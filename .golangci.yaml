@@ -1,0 +1,66 @@
+# The sections in this file are ordered in the order presented in https://golangci-lint.run/usage/configuration/.
+# The nested fields are ordered alphabetically.
+
+linters-settings:
+  goheader:
+    template-path: copyright_header
+  goimports:
+    local-prefixes: github.com/runfinch/finch
+  gosec:
+    config:
+      G306: "0o644"
+  lll:
+    # 145 is just a lax value that does not require too much work to add this check,
+    # and we don't want this to be too strict anyway.
+    line-length: 145
+    tab-width: 4
+  makezero:
+    always: true
+  nolintlint:
+    require-explanation: true
+    require-specific: true
+  stylecheck:
+    # ST1003 is left out because it is a bit opinionated.
+    checks: ["all", "-ST1003"]
+linters:
+  enable:
+    - errname
+    - errorlint
+    - exportloopref
+    - forcetypeassert
+    - gocritic
+    - godot
+    - gofumpt
+    - goheader
+    - goimports
+    - gosec
+    - lll
+    - makezero
+    - misspell
+    - nilerr
+    - nilnil
+    - nolintlint
+    - nosprintfhostport
+    - paralleltest
+    - predeclared
+    - reassign
+    - revive
+    - testableexamples
+    - unconvert
+    - unparam
+    - usestdlibvars
+    # TODO: Enable wastedassign after https://github.com/sanposhiho/wastedassign/issues/41 is fixed.
+    # - wastedassign
+    - whitespace
+    - stylecheck
+issues:
+  exclude-rules:
+    - linters:
+        - lll
+      # A go:generate statement has to be in the same line: https://github.com/golang/go/issues/46050.
+      source: "^//go:generate "
+  # Some checks enabled in the stylecheck setting are disabled by default
+  # (e.g., https://golangci-lint.run/usage/false-positives/#exc0013),
+  # so we need to enable them explicitly here.
+  exclude-use-default: false
+  fix: true

@@ -1,0 +1,101 @@
+name: Upload build to s3
+
+on:
+  workflow_dispatch:
+env:
+  GO111MODULE: on
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  macos-arm64-build:
+    runs-on: ['self-hosted', 'macos', 'arm64', '11.7']
+    timeout-minutes: 60
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.19.x
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Make macos arm64 build
+        run: |
+          make clean
+          make download-licenses 
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
+          tar -zcvf finch.arm64."$(date '+%s').tar.gz" _output
+
+      - name: Upload macos arm64 build
+        uses: actions/upload-artifact@v2
+        with:
+          name: finch.macos-arm64
+          path: finch.arm64.*.tar.gz
+          if-no-files-found: error
+
+  macos-x86-build:
+    runs-on: ['self-hosted', 'macos', 'amd64', '11.7']
+    timeout-minutes: 60
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.19.x
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Make macos amd64 build
+        run: |
+          make clean
+          make download-licenses 
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
+          tar -zcvf finch.amd64."$(date '+%s').tar.gz" _output
+
+      - name: Upload macos amd64 build
+        uses: actions/upload-artifact@v2
+        with:
+          name: finch.macos-amd64
+          path: finch.amd64.*.tar.gz
+          if-no-files-found: error
+
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - macos-x86-build
+      - macos-arm64-build
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: dependency-upload-session
+          aws-region: ${{ secrets.REGION }}
+
+      - name: Download macos arm64 build
+        uses: actions/download-artifact@v2
+        with:
+          name: finch.macos-arm64
+          path: build
+
+      - name: Download macos amd64 build
+        uses: actions/download-artifact@v2
+        with:
+          name: finch.macos-amd64
+          path: build
+      # TODO: Change destination bucket after creating automation for signing.
+      - name: "Upload to S3"
+        run: |
+          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/aarch64/ --recursive --exclude "*" --include "finch.arm64*"
+          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/x86-64/ --recursive --exclude "*" --include "finch.amd64*"

@@ -1,0 +1,29 @@
+# Paths to vde executables. Because vde_vmnet is invoked via sudo it should be
+# installed where only root can modify/replace it. This means also none of the
+# parent directories should be writable by the user.
+#
+# The varRun directory also must not be writable by the user because it will
+# include the vde_vmnet pid files. Those will be terminated via sudo, so replacing
+# the pid files would allow killing of arbitrary privileged processes. varRun
+# however MUST be writable by the daemon user.
+#
+# None of the paths segments may be symlinks, why it has to be /private/var
+# instead of /var etc.
+paths:
+  socketVMNet: /opt/finch/bin/socket_vmnet
+  varRun: /private/var/run/finch-lima
+  sudoers: /private/etc/sudoers.d/finch-lima
+
+group: everyone
+
+networks:
+  finch-shared:
+    mode: shared
+    gateway: 192.168.105.1
+    dhcpEnd: 192.168.105.254
+    netmask: 255.255.255.0
+  host:
+    mode: host
+    gateway: 192.168.106.1
+    dhcpEnd: 192.168.106.254
+    netmask: 255.255.255.0

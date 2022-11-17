@@ -1,0 +1,187 @@
+# ===================================================================== #
+# BASIC CONFIGURATION
+# ===================================================================== #
+
+# Default values in this YAML file are specified by `null` instead of Lima's "builtin default" values,
+# so they can be overridden by the $LIMA_HOME/_config/default.yaml mechanism documented at the end of this file.
+
+# Arch: "default", "x86_64", "aarch64".
+# 🟢 Builtin default: "default" (corresponds to the host architecture)
+arch: null
+
+# OpenStack-compatible disk image.
+# 🟢 Builtin default: null (must be specified)
+# 🔵 This file: Ubuntu 22.04 Jammy Jellyfish images
+images:
+  - location: "<finch_image_location>"
+    arch: "<finch_image_arch>"
+    digest: "<finch_image_digest>"
+
+# CPUs: if you see performance issues, try limiting cpus to 1.
+# 🟢 Builtin default: 4
+cpus: null
+
+# Memory size
+# 🟢 Builtin default: "4GiB"
+memory: "4GiB"
+
+# Disk size
+# 🟢 Builtin default: "100GiB"
+disk: null
+
+# Expose host directories to the guest, the mount point might be accessible from all UIDs in the guest
+# 🟢 Builtin default: null (Mount nothing)
+# 🔵 This file: Mount the home as read-only, /tmp/lima as writable
+mounts:
+- location: "~"
+  # Configure the mountPoint inside the guest.
+  # 🟢 Builtin default: value of location
+  mountPoint: null
+  # CAUTION: `writable` SHOULD be false for the home directory.
+  # Setting `writable` to true is safe for finch use case.
+  # Reference: https://github.com/lima-vm/lima/discussions/550
+  writable: true
+  sshfs:
+    # Enabling the SSHFS cache will increase performance of the mounted filesystem, at
+    # the cost of potentially not reflecting changes made on the host in a timely manner.
+    # Warning: It looks like PHP filesystem access does not work correctly when
+    # the cache is disabled.
+    # 🟢 Builtin default: true
+    cache: null
+    # SSHFS has an optional flag called 'follow_symlinks'. This allows mounts
+    # to be properly resolved in the guest os and allow for access to the
+    # contents of the symlink. As a result, symlinked files & folders on the Host
+    # system will look and feel like regular files directories in the Guest OS.
+    # 🟢 Builtin default: false
+    followSymlinks: null
+    # SFTP driver, "builtin" or "openssh-sftp-server". "openssh-sftp-server" is recommended.
+    # 🟢 Builtin default: "openssh-sftp-server" if OpenSSH SFTP Server binary is found, otherwise "builtin"
+    sftpDriver: null
+  9p:
+    # Supported security models are "passthrough", "mapped-xattr", "mapped-file" and "none".
+    # 🟢 Builtin default: "mapped-xattr"
+    securityModel: null
+    # Select 9P protocol version. Valid options are: "9p2000" (legacy), "9p2000.u", "9p2000.L".
+    # 🟢 Builtin default: "9p2000.L"
+    protocolVersion: null
+    # The number of bytes to use for 9p packet payload, where 4KiB is the absolute minimum.
+    # 🟢 Builtin default: "128KiB"
+    msize: null
+    # Specifies a caching policy. Valid options are: "none", "loose", "fscache" and "mmap".
+    # Try choosing "mmap" or "none" if you see a stability issue with the default "fscache".
+    # See https://www.kernel.org/doc/Documentation/filesystems/9p.txt
+    # 🟢 Builtin default: "fscache" for non-writable mounts, "mmap" for writable mounts
+    cache: null
+- location: "/tmp/lima"
+  # 🟢 Builtin default: false
+  # 🔵 This file: true (only for "/tmp/lima")
+  writable: true
+
+# Mount type for above mounts, such as "reverse-sshfs" (from sshocker) or "9p" (EXPERIMENTAL, from QEMU’s virtio-9p-pci, aka virtfs)
+# 🟢 Builtin default: "reverse-sshfs"
+mountType: reverse-sshfs
+
+ssh:
+  # A localhost port of the host. Forwarded to port 22 of the guest.
+  # 🟢 Builtin default: 0 (automatically assigned to a free port)
+  # NOTE: when the instance name is "default", the builtin default value is set to
+  # 60022 for backward compatibility.
+  localPort: 0
+  # Load ~/.ssh/*.pub in addition to $LIMA_HOME/_config/user.pub .
+  # This option is useful when you want to use other SSH-based
+  # applications such as rsync with the Lima instance.
+  # If you have an insecure key under ~/.ssh, do not use this option.
+  # 🟢 Builtin default: true
+  loadDotSSHPubKeys: null
+  # Forward ssh agent into the instance.
+  # 🟢 Builtin default: false
+  forwardAgent: null
+  # Forward X11 into the instance
+  # 🟢 Builtin default: false
+  forwardX11: null
+  # Trust forwarded X11 clients
+  # 🟢 Builtin default: false
+  forwardX11Trusted: null
+
+# ===================================================================== #
+# ADVANCED CONFIGURATION
+# ===================================================================== #
+
+containerd:
+  # Enable system-wide (aka rootful)  containerd and its dependencies (BuildKit, Stargz Snapshotter)
+  # 🟢 Builtin default: false
+  system: null
+  # Enable user-scoped (aka rootless) containerd and its dependencies
+  # 🟢 Builtin default: true
+  user: null
+#  # Override containerd archive
+#  # 🟢 Builtin default: hard-coded URL with hard-coded digest (see the output of `limactl info | jq .defaultTemplate.containerd.archives`)
+#  archives:
+#  - location: "~/Downloads/nerdctl-full-X.Y.Z-linux-amd64.tar.gz"
+#    arch: "x86_64"
+#    digest: "sha256:..."
+
+# Provisioning scripts need to be idempotent because they might be called
+# multiple times, e.g. when the host VM is being restarted.
+# 🟢 Builtin default: null
+provision:
+# Install packages needed for QEMU user-mode emulation
+- mode: system
+  script: |
+    #!/bin/bash
+    dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+- mode: boot
+  script: |
+    systemctl stop NetworkManager-wait-online.service
+    systemctl reset-failed NetworkManager-wait-online.service
+    systemctl mask NetworkManager-wait-online.service
+# # `user` is executed without the root privilege
+# - mode: user
+#   script: |
+#     #!/bin/bash
+#     set -eux -o pipefail
+#     cat <<EOF > ~/.vimrc
+#     set number
+#     EOF
+
+# Probe scripts to check readiness.
+# 🟢 Builtin default: null
+# probes:
+# # Only `readiness` probes are supported right now.
+# - mode: readiness
+#   description: vim to be installed
+#   script: |
+#      #!/bin/bash
+#      set -eux -o pipefail
+#      if ! timeout 30s bash -c "until command -v vim; do sleep 3; done"; then
+#        echo >&2 "vim is not installed yet"
+#        exit 1
+#      fi
+#   hint: |
+#     vim was not installed in the guest. Make sure the package system is working correctly.
+#     Also see "/var/log/cloud-init-output.log" in the guest.
+
+# ===================================================================== #
+# FURTHER ADVANCED CONFIGURATION
+# ===================================================================== #
+
+# Specify desired QEMU CPU type for each arch.
+# You can see what options are available for host emulation with: `qemu-system-$(arch) -cpu help`.
+# Setting of instructions is supported like this: "qemu64,+ssse3".
+cpuType:
+  # 🟢 Builtin default: "cortex-a72" (or "host" when running on aarch64 host)
+  aarch64: null
+  # 🟢 Builtin default: "qemu64" (or "host" when running on x86_64 host)
+  x86_64: null
+
+firmware:
+  # Use legacy BIOS instead of UEFI. Ignored for aarch64.
+  # 🟢 Builtin default: false
+  legacyBIOS: null
+
+video:
+  # QEMU display, e.g., "none", "cocoa", "sdl", "gtk".
+  # As of QEMU v6.2, enabling this is known to have negative impact
+  # on performance on macOS hosts: https://gitlab.com/qemu-project/qemu/-/issues/334
+  # 🟢 Builtin default: "none"
+  display: null

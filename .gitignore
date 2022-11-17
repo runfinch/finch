@@ -1,0 +1,14 @@
+_output/
+*.idea
+git-diff
+*.DS_Store
+*.bak
+_vde_output/
+**/*.tar.gz
+**/*.lz4
+**/*.img
+tmp/
+.vscode/
+finch-core/
+tools_bin/
+test-coverage.*
