@@ -1,13 +1,28 @@
 # Contributing Guide
 
-* [New Contributor Guide](#contributing-guide)
-    * [Ways to Contribute](#ways-to-contribute)
-    * [Find an Issue](#find-an-issue)
-    * [Ask for Help](#ask-for-help)
-    * [Pull Request Lifecycle](#pull-request-lifecycle)
-    * [Development Environment Setup](#development-environment-setup)
-    * [Sign Your Commits](#sign-your-commits)
-    * [Pull Request Checklist](#pull-request-checklist)
+- [Contributing Guide](#contributing-guide)
+  - [Participating in the Project](#participating-in-the-project)
+    - [Community Participant](#community-participant)
+    - [Contributor](#contributor)
+    - [Maintainer](#maintainer)
+  - [Ways to Contribute](#ways-to-contribute)
+  - [Find an Issue](#find-an-issue)
+  - [Ask for Help](#ask-for-help)
+  - [Pull Request Lifecycle](#pull-request-lifecycle)
+  - [Development Environment Setup](#development-environment-setup)
+    - [Linter](#linter)
+    - [Build](#build)
+    - [Unit Testing](#unit-testing)
+    - [E2E Testing](#e2e-testing)
+  - [Sign Your Commits](#sign-your-commits)
+    - [DCO](#dco)
+  - [Pull Request Checklist](#pull-request-checklist)
+    - [Build](#build-1)
+    - [Lint](#lint)
+    - [Testing](#testing)
+      - [Unit Testing - Parallel by Default](#unit-testing---parallel-by-default)
+      - [E2E Testing](#e2e-testing-1)
+    - [Go File Naming](#go-file-naming)
 
 Welcome! We are glad that you want to contribute to our project! 💖
 
@@ -83,6 +98,8 @@ We feel spelling these norms out is better than assuming them, and we all acknow
 
 ## Development Environment Setup
 
+This section describes how one can develop Finch CLI locally on macOS, build it, and then run it to test out the changes. The design ensures that the local development environment is isolated from the installation (i.e., we should not need to run `make install` to do local development).
+
 ### Linter
 
 We use [golangci-lint](https://github.com/golangci/golangci-lint).
@@ -103,6 +120,29 @@ The binary in _output can be directly used. E.g. initializing the vm and display
 ```
 
 You can run `make install` to make finch binary globally accessible.
+
+
+### Unit Testing
+
+To run unit test locally, please run `make test-unit`. Please make sure to run the unit tests before pushing the changes.
+
+Ideally each go file should have a test file ending with `_test.go`, and we should have as much test coverage as we can.
+
+To check unit test coverage, run `make coverage` under root finch-cli root directory.
+
+
+### E2E Testing
+
+Run these steps at the first time of running e2e tests
+
+VM instance is not expected to exist before running e2e tests, please make sure to remove it before going into next step:
+```sh
+./_output/bin/finch vm stop
+./_output/bin/finch vm remove
+```
+
+To run e2e test locally, please run `make test-e2e`. Please make sure to run the e2e tests or add new e2e tests before pushing the changes.
+
 
 ## Sign Your Commits
 
