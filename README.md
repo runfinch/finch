@@ -10,7 +10,7 @@ With Finch, you can leverage these existing projects without chasing down all th
 
 ### Getting Started with Finch on macOS
 
-The project will in the near future have a more full set of documentation and tutorials. For now let's get started here. As mentioned above, `finch` integrates with `nerdctl`. While Finch doesn't implement 100% of the upstream commands, the most common commands are in place and working. The [nerdctl Command Reference](https://github.com/containerd/nerdctl#command-reference) can be replied upon as a starting point for documentation.
+The project will in the near future have a more full set of documentation and tutorials. For now let's get started here. As mentioned above, `finch` integrates with `nerdctl`. While Finch doesn't implement 100% of the upstream commands, the most common commands are in place and working. The [nerdctl Command Reference](https://github.com/containerd/nerdctl#command-reference) can be relied upon as a starting point for documentation.
 
 #### Installing Finch
 
@@ -68,7 +68,7 @@ You can also use the `--platform` option with builds, making it easy to create m
 
 ### Working with Finch
 
-We have plans to create some more documentation and tutorials here geared toward users who are new to containers, as well as some tips and tricks for more advanced users. For now, if you're ready to kick the tires, please do! You'll find most commands and options you're familiar with from other tools to present, and as you'd expect (or, as they are [documented upstream with nerdctl](https://github.com/containerd/nerdctl#command-reference)). Most of the commands we use every day are covered, including volume and network management as well as Compose support. If Finch doesn't so something you want it to, please consider opening an Issue or a Pull Request.
+We have plans to create some more documentation and tutorials here geared toward users who are new to containers, as well as some tips and tricks for more advanced users. For now, if you're ready to kick the tires, please do! You'll find most commands and options you're familiar with from other tools to present, and as you'd expect (or, as they are [documented upstream with nerdctl](https://github.com/containerd/nerdctl#command-reference)). Most of the commands we use every day are covered, including volume and network management as well as Compose support. If Finch doesn't do something you want it to, please consider opening an Issue or a Pull Request.
 
 #### A note on volume mounts
 
@@ -76,7 +76,7 @@ The `run` command has a `-v` option for volume mounts. See `Volume flags` under 
 
 #### Configuration
 
-Finch has a simple and extensible configuration. A configuration file at `${HOME}.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
+Finch has a simple and extensible configuration. A configuration file at `${HOME}/.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
 
 Currently, the options are:
 
@@ -85,7 +85,7 @@ Currently, the options are:
 
 For a full list of configuration options, check [the struct here](pkg/config/config.go#L25).
 
-An example `config.yaml` looks like this:
+An example `finch.yaml` looks like this:
 
 ```yaml
 cpus: 4
