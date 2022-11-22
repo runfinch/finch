@@ -33,6 +33,9 @@ jobs:
     steps:
       - run: echo "Skipping CI for docs"
   e2e-tests:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [[self-hosted, macos, amd64, 11.7], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 11.7], [self-hosted, macos, arm64, 12.6]]
+    runs-on: ${{ matrix.os }} 
     steps:
       - run: echo "Skipping CI for docs"
