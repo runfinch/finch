@@ -105,4 +105,4 @@ As the project gets a bit of momentum, maintainers will start creating milestone
 * Continued performance improvement, ongoing
 * Stability and usability improvement, ongoing
 
-If you'd like to chat with us, please find us in the `#finch` channel on the [CNCF slack](https://cloud-native.slack.com), and @runfinch [on Twitter](https://twitter.com/runfinch).
+If you'd like to chat with us, please find us in the `#finch` channel on the [CNCF slack](https://cloud-native.slack.com).
