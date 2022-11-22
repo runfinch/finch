@@ -1,3 +1,5 @@
+# This file is created to address the issue described in
+# https://stackoverflow.com/questions/66751567/return-passing-status-on-github-workflow-when-using-paths-ignore.
 name: CI
 on:
   push:
