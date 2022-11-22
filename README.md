@@ -1,23 +1,24 @@
 <img src="contrib/logo/Finch_Horizontal_Black.png" width=40% height=auto>
 
-### Hello, Finch! 
+### Hello, Finch
 
-Finch is a new open source client for container development. Its simple installer provides a minimal native client along with an opinionated distribution of other open source components. Rather than creating even more options to reason about and choose from, Finch aims to help promote other projects by making it easy to install and use them, while offering a simple native client to tie it all together.
+Finch is an open source client for container development. Its simple installer provides a minimal native client along with an opinionated distribution of other open source components. Rather than creating even more options to reason about and choose from, Finch aims to help promote other projects by making it easy to install and use them, while offering a simple native client to tie it all together.
 
 Finch provides a simple client which is integrated with [nerdctl](https://github.com/containerd/nerdctl). For the core build/run/push/pull commands, Finch depends upon nerdctl to handle the heavy lifting. It works with [containerd](https://containerd.io) for container management, and with [BuildKit](https://github.com/moby/buildkit) to handle Open Container Initiative (OCI) image builds. These components are all pulled together and run within a virtual machine managed by [Lima](https://github.com/lima-vm/lima).
 
-With Finch, you can leverage these existing projects without chasing down all the details. Just install and start runnning and building your containers!
+With Finch, you can leverage these existing projects without chasing down all the details. Just install and start running and building your containers!
 
 ### Getting Started with Finch on macOS
 
 The project will in the near future have a more full set of documentation and tutorials. For now let's get started here. As mentioned above, `finch` integrates with `nerdctl`. While Finch doesn't implement 100% of the upstream commands, the most common commands are in place and working. The [nerdctl Command Reference](https://github.com/containerd/nerdctl#command-reference) can be replied upon as a starting point for documentation.
 
-#### Installing Finch 
+#### Installing Finch
 
 To get started with Finch on macOS, the prerequisites are:
+
 * macOS catalina (10.15) or higher, newer versions are tested on a best-effort basis
 * Intel or Apple Silicon M1 system for macOS
-* Recommended minimum configuration is 2 cpu, 4gb mem
+* Recommended minimum configuration is 2 CPU, 4 GB memory
 
 Download a release package for your architecture from the [project's GitHub releases](https://github.com/runfinch/finch/releases) page, and once downloaded double click and follow the directions.
 
@@ -53,7 +54,6 @@ Again if you're new to containers, you just built a container image. Nice!
 
 The `build` command will work with the build system (the Moby Project's BuildKit in Finch's case) to create an OCI image from a Dockerfile, which is a special sort of recipe for creating an image. This image can then be used to create containers. You can see your locally pulled and built images with the `finch images` command.
 
-
 Finch makes it easy to build and run containers across architectures with the `--platform` option. When used with the `run` command, it will create a container using the specified architecture. For example, on an Apple Silicon M1 system, `--platform=amd64` will create a container and run processes within it using an x86-64 architecture.
 
 ```sh
@@ -80,8 +80,8 @@ Finch has a simple and extensible configuration. A configuration file at `${HOME
 
 Currently, the options are:
 
-- CPUs [int]: the amount of vcpu to dedicate to the virtual machine
-- Memory [string]: the amount of memory to dedicate to the virtual machine
+* CPUs [int]: the amount of vCPU to dedicate to the virtual machine
+* Memory [string]: the amount of memory to dedicate to the virtual machine
 
 For a full list of configuration options, check [the struct here](pkg/config/config.go#L25).
 
@@ -105,5 +105,4 @@ As the project gets a bit of momentum, maintainers will start creating milestone
 * Continued performance improvement, ongoing
 * Stability and usability improvement, ongoing
 
-If you'd like to chat with us, please find us in the `#finch` channel on the [CNCF slack](https://cloud-native.slack.com), and @runfinch [on Twitter](https://twitter.com/runfinch). 
-
+If you'd like to chat with us, please find us in the `#finch` channel on the [CNCF slack](https://cloud-native.slack.com), and @runfinch [on Twitter](https://twitter.com/runfinch).
