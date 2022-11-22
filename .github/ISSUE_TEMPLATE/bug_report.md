@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Describe the bug**
-Briefly describe the probem you are having.
+Briefly describe the problem you are having.
 
 
 **Steps to reproduce**

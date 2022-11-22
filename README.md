@@ -1,49 +1,87 @@
-# Finch CLI
+<img src="contrib/logo/Finch_Horizontal_Black.png" width=40% height=auto>
 
-## Local Development
+### Hello, Finch! 
 
-This section describes how one can develop Finch CLI locally on macOS, build it, and then run it to test out the changes. The design ensures that the local development environment is isolated from the homebrew installation (i.e., we should not need to run `make install` to do local development).
+Finch is a new open source client for container development. Its simple installer provides a minimal native client along with an opinionated distribution of other open source components. Rather than creating even more options to reason about and choose from, Finch aims to help promote other projects by making it easy to install and use them, while offering a simple native client to tie it all together.
 
-### Dependency Installation
+Finch provides a simple client which is integrated with [nerdctl](https://github.com/containerd/nerdctl). For the core build/run/push/pull commands, Finch depends upon nerdctl to handle the heavy lifting. It works with [containerd](https://containerd.io) for container management, and with [BuildKit](https://github.com/moby/buildkit) to handle Open Container Initiative (OCI) image builds. These components are all pulled together and run within a virtual machine managed by [Lima](https://github.com/lima-vm/lima).
 
-This section installs the dependencies need to build and run `finch`. `finch` leverages several other pieces of technology to provide the platform elements which include [lima](https://github.com/lima-vm/lima), [qemu](https://github.com/qemu/qemu) and others. The application wraps numerous pieces of technology to provide one cohesive application.
+With Finch, you can leverage these existing projects without chasing down all the details. Just install and start runnning and building your containers!
 
-It only needs to be done when the repository is just cloned.
+### Getting Started with Finch on macOS
 
-```sh
-make
-```
+The project will in the near future have a more full set of documentation and tutorials. For now let's get started here. As mentioned above, `finch` integrates with `nerdctl`. While Finch doesn't implement 100% of the upstream commands, the most common commands are in place and working. The [nerdctl Command Reference](https://github.com/containerd/nerdctl#command-reference) can be replied upon as a starting point for documentation.
 
-### Build
+#### Installing Finch 
 
-After you make some code changes, run the following command under the repository root to build an updated binary. It will generate a binary under `./_output/bin/finch`.
+To get started with Finch on macOS, the prerequisites are:
+* macOS catalina (10.15) or higher, newer versions are tested on a best-effort basis
+* Intel or Apple Silicon M1 system for macOS
+* Recommended minimum configuration is 2 cpu, 4gb mem
 
-```sh
-make finch
-```
+Download a release package for your architecture from the [project's GitHub releases](https://github.com/runfinch/finch/releases) page, and once downloaded double click and follow the directions.
 
-### Run
-
-Spin up the VM if you haven't. Note that if it's your time to run `finch vm init`, it may require you to enter your root password because it needs to configure [socket-vmnet](https://github.com/lima-vm/socket_vmnet), which need to be installed to privileged locations.
+Once the installation is complete, `finch vm init` is required once to set up the underlying system. This initial setup usually takes about a minute.
 
 ```sh
-./_output/bin/finch vm init
+finch vm init
+INFO[0000] Initializing and starting Finch virtual machine...
+..
+INFO[0067] Finch virtual machine started successfully
 ```
 
-Now you can run whatever command you want to test:
+#### Running containers and building images
+
+You can now run a test container. If you're familiar with container development, you can use the `run` command as you'd expect.
 
 ```sh
-./_output/bin/finch ...
+finch run --rm public.ecr.aws/finch/hello-finch
 ```
 
-#### Config
+If you're new to containers, that is so exciting! Give the command above a try after you've installed and initialized Finch. The `run` command pulls an image locally if it's not already present, and then creates and runs a container for you. Note the handy `--rm` option will delete the container instance once it's done executing.
 
-A config file at `$USER/.finch/finch.yaml` will be generated on first-run. Currently, this config file has options for system resource limits for the VM that is used to run containers. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
+To build an image, try a quick example from the finch client repository.
+
+```sh
+git clone git@github.com:runfinch/finch.git
+cd finch/contrib/hello-finch
+finch build . -t hello-finch
+..
+```
+
+Again if you're new to containers, you just built a container image. Nice!
+
+The `build` command will work with the build system (the Moby Project's BuildKit in Finch's case) to create an OCI image from a Dockerfile, which is a special sort of recipe for creating an image. This image can then be used to create containers. You can see your locally pulled and built images with the `finch images` command.
+
+
+Finch makes it easy to build and run containers across architectures with the `--platform` option. When used with the `run` command, it will create a container using the specified architecture. For example, on an Apple Silicon M1 system, `--platform=amd64` will create a container and run processes within it using an x86-64 architecture.
+
+```sh
+uname -ms
+Darwin arm64
+
+finch run --rm --platform=amd64 public.ecr.aws/amazonlinux/amazonlinux uname -ms
+Linux x86_64
+```
+
+You can also use the `--platform` option with builds, making it easy to create multiplatform images.
+
+### Working with Finch
+
+We have plans to create some more documentation and tutorials here geared toward users who are new to containers, as well as some tips and tricks for more advanced users. For now, if you're ready to kick the tires, please do! You'll find most commands and options you're familiar with from other tools to present, and as you'd expect (or, as they are [documented upstream with nerdctl](https://github.com/containerd/nerdctl#command-reference)). Most of the commands we use every day are covered, including volume and network management as well as Compose support. If Finch doesn't so something you want it to, please consider opening an Issue or a Pull Request.
+
+#### A note on volume mounts
+
+The `run` command has a `-v` option for volume mounts. See `Volume flags` under [nerdctl run](https://github.com/containerd/nerdctl#whale-blue_square-nerdctl-run) for more details, if you're not familiar. This allows you to mount directories from your local host into your container. One thing to note with Finch: currently, only locations within `$HOME` are supported by the volume mount `-v` option. Specifying directories outside `$HOME` may cause unexpected behavior. Support for other mount locations will be added soon.
+
+#### Configuration
+
+Finch has a simple and extensible configuration. A configuration file at `${HOME}.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
 
 Currently, the options are:
 
-- CPUs [int]: the amount of cores to dedicate to the VM (must be greater than 0, warning after exceeding max availbe on host)
-- Memory [string]: the amount of RAM to dedicate to the VM (must be greater than 0, warning after exceeding max availbe on host)
+- CPUs [int]: the amount of vcpu to dedicate to the virtual machine
+- Memory [string]: the amount of memory to dedicate to the virtual machine
 
 For a full list of configuration options, check [the struct here](pkg/config/config.go#L25).
 
@@ -54,21 +92,18 @@ cpus: 4
 memory: 4GiB
 ```
 
-### Unit Testing
+### What's next?
 
-To run unit test locally, please run `make test-unit`. Please make sure to run the unit tests before pushing the changes.
+We are excited to start this project in the open, and we'd love to hear from you. If you have ideas or find bugs please open an issue. Please feel free to start a discussion if you have something you'd like to propose or brainstorm. Pull requests are welcome, as well! See the [CONTRIBUTING](CONTRIBUTING.md) doc for more info on contributing, and the path to reviewer and maintainer roles for those interested.
 
-Ideally each go file should have a test file ending with `_test.go`, and we should have as much test coverage as we can.
+As the project gets a bit of momentum, maintainers will start creating milestones and look to establish a regular release cadence. In time, we'll also start to curate a public roadmap from the community ideas and issues that roll in. We already have some ideas, including:
 
-To check unit test coverage, run `make coverage` under root finch-cli root directory.
+* More minimal guest OS footprint
+* Windows client support
+* Linux client support
+* Formal extensibility
+* Continued performance improvement, ongoing
+* Stability and usability improvement, ongoing
 
-### E2E Testing
+If you'd like to chat with us, please find us in the `#finch` channel on the [CNCF slack](https://cloud-native.slack.com), and @runfinch [on Twitter](https://twitter.com/runfinch). 
 
-Run these steps at the first time of running e2e tests
-
-VM instance is not expected to exist before running e2e tests, please make sure to remove it before going into next step:
-```sh
-./_output/bin/finch vm stop
-./_output/bin/finch vm remove
-```
-To run e2e test locally, please run `make test-e2e`. Please make sure to run the e2e tests or add new e2e tests before pushing the changes.
