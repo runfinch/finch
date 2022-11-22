@@ -1,5 +1,5 @@
 # - When a third-party action is added (i.e., `uses`), please also add it to `download-licenses` in Makefile.
-# - The set of jobs in this file should be equal to that in ci-docs.yaml.
+# - When a job is added/removed/renamed, please make corresponding changes in ci-docs.yaml.
 name: CI
 on:
   push:

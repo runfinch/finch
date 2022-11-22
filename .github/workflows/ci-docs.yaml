@@ -1,5 +1,6 @@
 # This file is created to address the issue described in
 # https://stackoverflow.com/questions/66751567/return-passing-status-on-github-workflow-when-using-paths-ignore.
+# As a result, the set of jobs in this file should be equal to that in ci.yaml.
 name: CI
 on:
   push:
