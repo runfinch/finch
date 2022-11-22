@@ -1,4 +1,4 @@
-<img src="contrib/logo/Finch_Horizontal_Black.png" width=40% height=auto>
+<img src="contrib/logo/Finch_Horizontal_Black_on_White.png" width=40% height=auto>
 
 ### Hello, Finch
 
