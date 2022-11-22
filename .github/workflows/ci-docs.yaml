@@ -1,0 +1,38 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.md'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**.md'
+
+jobs:
+  gen-code-no-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skipping CI for docs"
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skipping CI for docs"
+  go-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skipping CI for docs"
+  go-mod-tidy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skipping CI for docs"
+  check-licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skipping CI for docs"
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skipping CI for docs"
