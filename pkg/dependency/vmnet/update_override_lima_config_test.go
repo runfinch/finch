@@ -46,7 +46,7 @@ func TestOverrideLimaConfig_verifyConfigHasNetworkSection(t *testing.T) {
 				pathErr.Path = "mock_config_file"
 				pathErr.Err = errors.New("file does not exist")
 
-				l.EXPECT().Debugf("config file not found: %w", &pathErr)
+				l.EXPECT().Debugf("config file not found: %v", &pathErr)
 			},
 			want: false,
 		},
@@ -59,7 +59,7 @@ func TestOverrideLimaConfig_verifyConfigHasNetworkSection(t *testing.T) {
 				var typeErr yaml.TypeError
 				typeErr.Errors = []string{"line 1: cannot unmarshal !!str `this is...` into vmnet.NetworkConfig"}
 
-				l.EXPECT().Errorf("failed to unmarshal YAML from override config file: %w", &typeErr)
+				l.EXPECT().Errorf("failed to unmarshal YAML from override config file: %v", &typeErr)
 			},
 			want: false,
 		},
