@@ -109,8 +109,12 @@ jobs:
           sudo rm -rf /opt/finch
           sudo rm -rf ~/.finch
           sudo rm -rf ./_output
-          sudo pkill '^qemu-system'
-          sudo pkill '^socket_vmnet'
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
       - run: brew install go lz4 automake autoconf libtool 
       - name: Build project
         run: |
