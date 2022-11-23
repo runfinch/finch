@@ -114,7 +114,7 @@ After cloning the repo, run `make` to build the binary.
 
 The binary in _output can be directly used. E.g. initializing the vm and display the version
 ```
-./_output/bin/finch vm init\
+./_output/bin/finch vm init
 
 ./_output/bin/finch version
 ```
