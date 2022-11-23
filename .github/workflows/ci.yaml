@@ -1,4 +1,5 @@
-# When a third-party action is added (i.e., `uses`), please also add it to `download-licenses` in Makefile.
+# - When a third-party action is added (i.e., `uses`), please also add it to `download-licenses` in Makefile.
+# - When a job is added/removed/renamed, please make corresponding changes in ci-docs.yaml.
 name: CI
 on:
   push:
@@ -41,18 +42,12 @@ jobs:
   # It's recommended to run golangci-lint in a job separate from other jobs (go test, etc) because different jobs run in parallel.
   go-linter:
     runs-on: ubuntu-latest
-    # TODO: Remove this when we make the repos public.
-    env:
-      GOPRIVATE: github.com/runfinch/common-tests
-      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: go.mod
           cache: true
-      # TODO: Remove this when we make the repos public.
-      - run: git config --global url.https://$ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -63,35 +58,23 @@ jobs:
           args: --fix=false
   go-mod-tidy-check:
     runs-on: ubuntu-latest
-    # TODO: Remove this when we make the repos public.
-    env:
-      GOPRIVATE: github.com/runfinch/common-tests
-      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: go.mod
           cache: true
-      # TODO: Remove this when we make the repos public.
-      - run: git config --global url.https://$ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       # TODO: Use `go mod tidy --check` after https://github.com/golang/go/issues/27005 is fixed.
       - run: go mod tidy
       - run: git diff --exit-code
   check-licenses:
     runs-on: ubuntu-latest
-    # TODO: Remove this when we make the repos public.
-    env:
-      GOPRIVATE: github.com/runfinch/common-tests
-      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: go.mod
           cache: true
-      # TODO: Remove this when we make the repos public.
-      - run: git config --global url.https://$ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - run: make check-licenses
   e2e-tests:
     strategy:
@@ -99,9 +82,6 @@ jobs:
       matrix:
         os: [[self-hosted, macos, amd64, 11.7], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 11.7], [self-hosted, macos, arm64, 12.6]]
     runs-on: ${{ matrix.os }} 
-    # TODO: Remove this when we make the repos public
-    env:
-      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - name: Clean up previous files
@@ -121,7 +101,4 @@ jobs:
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           which libtool
           make
-      # TODO: Remove this when we make the repos public
-      - name: Configure repo access
-        run: git config --global url.https://$ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - run: make test-e2e

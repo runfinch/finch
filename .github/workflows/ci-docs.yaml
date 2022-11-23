@@ -1,3 +1,6 @@
+# This file is created according to
+# https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/troubleshooting-required-status-checks#handling-skipped-but-required-checks
+# As a result, the set of jobs in this file should be equal to that in ci.yaml.
 name: CI
 on:
   push:
