@@ -5,16 +5,16 @@ go 1.18
 require (
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.5.0
-	github.com/lima-vm/lima v0.12.0
+	github.com/lima-vm/lima v0.13.0
 	github.com/onsi/ginkgo/v2 v2.5.0
 	github.com/onsi/gomega v1.24.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.5
 	github.com/runfinch/common-tests v0.1.0
 	github.com/sirupsen/logrus v1.9.0
-	github.com/spf13/afero v1.9.2
-	github.com/spf13/cobra v1.6.0
-	github.com/stretchr/testify v1.8.0
+	github.com/spf13/afero v1.9.3
+	github.com/spf13/cobra v1.6.1
+	github.com/stretchr/testify v1.8.1
 	github.com/xorcare/pointer v1.2.1
 	golang.org/x/crypto v0.1.0
 	golang.org/x/tools v0.2.0
