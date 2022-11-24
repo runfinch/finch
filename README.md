@@ -1,4 +1,8 @@
-<img src="contrib/logo/Finch_Horizontal_Black_on_White.png" width=40% height=auto>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="contrib/logo/Finch_Horizontal_White.svg">
+  <source media="(prefers-color-scheme: light)" srcset="contrib/logo/Finch_Horizontal_Black.svg">
+  <img alt="Finch logo" width=40% height=auto src="contrib/logo/Finch_Horizontal_Black.svg">
+</picture>
 
 ### Hello, Finch
 
