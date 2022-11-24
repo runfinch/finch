@@ -14,7 +14,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/afero v1.9.2
 	github.com/spf13/cobra v1.6.1
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/xorcare/pointer v1.2.1
 	golang.org/x/crypto v0.1.0
 	golang.org/x/tools v0.2.0
