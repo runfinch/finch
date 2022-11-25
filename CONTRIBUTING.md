@@ -225,3 +225,11 @@ Keep file names to one word if possible (e.g., avoid stuttering with package nam
 Rationale: It's more readable (i.e., `complicateddistirbutedsystem` vs `complicated_distributed_system`). Furthermore, the practical reason to avoid underscores as separators is that the suffix may later become either an OS or an architecture, but we think that the potential risk is outweighed by the readability gain.
 
 To add more context, there are some [public discussions](https://github.com/golang/go/issues/36060#issue-535213527) on this, but there is no consensus yet.
+
+## Merge dependabot PRs
+
+If you have write access to the repository, and all the checks have passed, feel free to merge the PR.
+
+If you're the only approver of the PR, and the PR branch has been outdated, please comment `@dependabot rebase` on the PR to update it.
+
+If you [directly use Github UI to update the PR branch](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/keeping-your-pull-request-in-sync-with-the-base-branch), then you will be the author of the merge commit, and since we [require the approver not to be the last pusher of the PR](https://github.blog/changelog/2022-10-20-new-branch-protections-last-pusher-and-locked-branch/), you won't be able to merge the PR unless someone else with write access approves the PR.
