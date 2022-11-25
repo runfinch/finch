@@ -6,7 +6,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.5.0
 	github.com/lima-vm/lima v0.13.0
-	github.com/onsi/ginkgo/v2 v2.5.0
+	github.com/onsi/ginkgo/v2 v2.5.1
 	github.com/onsi/gomega v1.24.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.5
