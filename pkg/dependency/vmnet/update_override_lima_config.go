@@ -62,16 +62,16 @@ func (overConf *overrideLimaConfig) verifyConfigHasNetworkSection(filePath strin
 	yamlFile, err := afero.ReadFile(overConf.fs, filePath)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			overConf.l.Debugf("config file not found: %w", err)
+			overConf.l.Debugf("config file not found: %v", err)
 		} else {
-			overConf.l.Errorf("failed to read config file: %w", err)
+			overConf.l.Errorf("failed to read config file: %v", err)
 		}
 		return false
 	}
 	var cfg NetworkConfig
 	err = yaml.Unmarshal(yamlFile, &cfg)
 	if err != nil {
-		overConf.l.Errorf("failed to unmarshal YAML from override config file: %w", err)
+		overConf.l.Errorf("failed to unmarshal YAML from override config file: %v", err)
 		return false
 	}
 

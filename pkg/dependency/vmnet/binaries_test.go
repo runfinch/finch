@@ -106,7 +106,7 @@ func TestBinaries_Installed(t *testing.T) {
 				pathErr.Path = "mock_prefix/dependencies/lima-socket_vmnet/opt/finch/bin/socket_vmnet"
 				pathErr.Err = errors.New("file does not exist")
 
-				l.EXPECT().Infof("dependency socket_vmnet file not found: %w", &pathErr)
+				l.EXPECT().Infof("dependency socket_vmnet file not found: %v", &pathErr)
 			},
 			want: false,
 		},
@@ -125,7 +125,7 @@ func TestBinaries_Installed(t *testing.T) {
 				pathErr.Path = "/opt/finch/bin/socket_vmnet"
 				pathErr.Err = errors.New("file does not exist")
 
-				l.EXPECT().Infof("installed socket_vmnet file not found: %w", &pathErr)
+				l.EXPECT().Infof("installed socket_vmnet file not found: %v", &pathErr)
 			},
 			want: false,
 		},

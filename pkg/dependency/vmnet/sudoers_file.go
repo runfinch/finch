@@ -44,16 +44,16 @@ func (s *sudoersFile) Installed() bool {
 	b, err := afero.ReadFile(s.fs, s.path())
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			s.l.Infof("sudoers file not found: %w", err)
+			s.l.Infof("sudoers file not found: %v", err)
 		} else {
-			s.l.Errorf("failed to read sudoers file: %w", err)
+			s.l.Errorf("failed to read sudoers file: %v", err)
 		}
 		return false
 	}
 	cmd := s.limaCmdCreator.CreateWithoutStdio("sudoers")
 	out, err := cmd.Output()
 	if err != nil {
-		s.l.Errorf("failed to run lima sudoers command: %w", err)
+		s.l.Errorf("failed to run lima sudoers command: %v", err)
 		return false
 	}
 	return bytes.Equal(b, out)
