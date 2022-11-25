@@ -74,6 +74,10 @@ You can also use the `--platform` option with builds, making it easy to create m
 
 We have plans to create some more documentation and tutorials here geared toward users who are new to containers, as well as some tips and tricks for more advanced users. For now, if you're ready to kick the tires, please do! You'll find most commands and options you're familiar with from other tools to present, and as you'd expect (or, as they are [documented upstream with nerdctl](https://github.com/containerd/nerdctl#command-reference)). Most of the commands we use every day are covered, including volume and network management as well as Compose support. If Finch doesn't do something you want it to, please consider opening an Issue or a Pull Request.
 
+####  Finch and other tools
+
+The installer will install Finch and its dependencies in its own area of your system, and it can happily coexist with other container development tools. Finch is a new project and not meant to be a direct drop-in replacement for other tools. Therefore, we don't recommend aliasing or linking other command names to `finch`.
+
 #### A note on volume mounts
 
 The `run` command has a `-v` option for volume mounts. See `Volume flags` under [nerdctl run](https://github.com/containerd/nerdctl#whale-blue_square-nerdctl-run) for more details, if you're not familiar. This allows you to mount directories from your local host into your container. One thing to note with Finch: currently, only locations within `$HOME` are supported by the volume mount `-v` option. Specifying directories outside `$HOME` may cause unexpected behavior. Support for other mount locations will be added soon.
