@@ -92,7 +92,7 @@ func (overConf *overrideLimaConfig) appendNetworkConfiguration(filePath string) 
 	}
 	defer func() {
 		if err := f.Close(); err != nil {
-			overConf.l.Errorf("error closing file at path %s, error: %v", filePath, err)
+			overConf.l.Errorf("error closing file at path %s, error: %s", filePath, err.Error())
 		}
 	}()
 	if _, err := f.WriteString(networkConfigString); err != nil {
