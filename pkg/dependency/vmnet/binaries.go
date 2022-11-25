@@ -66,7 +66,7 @@ func (bin *binaries) buildArtifactSocketVmnetExe() string {
 func (bin *binaries) Installed() bool {
 	dirExists, err := afero.DirExists(bin.fs, bin.installationPath())
 	if err != nil {
-		bin.l.Errorf("failed to get status of binaries directory: %w", err)
+		bin.l.Errorf("failed to get status of binaries directory: %v", err)
 		return false
 	}
 	if !dirExists {
@@ -76,18 +76,18 @@ func (bin *binaries) Installed() bool {
 	buildArtifactFileBytes, err := afero.ReadFile(bin.fs, bin.buildArtifactSocketVmnetExe())
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			bin.l.Infof("dependency socket_vmnet file not found: %w", err)
+			bin.l.Infof("dependency socket_vmnet file not found: %v", err)
 		} else {
-			bin.l.Errorf("failed to read dependency socket_vmnet file: %w", err)
+			bin.l.Errorf("failed to read dependency socket_vmnet file: %v", err)
 		}
 		return false
 	}
 	installedFileBytes, err := afero.ReadFile(bin.fs, bin.installationPathSocketVmnetExe())
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			bin.l.Infof("installed socket_vmnet file not found: %w", err)
+			bin.l.Infof("installed socket_vmnet file not found: %v", err)
 		} else {
-			bin.l.Errorf("failed to read installed socket_vmnet file: %w", err)
+			bin.l.Errorf("failed to read installed socket_vmnet file: %v", err)
 		}
 		return false
 	}

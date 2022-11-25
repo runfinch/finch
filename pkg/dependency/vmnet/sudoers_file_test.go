@@ -58,7 +58,7 @@ func TestSudoers_Installed(t *testing.T) {
 				pathErr.Path = "/etc/sudoers.d/finch-lima"
 				pathErr.Err = errors.New("file does not exist")
 
-				l.EXPECT().Infof("sudoers file not found: %w", &pathErr)
+				l.EXPECT().Infof("sudoers file not found: %v", &pathErr)
 			},
 			want: false,
 		},
@@ -73,7 +73,7 @@ func TestSudoers_Installed(t *testing.T) {
 
 				lc.EXPECT().CreateWithoutStdio("sudoers").Return(cmd)
 				cmd.EXPECT().Output().Return([]byte{}, wantErr)
-				l.EXPECT().Errorf("failed to run lima sudoers command: %w", wantErr)
+				l.EXPECT().Errorf("failed to run lima sudoers command: %v", wantErr)
 			},
 			want: false,
 		},
