@@ -28,7 +28,6 @@ func TestNerdctlCommandCreator_create(t *testing.T) {
 	cmd := newNerdctlCommandCreator(nil, nil).create("build", "build description")
 	assert.Equal(t, cmd.Name(), "build")
 	assert.Equal(t, cmd.DisableFlagParsing, true)
-	assert.Equal(t, cmd.FParseErrWhitelist, cobra.FParseErrWhitelist{UnknownFlags: true})
 }
 
 func TestNerdctlCommand_runAdaptor(t *testing.T) {
