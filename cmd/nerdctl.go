@@ -31,8 +31,6 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 	command := &cobra.Command{
 		Use:   cmdName,
 		Short: cmdDesc,
-		// TODO(Ang): Remove it (https://github.com/runfinch/finch/pull/40#issuecomment-1263878146).
-		FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true},
 		// If we don't specify it, and the user issues `finch run -d alpine`,
 		// the args passed to nerdctlCommand.run will be empty because
 		// cobra will try to parse `-d alpine` as if alpine is the value of the `-d` flag.
