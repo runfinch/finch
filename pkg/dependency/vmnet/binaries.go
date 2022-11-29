@@ -70,7 +70,7 @@ func (bin *binaries) Installed() bool {
 		return false
 	}
 	if !dirExists {
-		bin.l.Infof("binaries directory doesn't exist")
+		bin.l.Info("binaries directory doesn't exist")
 		return false
 	}
 	buildArtifactFileBytes, err := afero.ReadFile(bin.fs, bin.buildArtifactSocketVmnetExe())
