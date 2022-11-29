@@ -26,6 +26,12 @@ To get started with Finch on macOS, the prerequisites are:
 
 Download a release package for your architecture from the [project's GitHub releases](https://github.com/runfinch/finch/releases) page, and once downloaded double click and follow the directions.
 
+#### Installing Finch via [brew](https://brew.sh/)
+
+```sh
+$ brew install --cask finch
+```
+
 Once the installation is complete, `finch vm init` is required once to set up the underlying system. This initial setup usually takes about a minute.
 
 ```sh
