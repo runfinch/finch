@@ -119,7 +119,7 @@ The binary in _output can be directly used. E.g. initializing the vm and display
 ./_output/bin/finch version
 ```
 
-You can run `make install` to make finch binary globally accessible.
+You can also run `make install` to build and make finch binary globally accessible. However, note that this may conflict with the one installed via an official installer.
 
 
 ### Unit Testing

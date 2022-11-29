@@ -24,14 +24,36 @@ To get started with Finch on macOS, the prerequisites are:
 * Intel or Apple Silicon M1 system for macOS
 * Recommended minimum configuration is 2 CPU, 4 GB memory
 
+##### From Go
+
+The easiest way to install the Finch is to use Go way by issuing the following command:
+
+```sh
+$ go install github.com/runfinch/finch/cmd@v0.1.0
+```
+
+##### From Releases
+
 Download a release package for your architecture from the [project's GitHub releases](https://github.com/runfinch/finch/releases) page, and once downloaded double click and follow the directions.
+
+##### From Source
+
+If you want to build and compile the source code, follow the instructions below:
+
+```sh
+$ git clone git@github.com:runfinch/finch.git
+$ cd finch
+$ make install
+```
+
+#### Running the VM
 
 Once the installation is complete, `finch vm init` is required once to set up the underlying system. This initial setup usually takes about a minute.
 
 ```sh
-finch vm init
+$ finch vm init
 INFO[0000] Initializing and starting Finch virtual machine...
-..
+...
 INFO[0067] Finch virtual machine started successfully
 ```
 
@@ -40,7 +62,7 @@ INFO[0067] Finch virtual machine started successfully
 You can now run a test container. If you're familiar with container development, you can use the `run` command as you'd expect.
 
 ```sh
-finch run --rm public.ecr.aws/finch/hello-finch
+$ finch run --rm public.ecr.aws/finch/hello-finch
 ```
 
 If you're new to containers, that is so exciting! Give the command above a try after you've installed and initialized Finch. The `run` command pulls an image locally if it's not already present, and then creates and runs a container for you. Note the handy `--rm` option will delete the container instance once it's done executing.
@@ -48,10 +70,9 @@ If you're new to containers, that is so exciting! Give the command above a try a
 To build an image, try a quick example from the finch client repository.
 
 ```sh
-git clone git@github.com:runfinch/finch.git
-cd finch/contrib/hello-finch
-finch build . -t hello-finch
-..
+$ git clone git@github.com:runfinch/finch.git
+$ cd finch/contrib/hello-finch
+$ finch build . -t hello-finch
 ```
 
 Again if you're new to containers, you just built a container image. Nice!
@@ -61,10 +82,10 @@ The `build` command will work with the build system (the Moby Project's BuildKit
 Finch makes it easy to build and run containers across architectures with the `--platform` option. When used with the `run` command, it will create a container using the specified architecture. For example, on an Apple Silicon M1 system, `--platform=amd64` will create a container and run processes within it using an x86-64 architecture.
 
 ```sh
-uname -ms
+$ uname -ms
 Darwin arm64
 
-finch run --rm --platform=amd64 public.ecr.aws/amazonlinux/amazonlinux uname -ms
+$ finch run --rm --platform=amd64 public.ecr.aws/amazonlinux/amazonlinux uname -ms
 Linux x86_64
 ```
 
