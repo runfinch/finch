@@ -237,4 +237,11 @@ If you have write access to the repository, and all the checks have passed, feel
 
 ## Release Process
 
-We use [`release-please`](.github/workflows/release-please.yaml) to automate the release process. Before merging a `release-please` PR, please ensure that all the checks are passing for the latest commit on `main`. This is needed because `main` could contain a bug (more info: `Loose` branch protection in [After Merge](#after-merge)), while we want no bugs in an official release.
+We use [`release-please`](.github/workflows/release-please.yaml) to automate the release process.
+
+Detailed steps:
+
+1. [Restrict who can push to matching branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches#restrict-who-can-push-to-matching-branches) to only you in [the branch protection rule of `main`](https://github.com/runfinch/finch/settings/branch_protection_rules/30961049).
+1. Ensure that all the checks are passing for the latest commit on `main`. This is needed because `main` could contain a bug (more info: `Loose` branch protection in [After Merge](#after-merge)), while we want no bugs in an official release.
+1. Merge the `release-please` PR ([example](https://github.com/runfinch/finch/pull/17)).
+1. Remove the pusher restriction in the first step.
