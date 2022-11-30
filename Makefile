@@ -135,7 +135,7 @@ uninstall: uninstall.finch
 
 .PHONY: finch
 finch:
-	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd
+	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
 
 .PHONY: release
 release: check-licenses all download-licenses
@@ -210,8 +210,6 @@ download-licenses:
     ### system-level dependencies - end ###
 
 .PHONY: check-licenses
-# TODO: Include deps only imported in testing code after https://github.com/google/go-licenses/issues/62 is fixed.
-#
 # Guidelines:
 #
 # - The dependencies in pkg/tools.go are not included, so one has to manually verify the license when a new tool is added.
