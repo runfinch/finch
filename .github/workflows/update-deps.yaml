@@ -36,5 +36,6 @@ jobs:
           # More info: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#workarounds-to-trigger-further-workflow-runs
           # TODO: Use FINCH_BOT_TOKEN instead of GITHUB_TOKEN.
           token: ${{ secrets.GITHUB_TOKEN }}
+          signoff: true
           # TODO: Add updated lima version in the title.
           title: 'build(deps): Bump lima version'
