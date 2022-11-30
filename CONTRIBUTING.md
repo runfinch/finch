@@ -95,6 +95,11 @@ For PR reviewers, after a comment left by you is acted upon, it is encouraged to
 
 We feel spelling these norms out is better than assuming them, and we all acknowledge life happens and these are guidelines, not strict rules.
 
+### After Merge
+
+After a PR is merged, please check if the [corresponding build](https://github.com/runfinch/finch/blob/1da659f228458f69d4adb67b6d1695477b1ae4d4/.github/workflows/ci.yaml#L7) is passing. If not, please create a new PR to revert the problematic PR. We should do that before fixing the root cause so that we can unblock other PRs first. However, if the failure seems unrelated to your PR, please check if there's an existing issue regarding the flakiness ([example](https://github.com/runfinch/finch/issues/31)). If there's not, feel free to create one to report the newly found flakiness.
+
+This is needed because we use `Loose` instead of `Strict` regarding [branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches#require-status-checks-before-merging). In other words, if there is a bug that only exists after multiple PRs are merged, then there's a chance for us to have the bug in `main`: PR1's checks passed → PR2's checks passed → Merge PR2 → Now PR1 becomes outdated, and CI would fail if we update the PR branch and run the checks again, but since we're using `Loose`, we can just merge it → bug in `main`. Given the deficiency mentioned above, we still want to go with `Loose` because it streamlines developer UX tremendously: if we use `Strict`, then after a PR is merged, all the other open PRs will need to merge the latest `main` into the PR branches before they can be merged, which is not scalable.
 
 ## Development Environment Setup
 
@@ -230,6 +235,13 @@ To add more context, there are some [public discussions](https://github.com/gola
 
 If you have write access to the repository, and all the checks have passed, feel free to merge the PR.
 
-If you're the only approver of the PR, and the PR branch has been outdated, please comment `@dependabot rebase` on the PR to update it.
+## Release Process
 
-If you [directly use GitHub UI to update the PR branch](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/keeping-your-pull-request-in-sync-with-the-base-branch), then you will be the author of the merge commit, and since we [require the approver not to be the last pusher of the PR](https://github.blog/changelog/2022-10-20-new-branch-protections-last-pusher-and-locked-branch/), you won't be able to merge the PR unless someone else with write access approves the PR.
+We use [`release-please`](.github/workflows/release-please.yaml) to automate the release process.
+
+Detailed steps:
+
+1. [Restrict who can push to matching branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches#restrict-who-can-push-to-matching-branches) to only you in [the branch protection rule of `main`](https://github.com/runfinch/finch/settings/branch_protection_rules/30961049).
+1. Ensure that all the checks are passing for the latest commit on `main`. This is needed because `main` could contain a bug (more info: `Loose` branch protection in [After Merge](#after-merge)), while we want no bugs in an official release.
+1. Merge the `release-please` PR ([example](https://github.com/runfinch/finch/pull/17)).
+1. Remove the pusher restriction in the first step.
