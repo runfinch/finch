@@ -26,7 +26,7 @@ CORE_OUTDIR := $(CURDIR)/$(CORE_FILENAME)/_output
 CORE_VDE_PREFIX ?= $(OUTDIR)/dependencies/vde/opt/finch
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
-LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION)"
+LDFLAGS := "-s -w -X $(PACKAGE)/pkg/version.Version=$(VERSION)"
 
 .DEFAULT_GOAL := all
 
@@ -114,7 +114,7 @@ copy:
 	(cd _output && tar c * | tar Cvx  $(DEST) )
 
 .PHONY: install
-install: copy
+install: finch copy
 	sudo ln -sf $(DEST)/bin/finch "$(BINDIR)/finch"
 
 uninstall.finch:
