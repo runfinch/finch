@@ -44,5 +44,5 @@ func TestVersionAction(t *testing.T) {
 	}
 
 	output := captureStdout(t, versionActionFunc)
-	assert.Contains(t, output, finchVersion())
+	assert.Contains(t, output, finchVersion)
 }

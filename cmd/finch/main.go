@@ -54,7 +54,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		Short:         "Finch: open-source container development tool",
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		Version:       finchVersion(),
+		Version:       finchVersion,
 	}
 	// TODO: Decide when to forward --debug to the dependencies
 	// (e.g. nerdctl for container commands and limactl for VM commands).
