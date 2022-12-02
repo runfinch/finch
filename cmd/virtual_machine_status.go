@@ -43,15 +43,19 @@ func (sva *statusVMAction) run() error {
 	}
 	switch status {
 	case lima.Running:
-		sva.logger.Infof("the instance %q is running", limaInstanceName)
+		fmt.Println("Running")
 		return nil
 	case lima.Nonexistent:
-		return fmt.Errorf("the instance %q does not exist", limaInstanceName)
+		fmt.Println("Notexistent")
+		return nil
 	case lima.Stopped:
-		return fmt.Errorf("the instance %q is stopped. run `finch %s start` to start the instance", limaInstanceName, virtualMachineRootCmd)
+		fmt.Println("Stopped")
+		return nil
 	case lima.Unknown:
-		return fmt.Errorf("the instance status of %q is unknown", limaInstanceName)
+		fmt.Println("Unknown")
+		return nil
 	default:
-		return fmt.Errorf("the instance %q gave a not defined status", limaInstanceName)
+		fmt.Println("Undefined")
+		return nil
 	}
 }
