@@ -259,6 +259,17 @@ gen-code:
 lint:
 	golangci-lint run
 
+.PHONY: mdlint
+# Install it locally: https://github.com/igorshubovych/markdownlint-cli#installation
+# Or see `mdlint-ctr` below or https://github.com/DavidAnson/markdownlint#related.
+mdlint:
+	markdownlint --ignore CHANGELOG.md '**/*.md'
+
+.PHONY: mdlint-ctr
+# If markdownlint is not installed, you can run markdownlint within a container.
+mdlint-ctr:
+	finch run --rm -v "$(shell pwd):/repo:ro" -w /repo public.ecr.aws/pfc/markdown-lint:v1 --ignore CHANGELOG.md '**/*.md'
+
 .PHONY: clean
 clean:
 	-@rm -rf $(OUTDIR) 2>/dev/null || true
