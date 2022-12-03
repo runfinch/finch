@@ -52,10 +52,8 @@ func (sva *statusVMAction) run() error {
 		fmt.Println("Stopped")
 		return nil
 	case lima.Unknown:
-		fmt.Println("Unknown")
-		return nil
+		return fmt.Errorf("instance state of %q is unknown", limaInstanceName)
 	default:
-		fmt.Println("Undefined")
-		return nil
+		return fmt.Errorf("instance state of %q is undefined", limaInstanceName)
 	}
 }
