@@ -14,37 +14,39 @@ on:
       - main
     paths:
       - '**.md'
+      - 'contrib/**'
   pull_request:
     branches:
       - main
     paths:
       - '**.md'
+      - 'contrib/**'
 
 jobs:
   gen-code-no-diff:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   go-linter:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   check-licenses:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   e2e-tests:
     strategy:
       matrix:
         os: [[self-hosted, macos, amd64, 11.7], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 11.7], [self-hosted, macos, arm64, 12.6]]
     runs-on: ${{ matrix.os }} 
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"

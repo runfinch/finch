@@ -7,11 +7,13 @@ on:
       - main
     paths-ignore:
       - '**.md'
+      - 'contrib/**'
   pull_request:
     branches:
       - main
     paths-ignore:
       - '**.md'
+      - 'contrib/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
