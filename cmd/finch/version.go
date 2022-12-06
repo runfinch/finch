@@ -11,7 +11,7 @@ import (
 
 func finchVersion() string {
 	// TODO: Remove hardcoded version after the git can be access through buildtime
-	return "v0.1.0"
+	return "v0.1.1"
 }
 
 func newVersionCommand() *cobra.Command {
