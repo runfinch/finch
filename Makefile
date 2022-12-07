@@ -31,6 +31,8 @@ LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION)"
 
 .DEFAULT_GOAL := all
 
+INSTALLED ?= false
+
 ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = aarch64
@@ -241,7 +243,7 @@ test-unit:
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
 .PHONY: test-e2e
 test-e2e:
-	go test -ldflags $(LDFLAGS) -timeout 60m ./e2e/... -test.v -ginkgo.v
+	go test -ldflags $(LDFLAGS) -timeout 60m ./e2e/... -test.v -ginkgo.v --installed="$(INSTALLED)"
 
 .PHONY: gen-code
 # Since different projects may have different versions of tool binaries,

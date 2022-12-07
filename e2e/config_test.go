@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/onsi/ginkgo/v2"
@@ -18,7 +19,7 @@ import (
 
 var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
 
-const limaConfigFilePath = "../_output/lima/data/_config/override.yaml"
+const defaultLimaConfigFilePath = "../_output/lima/data/_config/override.yaml"
 
 func readFile(filePath string) []byte {
 	out, err := os.ReadFile(filepath.Clean(filePath))
@@ -53,11 +54,20 @@ func updateAndApplyConfig(o *option.Option, configBytes []byte) *gexec.Session {
 // empty and a non-existent Finch config.yaml. Meaning, if you run this without an existing config.yaml,
 // an empty config.yaml will be created after all test cases are run. This currently does not change the behavior
 // of Finch, but may need to be revisited later.
-var testConfig = func(o *option.Option) {
+var testConfig = func(o *option.Option, installed bool) {
 	// These tests are run in serial because we only define one virtual machine instance, and it requires disk I/O.
 	ginkgo.Describe("Config", ginkgo.Serial, func() {
+		var limaConfigFilePath string
 		ginkgo.BeforeEach(func() {
 			origFinchCfg := readFile(finchConfigFilePath)
+			limaConfigFilePath = defaultLimaConfigFilePath
+			if installed {
+				path, err := exec.LookPath(installedTestSubject)
+				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+				realFinchPath, err := filepath.EvalSymlinks(path)
+				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+				limaConfigFilePath = filepath.Join(realFinchPath, "/../../lima/data/_config/override.yaml")
+			}
 			origLimaCfg := readFile(limaConfigFilePath)
 
 			ginkgo.DeferCleanup(func() {
