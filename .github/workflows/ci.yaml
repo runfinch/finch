@@ -34,6 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-go@v3
         with:
           # Since this repository is not meant to be used as a library,
@@ -86,6 +89,9 @@ jobs:
     runs-on: ${{ matrix.os }} 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
