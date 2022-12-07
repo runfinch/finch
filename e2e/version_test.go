@@ -10,12 +10,14 @@ import (
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
+
+	"github.com/runfinch/finch/pkg/version"
 )
 
 var testVersion = func(o *option.Option) {
 	ginkgo.Context("Version", func() {
 		ginkgo.Specify("Test version", func() {
-			gomega.Expect(command.StdoutStr(o, "version")).To(gomega.Equal(fmt.Sprintf("Finch version: %s", "v0.1.1")))
+			gomega.Expect(command.StdoutStr(o, "version")).To(gomega.Equal(fmt.Sprintf("Finch version: %s", version.Version)))
 		})
 	})
 }

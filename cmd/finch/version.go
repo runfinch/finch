@@ -7,18 +7,17 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+
+	"github.com/runfinch/finch/pkg/version"
 )
 
-func finchVersion() string {
-	// TODO: Remove hardcoded version after the git can be access through buildtime
-	return "v0.1.1"
-}
+var finchVersion = version.Version
 
 func newVersionCommand() *cobra.Command {
 	versionCommand := &cobra.Command{
 		Use:   "version",
 		Args:  cobra.NoArgs,
-		Short: "Show Finch version information",
+		Short: "Shows Finch version information",
 		RunE:  versionAction,
 	}
 
@@ -26,6 +25,6 @@ func newVersionCommand() *cobra.Command {
 }
 
 func versionAction(cmd *cobra.Command, args []string) error {
-	fmt.Println("Finch version:", finchVersion())
+	fmt.Println("Finch version:", finchVersion)
 	return nil
 }
