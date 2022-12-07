@@ -14,6 +14,7 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/runfinch/finch/pkg/path"
+	"github.com/runfinch/finch/pkg/version"
 
 	"github.com/golang/mock/gomock"
 	"github.com/spf13/afero"
@@ -131,7 +132,7 @@ func TestNewApp(t *testing.T) {
 	cmd := newApp(l, fp, fs, &config.Finch{})
 
 	assert.Equal(t, cmd.Name(), finchRootCmd)
-	assert.Equal(t, cmd.Version, finchVersion)
+	assert.Equal(t, cmd.Version, version.Version)
 	assert.Equal(t, cmd.SilenceUsage, true)
 	assert.Equal(t, cmd.SilenceErrors, true)
 	// confirm the number of command, comprised of nerdctl commands + finch commands (version, vm)

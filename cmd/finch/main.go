@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/runfinch/finch/pkg/disk"
 
@@ -18,6 +19,7 @@ import (
 	"github.com/runfinch/finch/pkg/fssh"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/system"
+	"github.com/runfinch/finch/pkg/version"
 
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -56,7 +58,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		Short:         "Finch: open-source container development tool",
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		Version:       finchVersion,
+		Version:       strings.TrimPrefix(version.Version, "v"),
 	}
 	// TODO: Decide when to forward --debug to the dependencies
 	// (e.g. nerdctl for container commands and limactl for VM commands).
@@ -83,7 +85,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 	allCommands := initializeNerdctlCommands(lcc, logger)
 	// append finch specific commands
 	allCommands = append(allCommands,
-		newVersionCommand(),
+		newVersionCommand(lcc, logger),
 		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc),
 	)
 
