@@ -10,6 +10,7 @@ import (
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
+
 	"github.com/runfinch/finch/pkg/version"
 )
 
