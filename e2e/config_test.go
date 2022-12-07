@@ -84,7 +84,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
 
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
-			cfgBuf, err := os.ReadFile(limaConfigFilePath)
+			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.ContainSubstring("cpus: 6"), gomega.ContainSubstring("memory: 4GiB")))
 		})
@@ -94,7 +94,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
 
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
-			cfgBuf, err := os.ReadFile(limaConfigFilePath)
+			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			// 4 CPUs is the default
 			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.MatchRegexp(`cpus: \d`), gomega.ContainSubstring("memory: 6GiB")))
@@ -105,7 +105,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
 
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
-			cfgBuf, err := os.ReadFile(limaConfigFilePath)
+			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.MatchRegexp(`cpus: \d`), gomega.MatchRegexp(`memory: \dGiB`)))
 		})

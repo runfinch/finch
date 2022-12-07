@@ -16,8 +16,10 @@ import (
 	"github.com/runfinch/common-tests/tests"
 )
 
-const virtualMachineRootCmd = "vm"
-const installedTestSubject = "finch"
+const (
+	virtualMachineRootCmd = "vm"
+	installedTestSubject  = "finch"
+)
 
 var installed = flag.Bool("installed", false, "the flag to show whether the tests are ran against installed application")
 
