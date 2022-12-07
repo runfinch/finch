@@ -7,6 +7,7 @@
 
 * added the contrib folder to be ignored by CI ([#92](https://github.com/runfinch/finch/issues/92)) ([3415f2a](https://github.com/runfinch/finch/commit/3415f2a6683b0218816e189c7ed47100a031d45c))
 * error readable by using the right placeholder ([#39](https://github.com/runfinch/finch/issues/39)) ([8e5f38d](https://github.com/runfinch/finch/commit/8e5f38d2b994dadf53f57430eaa0a59b8cafd2f8))
+* Change amd64 runner to 10.15 OS version for amd64 build ([#72](https://github.com/runfinch/finch/issues/72)) ([78a646e](https://github.com/runfinch/finch/commit/78a646e67402a14c57c2acc2704cf3e060b5c29f))
 
 
 ### Build System or External Dependencies
