@@ -21,7 +21,7 @@ jobs:
           go-version: 1.19.x
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Make macos arm64 build
@@ -47,7 +47,7 @@ jobs:
           go-version: 1.19.x
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Make macos amd64 build
@@ -73,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           persist-credentials: false
 
       - name: configure aws credentials
