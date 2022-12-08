@@ -108,3 +108,12 @@ jobs:
           which libtool
           make
       - run: make test-e2e
+  mdlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: avto-dev/markdown-lint@v1
+        with:
+          args: '**/*.md'
+          # CHANGELOG.md is only updated by release-please bot.
+          ignore: 'CHANGELOG.md'

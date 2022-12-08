@@ -1,0 +1,2 @@
+# Modern IDEs usually automatically wrap long lines in *.md files, so this may be unnecessary.
+line-length: false
