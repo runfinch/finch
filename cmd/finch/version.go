@@ -22,7 +22,7 @@ func newVersionCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger
 		Short: "Shows Finch version information",
 		RunE:  newVersionAction(limaCmdCreator, logger).runAdapter,
 	}
-
+	
 	return versionCommand
 }
 
@@ -45,9 +45,13 @@ func (va *versionAction) printVersion() error {
 		fmt.Println("Finch version:", version.Version)
 	}
 
-	v, _ := exec.Command("lima", "nerdctl", "version").Output()
+	v, _ := exec.Command("lima", "nerdctl", "version", "--format", "json").Output()
 
-	fmt.Println("Finch version:", version.Version, "\n", v)
+	fmt.Println(string(v))
+
+	
+	// fmt.Println("Finch version:", version.Version, "\n", v)
 
 	return nil
 }
+
