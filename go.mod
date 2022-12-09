@@ -16,7 +16,7 @@ require (
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
 	github.com/xorcare/pointer v1.2.2
-	golang.org/x/crypto v0.3.0
+	golang.org/x/crypto v0.4.0
 	golang.org/x/tools v0.4.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.25.4
