@@ -19,7 +19,7 @@ require (
 	golang.org/x/crypto v0.4.0
 	golang.org/x/tools v0.4.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.25.4
+	k8s.io/apimachinery v0.26.0
 )
 
 require (
@@ -49,7 +49,7 @@ require (
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/mod v0.7.0 // indirect
-	golang.org/x/net v0.3.0 // indirect
+	golang.org/x/net v0.3.1-0.20221206200815-1e63c2f08a10 // indirect
 	golang.org/x/sys v0.3.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
