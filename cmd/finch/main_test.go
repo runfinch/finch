@@ -79,7 +79,7 @@ func TestXmain(t *testing.T) {
 		{
 			name: "failed to load finch config because of invalid YAML",
 			wantErr: fmt.Errorf("failed to load config: %w",
-				fmt.Errorf("failed to unmarshal config file, using default values: %w",
+				fmt.Errorf("failed to unmarshal config file: %w",
 					&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into config.Finch"}},
 				),
 			),
