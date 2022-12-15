@@ -24,8 +24,9 @@ import (
 
 // Finch represents the configuration file for Finch CLI.
 type Finch struct {
-	CPUs   *int    `yaml:"cpus"`
-	Memory *string `yaml:"memory"`
+	CPUs                  *int     `yaml:"cpus"`
+	Memory                *string  `yaml:"memory"`
+	AdditionalDirectories []string `yaml:"additional_directories"`
 }
 
 // Nerdctl is a copy from github.com/containerd/nerdctl/cmd/nerdctl/main.go
