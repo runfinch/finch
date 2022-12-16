@@ -1,23 +1,25 @@
-## Config to support additional workspace directories
+# Config to support additional directories
 
-### Issue
-https://github.com/runfinch/finch/issues/107
+## Issue
 
-### Approach
+[#107](https://github.com/runfinch/finch/issues/107)
 
-Lima yaml file has Mounts field to handle the mount points. Similar to other Finch config like cpu and memory, it is straightforward to write additional_workspace_directories to Lima’s override.yaml file.
+## Approach
+
+The [finch.yaml](https://github.com/runfinch/finch/blob/main/finch.yaml#L35) file which is used to boot in Lima has Mounts field to handle the mount points. However, changing it in finch.yaml would make the configs only applied in `vm init`, and finch.yaml is expected to be the place to keep Finch's default config without being messed up with user's customized configs. So instead of adding to finch.yaml, I recommended adding additional_directories to Lima’s override.yaml file. Both `vm init` and `vm start` can apply the configs in override.yaml. This is same to how Finch applies cpu and memory configs today.
 
 For example, for Finch config:
-```
+
+```yaml
 cpus: 2
 memory: 4GiB
-additional_workspace_directories:
+additional_directories:
 - /Volumes/mydir
 ```
 
 Finch config applier will make override.yaml like this:
 
-```
+```yaml
 images: []
 cpus: 2
 memory: 4GiB
@@ -26,25 +28,25 @@ mounts:
 mountPoint: /Volumes/mydir
 writable: true
 sshfs:
-cache: true
-followSymlinks: false
-sftpDriver: ""
+    cache: true
+    followSymlinks: false
+    sftpDriver: ""
 9p:
-securityModel: none
-protocolVersion: 9p2000.L
-msize: 128KiB
-cache: mmap
+    securityModel: none
+    protocolVersion: 9p2000.L
+    msize: 128KiB
+    cache: mmap
 networks:
 - lima: finch-shared
 ```
 
-Different to cpu and memory, the “mounts” field in override.yaml will be appended to the default mounts instead of replacing it. So we don’t have to add the default home directory to the override.yaml file. Reference (https://github.com/lima-vm/lima/blob/master/pkg/limayaml/defaults.go#L410)
+Different to cpu and memory, the “mounts” field in override.yaml will be appended to the default mounts instead of replacing it. So we don’t have to add the default home directory to the override.yaml file. [Reference](https://github.com/lima-vm/lima/blob/master/pkg/limayaml/defaults.go#L410)
 
-### Error handling consideration
+## Error handling consideration
 
-There are lots of error cases if users directly pass random locations to Lima. For example, when users try to set “/” as in additional workspace directories.
+There are lots of error cases if users directly pass random locations to Lima. For example, when users try to set “/” as in additional directories.
 
-*Option 1 Directly pass the Lima and return whatever error Lima returns. Contribute to Lima to enhance error handling if needed. (Recommended)*
+Option 1 Directly pass the Lima and return whatever error Lima returns. Contribute to Lima to enhance error handling if needed. (Recommended)
 
 Pros:
 
@@ -53,9 +55,14 @@ Pros:
 Cons:
 
 * Sometimes the error log in Lima context may not be descriptive in Finch context
-* Depends on Lima error handing. (However, other commands also depend on Lima/Nerdctl error handling today and Finch can still catch it in e2e tests.)
+  * Mitigation: 
+    * Add Finch's own error message to wrap Lima's error message
+    * Use lima config validation method to validate first
+* Depends on Lima error handing.
+  * However, other commands also depend on Lima/Nerdctl error handling today and Finch can still catch it in e2e tests.)
 
-*Option 2 Allowlist specific locations in Finch.*
+Option 2 Allowlist specific locations in Finch.
+
 Pros:
 
 * Easy to implement
@@ -66,7 +73,8 @@ Cons:
 * Not flexible for users to mount their customized locations under “/”.
 * Finch can’t catch it in e2e tests when a new location is allowed in Lima.
 
-*Option 3 Blocklist specific locations in Finch with different error messages.*
+Option 3 Blocklist specific locations in Finch with different error messages.
+
 Pros:
 
 * The error messages will be specific.
@@ -76,26 +84,23 @@ Cons:
 * Finch can’t catch it in e2e tests when a new location is blocked in Lima.
 * Difficult to make error messages accurate for different host environments.
 
-### Platform consistency consideration
+## Platform consistency consideration
 
 Finch currently only supports macOS but may support other platforms in the future. As one field of the user facing finch config, having a consistent meaning can help users easy to use across different platforms. So we can make naming and description of the new field generic.
 
-#### Naming
+### Naming
 
 * additional_workspace_locations
-* **additional_workspace_directories (recommended)**
-* additional_directories
+* additional_workspace_directories
+* **additional_directories (recommended)**
 * additional_locations
 * additional_work_directories
 * additional_work_locations
 
-#### Description
+### Description
 
-additional_workspace_directories can be an optional field to be used whenever the default mount points can’t cover all the possible directories.
+additional_directories can be an optional field to be used whenever the default mount points can’t cover all the possible directories.
 
 In any platform with virtualization (Windows, or Linux with containerd running in VM), the field could be used as an optional field.
 
 In any platform without virtualization (Linux with containerd running in host), the field will be invalid/ignored. That can be implemented by a condition check.
-
-
-
