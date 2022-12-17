@@ -46,7 +46,7 @@ func (sva *statusVMAction) run() error {
 		fmt.Println("Running")
 		return nil
 	case lima.Nonexistent:
-		fmt.Println("Notexistent")
+		fmt.Println("Nonexistent")
 		return nil
 	case lima.Stopped:
 		fmt.Println("Stopped")
