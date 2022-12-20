@@ -14,6 +14,7 @@ import (
 	"github.com/runfinch/finch/pkg/version"
 )
 
+//TODO: Ang's review
 var testVersion = func(o *option.Option) {
 	ginkgo.Context("Version", func() {
 		ginkgo.Specify("Test version", func() {
