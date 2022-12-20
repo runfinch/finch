@@ -49,7 +49,7 @@ func (lca *limaConfigApplier) Apply() error {
 		// Copied default configs from Lima code:
 		// https://github.com/lima-vm/lima/blob/142c5fd17c31464e6d37ac2d78b24c16a5500968/pkg/limayaml/defaults.go#L448.
 		limaCfg.Mounts = append(limaCfg.Mounts, limayaml.Mount{
-			Location: ad, MountPoint: ad, Writable: pointer.Bool(true),
+			Location: *ad.Path, MountPoint: *ad.Path, Writable: pointer.Bool(true),
 			SSHFS: limayaml.SSHFS{
 				Cache: pointer.Bool(true), FollowSymlinks: pointer.Bool(false),
 				SFTPDriver: pointer.String(""),

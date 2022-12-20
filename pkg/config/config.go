@@ -22,11 +22,16 @@ import (
 	"github.com/runfinch/finch/pkg/system"
 )
 
+// AdditionalDirectory represents the additional directory used in Finch config.
+type AdditionalDirectory struct {
+	Path *string
+}
+
 // Finch represents the configuration file for Finch CLI.
 type Finch struct {
-	CPUs                  *int     `yaml:"cpus"`
-	Memory                *string  `yaml:"memory"`
-	AdditionalDirectories []string `yaml:"additional_directories,omitempty"`
+	CPUs                  *int                  `yaml:"cpus"`
+	Memory                *string               `yaml:"memory"`
+	AdditionalDirectories []AdditionalDirectory `yaml:"additional_directories,omitempty"`
 }
 
 // Nerdctl is a copy from github.com/containerd/nerdctl/cmd/nerdctl/main.go
