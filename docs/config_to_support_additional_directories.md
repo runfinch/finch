@@ -54,9 +54,8 @@ Pros:
 
 Cons:
 
-* Sometimes the error log in Lima context may not be descriptive in Finch context
-  * Mitigation: 
-    * Add Finch's own error message to wrap Lima's error message. We are already doing this in [init](https://github.com/runfinch/finch/blob/d8174ff773f0f92ec94d6d97c753a872a98f74a0/cmd/finch/virtual_machine_init.go#L84) and [start](https://github.com/runfinch/finch/blob/d8174ff773f0f92ec94d6d97c753a872a98f74a0/cmd/finch/virtual_machine_start.go#L75) today so no additional change is needed.
+* Sometimes the error log in Lima context may not be descriptive in Finch context.
+  * However, we are having finch error messages wrapping Lima error messages today in [init](https://github.com/runfinch/finch/blob/d8174ff773f0f92ec94d6d97c753a872a98f74a0/cmd/finch/virtual_machine_init.go#L84) and [start](https://github.com/runfinch/finch/blob/d8174ff773f0f92ec94d6d97c753a872a98f74a0/cmd/finch/virtual_machine_start.go#L75). This can mitigate this concern.
 * Depends on Lima error handing.
   * However, other commands also depend on Lima/Nerdctl error handling today and Finch can still catch it in e2e tests.)
 
@@ -91,7 +90,7 @@ Finch currently only supports macOS but may support other platforms in the futur
 
 * additional_workspace_locations
 * additional_workspace_directories
-* **additional_directories (recommended)**
+* additional_directories (recommended)
 * additional_locations
 * additional_work_directories
 * additional_work_locations
