@@ -57,7 +57,7 @@ Cons:
 * Sometimes the error log in Lima context may not be descriptive in Finch context.
   * However, we are having finch error messages wrapping Lima error messages today in [init](https://github.com/runfinch/finch/blob/d8174ff773f0f92ec94d6d97c753a872a98f74a0/cmd/finch/virtual_machine_init.go#L84) and [start](https://github.com/runfinch/finch/blob/d8174ff773f0f92ec94d6d97c753a872a98f74a0/cmd/finch/virtual_machine_start.go#L75). This can mitigate this concern.
 * Depends on Lima error handing.
-  * However, other commands also depend on Lima/Nerdctl error handling today and Finch can still catch it in e2e tests.)
+  * However, other commands also depend on Lima/Nerdctl error handling today and Finch can still catch it in e2e tests.
 
 Option 2 Allowlist specific locations in Finch.
 
