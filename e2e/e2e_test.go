@@ -56,7 +56,7 @@ func TestE2e(t *testing.T) {
 		tests.Pull(o)
 		tests.Rm(o)
 		tests.Rmi(o)
-		tests.Run(o)
+		tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified})
 		tests.Start(o)
 		tests.Stop(o)
 		tests.Tag(o)
