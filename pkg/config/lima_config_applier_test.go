@@ -81,6 +81,31 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into limayaml.LimaYAML"}},
 			),
 		},
+		{
+			name: "lima config file with additional directories",
+			config: &Finch{
+				Memory:                pointer.String("2GiB"),
+				CPUs:                  pointer.Int(4),
+				AdditionalDirectories: []AdditionalDirectory{{pointer.String("/Volumes")}},
+			},
+			path: "/lima.yaml",
+			mockSvc: func(fs afero.Fs, l *mocks.Logger) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
+				require.NoError(t, err)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				// limayaml.LimaYAML has a required "images" field which will also get marshaled
+				wantYaml := "images: []\ncpus: 4\nmemory: 2GiB\nmounts:\n    - location: /Volumes\n      " +
+					"mountPoint: /Volumes\n      writable: true\n      sshfs:\n        cache: true\n        " +
+					"followSymlinks: false\n        sftpDriver: \"\"\n      9p:\n        securityModel: none\n        " +
+					"protocolVersion: 9p2000.L\n        msize: 128KiB\n        cache: mmap\n"
+				require.Equal(t, wantYaml, string(buf))
+			},
+			want: nil,
+		},
 	}
 
 	for _, tc := range testCases {

@@ -124,5 +124,20 @@ var testConfig = func(o *option.Option, installed bool) {
 			startCmdSession := updateAndApplyConfig(o, []byte("memory: 0GiB"))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(1))
 		})
+
+		ginkgo.It("updates config values when a config file is present with additional directories", func() {
+			startCmdSession := updateAndApplyConfig(o, []byte("memory: 4GiB\ncpus: 6\nadditional_directories:\n    - path: /Volumes"))
+			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
+
+			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
+			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.ContainSubstring("cpus: 6"),
+				gomega.ContainSubstring("memory: 4GiB"),
+				gomega.ContainSubstring("mounts:\n    - location: /Volumes\n      "+
+					"mountPoint: /Volumes\n      writable: true\n      sshfs:\n        cache: true\n        "+
+					"followSymlinks: false\n        sftpDriver: \"\"\n      9p:\n        securityModel: none\n        "+
+					"protocolVersion: 9p2000.L\n        msize: 128KiB\n        cache: mmap")))
+		})
 	})
 }

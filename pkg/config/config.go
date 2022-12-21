@@ -24,7 +24,7 @@ import (
 
 // AdditionalDirectory represents the additional directory used in Finch config.
 type AdditionalDirectory struct {
-	Path *string
+	Path *string `yaml:"path"`
 }
 
 // Finch represents the configuration file for Finch CLI.
