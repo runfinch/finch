@@ -98,7 +98,7 @@ Currently, the options are:
 
 * CPUs [int] (required): the amount of vCPU to dedicate to the virtual machine
 * Memory [string] (required): the amount of memory to dedicate to the virtual machine
-* AdditionalDirectories [AdditionalDirectory{path [string]}] (optional): the work directories that are not supported by default. In macOS, only home directory is supported by default.
+* AdditionalDirectories [AdditionalDirectory{path [string]}] (optional): the work directories that are not supported by default. In macOS, only home directory is supported by default. For example, if you want to mount a directory into a container, and that directory is not under your home directory, then you'll need to specify this field to add that directory or any ascendant of it as a work directory.
 
 For a full list of configuration options, check [the struct here](pkg/config/config.go#L25).
 
