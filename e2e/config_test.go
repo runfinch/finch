@@ -89,7 +89,12 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.ContainSubstring("cpus: 6"), gomega.ContainSubstring("memory: 4GiB")))
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(limaCfg.CPUs).Should(gomega.Equal(pointer.Int(6)))
+			gomega.Expect(limaCfg.Memory).Should(gomega.Equal(pointer.String("4GiB")))
 		})
 
 		ginkgo.It("updates config values when partial config file is present", func() {
@@ -99,8 +104,13 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			// 4 CPUs is the default
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.MatchRegexp(`cpus: \d`), gomega.ContainSubstring("memory: 6GiB")))
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			// 4 CPUs are the default
+			gomega.Expect(limaCfg.CPUs).Should(gomega.Equal(pointer.Int(4)))
+			gomega.Expect(limaCfg.Memory).Should(gomega.Equal(pointer.String("6GiB")))
 		})
 
 		ginkgo.It("uses the default config values when no config file is present", func() {
@@ -110,7 +120,13 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.MatchRegexp(`cpus: \d`), gomega.MatchRegexp(`memory: \dGiB`)))
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			// 4 CPUs and 4GiB memory are the default
+			gomega.Expect(limaCfg.CPUs).Should(gomega.Equal(pointer.Int(4)))
+			gomega.Expect(limaCfg.Memory).Should(gomega.Equal(pointer.String("4GiB")))
 		})
 
 		ginkgo.It("fails to launch when the config file is improperly formatted", func() {
