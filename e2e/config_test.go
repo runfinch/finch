@@ -93,8 +93,8 @@ var testConfig = func(o *option.Option, installed bool) {
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(limaCfg.CPUs).Should(gomega.Equal(pointer.Int(6)))
-			gomega.Expect(limaCfg.Memory).Should(gomega.Equal(pointer.String("4GiB")))
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
 		})
 
 		ginkgo.It("updates config values when partial config file is present", func() {
@@ -108,9 +108,8 @@ var testConfig = func(o *option.Option, installed bool) {
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			// 4 CPUs are the default
-			gomega.Expect(limaCfg.CPUs).Should(gomega.Equal(pointer.Int(4)))
-			gomega.Expect(limaCfg.Memory).Should(gomega.Equal(pointer.String("6GiB")))
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Not(gomega.BeEmpty()))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("6GiB"))
 		})
 
 		ginkgo.It("uses the default config values when no config file is present", func() {
@@ -124,9 +123,8 @@ var testConfig = func(o *option.Option, installed bool) {
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			// 4 CPUs and 4GiB memory are the default
-			gomega.Expect(limaCfg.CPUs).Should(gomega.Equal(pointer.Int(4)))
-			gomega.Expect(limaCfg.Memory).Should(gomega.Equal(pointer.String("4GiB")))
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Not(gomega.BeEmpty()))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal(gomega.MatchRegexp("%dGiB")))
 		})
 
 		ginkgo.It("fails to launch when the config file is improperly formatted", func() {
@@ -158,8 +156,8 @@ additional_directories:
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(limaCfg.CPUs).Should(gomega.Equal(pointer.Int(6)))
-			gomega.Expect(limaCfg.Memory).Should(gomega.Equal(pointer.String("4GiB")))
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
 			gomega.Expect(len(limaCfg.Mounts)).Should(gomega.Equal(2))
 			gomega.Expect(limaCfg.Mounts[0].Location).Should(gomega.Equal("/Volumes"))
 			gomega.Expect(limaCfg.Mounts[0].Writable).Should(gomega.Equal(pointer.Bool(true)))
