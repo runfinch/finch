@@ -6,7 +6,7 @@ package config
 import (
 	"fmt"
 
-	limayaml "github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/xorcare/pointer"
 	"gopkg.in/yaml.v3"
@@ -46,19 +46,8 @@ func (lca *limaConfigApplier) Apply() error {
 	limaCfg.Memory = lca.cfg.Memory
 	limaCfg.Mounts = []limayaml.Mount{}
 	for _, ad := range lca.cfg.AdditionalDirectories {
-		// Copied default configs from Lima code:
-		// https://github.com/lima-vm/lima/blob/142c5fd17c31464e6d37ac2d78b24c16a5500968/pkg/limayaml/defaults.go#L448.
 		limaCfg.Mounts = append(limaCfg.Mounts, limayaml.Mount{
-			Location: *ad.Path, MountPoint: *ad.Path, Writable: pointer.Bool(true),
-			SSHFS: limayaml.SSHFS{
-				Cache: pointer.Bool(true), FollowSymlinks: pointer.Bool(false),
-				SFTPDriver: pointer.String(""),
-			},
-			NineP: limayaml.NineP{
-				SecurityModel:   pointer.String(limayaml.Default9pSecurityModel),
-				ProtocolVersion: pointer.String(limayaml.Default9pProtocolVersion),
-				Msize:           pointer.String(limayaml.Default9pMsize), Cache: pointer.String(limayaml.Default9pCacheForRW),
-			},
+			Location: *ad.Path, Writable: pointer.Bool(true),
 		})
 	}
 

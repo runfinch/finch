@@ -10,11 +10,14 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
+	"github.com/xorcare/pointer"
+	"gopkg.in/yaml.v3"
 )
 
 var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
@@ -126,18 +129,26 @@ var testConfig = func(o *option.Option, installed bool) {
 		})
 
 		ginkgo.It("updates config values when a config file is present with additional directories", func() {
-			startCmdSession := updateAndApplyConfig(o, []byte("memory: 4GiB\ncpus: 6\nadditional_directories:\n    - path: /Volumes"))
+			startCmdSession := updateAndApplyConfig(o, []byte(`memory: 4GiB
+cpus: 6
+additional_directories:
+    - path: /Volumes
+    - path: /tmp/workspace`))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
 
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.ContainSubstring("cpus: 6"),
-				gomega.ContainSubstring("memory: 4GiB"),
-				gomega.ContainSubstring("mounts:\n    - location: /Volumes\n      "+
-					"mountPoint: /Volumes\n      writable: true\n      sshfs:\n        cache: true\n        "+
-					"followSymlinks: false\n        sftpDriver: \"\"\n      9p:\n        securityModel: none\n        "+
-					"protocolVersion: 9p2000.L\n        msize: 128KiB\n        cache: mmap")))
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(limaCfg.CPUs).Should(gomega.Equal(pointer.Int(6)))
+			gomega.Expect(limaCfg.Memory).Should(gomega.Equal(pointer.String("4GiB")))
+			gomega.Expect(len(limaCfg.Mounts)).Should(gomega.Equal(2))
+			gomega.Expect(limaCfg.Mounts[0].Location).Should(gomega.Equal("/Volumes"))
+			gomega.Expect(limaCfg.Mounts[0].Writable).Should(gomega.Equal(pointer.Bool(true)))
+			gomega.Expect(limaCfg.Mounts[1].Location).Should(gomega.Equal("/tmp/workspace"))
+			gomega.Expect(limaCfg.Mounts[1].Writable).Should(gomega.Equal(pointer.Bool(true)))
 		})
 	})
 }

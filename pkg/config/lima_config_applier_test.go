@@ -45,7 +45,11 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NoError(t, err)
 
 				// limayaml.LimaYAML has a required "images" field which will also get marshaled
-				require.Equal(t, buf, []byte("images: []\ncpus: 4\nmemory: 2GiB\n"))
+				wantYaml := `images: []
+cpus: 4
+memory: 2GiB
+`
+				require.Equal(t, wantYaml, string(buf))
 			},
 			want: nil,
 		},
@@ -98,10 +102,13 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NoError(t, err)
 
 				// limayaml.LimaYAML has a required "images" field which will also get marshaled
-				wantYaml := "images: []\ncpus: 4\nmemory: 2GiB\nmounts:\n    - location: /Volumes\n      " +
-					"mountPoint: /Volumes\n      writable: true\n      sshfs:\n        cache: true\n        " +
-					"followSymlinks: false\n        sftpDriver: \"\"\n      9p:\n        securityModel: none\n        " +
-					"protocolVersion: 9p2000.L\n        msize: 128KiB\n        cache: mmap\n"
+				wantYaml := `images: []
+cpus: 4
+memory: 2GiB
+mounts:
+    - location: /Volumes
+      writable: true
+`
 				require.Equal(t, wantYaml, string(buf))
 			},
 			want: nil,

@@ -96,22 +96,13 @@ Finch has a simple and extensible configuration. A configuration file at `${HOME
 
 Currently, the options are:
 
-* CPUs [int]: the amount of vCPU to dedicate to the virtual machine
-* Memory [string]: the amount of memory to dedicate to the virtual machine
-* AdditionalDirectories [AdditionalDirectory]: an optional field that states the work directories that are not supported by default. In macOS, only home directory is supported by default.
+* CPUs [int] (required): the amount of vCPU to dedicate to the virtual machine
+* Memory [string] (required): the amount of memory to dedicate to the virtual machine
+* AdditionalDirectories [AdditionalDirectory{path [string]}] (optional): the work directories that are not supported by default. In macOS, only home directory is supported by default.
 
 For a full list of configuration options, check [the struct here](pkg/config/config.go#L25).
 
-#### Examples
-
-1. `finch.yaml` without additional directories looks like this:
-
-```yaml
-cpus: 4
-memory: 4GiB
-```
-
-1. `finch.yaml` with additional directories that include one directory "/Volumes" looks like this:
+An example `finch.yaml` looks like this:
 
 ```yaml
 cpus: 4
