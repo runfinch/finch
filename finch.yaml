@@ -185,3 +185,15 @@ video:
   # on performance on macOS hosts: https://gitlab.com/qemu-project/qemu/-/issues/334
   # 🟢 Builtin default: "none"
   display: null
+
+# Extra environment variables that will be loaded into the VM at start up.
+# These variables are consumed by internal init scripts, and also added
+# to /etc/environment.
+# If you set any of "ftp_proxy", "http_proxy", "https_proxy", or "no_proxy", then
+# Lima will automatically set an uppercase variant to the same value as well.
+# 🟢 Builtin default: null
+env:
+  # Containerd namespace is used by the lima cidata script
+  # 40-install-containerd.sh. Specifically this variable is defining the
+  # Buildkit Workers Containerd namespace. 
+  CONTAINERD_NAMESPACE: finch
