@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reflect"
 
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/onsi/ginkgo/v2"
@@ -108,7 +109,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(*limaCfg.CPUs).Should(gomega.Not(gomega.BeEmpty()))
+			gomega.Expect(reflect.ValueOf(limaCfg).FieldByName("CPUs").IsValid()).Should(gomega.BeTrue())
 			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("6GiB"))
 		})
 
@@ -123,8 +124,8 @@ var testConfig = func(o *option.Option, installed bool) {
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(*limaCfg.CPUs).Should(gomega.Not(gomega.BeEmpty()))
-			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal(gomega.MatchRegexp("%dGiB")))
+			gomega.Expect(reflect.ValueOf(limaCfg).FieldByName("CPUs").IsValid()).Should(gomega.BeTrue())
+			gomega.Expect(*limaCfg.Memory).Should(gomega.MatchRegexp(`\dGiB`))
 		})
 
 		ginkgo.It("fails to launch when the config file is improperly formatted", func() {
