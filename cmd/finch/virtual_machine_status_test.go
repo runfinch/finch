@@ -20,13 +20,13 @@ func TestNewStatusVMCommand(t *testing.T) {
 	assert.Equal(t, cmd.Name(), "status")
 }
 
-func TestStatusVMAction_run(t *testing.T) {
+func TestStatusVMAction_runAdapter(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
 		name    string
-		wantErr error
-		groups  func(*gomock.Controller) []*dependency.Group
+		command *cobra.Command
+		args    []string
 		mockSvc func(
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
@@ -35,11 +35,41 @@ func TestStatusVMAction_run(t *testing.T) {
 		)
 	}{
 		{
-			name:    "running VM",
-			wantErr: nil,
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
-				return nil
+			name: "should get nonexistent vm status",
+			command: &cobra.Command{
+				Use: "status",
 			},
+			args: []string{},
+			mockSvc: func(
+				lcc *mocks.LimaCmdCreator,
+				logger *mocks.Logger,
+				lca *mocks.LimaConfigApplier,
+				ctrl *gomock.Controller,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Nonexistent"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Nonexistent")
+			},
+			},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			logger := mocks.NewLogger(ctrl)
+			lcc := mocks.NewLimaCmdCreator(ctrl)
+			lca := mocks.NewLimaConfigApplier(ctrl)
+
+			tc.mockSvc(lcc, logger, lca, ctrl)
+
+			assert.NoError(t, newStatusVMAction(lcc, logger).runAdapter(tc.command, tc.args))
+		})
+	}
+}
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
