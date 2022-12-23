@@ -53,7 +53,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			},
 		},
 		{
-			name: "stopped VM",
+			name:    "stopped VM",
 			wantErr: nil,
 			groups: func(ctrl *gomock.Controller) []*dependency.Group {
 				return nil
@@ -68,6 +68,42 @@ func TestStatusVMAction_run(t *testing.T) {
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+			},
+		},
+		{
+			name:    "nonExistent VM",
+			wantErr: nil,
+			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+				return nil
+			},
+			mockSvc: func(
+				lcc *mocks.LimaCmdCreator,
+				logger *mocks.Logger,
+				lca *mocks.LimaConfigApplier,
+				ctrl *gomock.Controller,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Nonexistent"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Nonexistent")
+			},
+		},
+		{
+			name:    "undefined VM",
+			wantErr: errors.New("unrecognized system status"),
+			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+				return nil
+			},
+			mockSvc: func(
+				lcc *mocks.LimaCmdCreator,
+				logger *mocks.Logger,
+				lca *mocks.LimaConfigApplier,
+				ctrl *gomock.Controller,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Undefined"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Undefined")
 			},
 		},
 		{
