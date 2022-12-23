@@ -92,7 +92,7 @@ ssh:
   # applications such as rsync with the Lima instance.
   # If you have an insecure key under ~/.ssh, do not use this option.
   # 🟢 Builtin default: true
-  loadDotSSHPubKeys: null
+  loadDotSSHPubKeys: false
   # Forward ssh agent into the instance.
   # 🟢 Builtin default: false
   forwardAgent: null

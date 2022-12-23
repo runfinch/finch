@@ -20,7 +20,8 @@ VDE_INSTALL ?= /opt/finch
 UNAME := $(shell uname -m)
 ARCH ?= $(UNAME)
 SUPPORTED_ARCH = false
-CORE_URL ?= https://artifact.runfinch.com/finch-core-0.1.0.tar.gz
+CORE_VERSION ?= 0.1.1
+CORE_URL ?= https://artifact.runfinch.com/finch-core-$(CORE_VERSION).tar.gz
 CORE_FILENAME := finch-core
 CORE_OUTDIR := $(CURDIR)/$(CORE_FILENAME)/_output
 CORE_VDE_PREFIX ?= $(OUTDIR)/dependencies/vde/opt/finch
@@ -29,6 +30,8 @@ VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always -
 LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION)"
 
 .DEFAULT_GOAL := all
+
+INSTALLED ?= false
 
 ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
@@ -185,6 +188,8 @@ download-licenses:
 	curl https://raw.githubusercontent.com/actions/setup-go/main/LICENSE --output "$(LICENSEDIR)/github.com/actions/setup-go/LICENSE"
 	mkdir -p "$(LICENSEDIR)/github.com/golangci/golangci-lint-action"
 	curl https://raw.githubusercontent.com/golangci/golangci-lint-action/master/LICENSE --output "$(LICENSEDIR)/github.com/golangci/golangci-lint-action/LICENSE"
+	mkdir -p "$(LICENSEDIR)/github.com/avto-dev/markdown-lint"
+	curl https://raw.githubusercontent.com/avto-dev/markdown-lint/master/LICENSE --output "$(LICENSEDIR)/github.com/avto-dev/markdown-lint/LICENSE"
 
     ### dependencies in ci.yaml - end ###
 
@@ -240,7 +245,7 @@ test-unit:
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
 .PHONY: test-e2e
 test-e2e:
-	go test -ldflags $(LDFLAGS) -timeout 60m ./e2e/... -test.v -ginkgo.v
+	go test -ldflags $(LDFLAGS) -timeout 60m ./e2e/... -test.v -ginkgo.v --installed="$(INSTALLED)"
 
 .PHONY: gen-code
 # Since different projects may have different versions of tool binaries,
@@ -258,6 +263,17 @@ gen-code:
 # To run golangci-lint locally: https://golangci-lint.run/usage/install/#local-installation
 lint:
 	golangci-lint run
+
+.PHONY: mdlint
+# Install it locally: https://github.com/igorshubovych/markdownlint-cli#installation
+# Or see `mdlint-ctr` below or https://github.com/DavidAnson/markdownlint#related.
+mdlint:
+	markdownlint --ignore CHANGELOG.md '**/*.md'
+
+.PHONY: mdlint-ctr
+# If markdownlint is not installed, you can run markdownlint within a container.
+mdlint-ctr:
+	finch run --rm -v "$(shell pwd):/repo:ro" -w /repo avtodev/markdown-lint:v1 --ignore CHANGELOG.md '**/*.md'
 
 .PHONY: clean
 clean:

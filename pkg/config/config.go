@@ -114,7 +114,7 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 
 	var cfg Finch
 	if err := yaml.Unmarshal(b, &cfg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config file, using default values: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
 	}
 
 	defCfg := applyDefaults(&cfg, systemDeps, mem)
