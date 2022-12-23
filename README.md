@@ -94,20 +94,20 @@ The `run` command has a `-v` option for volume mounts. See `Volume flags` under 
 
 Finch has a simple and extensible configuration. A configuration file at `${HOME}/.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
 
-Currently, the options are:
-
-* CPUs [int] (required): the amount of vCPU to dedicate to the virtual machine
-* Memory [string] (required): the amount of memory to dedicate to the virtual machine
-* AdditionalDirectories [AdditionalDirectory{path [string]}] (optional): the work directories that are not supported by default. In macOS, only home directory is supported by default. For example, if you want to mount a directory into a container, and that directory is not under your home directory, then you'll need to specify this field to add that directory or any ascendant of it as a work directory.
-
 For a full list of configuration options, check [the struct here](pkg/config/config.go#L25).
 
 An example `finch.yaml` looks like this:
 
 ```yaml
+# CPUs: the amount of vCPU to dedicate to the virtual machine. (required)
 cpus: 4
+# Memory: the amount of memory to dedicate to the virtual machine. (required)
 memory: 4GiB
+# AdditionalDirectories: the work directories that are not supported by default. In macOS, only home directory is supported by default. 
+# For example, if you want to mount a directory into a container, and that directory is not under your home directory, 
+# then you'll need to specify this field to add that directory or any ascendant of it as a work directory. (optional)
 additional_directories:
+  # the path of each additional directory.
   - path: /Volumes
 ```
 

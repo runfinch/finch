@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"reflect"
 
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/onsi/ginkgo/v2"
@@ -109,7 +108,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(reflect.ValueOf(limaCfg).FieldByName("CPUs").IsValid()).Should(gomega.BeTrue())
+			gomega.Expect(limaCfg.CPUs != nil).Should(gomega.BeTrue())
 			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("6GiB"))
 		})
 
@@ -124,7 +123,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(reflect.ValueOf(limaCfg).FieldByName("CPUs").IsValid()).Should(gomega.BeTrue())
+			gomega.Expect(limaCfg.CPUs != nil).Should(gomega.BeTrue())
 			gomega.Expect(*limaCfg.Memory).Should(gomega.MatchRegexp(`\dGiB`))
 		})
 

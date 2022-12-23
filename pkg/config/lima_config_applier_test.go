@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 	"github.com/xorcare/pointer"
@@ -44,12 +45,11 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/lima.yaml")
 				require.NoError(t, err)
 
-				// limayaml.LimaYAML has a required "images" field which will also get marshaled
-				wantYaml := `images: []
-cpus: 4
-memory: 2GiB
-`
-				require.Equal(t, wantYaml, string(buf))
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
 			},
 			want: nil,
 		},
@@ -110,6 +110,14 @@ mounts:
       writable: true
 `
 				require.Equal(t, wantYaml, string(buf))
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, 1, len(limaCfg.Mounts))
+				require.Equal(t, "/Volumes", limaCfg.Mounts[0].Location)
+				require.Equal(t, true, *limaCfg.Mounts[0].Writable)
 			},
 			want: nil,
 		},
