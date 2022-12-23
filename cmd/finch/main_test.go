@@ -79,7 +79,7 @@ func TestXmain(t *testing.T) {
 		{
 			name: "failed to load finch config because of invalid YAML",
 			wantErr: fmt.Errorf("failed to load config: %w",
-				fmt.Errorf("failed to unmarshal config file, using default values: %w",
+				fmt.Errorf("failed to unmarshal config file: %w",
 					&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into config.Finch"}},
 				),
 			),
@@ -131,7 +131,7 @@ func TestNewApp(t *testing.T) {
 	cmd := newApp(l, fp, fs, &config.Finch{})
 
 	assert.Equal(t, cmd.Name(), finchRootCmd)
-	assert.Equal(t, cmd.Version, finchVersion())
+	assert.Equal(t, cmd.Version, finchVersion)
 	assert.Equal(t, cmd.SilenceUsage, true)
 	assert.Equal(t, cmd.SilenceErrors, true)
 	// confirm the number of command, comprised of nerdctl commands + finch commands (version, vm)

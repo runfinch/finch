@@ -1,6 +1,12 @@
 # This file is created according to
 # https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/troubleshooting-required-status-checks#handling-skipped-but-required-checks
 # As a result, the set of jobs in this file should be equal to that in ci.yaml.
+#
+# Note that if a PR contains changes of both markdown files and non-markdown files,
+# there'll be twins for each check (e.g., https://github.com/runfinch/finch/pull/88).
+# However, due to GitHub's logic, even though the one from ci-docs.yaml passes,
+# the one from ci.yaml still has to pass for the PR to be merged,
+# so it functionally works, while it's visually confusing.
 name: CI
 on:
   push:
@@ -8,37 +14,48 @@ on:
       - main
     paths:
       - '**.md'
+      - 'contrib/**'
   pull_request:
     branches:
       - main
     paths:
       - '**.md'
+      - 'contrib/**'
 
 jobs:
   gen-code-no-diff:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   go-linter:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   check-licenses:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
   e2e-tests:
     strategy:
       matrix:
         os: [[self-hosted, macos, amd64, 11.7], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 11.7], [self-hosted, macos, arm64, 12.6]]
     runs-on: ${{ matrix.os }} 
     steps:
-      - run: echo "Skipping CI for docs"
+      - run: echo "Skipping CI for docs & contrib files"
+  mdlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: avto-dev/markdown-lint@v1
+        with:
+          args: '**/*.md'
+          # CHANGELOG.md is only updated by release-please bot.
+          ignore: 'CHANGELOG.md'

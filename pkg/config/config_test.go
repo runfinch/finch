@@ -96,7 +96,7 @@ cpus: 8
 			},
 			want: nil,
 			wantErr: fmt.Errorf(
-				"failed to unmarshal config file, using default values: %w",
+				"failed to unmarshal config file: %w",
 				&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into config.Finch"}},
 			),
 		},

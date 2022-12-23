@@ -4,6 +4,7 @@
 package e2e
 
 import (
+	"flag"
 	"os"
 	"path/filepath"
 	"testing"
@@ -15,7 +16,12 @@ import (
 	"github.com/runfinch/common-tests/tests"
 )
 
-const virtualMachineRootCmd = "vm"
+const (
+	virtualMachineRootCmd = "vm"
+	installedTestSubject  = "finch"
+)
+
+var installed = flag.Bool("installed", false, "the flag to show whether the tests are ran against installed application")
 
 //nolint:paralleltest // TestE2e is like TestMain for our e2e tests.
 func TestE2e(t *testing.T) {
@@ -26,6 +32,9 @@ func TestE2e(t *testing.T) {
 		t.Fatalf("failed to get the current working directory: %v", err)
 	}
 	subject := filepath.Join(wd, "../_output/bin/finch")
+	if *installed {
+		subject = installedTestSubject
+	}
 
 	o, err := option.New([]string{subject})
 	if err != nil {
@@ -47,7 +56,7 @@ func TestE2e(t *testing.T) {
 		tests.Pull(o)
 		tests.Rm(o)
 		tests.Rmi(o)
-		tests.Run(o)
+		tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified})
 		tests.Start(o)
 		tests.Stop(o)
 		tests.Tag(o)
@@ -89,7 +98,7 @@ func TestE2e(t *testing.T) {
 		// When running tests in serial sequence and using the local registry, testVirtualMachine needs to run after generic tests finished
 		// since it will remove the VM instance thus removing the local registry.
 		testVirtualMachine(o)
-		testConfig(o)
+		testConfig(o, *installed)
 		testVersion(o)
 	})
 

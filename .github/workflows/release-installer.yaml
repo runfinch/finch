@@ -1,0 +1,113 @@
+# When a third-party action is added (i.e., `uses`), please also add it to `download-licenses` in Makefile.
+# When the installers are ready in installer private bucket, run this workflow to test them.
+# TODO: Add job of uploading installers to Github release when installer tests are stable.
+# "release" runner tag is to make target hosts deterministic for easy clean up.
+# This not only refers to the cleanup described in https://github.com/runfinch/finch/issues/106 for arm hosts.
+# Currently tests on amd64 hosts sometimes also need manual cleanup via SSHing to the host.
+# TODO: Remove the "release" runner tag when installer tests are stable.
+name: Release Installer
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  # TODO: fix the arm64 installer tests. (https://github.com/runfinch/finch/issues/106)
+  # Currently the first time of calling any Finch command in arm64 hosts triggered by Github action will fail by
+  # the error "Error: Process completed with exit code 137." So the arm64 job will fail.
+  # We temporarily use follow-up manual steps to complete and clean up it.
+  # 1. Ssh to the arm64 hosts.
+  # 2. Run `cd ar/_work/finch/finch`.
+  # 3. Run `INSTALLED=true make test-e2e` to complete the installer e2e tests.
+  # 4. Run `sudo /Applications/Finch/uninstall.sh` to uninstall Finch.
+  # 5. Run `rm -rf Finch-<version>-aarch64.pkg` to delete the pkg.
+  macos-arm64-test-installer:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [[self-hosted, macos, arm64, 11.7, release], [self-hosted, macos, arm64, 12.6, release], [self-hosted, macos, arm64, 13.0, release]]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    env:
+      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.19.x
+      - uses: actions/checkout@v2
+      - name: Clean up previous files
+        run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: download-installer-session
+          aws-region: ${{ secrets.REGION }}
+      - name: Download from S3
+        run: |
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
+      - name: Silently install
+        # Rosetta is only needed in arm64. Currently the installer command will fail to install without Rosetta.
+        # TODO: Remove Rosetta command when the installer is fixed. (https://github.com/runfinch/finch/issues/105)
+        run: |
+          echo 'A' | sudo softwareupdate --install-rosetta
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
+      - name: Run e2e tests
+        run: INSTALLED=true make test-e2e
+      - name: Silently uninstall
+        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+      - name: Delete installer
+        run: rm -rf Finch-${GITHUB_REF_NAME}-aarch64.pkg
+
+  macos-amd64-test-installer:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [[self-hosted, macos, amd64, 10.15, release], [self-hosted, macos, amd64, 11.7, release], [self-hosted, macos, amd64, 12.6, release], [self-hosted, macos, amd64, 13.0, release]]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    env:
+      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19.x
+      - uses: actions/checkout@v3
+      - name: Clean up previous files
+        run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: download-installer-session
+          aws-region: ${{ secrets.REGION }}
+      - name: Download from S3
+        run: |
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
+      - name: Silently install
+        run: |
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
+      - name: Run e2e tests
+        run: INSTALLED=true make test-e2e
+      - name: Silently uninstall
+        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+      - name: Delete installer
+        run: rm -rf Finch-${GITHUB_REF_NAME}-x86_64.pkg
