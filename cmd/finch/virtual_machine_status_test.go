@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/runfinch/finch/pkg/dependency"
 	"github.com/runfinch/finch/pkg/mocks"
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,7 +51,7 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Nonexistent"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Nonexistent")
 			},
-			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -70,6 +70,25 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 		})
 	}
 }
+
+func TestStatusVMAction_run(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name         string
+		wantErr      error
+		statusOutput string
+		mockSvc      func(
+			*mocks.LimaCmdCreator,
+			*mocks.Logger,
+			*mocks.LimaConfigApplier,
+			*gomock.Controller,
+		)
+	}{
+		{
+			name:         "running VM",
+			wantErr:      nil,
+			statusOutput: "Running",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -83,11 +102,9 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 			},
 		},
 		{
-			name:    "stopped VM",
-			wantErr: nil,
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
-				return nil
-			},
+			name:         "stopped VM",
+			wantErr:      nil,
+			statusOutput: "Stopped",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -101,11 +118,9 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 			},
 		},
 		{
-			name:    "nonExistent VM",
-			wantErr: nil,
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
-				return nil
-			},
+			name:         "nonExistent VM",
+			wantErr:      nil,
+			statusOutput: "Nonexistent",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -121,9 +136,6 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 		{
 			name:    "undefined VM",
 			wantErr: errors.New("unrecognized system status"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
-				return nil
-			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -139,9 +151,6 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 		{
 			name:    "unknown VM status",
 			wantErr: errors.New("unrecognized system status"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
-				return nil
-			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -157,9 +166,6 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 		{
 			name:    "status command returns an error",
 			wantErr: errors.New("get status error"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
-				return nil
-			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
