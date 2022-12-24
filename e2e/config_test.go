@@ -108,7 +108,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(limaCfg.CPUs).Should(gomega.BeNil())
+			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
 			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("6GiB"))
 		})
 
@@ -123,7 +123,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			var limaCfg limayaml.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(limaCfg.CPUs).Should(gomega.BeNil())
+			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
 			gomega.Expect(*limaCfg.Memory).Should(gomega.MatchRegexp(`\dGiB`))
 		})
 
