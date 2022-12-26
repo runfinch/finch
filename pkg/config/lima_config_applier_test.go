@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 	"github.com/xorcare/pointer"
@@ -44,8 +45,11 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/lima.yaml")
 				require.NoError(t, err)
 
-				// limayaml.LimaYAML has a required "images" field which will also get marshaled
-				require.Equal(t, buf, []byte("images: []\ncpus: 4\nmemory: 2GiB\n"))
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
 			},
 			want: nil,
 		},
@@ -80,6 +84,42 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				"failed to unmarshal the lima config file: %w",
 				&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into limayaml.LimaYAML"}},
 			),
+		},
+		{
+			name: "lima config file with additional directories",
+			config: &Finch{
+				Memory:                pointer.String("2GiB"),
+				CPUs:                  pointer.Int(4),
+				AdditionalDirectories: []AdditionalDirectory{{pointer.String("/Volumes")}},
+			},
+			path: "/lima.yaml",
+			mockSvc: func(fs afero.Fs, l *mocks.Logger) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
+				require.NoError(t, err)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				// limayaml.LimaYAML has a required "images" field which will also get marshaled
+				wantYaml := `images: []
+cpus: 4
+memory: 2GiB
+mounts:
+    - location: /Volumes
+      writable: true
+`
+				require.Equal(t, wantYaml, string(buf))
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, 1, len(limaCfg.Mounts))
+				require.Equal(t, "/Volumes", limaCfg.Mounts[0].Location)
+				require.Equal(t, true, *limaCfg.Mounts[0].Writable)
+			},
+			want: nil,
 		},
 	}
 

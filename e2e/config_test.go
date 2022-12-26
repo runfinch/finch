@@ -10,11 +10,14 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
+	"github.com/xorcare/pointer"
+	"gopkg.in/yaml.v3"
 )
 
 var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
@@ -86,7 +89,12 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.ContainSubstring("cpus: 6"), gomega.ContainSubstring("memory: 4GiB")))
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
 		})
 
 		ginkgo.It("updates config values when partial config file is present", func() {
@@ -96,8 +104,12 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			// 4 CPUs is the default
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.MatchRegexp(`cpus: \d`), gomega.ContainSubstring("memory: 6GiB")))
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("6GiB"))
 		})
 
 		ginkgo.It("uses the default config values when no config file is present", func() {
@@ -107,7 +119,12 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.MatchRegexp(`cpus: \d`), gomega.MatchRegexp(`memory: \dGiB`)))
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
+			gomega.Expect(*limaCfg.Memory).Should(gomega.MatchRegexp(`\dGiB`))
 		})
 
 		ginkgo.It("fails to launch when the config file is improperly formatted", func() {
@@ -123,6 +140,29 @@ var testConfig = func(o *option.Option, installed bool) {
 		ginkgo.It("fails to launch when the config file doesn't specify enough memory", func() {
 			startCmdSession := updateAndApplyConfig(o, []byte("memory: 0GiB"))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(1))
+		})
+
+		ginkgo.It("updates config values when a config file is present with additional directories", func() {
+			startCmdSession := updateAndApplyConfig(o, []byte(`memory: 4GiB
+cpus: 6
+additional_directories:
+    - path: /Volumes
+    - path: /tmp/workspace`))
+			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
+
+			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
+			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
+			gomega.Expect(len(limaCfg.Mounts)).Should(gomega.Equal(2))
+			gomega.Expect(limaCfg.Mounts[0].Location).Should(gomega.Equal("/Volumes"))
+			gomega.Expect(limaCfg.Mounts[0].Writable).Should(gomega.Equal(pointer.Bool(true)))
+			gomega.Expect(limaCfg.Mounts[1].Location).Should(gomega.Equal("/tmp/workspace"))
+			gomega.Expect(limaCfg.Mounts[1].Writable).Should(gomega.Equal(pointer.Bool(true)))
 		})
 	})
 }
