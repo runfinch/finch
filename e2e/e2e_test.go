@@ -98,6 +98,7 @@ func TestE2e(t *testing.T) {
 		// When running tests in serial sequence and using the local registry, testVirtualMachine needs to run after generic tests finished
 		// since it will remove the VM instance thus removing the local registry.
 		testVirtualMachine(o)
+		testAdditionalDisk(o)
 		testConfig(o, *installed)
 		testVersion(o)
 	})

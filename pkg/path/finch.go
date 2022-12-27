@@ -18,6 +18,12 @@ func (Finch) ConfigFilePath(homeDir string) string {
 	return fmt.Sprintf("%s/.finch/finch.yaml", homeDir)
 }
 
+// UserDataDiskPath returns the path to the permanent storage location of the Finch
+// user data disk.
+func (Finch) UserDataDiskPath(homeDir string) string {
+	return fmt.Sprintf("%s/.finch/.datadisk", homeDir)
+}
+
 // LimaHomePath returns the path that should be set to LIMA_HOME for Finch.
 func (w Finch) LimaHomePath() string {
 	return fmt.Sprintf("%s/lima/data", w)
