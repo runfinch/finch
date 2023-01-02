@@ -40,7 +40,7 @@ func GetVMStatus(creator command.LimaCmdCreator, logger flog.Logger, instanceNam
 func toVMStatus(status string, logger flog.Logger) (VMStatus, error) {
 	logger.Debugf("Status of virtual machine: %s", status)
 	switch status {
-	case "", "Nonexistent":
+	case "":
 		return Nonexistent, nil
 	case "Running":
 		return Running, nil
