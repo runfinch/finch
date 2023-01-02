@@ -48,8 +48,8 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Nonexistent"), nil)
-				logger.EXPECT().Debugf("Status of virtual machine: %s", "Nonexistent")
+				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 			},
 		},
 	}
@@ -120,7 +120,7 @@ func TestStatusVMAction_run(t *testing.T) {
 		{
 			name:         "nonExistent VM",
 			wantErr:      nil,
-			statusOutput: "Nonexistent",
+			statusOutput: "",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -129,8 +129,8 @@ func TestStatusVMAction_run(t *testing.T) {
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Nonexistent"), nil)
-				logger.EXPECT().Debugf("Status of virtual machine: %s", "Nonexistent")
+				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 			},
 		},
 		{
