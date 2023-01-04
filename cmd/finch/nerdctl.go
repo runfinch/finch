@@ -129,6 +129,7 @@ var nerdctlCmds = map[string]string{
 	"compose":   "Compose",
 	"container": "Manage containers",
 	"create":    "Create a new container",
+	"cp":        "Copy files/folders between a running container and the local filesystem",
 	"events":    "Get real time events from the server",
 	"exec":      "Run a command in a running container",
 	"history":   "Show the history of an image",
