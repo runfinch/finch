@@ -224,6 +224,8 @@ implement them in common-tests repo and then import them in [`./e2e/e2e_test.go`
 
 Otherwise, it means that the scenarios are specific to finch CLI (e.g., version, VM lifecycle, etc.), and you should implement them under `./e2e/` (e.g., `./e2e/version.go`) and import them in `./e2e/e2e_test.go`.
 
+To save time while developing e2e tests, use the [`Focus`](https://onsi.github.io/ginkgo/#focused-specs) decorator while running tests, but be sure to remove it before PR-ing your changes.
+
 ### Go File Naming
 
 Keep file names to one word if possible (e.g., avoid stuttering with package name: prefer `thing/factory.go` over `thing/thing_factory.go`). If there have to be more than one words, use underscores as separators. Do not use hyphens or camelCase.
