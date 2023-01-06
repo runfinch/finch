@@ -40,6 +40,7 @@ func newVirtualMachineCommand(
 		newStartVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fs, fp.LimaSSHPrivateKeyPath()),
 		newStopVMCommand(limaCmdCreator, logger),
 		newRemoveVMCommand(limaCmdCreator, logger),
+		newStatusVMCommand(limaCmdCreator, logger),
 		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs, fp.LimaSSHPrivateKeyPath()),
 	)
 
