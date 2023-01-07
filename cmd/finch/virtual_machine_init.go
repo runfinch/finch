@@ -6,6 +6,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/runfinch/finch/pkg/disk"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
@@ -25,11 +27,12 @@ func newInitVMCommand(
 	baseYamlFilePath string,
 	fs afero.Fs,
 	privateKeyPath string,
+	diskManager disk.UserDataDiskManager,
 ) *cobra.Command {
 	initVMCommand := &cobra.Command{
 		Use:      "init",
 		Short:    "Initialize the virtual machine",
-		RunE:     newInitVMAction(lcc, logger, optionalDepGroups, lca, baseYamlFilePath).runAdapter,
+		RunE:     newInitVMAction(lcc, logger, optionalDepGroups, lca, baseYamlFilePath, diskManager).runAdapter,
 		PostRunE: newPostVMStartInitAction(logger, lcc, fs, privateKeyPath, nca).runAdapter,
 	}
 
@@ -42,6 +45,7 @@ type initVMAction struct {
 	logger            flog.Logger
 	optionalDepGroups []*dependency.Group
 	limaConfigApplier config.LimaConfigApplier
+	diskManager       disk.UserDataDiskManager
 }
 
 func newInitVMAction(
@@ -50,9 +54,15 @@ func newInitVMAction(
 	optionalDepGroups []*dependency.Group,
 	lca config.LimaConfigApplier,
 	baseYamlFilePath string,
+	diskManager disk.UserDataDiskManager,
 ) *initVMAction {
 	return &initVMAction{
-		creator: creator, logger: logger, optionalDepGroups: optionalDepGroups, limaConfigApplier: lca, baseYamlFilePath: baseYamlFilePath,
+		creator:           creator,
+		logger:            logger,
+		optionalDepGroups: optionalDepGroups,
+		limaConfigApplier: lca,
+		baseYamlFilePath:  baseYamlFilePath,
+		diskManager:       diskManager,
 	}
 }
 
@@ -61,7 +71,7 @@ func (iva *initVMAction) runAdapter(cmd *cobra.Command, args []string) error {
 }
 
 func (iva *initVMAction) run() error {
-	err := iva.assertVMIsNonexistent(iva.creator, iva.logger)
+	err := iva.assertVMIsNonexistent()
 	if err != nil {
 		return err
 	}
@@ -72,6 +82,11 @@ func (iva *initVMAction) run() error {
 	}
 
 	err = iva.limaConfigApplier.Apply()
+	if err != nil {
+		return err
+	}
+
+	err = iva.diskManager.EnsureUserDataDisk()
 	if err != nil {
 		return err
 	}
@@ -88,8 +103,8 @@ func (iva *initVMAction) run() error {
 	return nil
 }
 
-func (iva *initVMAction) assertVMIsNonexistent(creator command.LimaCmdCreator, logger flog.Logger) error {
-	status, err := lima.GetVMStatus(creator, logger, limaInstanceName)
+func (iva *initVMAction) assertVMIsNonexistent() error {
+	status, err := lima.GetVMStatus(iva.creator, iva.logger, limaInstanceName)
 	if err != nil {
 		return err
 	}
