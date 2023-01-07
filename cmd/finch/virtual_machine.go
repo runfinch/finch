@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/runfinch/finch/pkg/disk"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
@@ -30,6 +32,7 @@ func newVirtualMachineCommand(
 	nca config.NerdctlConfigApplier,
 	fp path.Finch,
 	fs afero.Fs,
+	diskManager disk.UserDataDiskManager,
 ) *cobra.Command {
 	virtualMachineCommand := &cobra.Command{
 		Use:   virtualMachineRootCmd,
@@ -37,10 +40,11 @@ func newVirtualMachineCommand(
 	}
 
 	virtualMachineCommand.AddCommand(
-		newStartVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fs, fp.LimaSSHPrivateKeyPath()),
+		newStartVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fs, fp.LimaSSHPrivateKeyPath(), diskManager),
 		newStopVMCommand(limaCmdCreator, logger),
 		newRemoveVMCommand(limaCmdCreator, logger),
-		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs, fp.LimaSSHPrivateKeyPath()),
+		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs,
+			fp.LimaSSHPrivateKeyPath(), diskManager),
 	)
 
 	return virtualMachineCommand

@@ -7,6 +7,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/runfinch/finch/pkg/disk"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
@@ -108,6 +110,7 @@ func virtualMachineCommands(
 		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), system.NewStdLib()),
 		fp,
 		fs,
+		disk.NewUserDataDiskManager(lcc, &afero.OsFs{}, fp, system.NewStdLib().Env("HOME")),
 	)
 }
 

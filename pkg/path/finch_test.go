@@ -23,6 +23,13 @@ func TestFinch_ConfigFilePath(t *testing.T) {
 	assert.Equal(t, res, "homeDir/.finch/finch.yaml")
 }
 
+func TestFinch_UserDataDiskPath(t *testing.T) {
+	t.Parallel()
+
+	res := mockFinch.UserDataDiskPath("homeDir")
+	assert.Equal(t, res, "homeDir/.finch/.datadisk")
+}
+
 func TestFinch_LimaHomePath(t *testing.T) {
 	t.Parallel()
 
