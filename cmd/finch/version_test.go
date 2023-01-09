@@ -10,6 +10,8 @@ import (
 	"testing"
 
 	"github.com/runfinch/finch/pkg/mocks"
+	"github.com/runfinch/finch/pkg/version"
+	"github.com/spf13/cobra"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -42,15 +44,61 @@ func TestVersionCommand(t *testing.T) {
 	assert.Equal(t, cmd.Name(), "version")
 }
 
-//TODO: Ang's review
-// func TestVersionAction_runAdapter(t *testing.T) {
-// 		cmd     *cobra.Command
-// 		args    []string
-// 		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller)
-// 	printVersionFunc := func() {
-// 		require.NoError(t, newVersionAction(cmd, []string{}))
+func TestPrintVersion(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name    string
+		command *cobra.Command
+		args    []string
+		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller)
+	}{
+		{
+			name: "print finch version",
+			command: &cobra.Command{
+				Use: "version",
+			},
+			args: []string{},
+			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			logger := mocks.NewLogger(ctrl)
+			lcc := mocks.NewLimaCmdCreator(ctrl)
+
+			versionActionFunc := func() {
+				require.NoError(t, newVersionAction(lcc, logger).printVersion())
+			}
+		
+			output := captureStdout(t, versionActionFunc)
+			assert.Equal(t, output, version.Version)
+			assert.Equal(t, output, version.GitCommit)
+		})
+	}
+}
+
+// func TestVersionAction(t *testing.T) {
+// 	ctrl := gomock.NewController(t)
+// 	logger := mocks.NewLogger(ctrl)
+// 	lcc := mocks.NewLimaCmdCreator(ctrl)
+// 	mockCmd := newVersionCommand(lcc, logger)
+
+// 	versionActionFunc := func() {
+// 		require.NoError(t, newVersionAction(lcc, logger).printVersion())
 // 	}
 
-// 	output := captureStdout(t, printVersionFunc)
-// 	assert.Contains(t, output, finchVersion())
+// 	output := captureStdout(t, versionActionFunc)
+// 	assert.Equal(t, output, version.Version)
+// 	assert.Equal(t, output, version.GitCommit)
 // }

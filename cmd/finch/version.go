@@ -72,38 +72,40 @@ func (va *versionAction) runAdapter(cmd *cobra.Command, args []string) error {
 }
 
 func (va *versionAction) printVersion() error {
-	_, err := lima.GetVMStatus(va.creator, va.logger, limaInstanceName)
-	if err != nil {
+	status, err := lima.GetVMStatus(va.creator, va.logger, limaInstanceName)
+	if (status != lima.Running) || (err != nil) {
 		fmt.Println("Finch version:", version.Version)
-	}
+		fmt.Println("Please run finch vm init to start the virtual machine")
+	} else {
 
-	limaArgs := []string{"shell", limaInstanceName, "nerdctl", "version", "--format", "json"}
-	out, _ := va.creator.CreateWithoutStdio(limaArgs...).Output()
+		limaArgs := []string{"shell", limaInstanceName, "nerdctl", "version", "--format", "json"}
+		out, _ := va.creator.CreateWithoutStdio(limaArgs...).Output()
 
-	var nerdctlVersion NerdctlVersionOutput
-	err = json.Unmarshal(out, &nerdctlVersion)
+		var nerdctlVersion NerdctlVersionOutput
+		err = json.Unmarshal(out, &nerdctlVersion)
 
-	var w io.Writer = os.Stdout
+		var w io.Writer = os.Stdout
 
-	if err == nil {
-		fmt.Fprintf(w, "Client:\n")
-		fmt.Fprintf(w, " Version:\t%s\n", version.Version)
-		fmt.Fprintf(w, " OS/Arch:\t%s/%s\n", nerdctlVersion.Client.Os, nerdctlVersion.Client.Arch)
-		fmt.Fprintf(w, " Git commit:\t%s\n", version.GitCommit)
-		fmt.Fprintf(w, "nerdctl:\n")
-		fmt.Fprintf(w, " Version:\t%s\n", nerdctlVersion.Client.Version)
-		fmt.Fprintf(w, " Git commit:\t%s\n", nerdctlVersion.Client.GitCommit)
-		for _, compo := range nerdctlVersion.Client.Components {
-			fmt.Fprintf(w, "%s:\n", compo.Name)
-			fmt.Fprintf(w, "  Version:\t%s\n", compo.Version)
-			fmt.Fprintf(w, "  Git commit:\t%s\n", compo.Details.GitCommit)
-		}
-		fmt.Fprintf(w, "\n")
-		fmt.Fprintf(w, "Server:\n")
-		for _, compo := range nerdctlVersion.Server.Components {
-			fmt.Fprintf(w, " %s:\n", compo.Name)
-			fmt.Fprintf(w, "  Version:\t%s\n", compo.Version)
-			fmt.Fprintf(w, "  Git commit:\t%s\n", compo.Details.GitCommit)
+		if err == nil {
+			fmt.Fprintf(w, "Client:\n")
+			fmt.Fprintf(w, " Version:\t%s\n", version.Version)
+			fmt.Fprintf(w, " OS/Arch:\t%s/%s\n", nerdctlVersion.Client.Os, nerdctlVersion.Client.Arch)
+			fmt.Fprintf(w, " Git commit:\t%s\n", version.GitCommit)
+			fmt.Fprintf(w, "nerdctl:\n")
+			fmt.Fprintf(w, " Version:\t%s\n", nerdctlVersion.Client.Version)
+			fmt.Fprintf(w, " Git commit:\t%s\n", nerdctlVersion.Client.GitCommit)
+			for _, compo := range nerdctlVersion.Client.Components {
+				fmt.Fprintf(w, "%s:\n", compo.Name)
+				fmt.Fprintf(w, "  Version:\t%s\n", compo.Version)
+				fmt.Fprintf(w, "  Git commit:\t%s\n", compo.Details.GitCommit)
+			}
+			fmt.Fprintf(w, "\n")
+			fmt.Fprintf(w, "Server:\n")
+			for _, compo := range nerdctlVersion.Server.Components {
+				fmt.Fprintf(w, " %s:\n", compo.Name)
+				fmt.Fprintf(w, "  Version:\t%s\n", compo.Version)
+				fmt.Fprintf(w, "  Git commit:\t%s\n", compo.Details.GitCommit)
+			}
 		}
 	}
 
