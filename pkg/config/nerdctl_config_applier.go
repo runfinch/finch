@@ -69,7 +69,16 @@ func updateEnvironment(fs afero.Fs, user string) error {
 	}
 
 	profStr := string(profBuf)
-	if !strings.Contains(profStr, "export DOCKER_CONFIG") {
+	proStrs := strings.Split(profStr, "\n")
+	var hasVar = false
+	for _, str := range proStrs {
+		if strings.HasPrefix(str, fmt.Sprintf("export DOCKER_CONFIG=\"/Users/%s/.finch\"", user)) {
+			hasVar = true
+			break
+		}
+	}
+
+	if !hasVar {
 		profBufWithDockerCfg := fmt.Sprintf("%s\nexport DOCKER_CONFIG=\"/Users/%s/.finch\"\n", profStr, user)
 		if err := afero.WriteFile(fs, profileFilePath, []byte(profBufWithDockerCfg), 0o644); err != nil {
 			return fmt.Errorf("failed to write to profile file: %w", err)

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -69,6 +70,31 @@ func Test_updateEnvironment(t *testing.T) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
 				require.NoError(t, err)
 				assert.Equal(t, []byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`), fileBytes)
+			},
+			want: nil,
+		},
+		{
+			name: "happy path, file already exists but contains outdated DOCKER_CONFIG variable",
+			user: "mock_user",
+			mockSvc: func(t *testing.T, fs afero.Fs) {
+				require.NoError(
+					t,
+					afero.WriteFile(
+						fs,
+						"/home/mock_user.linux/.bashrc",
+						[]byte("other stuff\nanother line\nexport DOCKER_CONFIG=\"/Users/not_mock_user/.finch\""),
+						0o644,
+					),
+				)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
+				require.NoError(t, err)
+				strs := strings.Split(string(fileBytes), "\n")
+				// 5 because of newline before and after newly inserted line
+				assert.Equal(t, 5, len(strs))
+				dockerConfLine := strs[len(strs)-2]
+				assert.Equal(t, []byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`), []byte(dockerConfLine))
 			},
 			want: nil,
 		},
