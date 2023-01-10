@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/mocks"
