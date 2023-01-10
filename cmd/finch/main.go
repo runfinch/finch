@@ -6,6 +6,8 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/runfinch/finch/pkg/disk"
@@ -32,12 +34,13 @@ func main() {
 	stdLib := system.NewStdLib()
 	fs := afero.NewOsFs()
 	mem := fmemory.NewMemory()
-	if err := xmain(logger, stdLib, fs, stdLib, mem); err != nil {
+	stdOut := os.Stdout
+	if err := xmain(logger, stdLib, fs, stdLib, mem, stdOut); err != nil {
 		logger.Fatal(err)
 	}
 }
 
-func xmain(logger flog.Logger, ffd path.FinchFinderDeps, fs afero.Fs, loadCfgDeps config.LoadSystemDeps, mem fmemory.Memory) error {
+func xmain(logger flog.Logger, ffd path.FinchFinderDeps, fs afero.Fs, loadCfgDeps config.LoadSystemDeps, mem fmemory.Memory, stdOut io.Writer) error {
 	fp, err := path.FindFinch(ffd)
 	if err != nil {
 		return fmt.Errorf("failed to find the installation path of Finch: %w", err)
@@ -48,10 +51,10 @@ func xmain(logger flog.Logger, ffd path.FinchFinderDeps, fs afero.Fs, loadCfgDep
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	return newApp(logger, fp, fs, fc).Execute()
+	return newApp(logger, fp, fs, fc, stdOut).Execute()
 }
 
-var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Finch) *cobra.Command {
+var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Finch, stdOut io.Writer) *cobra.Command {
 	usage := fmt.Sprintf("%v <command>", finchRootCmd)
 	rootCmd := &cobra.Command{
 		Use:           usage,
@@ -85,7 +88,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 	allCommands := initializeNerdctlCommands(lcc, logger)
 	// append finch specific commands
 	allCommands = append(allCommands,
-		newVersionCommand(lcc, logger),
+		newVersionCommand(lcc, logger, stdOut),
 		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc),
 	)
 

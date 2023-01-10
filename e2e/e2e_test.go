@@ -41,18 +41,6 @@ func TestE2e(t *testing.T) {
 		t.Fatalf("failed to initialize a testing option: %v", err)
 	}
 
-	var modifiedOpt *option.Option
-	var merr error
-
-	modifiedOpt, merr = option.New(
-		[]string{"/Applications/Finch/lima/bin/limactl", "shell", "finch", "sudo"},
-		option.Env([]string{"LIMA_HOME=/Applications/Finch/lima/data"}),
-	)
-
-	if merr != nil {
-		t.Fatalf("failed to initialize the modifiedOpt option: %v", err)
-	}
-
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
 		command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
 		tests.SetupLocalRegistry(o)
@@ -113,7 +101,7 @@ func TestE2e(t *testing.T) {
 		testVirtualMachine(o)
 		testAdditionalDisk(o)
 		testConfig(o, *installed)
-		testVersion(o, modifiedOpt)
+		testVersion(o)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)

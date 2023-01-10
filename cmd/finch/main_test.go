@@ -6,6 +6,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 	"testing"
 
 	"gopkg.in/yaml.v3"
@@ -112,8 +113,9 @@ func TestXmain(t *testing.T) {
 			loadCfgDeps := mocks.NewLoadSystemDeps(ctrl)
 			mem := mocks.NewMemory(ctrl)
 			fs := afero.NewMemMapFs()
+			stdOut := os.Stdout
 			tc.mockSvc(logger, ffd, fs, loadCfgDeps, mem)
-			err := xmain(logger, ffd, fs, loadCfgDeps, mem)
+			err := xmain(logger, ffd, fs, loadCfgDeps, mem, stdOut)
 			assert.Equal(t, err, tc.wantErr)
 		})
 	}
@@ -126,10 +128,11 @@ func TestNewApp(t *testing.T) {
 	l := mocks.NewLogger(ctrl)
 	fp := path.Finch("")
 	fs := afero.NewMemMapFs()
+	stdOut := os.Stdout
 
 	require.NoError(t, afero.WriteFile(fs, "/real/config.yaml", []byte(configStr), 0o600))
 
-	cmd := newApp(l, fp, fs, &config.Finch{})
+	cmd := newApp(l, fp, fs, &config.Finch{}, stdOut)
 
 	assert.Equal(t, cmd.Name(), finchRootCmd)
 	assert.Equal(t, cmd.Version, version.Version)

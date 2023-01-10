@@ -4,18 +4,17 @@
 package e2e
 
 import (
-	//"fmt"
-
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
+
+	"github.com/runfinch/finch/pkg/version"
 )
 
-// Checks finch version
-var testVersion = func(o *option.Option, m *option.Option) {
+// Checks finch version.
+var testVersion = func(o *option.Option) {
 	ginkgo.FDescribe("Check finch version", func() {
-		
 		ginkgo.BeforeEach(func() {
 			command.RemoveAll(o)
 		})
@@ -24,12 +23,9 @@ var testVersion = func(o *option.Option, m *option.Option) {
 		})
 
 		ginkgo.FIt("Should print finch version information", func() {
-			gomega.Expect(command.StdoutStr(o, "version")).ShouldNot(gomega.BeEmpty())
+			versionInfo := command.StdOut(o, "version")
+			gomega.Expect(versionInfo).Should(gomega.ContainSubstring(version.Version))
+			gomega.Expect(versionInfo).Should(gomega.ContainSubstring(version.GitCommit))
 		})
-
-		ginkgo.FIt("Should print finch version information", func() {
-			gomega.Expect(command.StdoutStr(m, "version")).ShouldNot(gomega.BeEmpty())
-		})
-
 	})
 }

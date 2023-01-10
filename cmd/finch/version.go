@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"os"
 
 	"github.com/spf13/cobra"
 
@@ -17,12 +16,12 @@ import (
 	"github.com/runfinch/finch/pkg/version"
 )
 
-func newVersionCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger) *cobra.Command {
+func newVersionCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger, stdOut io.Writer) *cobra.Command {
 	versionCommand := &cobra.Command{
 		Use:   "version",
 		Args:  cobra.NoArgs,
 		Short: "Shows Finch version information",
-		RunE:  newVersionAction(limaCmdCreator, logger).runAdapter,
+		RunE:  newVersionAction(limaCmdCreator, logger, stdOut).runAdapter,
 	}
 
 	return versionCommand
@@ -31,6 +30,7 @@ func newVersionCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger
 type versionAction struct {
 	creator command.LimaCmdCreator
 	logger  flog.Logger
+	stdOut  io.Writer
 }
 
 // NerdctlVersionOutput captures the nerdctl version.
@@ -63,48 +63,45 @@ type NerdctlComponentsOutput struct {
 	}
 }
 
-func newVersionAction(creator command.LimaCmdCreator, logger flog.Logger) *versionAction {
-	return &versionAction{creator: creator, logger: logger}
+func newVersionAction(creator command.LimaCmdCreator, logger flog.Logger, stdOut io.Writer) *versionAction {
+	return &versionAction{creator: creator, logger: logger, stdOut: stdOut}
 }
 
 func (va *versionAction) runAdapter(cmd *cobra.Command, args []string) error {
-	return va.printVersion()
+	return va.run()
 }
 
-func (va *versionAction) printVersion() error {
+func (va *versionAction) run() error {
 	status, err := lima.GetVMStatus(va.creator, va.logger, limaInstanceName)
 	if (status != lima.Running) || (err != nil) {
 		fmt.Println("Finch version:", version.Version)
-		fmt.Println("Please run finch vm init to start the virtual machine")
+		fmt.Println("Please run finch vm start to start the virtual machine")
 	} else {
-
 		limaArgs := []string{"shell", limaInstanceName, "nerdctl", "version", "--format", "json"}
 		out, _ := va.creator.CreateWithoutStdio(limaArgs...).Output()
 
 		var nerdctlVersion NerdctlVersionOutput
 		err = json.Unmarshal(out, &nerdctlVersion)
 
-		var w io.Writer = os.Stdout
-
 		if err == nil {
-			fmt.Fprintf(w, "Client:\n")
-			fmt.Fprintf(w, " Version:\t%s\n", version.Version)
-			fmt.Fprintf(w, " OS/Arch:\t%s/%s\n", nerdctlVersion.Client.Os, nerdctlVersion.Client.Arch)
-			fmt.Fprintf(w, " Git commit:\t%s\n", version.GitCommit)
-			fmt.Fprintf(w, "nerdctl:\n")
-			fmt.Fprintf(w, " Version:\t%s\n", nerdctlVersion.Client.Version)
-			fmt.Fprintf(w, " Git commit:\t%s\n", nerdctlVersion.Client.GitCommit)
+			fmt.Fprintf(va.stdOut, "Client:\n")
+			fmt.Fprintf(va.stdOut, " Version:\t%s\n", version.Version)
+			fmt.Fprintf(va.stdOut, " OS/Arch:\t%s/%s\n", nerdctlVersion.Client.Os, nerdctlVersion.Client.Arch)
+			fmt.Fprintf(va.stdOut, " Git commit:\t%s\n", version.GitCommit)
+			fmt.Fprintf(va.stdOut, "nerdctl:\n")
+			fmt.Fprintf(va.stdOut, " Version:\t%s\n", nerdctlVersion.Client.Version)
+			fmt.Fprintf(va.stdOut, " Git commit:\t%s\n", nerdctlVersion.Client.GitCommit)
 			for _, compo := range nerdctlVersion.Client.Components {
-				fmt.Fprintf(w, "%s:\n", compo.Name)
-				fmt.Fprintf(w, "  Version:\t%s\n", compo.Version)
-				fmt.Fprintf(w, "  Git commit:\t%s\n", compo.Details.GitCommit)
+				fmt.Fprintf(va.stdOut, "%s:\n", compo.Name)
+				fmt.Fprintf(va.stdOut, "  Version:\t%s\n", compo.Version)
+				fmt.Fprintf(va.stdOut, "  Git commit:\t%s\n", compo.Details.GitCommit)
 			}
-			fmt.Fprintf(w, "\n")
-			fmt.Fprintf(w, "Server:\n")
+			fmt.Fprintf(va.stdOut, "\n")
+			fmt.Fprintf(va.stdOut, "Server:\n")
 			for _, compo := range nerdctlVersion.Server.Components {
-				fmt.Fprintf(w, " %s:\n", compo.Name)
-				fmt.Fprintf(w, "  Version:\t%s\n", compo.Version)
-				fmt.Fprintf(w, "  Git commit:\t%s\n", compo.Details.GitCommit)
+				fmt.Fprintf(va.stdOut, " %s:\n", compo.Name)
+				fmt.Fprintf(va.stdOut, "  Version:\t%s\n", compo.Version)
+				fmt.Fprintf(va.stdOut, "  Git commit:\t%s\n", compo.Details.GitCommit)
 			}
 		}
 	}
