@@ -9,8 +9,8 @@ on:
   push:
 
 permissions:
-  id-token: write   # This is required for requesting the JWT
-  contents: read    # This is required for actions/checkout
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
 
 env:
   CASK: finch
@@ -26,7 +26,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [[self-hosted, macos, arm64, 11.7, release], [self-hosted, macos, arm64, 12.6, release], [self-hosted, macos, arm64, 13.0, release]]
+        os:
+          [
+            [self-hosted, macos, arm64, 11.7, release],
+            [self-hosted, macos, arm64, 12.6, release],
+            [self-hosted, macos, arm64, 13.0, release],
+          ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     env:
@@ -66,13 +71,19 @@ jobs:
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
-        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh && brew uninstall --cask finch
+        run: brew uninstall --cask finch
 
   macos-amd64-test-installer:
     strategy:
       fail-fast: false
       matrix:
-        os: [[self-hosted, macos, amd64, 10.15, release], [self-hosted, macos, amd64, 11.7, release], [self-hosted, macos, amd64, 12.6, release], [self-hosted, macos, amd64, 13.0, release]]
+        os:
+          [
+            [self-hosted, macos, amd64, 10.15, release],
+            [self-hosted, macos, amd64, 11.7, release],
+            [self-hosted, macos, amd64, 12.6, release],
+            [self-hosted, macos, amd64, 13.0, release],
+          ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     env:
@@ -112,5 +123,4 @@ jobs:
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
-        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh && brew uninstall --cask finch
-
+        run: brew uninstall --cask finch
