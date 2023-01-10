@@ -12,7 +12,7 @@ linters-settings:
   lll:
     # 145 is just a lax value that does not require too much work to add this check,
     # and we don't want this to be too strict anyway.
-    line-length: 160
+    line-length: 145
     tab-width: 4
   makezero:
     always: true

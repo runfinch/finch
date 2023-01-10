@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 
 	"github.com/runfinch/finch/pkg/disk"
 
@@ -40,6 +39,7 @@ func main() {
 	}
 }
 
+//nolint: lll //Line is more than 150 character
 func xmain(logger flog.Logger, ffd path.FinchFinderDeps, fs afero.Fs, loadCfgDeps config.LoadSystemDeps, mem fmemory.Memory, stdOut io.Writer) error {
 	fp, err := path.FindFinch(ffd)
 	if err != nil {
@@ -61,7 +61,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		Short:         "Finch: open-source container development tool",
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		Version:       strings.TrimPrefix(version.Version, "v"),
+		Version:       version.Version,
 	}
 	// TODO: Decide when to forward --debug to the dependencies
 	// (e.g. nerdctl for container commands and limactl for VM commands).
