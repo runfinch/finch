@@ -10,6 +10,8 @@ import (
 	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/spf13/cobra"
 
+	"github.com/runfinch/finch/pkg/mocks"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
