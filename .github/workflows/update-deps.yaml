@@ -26,7 +26,7 @@ jobs:
       # This step fetches the latest set of released dependencies from s3 and updates the Makefile to use the same.
       - name: update dependencies url
         run: |
-          ./.github/bin/update-lima-dep.sh -b ${{ secrets.DEPENDENCY_BUCKET_NAME }}
+          ./.github/bin/update-lima-dep.sh -d ${{ secrets.DEPENDENCY_BUCKET_NAME }} -a {{ secrets.ARTIFACT_BUCKET_NAME }}
 
       - name: create PR
         uses: peter-evans/create-pull-request@v4
