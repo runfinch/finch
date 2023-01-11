@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -40,7 +41,7 @@ func newVirtualMachineCommand(
 		newStartVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fs, fp.LimaSSHPrivateKeyPath()),
 		newStopVMCommand(limaCmdCreator, logger),
 		newRemoveVMCommand(limaCmdCreator, logger),
-		newStatusVMCommand(limaCmdCreator, logger),
+		newStatusVMCommand(limaCmdCreator, logger, os.Stdout),
 		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs, fp.LimaSSHPrivateKeyPath()),
 	)
 
