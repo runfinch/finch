@@ -39,8 +39,13 @@ func main() {
 	}
 }
 
-//nolint: lll //Line is more than 150 character
-func xmain(logger flog.Logger, ffd path.FinchFinderDeps, fs afero.Fs, loadCfgDeps config.LoadSystemDeps, mem fmemory.Memory, stdOut io.Writer) error {
+func xmain(logger flog.Logger,
+	ffd path.FinchFinderDeps,
+	fs afero.Fs,
+	loadCfgDeps config.LoadSystemDeps,
+	mem fmemory.Memory,
+	stdOut io.Writer,
+) error {
 	fp, err := path.FindFinch(ffd)
 	if err != nil {
 		return fmt.Errorf("failed to find the installation path of Finch: %w", err)

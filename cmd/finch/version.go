@@ -5,6 +5,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 
@@ -73,48 +74,52 @@ func (va *versionAction) runAdapter(cmd *cobra.Command, args []string) error {
 
 func (va *versionAction) run() error {
 	status, err := lima.GetVMStatus(va.creator, va.logger, limaInstanceName)
-	//nolint: gocritic // will change to switch statement later
 	if err != nil {
-		fmt.Fprintf(va.stdOut, "Finch version:\t%s", version.Version)
-		return err
-	} else if status != lima.Running {
-		fmt.Fprintf(va.stdOut, "Finch version:\t%s", version.Version)
-	} else {
-		limaArgs := []string{"shell", limaInstanceName, "nerdctl", "version", "--format", "json"}
-		out, err := va.creator.CreateWithoutStdio(limaArgs...).Output()
-		if err != nil {
-			fmt.Fprintf(va.stdOut, "Finch version:\t%s", version.Version)
-			return err
-		}
+		va.printVersion()
+		return fmt.Errorf("failed to get VM status: %w", err)
+	}
+	if status != lima.Running {
+		va.printVersion()
+		return errors.New("detailed version info is unavailable because VM is not running")
+	}
 
-		var nerdctlVersion NerdctlVersionOutput
-		err = json.Unmarshal(out, &nerdctlVersion)
+	limaArgs := []string{"shell", limaInstanceName, "nerdctl", "version", "--format", "json"}
+	out, err := va.creator.CreateWithoutStdio(limaArgs...).Output()
+	if err != nil {
+		return fmt.Errorf("failed to create the nerdctl version command: %w", err)
+	}
 
-		if err != nil {
-			fmt.Fprintf(va.stdOut, "Finch version:\t%s", version.Version)
-			return err
-		}
+	var nerdctlVersion NerdctlVersionOutput
+	err = json.Unmarshal(out, &nerdctlVersion)
 
-		fmt.Fprintf(va.stdOut, "Client:\n")
-		fmt.Fprintf(va.stdOut, " Version:\t%s\n", version.Version)
-		fmt.Fprintf(va.stdOut, " OS/Arch:\t%s/%s\n", nerdctlVersion.Client.Os, nerdctlVersion.Client.Arch)
-		fmt.Fprintf(va.stdOut, " GitCommit:\t%s\n", version.GitCommit)
-		fmt.Fprintf(va.stdOut, "nerdctl:\n")
-		fmt.Fprintf(va.stdOut, " Version:\t%s\n", nerdctlVersion.Client.Version)
-		fmt.Fprintf(va.stdOut, " GitCommit:\t%s\n", nerdctlVersion.Client.GitCommit)
-		for _, compo := range nerdctlVersion.Client.Components {
-			fmt.Fprintf(va.stdOut, "%s:\n", compo.Name)
-			fmt.Fprintf(va.stdOut, "  Version:\t%s\n", compo.Version)
-			fmt.Fprintf(va.stdOut, "  GitCommit:\t%s\n", compo.Details.GitCommit)
-		}
-		fmt.Fprintf(va.stdOut, "\n")
-		fmt.Fprintf(va.stdOut, "Server:\n")
-		for _, compo := range nerdctlVersion.Server.Components {
-			fmt.Fprintf(va.stdOut, " %s:\n", compo.Name)
-			fmt.Fprintf(va.stdOut, "  Version:\t%s\n", compo.Version)
-			fmt.Fprintf(va.stdOut, "  GitCommit:\t%s\n", compo.Details.GitCommit)
-		}
+	if err != nil {
+		va.printVersion()
+		return fmt.Errorf("failed to JSON-unmarshal the nerdctl version output: %w", err)
+	}
+
+	fmt.Fprintf(va.stdOut, "Client:\n")
+	fmt.Fprintf(va.stdOut, " Version:\t%s\n", version.Version)
+	fmt.Fprintf(va.stdOut, " OS/Arch:\t%s/%s\n", nerdctlVersion.Client.Os, nerdctlVersion.Client.Arch)
+	fmt.Fprintf(va.stdOut, " GitCommit:\t%s\n", version.GitCommit)
+	fmt.Fprintf(va.stdOut, " nerdctl:\n")
+	fmt.Fprintf(va.stdOut, "  Version:\t%s\n", nerdctlVersion.Client.Version)
+	fmt.Fprintf(va.stdOut, "  GitCommit:\t%s\n", nerdctlVersion.Client.GitCommit)
+	for _, compo := range nerdctlVersion.Client.Components {
+		fmt.Fprintf(va.stdOut, " %s:\n", compo.Name)
+		fmt.Fprintf(va.stdOut, "  Version:\t%s\n", compo.Version)
+		fmt.Fprintf(va.stdOut, "  GitCommit:\t%s\n", compo.Details.GitCommit)
+	}
+	fmt.Fprintf(va.stdOut, "\n")
+	fmt.Fprintf(va.stdOut, "Server:\n")
+	for _, compo := range nerdctlVersion.Server.Components {
+		fmt.Fprintf(va.stdOut, " %s:\n", compo.Name)
+		fmt.Fprintf(va.stdOut, "  Version:\t%s\n", compo.Version)
+		fmt.Fprintf(va.stdOut, "  GitCommit:\t%s\n", compo.Details.GitCommit)
 	}
 
 	return nil
+}
+
+func (va *versionAction) printVersion() {
+	(fmt.Fprintf(va.stdOut, "Finch version:\t%s\n", version.Version))
 }

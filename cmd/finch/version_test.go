@@ -6,6 +6,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -15,9 +16,10 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestVersionCommand(t *testing.T) {
+func TestNewVersionCommand(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -102,15 +104,16 @@ func TestVersionAction_run(t *testing.T) {
 			},
 			postRunCheck: func(t *testing.T, stdout []byte) {
 				lines := strings.SplitAfter(string(stdout), "\n")
+				require.Len(t, lines, 19)
 
 				assert.Equal(t, lines[0], "Client:\n")
 				assert.Equal(t, lines[1], " Version:\t\n")
 				assert.Equal(t, lines[2], " OS/Arch:\tlinux/arm64\n")
 				assert.Equal(t, lines[3], " GitCommit:\t\n")
-				assert.Equal(t, lines[4], "nerdctl:\n")
-				assert.Equal(t, lines[5], " Version:\tv1.0.0\n")
-				assert.Equal(t, lines[6], " GitCommit:\tc00780a1f5b905b09812722459c54936c9e070e6\n")
-				assert.Equal(t, lines[7], "buildctl:\n")
+				assert.Equal(t, lines[4], " nerdctl:\n")
+				assert.Equal(t, lines[5], "  Version:\tv1.0.0\n")
+				assert.Equal(t, lines[6], "  GitCommit:\tc00780a1f5b905b09812722459c54936c9e070e6\n")
+				assert.Equal(t, lines[7], " buildctl:\n")
 				assert.Equal(t, lines[8], "  Version:\tv0.10.5\n")
 				assert.Equal(t, lines[9], "  GitCommit:\tbc26045116045516ff2427201abd299043eaf8f7\n")
 				assert.Equal(t, lines[10], "\n")
@@ -124,8 +127,8 @@ func TestVersionAction_run(t *testing.T) {
 			},
 		},
 		{
-			name:    "print finch version only while VM not running",
-			wantErr: nil,
+			name:    "print only finch version only while VM not running",
+			wantErr: errors.New("detailed version info is unavailable because VM is not running"),
 			cmd: &cobra.Command{
 				Use: "version",
 			},
@@ -136,14 +139,15 @@ func TestVersionAction_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 			},
 			postRunCheck: func(t *testing.T, stdout []byte) {
-				lines := strings.SplitAfter(string(stdout), "\n")
-
-				assert.Equal(t, lines[0], "Finch version:\t")
+				assert.Equal(t, string(stdout), "Finch version:\t\n")
 			},
 		},
 		{
-			name:    "print finch version if VM getting error",
-			wantErr: errors.New("get status error"),
+			name: "print only finch version if VM getting error",
+			wantErr: fmt.Errorf(
+				"failed to get VM status: %w",
+				errors.New("get status error"),
+			),
 			cmd: &cobra.Command{
 				Use: "version",
 			},
@@ -153,9 +157,7 @@ func TestVersionAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
 			},
 			postRunCheck: func(t *testing.T, stdout []byte) {
-				lines := strings.SplitAfter(string(stdout), "\n")
-
-				assert.Equal(t, lines[0], "Finch version:\t")
+				assert.Equal(t, string(stdout), "Finch version:\t\n")
 			},
 		},
 	}
