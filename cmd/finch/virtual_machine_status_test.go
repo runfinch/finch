@@ -4,6 +4,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"testing"
 
@@ -16,7 +17,7 @@ import (
 func TestNewStatusVMCommand(t *testing.T) {
 	t.Parallel()
 
-	cmd := newStatusVMCommand(nil, nil)
+	cmd := newStatusVMCommand(nil, nil, nil)
 	assert.Equal(t, cmd.Name(), "status")
 }
 
@@ -61,24 +62,25 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
+			stdout := bytes.Buffer{}
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 
 			tc.mockSvc(lcc, logger, lca, ctrl)
 
-			assert.NoError(t, newStatusVMAction(lcc, logger).runAdapter(tc.command, tc.args))
+			assert.NoError(t, newStatusVMAction(lcc, logger, &stdout).runAdapter(tc.command, tc.args))
 		})
 	}
 }
 
 func TestStatusVMAction_run(t *testing.T) {
-	t.Parallel()
+	// t.Parallel()
 
 	testCases := []struct {
-		name         string
-		wantErr      error
-		statusOutput string
-		mockSvc      func(
+		name             string
+		wantErr          error
+		wantStatusOutput string
+		mockSvc          func(
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
@@ -86,9 +88,9 @@ func TestStatusVMAction_run(t *testing.T) {
 		)
 	}{
 		{
-			name:         "running VM",
-			wantErr:      nil,
-			statusOutput: "Running",
+			name:             "running VM",
+			wantErr:          nil,
+			wantStatusOutput: "Running\n",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -102,9 +104,9 @@ func TestStatusVMAction_run(t *testing.T) {
 			},
 		},
 		{
-			name:         "stopped VM",
-			wantErr:      nil,
-			statusOutput: "Stopped",
+			name:             "stopped VM",
+			wantErr:          nil,
+			wantStatusOutput: "Stopped\n",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -118,9 +120,9 @@ func TestStatusVMAction_run(t *testing.T) {
 			},
 		},
 		{
-			name:         "nonExistent VM",
-			wantErr:      nil,
-			statusOutput: "",
+			name:             "nonExistent VM",
+			wantErr:          nil,
+			wantStatusOutput: "Nonexistent\n",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -134,8 +136,9 @@ func TestStatusVMAction_run(t *testing.T) {
 			},
 		},
 		{
-			name:    "undefined VM",
-			wantErr: errors.New("unrecognized system status"),
+			name:             "undefined VM",
+			wantErr:          errors.New("unrecognized system status"),
+			wantStatusOutput: "",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -149,8 +152,9 @@ func TestStatusVMAction_run(t *testing.T) {
 			},
 		},
 		{
-			name:    "unknown VM status",
-			wantErr: errors.New("unrecognized system status"),
+			name:             "unknown VM status",
+			wantErr:          errors.New("unrecognized system status"),
+			wantStatusOutput: "",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -164,8 +168,9 @@ func TestStatusVMAction_run(t *testing.T) {
 			},
 		},
 		{
-			name:    "status command returns an error",
-			wantErr: errors.New("get status error"),
+			name:             "status command returns an error",
+			wantErr:          errors.New("get status error"),
+			wantStatusOutput: "",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
@@ -186,13 +191,15 @@ func TestStatusVMAction_run(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
+			stdout := bytes.Buffer{}
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 
 			tc.mockSvc(lcc, logger, lca, ctrl)
 
-			err := newStatusVMAction(lcc, logger).run()
+			err := newStatusVMAction(lcc, logger, &stdout).run()
 			assert.Equal(t, err, tc.wantErr)
+			assert.Equal(t, tc.wantStatusOutput, stdout.String())
 		})
 	}
 }
