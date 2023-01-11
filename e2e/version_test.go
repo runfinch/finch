@@ -4,6 +4,9 @@
 package e2e
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
@@ -16,14 +19,27 @@ import (
 var testVersion = func(o *option.Option) {
 	ginkgo.Describe("Check finch version", func() {
 		ginkgo.It("Should print finch version information", func() {
-			versionInfo := command.StdoutStr(o, "version")
-			gomega.Expect(versionInfo).Should(gomega.ContainSubstring(version.Version))
-			gomega.Expect(versionInfo).Should(gomega.ContainSubstring(version.GitCommit))
-		})
+			// StdoutStr is not used because it trims both leading and trailing spaces,
+			// while we want an exact match here.
+			gomega.Expect(string(command.StdOut(o, "version"))).Should(gomega.MatchRegexp(fmt.Sprintf(`Client:
+ Version:	%s
+ OS\/Arch:	[A-Za-z0-9]+\/[A-Za-z0-9]+
+ GitCommit:	%s
+ nerdctl:
+  Version:	v[0-9]+\.[0-9]+\.[0-9]+
+  GitCommit:	[a-z0-9]{40}
+ buildctl:
+  Version:	v[0-9]+\.[0-9]+\.[0-9]+
+  GitCommit:	[a-z0-9]{40}
 
-		ginkgo.It("Should print finch version information", func() {
-			//nolint: lll // Version output format is larger than 500 character
-			gomega.Expect(command.StdoutStr(o, "version")).Should(gomega.MatchRegexp("Client:\\s+Version:\\s+v([0-9]+(\\.[0-9]+)+)-[0-9]+-[A-Za-z0-9]+\\s+OS/Arch:\\s+[A-Za-z0-9]+/[A-Za-z0-9]+\\s+GitCommit:\\s+[A-Za-z0-9]+\\s+nerdctl:\\s+Version:\\s+v([0-9]+(\\.[0-9]+)+)\\s+GitCommit:\\s+[A-Za-z0-9]+\\s+buildctl:\\s+Version:\\s+v([0-9]+(\\.[0-9]+)+)\\s+GitCommit:\\s+[A-Za-z0-9]+\\s+Server:\\s+containerd:\\s+Version:\\s+v([0-9]+(\\.[0-9]+)+)\\s+GitCommit:\\s+[A-Za-z0-9]+\\s+runc:\\s+Version:\\s+([A-Za-z0-9]+(\\.[A-Za-z0-9]+)+)\\s+GitCommit:\\s+v([0-9]+(\\.[0-9]+)+)-[0-9]+-[A-Za-z0-9]+"))
+Server:
+ containerd:
+  Version:	v[0-9]+\.[0-9]+\.[0-9]+
+  GitCommit:	[a-z0-9]{40}
+ runc:
+  Version:	[0-9]+\.[0-9]+\.[0-9]+
+  GitCommit:	v[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+-g[a-z0-9]{8})?
+`, strings.ReplaceAll(version.Version, ".", "\\."), version.GitCommit)))
 		})
 	})
 }
