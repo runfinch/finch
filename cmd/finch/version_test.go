@@ -124,6 +124,7 @@ func TestVersionAction_run(t *testing.T) {
 				assert.Equal(t, lines[15], " runc:\n")
 				assert.Equal(t, lines[16], "  Version:\t1.1.4\n")
 				assert.Equal(t, lines[17], "  GitCommit:\tv1.1.4-0-g5fd4c4d1\n")
+				assert.Equal(t, lines[18], "")
 			},
 		},
 		{
