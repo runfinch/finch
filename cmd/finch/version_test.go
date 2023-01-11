@@ -5,6 +5,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"strings"
 	"testing"
 
@@ -133,6 +134,23 @@ func TestVersionAction_run(t *testing.T) {
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+			},
+			postRunCheck: func(t *testing.T, stdout []byte) {
+				lines := strings.SplitAfter(string(stdout), "\n")
+
+				assert.Equal(t, lines[0], "Finch version:\t")
+			},
+		},
+		{
+			name:    "print finch version if VM getting error",
+			wantErr: errors.New("get status error"),
+			cmd: &cobra.Command{
+				Use: "version",
+			},
+			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
 			},
 			postRunCheck: func(t *testing.T, stdout []byte) {
 				lines := strings.SplitAfter(string(stdout), "\n")
