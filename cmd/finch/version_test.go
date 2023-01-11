@@ -99,8 +99,42 @@ func TestVersionAction_run(t *testing.T) {
 
 				command := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("shell", limaInstanceName, "nerdctl", "version", "--format", "json").Return(command)
-				//nolint: lll	// Version output format is larger than 500
-				command.EXPECT().Output().Return([]byte(`{"Client":{"Version":"v1.0.0","GitCommit":"c00780a1f5b905b09812722459c54936c9e070e6","GoVersion":"go1.19.2","Os":"linux","Arch":"arm64","Components":[{"Name":"buildctl","Version":"v0.10.5","Details":{"GitCommit":"bc26045116045516ff2427201abd299043eaf8f7"}}]},"Server":{"Components":[{"Name":"containerd","Version":"v1.6.8","Details":{"GitCommit":"9cd3357b7fd7218e4aec3eae239db1f68a5a6ec6"}},{"Name":"runc","Version":"1.1.4","Details":{"GitCommit":"v1.1.4-0-g5fd4c4d1"}}]}}`), nil)
+				command.EXPECT().Output().Return([]byte(`{
+					"Client":{
+						"Version":"v1.0.0",
+						"GitCommit":"c00780a1f5b905b09812722459c54936c9e070e6",
+						"GoVersion":"go1.19.2",
+						"Os":"linux",
+						"Arch":"arm64",
+						"Components":[
+							{
+								"Name":"buildctl",
+								"Version":"v0.10.5",
+								"Details":{
+									"GitCommit":"bc26045116045516ff2427201abd299043eaf8f7"
+								}
+							}
+						]
+					},
+					"Server":{
+						"Components":[
+							{
+								"Name":"containerd",
+								"Version":"v1.6.8",
+								"Details":{
+									"GitCommit":"9cd3357b7fd7218e4aec3eae239db1f68a5a6ec6"
+								}
+							},
+							{
+								"Name":"runc",
+								"Version":"1.1.4",
+								"Details":{
+									"GitCommit":"v1.1.4-0-g5fd4c4d1"
+								}
+							}
+						]
+					}
+				}`), nil)
 			},
 			postRunCheck: func(t *testing.T, stdout []byte) {
 				lines := strings.SplitAfter(string(stdout), "\n")
