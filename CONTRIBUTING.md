@@ -114,9 +114,11 @@ For more details, see [`.golangci.yaml`](./.golangci.yaml) and the `lint` target
 ### Install dependencies
 
 Before building, install dependencies required to build the project binaries.
+
 ```sh
 brew install go lz4 automake autoconf libtool
 ```
+
 Note that you may need to add the following to the `.profile` file of your shell if `which libtool` does not return the one installed by Homebrew. The one that comes with macOS is too old for our use.
 
 ```sh
