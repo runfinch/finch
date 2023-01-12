@@ -15,7 +15,7 @@ permissions:
 env:
   CASK: finch
   FORK_REPO: https://github.com/AnqiPang/homebrew-cask.git
-  FORK_BRANCH: v0.1.1
+  FORK_BRANCH: v0.2.0
 
 jobs:
   # TODO: fix the arm64 test installer.
@@ -111,6 +111,7 @@ jobs:
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
+          git remote rm fork-repo || true
           git remote add fork-repo ${{ env.FORK_REPO }}
           git fetch fork-repo
           git checkout -B ${{ env.FORK_BRANCH }} fork-repo/${{ env.FORK_BRANCH }}
