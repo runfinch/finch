@@ -101,7 +101,7 @@ This is needed because we use `Loose` instead of `Strict` regarding [branch prot
 
 ## Development Environment Setup
 
-This section describes how one can develop Finch CLI locally on macOS, build it, and then run it to test out the changes. The design ensures that the local development environment is isolated from the installation (i.e., we should not need to run `make install` to do local development).
+This section describes how one can develop Finch CLI locally on macOS, build it, and then run it to test out the changes. The design ensures that the local development environment is isolated from the installation (i.e., we should not need to run `make install` to do local development). Please note that this section uses [Homebrew](https://brew.sh/) to install dependencies.
 
 ### Linter
 
@@ -110,6 +110,20 @@ We use [golangci-lint](https://github.com/golangci/golangci-lint).
 To integrate it into your IDE, please check out the [official documentation](https://golangci-lint.run/usage/integrations/).
 
 For more details, see [`.golangci.yaml`](./.golangci.yaml) and the `lint` target in [`Makefile`](./Makefile).
+
+### Install dependencies
+
+Before building, install dependencies required to build the project binaries.
+
+```sh
+brew install go lz4 automake autoconf libtool
+```
+
+Note that you may need to add the following to the `.profile` file of your shell if `which libtool` does not return the one installed by Homebrew. The one that comes with macOS is too old for our use.
+
+```sh
+export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+```
 
 ### Build
 
