@@ -58,6 +58,7 @@ jobs:
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
+          git remote rm fork-repo || true
           git remote add fork-repo ${{ env.FORK_REPO }}
           git fetch fork-repo
           git checkout -B ${{ env.FORK_BRANCH }} fork-repo/${{ env.FORK_BRANCH }}
