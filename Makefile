@@ -243,9 +243,13 @@ test-unit:
 	go test $(shell go list ./... | grep -v e2e) -shuffle on -race
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
+#
+# Container tests have to be run before VM tests according to the current code setup.
+# For more details, see the package-level comment of the e2e package.
 .PHONY: test-e2e
 test-e2e:
-	go test -ldflags $(LDFLAGS) -timeout 60m ./e2e/... -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/container -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
 
 .PHONY: gen-code
 # Since different projects may have different versions of tool binaries,
