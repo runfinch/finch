@@ -73,13 +73,19 @@ func (va *versionAction) runAdapter(cmd *cobra.Command, args []string) error {
 }
 
 func (va *versionAction) run() error {
+	if err := va.printVersion(); err != nil {
+		fmt.Fprintf(va.stdOut, "Finch version:\t%s\n", version.Version)
+		return err
+	}
+	return nil
+}
+
+func (va *versionAction) printVersion() error {
 	status, err := lima.GetVMStatus(va.creator, va.logger, limaInstanceName)
 	if err != nil {
-		va.printVersion()
 		return fmt.Errorf("failed to get VM status: %w", err)
 	}
 	if status != lima.Running {
-		va.printVersion()
 		return errors.New("detailed version info is unavailable because VM is not running")
 	}
 
@@ -91,9 +97,7 @@ func (va *versionAction) run() error {
 
 	var nerdctlVersion NerdctlVersionOutput
 	err = json.Unmarshal(out, &nerdctlVersion)
-
 	if err != nil {
-		va.printVersion()
 		return fmt.Errorf("failed to JSON-unmarshal the nerdctl version output: %w", err)
 	}
 
@@ -118,8 +122,4 @@ func (va *versionAction) run() error {
 	}
 
 	return nil
-}
-
-func (va *versionAction) printVersion() {
-	(fmt.Fprintf(va.stdOut, "Finch version:\t%s\n", version.Version))
 }
