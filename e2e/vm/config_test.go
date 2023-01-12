@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package e2e
+package vm
 
 import (
 	"errors"
@@ -18,11 +18,13 @@ import (
 	"github.com/runfinch/common-tests/option"
 	"github.com/xorcare/pointer"
 	"gopkg.in/yaml.v3"
+
+	"github.com/runfinch/finch/e2e"
 )
 
 var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
 
-const defaultLimaConfigFilePath = "../_output/lima/data/_config/override.yaml"
+const defaultLimaConfigFilePath = "../../_output/lima/data/_config/override.yaml"
 
 func readFile(filePath string) []byte {
 	out, err := os.ReadFile(filepath.Clean(filePath))
@@ -65,11 +67,11 @@ var testConfig = func(o *option.Option, installed bool) {
 			origFinchCfg := readFile(finchConfigFilePath)
 			limaConfigFilePath = defaultLimaConfigFilePath
 			if installed {
-				path, err := exec.LookPath(installedTestSubject)
+				path, err := exec.LookPath(e2e.InstalledTestSubject)
 				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 				realFinchPath, err := filepath.EvalSymlinks(path)
 				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-				limaConfigFilePath = filepath.Join(realFinchPath, "/../../lima/data/_config/override.yaml")
+				limaConfigFilePath = filepath.Join(realFinchPath, "../../lima/data/_config/override.yaml")
 			}
 			origLimaCfg := readFile(limaConfigFilePath)
 
