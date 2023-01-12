@@ -5,6 +5,7 @@
 package path
 
 import (
+	"crypto/sha256"
 	"fmt"
 
 	"github.com/runfinch/finch/pkg/system"
@@ -20,13 +21,18 @@ func (Finch) ConfigFilePath(homeDir string) string {
 
 // UserDataDiskPath returns the path to the permanent storage location of the Finch
 // user data disk.
-func (Finch) UserDataDiskPath(homeDir string) string {
-	return fmt.Sprintf("%s/.finch/.datadisk", homeDir)
+func (w Finch) UserDataDiskPath(homeDir string) string {
+	return fmt.Sprintf("%s/.finch/.disks/%s", homeDir, w.generatePathSum())
 }
 
 // LimaHomePath returns the path that should be set to LIMA_HOME for Finch.
 func (w Finch) LimaHomePath() string {
 	return fmt.Sprintf("%s/lima/data", w)
+}
+
+// LimaInstancePath returns the path to the Lima instance of the Finch VM.
+func (w Finch) LimaInstancePath() string {
+	return fmt.Sprintf("%s/lima/data/finch", w)
 }
 
 // LimactlPath returns the limactl path.
@@ -58,6 +64,11 @@ func (w Finch) LimaOverrideConfigPath() string {
 // LimaSSHPrivateKeyPath returns the lima user key path.
 func (w Finch) LimaSSHPrivateKeyPath() string {
 	return fmt.Sprintf("%s/lima/data/_config/user", w)
+}
+
+func (w Finch) generatePathSum() string {
+	sum := sha256.Sum256([]byte(w.LimaInstancePath()))
+	return fmt.Sprintf("%x", sum[:8])
 }
 
 // FinchFinderDeps provides all the dependencies FindFinch needs to find Finch.
