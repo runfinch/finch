@@ -51,6 +51,7 @@ jobs:
           if pgrep '^socket_vmnet'; then
             sudo pkill '^socket_vmnet'
           fi
+          brew uninstall --cask finch || true
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -103,7 +104,8 @@ jobs:
           fi
           if pgrep '^socket_vmnet'; then
             sudo pkill '^socket_vmnet'
-          fi
+          fi 
+          brew uninstall --cask finch || true
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
