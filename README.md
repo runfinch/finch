@@ -56,7 +56,7 @@ If you're new to containers, that is so exciting! Give the command above a try a
 To build an image, try a quick example from the finch client repository.
 
 ```sh
-git clone git@github.com:runfinch/finch.git
+git clone https://github.com/runfinch/finch.git
 cd finch/contrib/hello-finch
 finch build . -t hello-finch
 ..
