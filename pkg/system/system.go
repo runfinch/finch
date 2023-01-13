@@ -47,6 +47,11 @@ type EnvGetter interface {
 	Env(key string) string
 }
 
+// EnvChecker mocks out os.LookupEnv.
+type EnvChecker interface {
+	LookupEnv(key string) (string, bool)
+}
+
 // StdinGetter mocks out os.Stdin.
 type StdinGetter interface {
 	Stdin() *os.File

@@ -38,6 +38,10 @@ func (s *StdLib) Env(key string) string {
 	return os.Getenv(key)
 }
 
+func (s *StdLib) LookupEnv(key string) (string, bool) {
+	return os.LookupEnv(key)
+}
+
 func (s *StdLib) Stdin() *os.File {
 	return os.Stdin
 }
