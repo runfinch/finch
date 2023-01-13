@@ -53,13 +53,13 @@ finch run --rm public.ecr.aws/finch/hello-finch
 
 If you're new to containers, that is so exciting! Give the command above a try after you've installed and initialized Finch. The `run` command pulls an image locally if it's not already present, and then creates and runs a container for you. Note the handy `--rm` option will delete the container instance once it's done executing.
 
-To build an image, try a quick example from the finch client repository.
+To build and run a local image, try a quick example from the finch client repository.
 
 ```sh
 git clone https://github.com/runfinch/finch.git
 cd finch/contrib/hello-finch
 finch build . -t hello-finch
-..
+finch run --rm hello-finch
 ```
 
 Again if you're new to containers, you just built a container image. Nice!
