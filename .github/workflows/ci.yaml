@@ -86,6 +86,10 @@ jobs:
     runs-on: ${{ matrix.os }} 
     steps:
       - uses: actions/checkout@v3
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -104,3 +108,12 @@ jobs:
           which libtool
           make
       - run: make test-e2e
+  mdlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: avto-dev/markdown-lint@v1
+        with:
+          args: '**/*.md'
+          # CHANGELOG.md is only updated by release-please bot.
+          ignore: 'CHANGELOG.md'

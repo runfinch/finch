@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package e2e
+package vm
 
 import (
 	"errors"
@@ -10,16 +10,21 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
+	"github.com/xorcare/pointer"
+	"gopkg.in/yaml.v3"
+
+	"github.com/runfinch/finch/e2e"
 )
 
 var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
 
-const defaultLimaConfigFilePath = "../_output/lima/data/_config/override.yaml"
+const defaultLimaConfigFilePath = "../../_output/lima/data/_config/override.yaml"
 
 func readFile(filePath string) []byte {
 	out, err := os.ReadFile(filepath.Clean(filePath))
@@ -38,8 +43,8 @@ func writeFile(filePath string, buf []byte) {
 func updateAndApplyConfig(o *option.Option, configBytes []byte) *gexec.Session {
 	writeFile(finchConfigFilePath, configBytes)
 
-	command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
-	return command.New(o, virtualMachineRootCmd, "start").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+	command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+	return command.New(o, virtualMachineRootCmd, "start").WithoutCheckingExitCode().WithTimeoutInSeconds(120).Run()
 }
 
 // testConfig updates the finch config file and ensures that its settings are applied properly.
@@ -62,11 +67,11 @@ var testConfig = func(o *option.Option, installed bool) {
 			origFinchCfg := readFile(finchConfigFilePath)
 			limaConfigFilePath = defaultLimaConfigFilePath
 			if installed {
-				path, err := exec.LookPath(installedTestSubject)
+				path, err := exec.LookPath(e2e.InstalledTestSubject)
 				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 				realFinchPath, err := filepath.EvalSymlinks(path)
 				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-				limaConfigFilePath = filepath.Join(realFinchPath, "/../../lima/data/_config/override.yaml")
+				limaConfigFilePath = filepath.Join(realFinchPath, "../../lima/data/_config/override.yaml")
 			}
 			origLimaCfg := readFile(limaConfigFilePath)
 
@@ -86,7 +91,12 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.ContainSubstring("cpus: 6"), gomega.ContainSubstring("memory: 4GiB")))
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
 		})
 
 		ginkgo.It("updates config values when partial config file is present", func() {
@@ -96,8 +106,12 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			// 4 CPUs is the default
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.MatchRegexp(`cpus: \d`), gomega.ContainSubstring("memory: 6GiB")))
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("6GiB"))
 		})
 
 		ginkgo.It("uses the default config values when no config file is present", func() {
@@ -107,7 +121,12 @@ var testConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
 			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(cfgBuf).Should(gomega.SatisfyAll(gomega.MatchRegexp(`cpus: \d`), gomega.MatchRegexp(`memory: \dGiB`)))
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
+			gomega.Expect(*limaCfg.Memory).Should(gomega.MatchRegexp(`\dGiB`))
 		})
 
 		ginkgo.It("fails to launch when the config file is improperly formatted", func() {
@@ -123,6 +142,29 @@ var testConfig = func(o *option.Option, installed bool) {
 		ginkgo.It("fails to launch when the config file doesn't specify enough memory", func() {
 			startCmdSession := updateAndApplyConfig(o, []byte("memory: 0GiB"))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(1))
+		})
+
+		ginkgo.It("updates config values when a config file is present with additional directories", func() {
+			startCmdSession := updateAndApplyConfig(o, []byte(`memory: 4GiB
+cpus: 6
+additional_directories:
+    - path: /Volumes
+    - path: /tmp/workspace`))
+			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
+
+			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
+			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
+			gomega.Expect(len(limaCfg.Mounts)).Should(gomega.Equal(2))
+			gomega.Expect(limaCfg.Mounts[0].Location).Should(gomega.Equal("/Volumes"))
+			gomega.Expect(limaCfg.Mounts[0].Writable).Should(gomega.Equal(pointer.Bool(true)))
+			gomega.Expect(limaCfg.Mounts[1].Location).Should(gomega.Equal("/tmp/workspace"))
+			gomega.Expect(limaCfg.Mounts[1].Writable).Should(gomega.Equal(pointer.Bool(true)))
 		})
 	})
 }

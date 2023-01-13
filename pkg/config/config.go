@@ -22,10 +22,19 @@ import (
 	"github.com/runfinch/finch/pkg/system"
 )
 
+// AdditionalDirectory represents the additional directory used in Finch config.
+type AdditionalDirectory struct {
+	Path *string `yaml:"path"`
+}
+
 // Finch represents the configuration file for Finch CLI.
 type Finch struct {
 	CPUs   *int    `yaml:"cpus"`
 	Memory *string `yaml:"memory"`
+	// AdditionalDirectories are the work directories that are not supported by default. In macOS, only home directory is supported by default.
+	// For example, if you want to mount a directory into a container, and that directory is not under your home directory,
+	// then you'll need to specify this field to add that directory or any ascendant of it as a work directory.
+	AdditionalDirectories []AdditionalDirectory `yaml:"additional_directories,omitempty"`
 }
 
 // Nerdctl is a copy from github.com/containerd/nerdctl/cmd/nerdctl/main.go
@@ -114,7 +123,7 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 
 	var cfg Finch
 	if err := yaml.Unmarshal(b, &cfg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config file, using default values: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
 	}
 
 	defCfg := applyDefaults(&cfg, systemDeps, mem)

@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package e2e
+package vm
 
 import (
 	"github.com/onsi/ginkgo/v2"
@@ -9,7 +9,7 @@ import (
 	"github.com/runfinch/common-tests/option"
 )
 
-var testVirtualMachine = func(o *option.Option) {
+var testVMLifecycle = func(o *option.Option) {
 	// These tests are run in serial because we only define one virtual machine instance.
 	ginkgo.Describe("virtual machine lifecycle", ginkgo.Serial, func() {
 		ginkgo.When("the virtual machine is in running status", func() {

@@ -17,11 +17,9 @@
   - [Sign Your Commits](#sign-your-commits)
     - [DCO](#dco)
   - [Pull Request Checklist](#pull-request-checklist)
-    - [Build](#build-1)
-    - [Lint](#lint)
     - [Testing](#testing)
       - [Unit Testing - Parallel by Default](#unit-testing---parallel-by-default)
-      - [E2E Testing](#e2e-testing-1)
+      - [E2E Testing Guidelines](#e2e-testing-guidelines)
     - [Go File Naming](#go-file-naming)
 
 Welcome! We are glad that you want to contribute to our project! 💖
@@ -29,9 +27,9 @@ Welcome! We are glad that you want to contribute to our project! 💖
 As you get started, you are in the best position to give us feedback on areas of
 our project that we need help with including:
 
-* Problems found during setting up a new developer environment
-* Gaps in our Quickstart Guide or documentation
-* Bugs in our automation scripts
+- Problems found during setting up a new developer environment
+- Gaps in our Quickstart Guide or documentation
+- Bugs in our automation scripts
 
 If anything doesn't make sense, or doesn't work when you run it, please open a
 bug report and let us know!
@@ -58,13 +56,13 @@ Maintainers are established contributors who are responsible for the entire proj
 
 We welcome many different types of contributions including:
 
-* New features
-* Builds, CI/CD
-* Bug fixes
-* Documentation
-* Issue Triage
-* Communications / Social Media / Blog Posts
-* Release management
+- New features
+- Builds, CI/CD
+- Bug fixes
+- Documentation
+- Issue Triage
+- Communications / Social Media / Blog Posts
+- Release management
 
 ## Find an Issue
 
@@ -103,7 +101,7 @@ This is needed because we use `Loose` instead of `Strict` regarding [branch prot
 
 ## Development Environment Setup
 
-This section describes how one can develop Finch CLI locally on macOS, build it, and then run it to test out the changes. The design ensures that the local development environment is isolated from the installation (i.e., we should not need to run `make install` to do local development).
+This section describes how one can develop Finch CLI locally on macOS, build it, and then run it to test out the changes. The design ensures that the local development environment is isolated from the installation (i.e., we should not need to run `make install` to do local development). Please note that this section uses [Homebrew](https://brew.sh/) to install dependencies.
 
 ### Linter
 
@@ -113,19 +111,32 @@ To integrate it into your IDE, please check out the [official documentation](htt
 
 For more details, see [`.golangci.yaml`](./.golangci.yaml) and the `lint` target in [`Makefile`](./Makefile).
 
+### Install dependencies
+
+Before building, install dependencies required to build the project binaries.
+
+```sh
+brew install go lz4 automake autoconf libtool
+```
+
+Note that you may need to add the following to the `.profile` file of your shell if `which libtool` does not return the one installed by Homebrew. The one that comes with macOS is too old for our use.
+
+```sh
+export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+```
+
 ### Build
 
 After cloning the repo, run `make` to build the binary.
 
 The binary in _output can be directly used. E.g. initializing the vm and display the version
-```
-./_output/bin/finch vm init
 
+```sh
+./_output/bin/finch vm init
 ./_output/bin/finch version
 ```
 
 You can run `make install` to make finch binary globally accessible.
-
 
 ### Unit Testing
 
@@ -135,12 +146,12 @@ Ideally each go file should have a test file ending with `_test.go`, and we shou
 
 To check unit test coverage, run `make coverage` under root finch-cli root directory.
 
-
 ### E2E Testing
 
 Run these steps at the first time of running e2e tests
 
 VM instance is not expected to exist before running e2e tests, please make sure to remove it before going into next step:
+
 ```sh
 ./_output/bin/finch vm stop
 ./_output/bin/finch vm remove
@@ -148,10 +159,10 @@ VM instance is not expected to exist before running e2e tests, please make sure 
 
 To run e2e test locally, please run `make test-e2e`. Please make sure to run the e2e tests or add new e2e tests before pushing the changes.
 
-
 ## Sign Your Commits
 
 ### DCO
+
 Licensing is important to open source projects. It provides some assurances that
 the software will continue to be available based under the terms that the
 author(s) desired. We require that contributors sign off on commits submitted to
@@ -162,33 +173,37 @@ have the right to contribute the code you are submitting to the project.
 You sign-off by adding the following to your commit messages. Your sign-off must
 match the git user and email associated with the commit.
 
-    This is my commit message
+```text
+This is my commit message
 
-    Signed-off-by: Your Name <your.name@example.com>
+Signed-off-by: Your Name <your.name@example.com>
+```
 
 Git has a `-s` command line option to do this automatically:
 
-    git commit -s -m 'This is my commit message'
+```sh
+git commit -s -m 'This is my commit message'
+```
 
 If you forgot to do this and have not yet pushed your changes to the remote
 repository, you can amend your commit with the sign-off by running
 
-    git commit --amend -s
+```sh
+git commit --amend -s --no-edit
+```
 
 ## Pull Request Checklist
 
-When you submit your pull request, or you push new commits to it, our automated
-systems will run some checks on your new code. We require that your pull request
-passes these checks, but we also have more criteria than just that before we can
-accept and merge it. We recommend that you check the following things locally
+When you submit your pull request, or you push new commits to it, our automated systems will run some checks on your new code. We require that your pull request passes these checks, and you can run the checks locally to iterate faster (you may need to [configure the environment](#development-environment-setup) first):
+
+```sh
+make test-unit
+make test-e2e
+make lint
+```
+
+We also have more criteria than just that before we can accept and merge it. We recommend that you check the following things locally
 before you submit your code:
-
-### Build
-
-```make```
-
-### Lint
-```make lint```
 
 ### Testing
 
@@ -207,7 +222,7 @@ Rationale:
 
 Keeping a good unit test coverage will be part of pull request review. You can run `make coverage` to self-check the coverage.
 
-#### E2E Testing
+#### E2E Testing Guidelines
 
 ```make test-e2e```
 
@@ -222,6 +237,8 @@ If the e2e test scenarios you are going to contribute
 implement them in common-tests repo and then import them in [`./e2e/e2e_test.go`](./e2e/e2e_test.go) in finch CLI and finch-core. The detailed flow can be found [here](https://github.com/runfinch/common-tests#sync-between-tests-and-code).
 
 Otherwise, it means that the scenarios are specific to finch CLI (e.g., version, VM lifecycle, etc.), and you should implement them under `./e2e/` (e.g., `./e2e/version.go`) and import them in `./e2e/e2e_test.go`.
+
+To save time while developing e2e tests, use the [`Focus`](https://onsi.github.io/ginkgo/#focused-specs) decorator while running tests, but be sure to remove it before PR-ing your changes.
 
 ### Go File Naming
 
