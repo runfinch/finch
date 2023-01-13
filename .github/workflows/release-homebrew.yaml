@@ -37,9 +37,6 @@ jobs:
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
-      - uses: actions/setup-go@v2
-        with:
-          go-version: 1.19.x
       - uses: actions/checkout@v2
       - name: Clean up previous files
         run: |
@@ -91,9 +88,6 @@ jobs:
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
-      - uses: actions/setup-go@v3
-        with:
-          go-version: 1.19.x
       - uses: actions/checkout@v3
       - name: Clean up previous files
         run: |
