@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"os"
 	"path"
 
 	limaStore "github.com/lima-vm/lima/pkg/store"
@@ -121,7 +122,15 @@ func (m *userDataDiskManager) createLimaDisk() error {
 func (m *userDataDiskManager) attachPersistentDiskToLimaDisk() error {
 	limaPath := fmt.Sprintf("%s/_disks/%s/datadisk", m.finch.LimaHomePath(), diskName)
 	if !m.persistentDiskExists() {
-		err := m.fs.Rename(limaPath, m.finch.UserDataDiskPath(m.homeDir))
+		disksDir := path.Dir(m.finch.UserDataDiskPath(m.homeDir))
+		_, err := m.fs.Stat(disksDir)
+		if os.IsNotExist(err) {
+			err := m.fs.MkdirAll(disksDir, 0o755)
+			if err != nil {
+				return fmt.Errorf("could not create persistent disk directory: %w", err)
+			}
+		}
+		err = m.fs.Rename(limaPath, m.finch.UserDataDiskPath(m.homeDir))
 		if err != nil {
 			return err
 		}

@@ -58,6 +58,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				cmd.EXPECT().Run().Return(nil)
 
 				dfs.EXPECT().Stat(finch.UserDataDiskPath(homeDir)).Return(nil, fs.ErrNotExist)
+				dfs.EXPECT().Stat(path.Dir(finch.UserDataDiskPath(homeDir))).Return(nil, nil)
 				dfs.EXPECT().Rename(limaPath, finch.UserDataDiskPath(homeDir)).Return(nil)
 
 				dfs.EXPECT().Stat(limaPath).Return(nil, fs.ErrNotExist)
@@ -89,6 +90,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				dfs.EXPECT().ReadlinkIfPossible(limaPath).Return("", nil)
 
 				dfs.EXPECT().Stat(finch.UserDataDiskPath(homeDir)).Return(nil, fs.ErrNotExist)
+				dfs.EXPECT().Stat(path.Dir(finch.UserDataDiskPath(homeDir))).Return(nil, nil)
 				dfs.EXPECT().Rename(limaPath, finch.UserDataDiskPath(homeDir)).Return(nil)
 
 				dfs.EXPECT().Stat(limaPath).Return(nil, fs.ErrNotExist)
