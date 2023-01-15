@@ -20,14 +20,14 @@ VDE_INSTALL ?= /opt/finch
 UNAME := $(shell uname -m)
 ARCH ?= $(UNAME)
 SUPPORTED_ARCH = false
-CORE_VERSION ?= 0.1.1
-CORE_URL ?= https://artifact.runfinch.com/finch-core-$(CORE_VERSION).tar.gz
+CORE_URL ?= https://artifact.runfinch.com/finch-core-0.1.1.tar.gz
 CORE_FILENAME := finch-core
 CORE_OUTDIR := $(CURDIR)/$(CORE_FILENAME)/_output
 CORE_VDE_PREFIX ?= $(OUTDIR)/dependencies/vde/opt/finch
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
-LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION)"
+GITCOMMIT := $(shell git rev-parse HEAD)$(shell if ! git diff --no-ext-diff --quiet --exit-code; then echo .m; fi)
+LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
 
 .DEFAULT_GOAL := all
 
@@ -38,13 +38,13 @@ ifneq (,$(findstring arm64,$(ARCH)))
 	LIMA_ARCH = aarch64
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/aarch64/images/
 	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-37-1.7.aarch64.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1669846015.tar.gz
+	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1673290784.tar.gz
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/
 	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-37-1.7.x86_64.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1669846001.tar.gz
+	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1673290501.tar.gz
 endif
 
 FINCH_OS_HASH := `shasum -a 256 $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
@@ -243,9 +243,13 @@ test-unit:
 	go test $(shell go list ./... | grep -v e2e) -shuffle on -race
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
+#
+# Container tests have to be run before VM tests according to the current code setup.
+# For more details, see the package-level comment of the e2e package.
 .PHONY: test-e2e
 test-e2e:
-	go test -ldflags $(LDFLAGS) -timeout 60m ./e2e/... -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/container -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
 
 .PHONY: gen-code
 # Since different projects may have different versions of tool binaries,

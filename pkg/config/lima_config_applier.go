@@ -8,6 +8,7 @@ import (
 
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
+	"github.com/xorcare/pointer"
 	"gopkg.in/yaml.v3"
 )
 
@@ -43,6 +44,12 @@ func (lca *limaConfigApplier) Apply() error {
 
 	limaCfg.CPUs = lca.cfg.CPUs
 	limaCfg.Memory = lca.cfg.Memory
+	limaCfg.Mounts = []limayaml.Mount{}
+	for _, ad := range lca.cfg.AdditionalDirectories {
+		limaCfg.Mounts = append(limaCfg.Mounts, limayaml.Mount{
+			Location: *ad.Path, Writable: pointer.Bool(true),
+		})
+	}
 
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {

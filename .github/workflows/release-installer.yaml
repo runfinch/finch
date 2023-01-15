@@ -57,11 +57,7 @@ jobs:
         run: |
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
       - name: Silently install
-        # Rosetta is only needed in arm64. Currently the installer command will fail to install without Rosetta.
-        # TODO: Remove Rosetta command when the installer is fixed. (https://github.com/runfinch/finch/issues/105)
-        run: |
-          echo 'A' | sudo softwareupdate --install-rosetta
-          sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
+        run: sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall

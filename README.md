@@ -86,26 +86,25 @@ We have plans to create some more documentation and tutorials here geared toward
 
 The installer will install Finch and its dependencies in its own area of your system, and it can happily coexist with other container development tools. Finch is a new project and not meant to be a direct drop-in replacement for other tools. Therefore, we don't recommend aliasing or linking other command names to `finch`.
 
-### A note on volume mounts
-
-The `run` command has a `-v` option for volume mounts. See `Volume flags` under [nerdctl run](https://github.com/containerd/nerdctl#whale-blue_square-nerdctl-run) for more details, if you're not familiar. This allows you to mount directories from your local host into your container. One thing to note with Finch: currently, only locations within `$HOME` are supported by the volume mount `-v` option. Specifying directories outside `$HOME` may cause unexpected behavior. Support for other mount locations will be added soon.
-
 ### Configuration
 
 Finch has a simple and extensible configuration. A configuration file at `${HOME}/.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
 
-Currently, the options are:
-
-* CPUs [int]: the amount of vCPU to dedicate to the virtual machine
-* Memory [string]: the amount of memory to dedicate to the virtual machine
-
-For a full list of configuration options, check [the struct here](pkg/config/config.go#L25).
+For a full list of configuration options, check [the struct here](pkg/config/config.go#L30).
 
 An example `finch.yaml` looks like this:
 
 ```yaml
+# CPUs: the amount of vCPU to dedicate to the virtual machine. (required)
 cpus: 4
+# Memory: the amount of memory to dedicate to the virtual machine. (required)
 memory: 4GiB
+# AdditionalDirectories: the work directories that are not supported by default. In macOS, only home directory is supported by default. 
+# For example, if you want to mount a directory into a container, and that directory is not under your home directory, 
+# then you'll need to specify this field to add that directory or any ascendant of it as a work directory. (optional)
+additional_directories:
+  # the path of each additional directory.
+  - path: /Volumes
 ```
 
 ## What's next?

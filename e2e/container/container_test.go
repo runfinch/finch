@@ -1,56 +1,35 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package e2e
+// Package container runs tests related to container development.
+package container
 
 import (
-	"flag"
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
-	"github.com/runfinch/common-tests/option"
 	"github.com/runfinch/common-tests/tests"
+
+	"github.com/runfinch/finch/e2e"
 )
 
-const (
-	virtualMachineRootCmd = "vm"
-	installedTestSubject  = "finch"
-)
+//nolint:paralleltest // TestContainer is like TestMain for the container-related tests.
+func TestContainer(t *testing.T) {
+	const description = "Finch Container Development E2E Tests"
 
-var installed = flag.Bool("installed", false, "the flag to show whether the tests are ran against installed application")
-
-//nolint:paralleltest // TestE2e is like TestMain for our e2e tests.
-func TestE2e(t *testing.T) {
-	description := "Finch CLI e2e Tests"
-
-	wd, err := os.Getwd()
+	o, err := e2e.CreateOption()
 	if err != nil {
-		t.Fatalf("failed to get the current working directory: %v", err)
-	}
-	subject := filepath.Join(wd, "../_output/bin/finch")
-	if *installed {
-		subject = installedTestSubject
+		t.Fatal(err)
 	}
 
-	o, err := option.New([]string{subject})
-	if err != nil {
-		t.Fatalf("failed to initialize a testing option: %v", err)
-	}
-
+	// The VM should be cleaned up in SynchronizedAfterSuite of e2e/vm.
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
 		command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
 		tests.SetupLocalRegistry(o)
 		return nil
 	}, func(bytes []byte) {})
-
-	ginkgo.SynchronizedAfterSuite(func() {
-		command.New(o, "vm", "stop").WithTimeoutInSeconds(60).Run()
-		command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()
-	}, func() {})
 
 	ginkgo.Describe(description, func() {
 		tests.Pull(o)
@@ -59,6 +38,7 @@ func TestE2e(t *testing.T) {
 		tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified})
 		tests.Start(o)
 		tests.Stop(o)
+		tests.Cp(o)
 		tests.Tag(o)
 		tests.Save(o)
 		tests.Load(o)
@@ -95,11 +75,6 @@ func TestE2e(t *testing.T) {
 		tests.NetworkInspect(o)
 		tests.NetworkLs(o)
 		tests.NetworkRm(o)
-		// When running tests in serial sequence and using the local registry, testVirtualMachine needs to run after generic tests finished
-		// since it will remove the VM instance thus removing the local registry.
-		testVirtualMachine(o)
-		testConfig(o, *installed)
-		testVersion(o)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)

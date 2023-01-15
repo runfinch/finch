@@ -6,6 +6,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/runfinch/finch/pkg/disk"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
@@ -24,20 +26,22 @@ func newStartVMCommand(
 	nca config.NerdctlConfigApplier,
 	fs afero.Fs,
 	privateKeyPath string,
+	dm disk.UserDataDiskManager,
 ) *cobra.Command {
 	return &cobra.Command{
 		Use:      "start",
 		Short:    "Start the virtual machine",
-		RunE:     newStartVMAction(lcc, logger, optionalDepGroups, lca).runAdapter,
+		RunE:     newStartVMAction(lcc, logger, optionalDepGroups, lca, dm).runAdapter,
 		PostRunE: newPostVMStartInitAction(logger, lcc, fs, privateKeyPath, nca).runAdapter,
 	}
 }
 
 type startVMAction struct {
-	creator           command.LimaCmdCreator
-	logger            flog.Logger
-	optionalDepGroups []*dependency.Group
-	limaConfigApplier config.LimaConfigApplier
+	creator             command.LimaCmdCreator
+	logger              flog.Logger
+	optionalDepGroups   []*dependency.Group
+	limaConfigApplier   config.LimaConfigApplier
+	userDataDiskManager disk.UserDataDiskManager
 }
 
 func newStartVMAction(
@@ -45,8 +49,15 @@ func newStartVMAction(
 	logger flog.Logger,
 	optionalDepGroups []*dependency.Group,
 	lca config.LimaConfigApplier,
+	dm disk.UserDataDiskManager,
 ) *startVMAction {
-	return &startVMAction{creator: creator, logger: logger, optionalDepGroups: optionalDepGroups, limaConfigApplier: lca}
+	return &startVMAction{
+		creator:             creator,
+		logger:              logger,
+		optionalDepGroups:   optionalDepGroups,
+		limaConfigApplier:   lca,
+		userDataDiskManager: dm,
+	}
 }
 
 func (sva *startVMAction) runAdapter(cmd *cobra.Command, args []string) error {
@@ -64,6 +75,11 @@ func (sva *startVMAction) run() error {
 	}
 
 	err = sva.limaConfigApplier.Apply()
+	if err != nil {
+		return err
+	}
+
+	err = sva.userDataDiskManager.EnsureUserDataDisk()
 	if err != nil {
 		return err
 	}

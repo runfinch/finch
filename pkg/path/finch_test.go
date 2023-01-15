@@ -23,11 +23,25 @@ func TestFinch_ConfigFilePath(t *testing.T) {
 	assert.Equal(t, res, "homeDir/.finch/finch.yaml")
 }
 
+func TestFinch_UserDataDiskPath(t *testing.T) {
+	t.Parallel()
+
+	res := mockFinch.UserDataDiskPath("homeDir")
+	assert.Equal(t, res, fmt.Sprintf("homeDir/.finch/.disks/%s", mockFinch.generatePathSum()))
+}
+
 func TestFinch_LimaHomePath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.LimaHomePath()
 	assert.Equal(t, res, "mock_finch/lima/data")
+}
+
+func TestFinch_LimaInstancePath(t *testing.T) {
+	t.Parallel()
+
+	res := mockFinch.LimaInstancePath()
+	assert.Equal(t, res, "mock_finch/lima/data/finch")
 }
 
 func TestFinch_LimactlPath(t *testing.T) {

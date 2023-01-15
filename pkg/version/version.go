@@ -5,4 +5,8 @@
 package version
 
 // Version will be filled via Makefile.
-var Version string
+var (
+	Version string
+	// GitCommit is filled via Makefile.
+	GitCommit string
+)
