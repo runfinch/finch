@@ -5,6 +5,7 @@ package e2e
 
 import (
 	"github.com/onsi/ginkgo/v2"
+	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
 )
@@ -18,6 +19,10 @@ var testVirtualMachine = func(o *option.Option) {
 				command.New(o, virtualMachineRootCmd, "remove").WithoutSuccessfulExit().Run()
 			})
 
+			ginkgo.It("should get running status", func() {
+				gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Running"))
+			})
+
 			ginkgo.It("should be able to stop the virtual machine", func() {
 				command.Run(o, "images")
 				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(60).Run()
@@ -29,6 +34,10 @@ var testVirtualMachine = func(o *option.Option) {
 			ginkgo.It("should fail to init/stop", func() {
 				command.New(o, virtualMachineRootCmd, "stop").WithoutSuccessfulExit().Run()
 				command.New(o, virtualMachineRootCmd, "init").WithoutSuccessfulExit().Run()
+			})
+
+			ginkgo.It("should get stopped status", func() {
+				gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Stopped"))
 			})
 
 			ginkgo.It("should be able to start the virtual machine", func() {
@@ -47,6 +56,10 @@ var testVirtualMachine = func(o *option.Option) {
 			ginkgo.It("should fail to start/stop", func() {
 				command.New(o, virtualMachineRootCmd, "start").WithoutSuccessfulExit().Run()
 				command.New(o, virtualMachineRootCmd, "stop").WithoutSuccessfulExit().Run()
+			})
+
+			ginkgo.It("should get nonexistent status", func() {
+				gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Nonexistent"))
 			})
 
 			ginkgo.It("should be able to init", func() {
