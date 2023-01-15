@@ -5,8 +5,9 @@ package main
 
 import (
 	"fmt"
-
+	"github.com/briandowns/spinner"
 	"github.com/runfinch/finch/pkg/disk"
+	"time"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
@@ -94,11 +95,17 @@ func (iva *initVMAction) run() error {
 	instanceName := fmt.Sprintf("--name=%v", limaInstanceName)
 	limaCmd := iva.creator.CreateWithoutStdio("start", instanceName, iva.baseYamlFilePath, "--tty=false")
 	iva.logger.Info("Initializing and starting Finch virtual machine...")
+	// Show spinner
+	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
+	s.Suffix = "VM creation in progress"
+	s.Start()
 	logs, err := limaCmd.CombinedOutput()
 	if err != nil {
+		s.Stop()
 		iva.logger.Errorf("Finch virtual machine failed to start, debug logs: %s", logs)
 		return err
 	}
+	s.Stop()
 	iva.logger.Info("Finch virtual machine started successfully")
 	return nil
 }
