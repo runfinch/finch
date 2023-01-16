@@ -21,7 +21,7 @@ var testVersion = func(o *option.Option) {
 		ginkgo.It("Should print finch version information", func() {
 			// StdoutStr is not used because it trims both leading and trailing spaces,
 			// while we want an exact match here.
-			gomega.Expect(string(command.StdOut(o, "version"))).Should(gomega.MatchRegexp(fmt.Sprintf(`Client:
+			gomega.Expect(string(command.Stdout(o, "version"))).Should(gomega.MatchRegexp(fmt.Sprintf(`Client:
  Version:	%s
  OS\/Arch:	[A-Za-z0-9]+\/[A-Za-z0-9]+
  GitCommit:	%s
