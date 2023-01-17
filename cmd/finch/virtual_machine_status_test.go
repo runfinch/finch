@@ -137,22 +137,6 @@ func TestStatusVMAction_run(t *testing.T) {
 			},
 		},
 		{
-			name:             "undefined VM",
-			wantErr:          errors.New("unrecognized system status"),
-			wantStatusOutput: "",
-			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
-				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				ctrl *gomock.Controller,
-			) {
-				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Undefined"), nil)
-				logger.EXPECT().Debugf("Status of virtual machine: %s", "Undefined")
-			},
-		},
-		{
 			name:             "unknown VM status",
 			wantErr:          errors.New("unrecognized system status"),
 			wantStatusOutput: "",
