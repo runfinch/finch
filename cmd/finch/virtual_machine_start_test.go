@@ -264,7 +264,7 @@ func TestStartVMAction_run(t *testing.T) {
 
 				lca.EXPECT().Apply().Return(errors.New("load config fails"))
 
-				logger.EXPECT().Error(fmt.Sprintf("Dependency error: failed to install dependencies: %v",
+				logger.EXPECT().Errorf("Dependency error: %v", fmt.Errorf("failed to install dependencies: %v",
 					[]error{fmt.Errorf("%s: %v", "mock_error_msg", []error{errors.New("dependency error occurs")})},
 				))
 			},

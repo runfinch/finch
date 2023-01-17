@@ -87,7 +87,7 @@ func TestBinaries_Installed(t *testing.T) {
 				err := afero.WriteFile(mFs, "mock_prefix/dependencies/lima-socket-vmnet/opt/finch/bin/socket_vmnet", fileData, 0o666)
 				require.NoError(t, err)
 
-				l.EXPECT().Infof("binaries directory doesn't exist")
+				l.EXPECT().Info("binaries directory doesn't exist")
 			},
 			want: false,
 		},
