@@ -19,10 +19,12 @@ var testAdditionalDisk = func(o *option.Option) {
 	ginkgo.Describe("Additional disk", ginkgo.Serial, func() {
 		ginkgo.It("Retains container user data after the VM is deleted", func() {
 			command.Run(o, "pull", savedImage)
+			ginkgo.DeferCleanup(command.Run, o, "rmi", savedImage)
 			oldImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
 			gomega.Expect(oldImagesOutput).Should(gomega.ContainSubstring(savedImage))
 
 			command.Run(o, "run", "--name", containerName, savedImage)
+			ginkgo.DeferCleanup(command.Run, o, "rm", containerName)
 			oldPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
 			gomega.Expect(oldPsOutput).Should(gomega.ContainSubstring(containerName))
 
@@ -36,9 +38,6 @@ var testAdditionalDisk = func(o *option.Option) {
 
 			newPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
 			gomega.Expect(newPsOutput).Should(gomega.Equal(oldPsOutput))
-
-			command.Run(o, "rm", containerName)
-			command.Run(o, "rmi", savedImage)
 		})
 	})
 }
