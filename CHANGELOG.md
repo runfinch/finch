@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.3.0](https://github.com/runfinch/finch/compare/v0.2.0...v0.3.0) (2023-01-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* changes persistent disk path to prevent collisions
+
+### Features
+
+* add `finch vm status` command ([#83](https://github.com/runfinch/finch/issues/83)) ([37d74d0](https://github.com/runfinch/finch/commit/37d74d0b82c41f439715d0a07e723fd5e5a9a617))
+
+
+### Bug Fixes
+
+* changes persistent disk path to prevent collisions ([3eb66a2](https://github.com/runfinch/finch/commit/3eb66a21bcbf56dd8e4465bfc3ed840903b069d9))
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/onsi/gomega from 1.24.2 to 1.25.0 ([#165](https://github.com/runfinch/finch/issues/165)) ([e4b9e96](https://github.com/runfinch/finch/commit/e4b9e96713feac19bc73dfc2dd788a80c28a064f))
+* **deps:** Bump github.com/runfinch/common-tests from 0.2.0 to 0.3.0 ([#151](https://github.com/runfinch/finch/issues/151)) ([79df04e](https://github.com/runfinch/finch/commit/79df04ef62df615c19070e607a060769ab09e7a0))
+* **deps:** Bump github.com/runfinch/common-tests version from v0.3.0 to v0.3.1 ([#169](https://github.com/runfinch/finch/issues/169)) ([16157fe](https://github.com/runfinch/finch/commit/16157fe3adfc8be19899700ae3f1cd5c1a848304))
+* **deps:** Bump golang.org/x/crypto from 0.4.0 to 0.5.0 ([#144](https://github.com/runfinch/finch/issues/144)) ([603419a](https://github.com/runfinch/finch/commit/603419a703154e8a8eac404da2b9aeb76c5b3333))
+
 ## [0.2.0](https://github.com/runfinch/finch/compare/v0.1.1...v0.2.0) (2023-01-11)
 
 
