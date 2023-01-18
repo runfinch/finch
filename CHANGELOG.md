@@ -10,7 +10,6 @@
 * Print version with Client and Server ([#108](https://github.com/runfinch/finch/issues/108)) ([7f7cdda](https://github.com/runfinch/finch/commit/7f7cdda1d21e430c259eb24a82c6b5784606cbac))
 * saves containerd user data to a persistent disk ([#133](https://github.com/runfinch/finch/issues/133)) ([fccb4f3](https://github.com/runfinch/finch/commit/fccb4f3530b5abc7943db921c25c4f01ea76d725))
 
-
 ### Bug Fixes
 
 * Configure Buildkit Namespace as Env Variable ([#129](https://github.com/runfinch/finch/issues/129)) ([ffb90be](https://github.com/runfinch/finch/commit/ffb90beeeeef7cb8db5706f9198e06d6e111f53f))
