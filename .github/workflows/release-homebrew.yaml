@@ -15,7 +15,7 @@ permissions:
 env:
   CASK: finch
   FORK_REPO: https://github.com/AnqiPang/homebrew-cask.git
-  FORK_BRANCH: v0.2.0
+  FORK_BRANCH: v0.3.0
 
 jobs:
   # TODO: fix the arm64 test installer.
@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: "v0.2.0"
+          ref: "v0.3.0"
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -92,7 +92,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: "v0.2.0"
+          ref: "v0.3.0"
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
