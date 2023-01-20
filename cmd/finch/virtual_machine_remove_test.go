@@ -11,7 +11,6 @@ import (
 	"github.com/runfinch/finch/pkg/mocks"
 
 	"github.com/golang/mock/gomock"
-	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,14 +27,10 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 	testCases := []struct {
 		name    string
 		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *gomock.Controller)
-		cmd     *cobra.Command
 		args    []string
 	}{
 		{
 			name: "should remove the instance",
-			cmd: &cobra.Command{
-				Use: "remove",
-			},
 			args: []string{},
 			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -45,6 +40,18 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("remove", limaInstanceName).Return(command)
+				command.EXPECT().CombinedOutput()
+				logger.EXPECT().Info(gomock.Any()).AnyTimes()
+			},
+		},
+		{
+			name: "should forcibly remove the instance",
+			args: []string{
+				"--force",
+			},
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+				command := mocks.NewCommand(ctrl)
+				creator.EXPECT().CreateWithoutStdio("remove", "--force", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
 				logger.EXPECT().Info(gomock.Any()).AnyTimes()
 			},
@@ -59,9 +66,11 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
-
 			tc.mockSvc(logger, lcc, ctrl)
-			assert.NoError(t, newRemoveVMAction(lcc, logger).runAdapter(tc.cmd, tc.args))
+
+			cmd := newRemoveVMCommand(lcc, logger)
+			cmd.SetArgs(tc.args)
+			assert.NoError(t, cmd.Execute())
 		})
 	}
 }
@@ -73,6 +82,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 		name    string
 		wantErr error
 		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *gomock.Controller)
+		force   bool
 	}{
 		{
 			name:    "should remove the instance",
@@ -89,6 +99,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 				logger.EXPECT().Info("Removing existing Finch virtual machine...")
 				logger.EXPECT().Info("Finch virtual machine removed successfully")
 			},
+			force: false,
 		},
 		{
 			name: "running VM",
@@ -100,6 +111,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 			},
+			force: false,
 		},
 		{
 			name:    "nonexistent VM",
@@ -110,6 +122,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 			},
+			force: false,
 		},
 		{
 			name:    "unknown VM status",
@@ -120,6 +133,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Broken")
 			},
+			force: false,
 		},
 		{
 			name:    "status command returns an error",
@@ -129,6 +143,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
 			},
+			force: false,
 		},
 		{
 			name:    "should print error if virtual machine failed to remove",
@@ -146,6 +161,19 @@ func TestRemoveVMAction_run(t *testing.T) {
 				logger.EXPECT().Info("Removing existing Finch virtual machine...")
 				logger.EXPECT().Errorf("Finch virtual machine failed to remove, debug logs: %s", logs)
 			},
+			force: false,
+		},
+		{
+			name:    "should forcibly remove the instance",
+			wantErr: nil,
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+				command := mocks.NewCommand(ctrl)
+				creator.EXPECT().CreateWithoutStdio("remove", "--force", limaInstanceName).Return(command)
+				command.EXPECT().CombinedOutput()
+				logger.EXPECT().Info("Forcibly removing Finch virtual machine...")
+				logger.EXPECT().Info("Finch virtual machine removed successfully")
+			},
+			force: true,
 		},
 	}
 
@@ -159,7 +187,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 
 			tc.mockSvc(logger, lcc, ctrl)
-			err := newRemoveVMAction(lcc, logger).run()
+			err := newRemoveVMAction(lcc, logger).run(tc.force)
 			assert.Equal(t, tc.wantErr, err)
 		})
 	}

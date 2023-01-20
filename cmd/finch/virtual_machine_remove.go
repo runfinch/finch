@@ -21,6 +21,8 @@ func newRemoveVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logge
 		RunE:  newRemoveVMAction(limaCmdCreator, logger).runAdapter,
 	}
 
+	removeVMCommand.Flags().BoolP("force", "f", false, "forcibly remove finch VM")
+
 	return removeVMCommand
 }
 
@@ -34,24 +36,24 @@ func newRemoveVMAction(creator command.LimaCmdCreator, logger flog.Logger) *remo
 }
 
 func (rva *removeVMAction) runAdapter(cmd *cobra.Command, args []string) error {
-	return rva.run()
+	force, err := cmd.Flags().GetBool("force")
+	if err != nil {
+		return err
+	}
+	return rva.run(force)
 }
 
-func (rva *removeVMAction) run() error {
+func (rva *removeVMAction) run(force bool) error {
+	if force {
+		return rva.removeVM(force)
+	}
+
 	err := rva.assertVMIsStopped(rva.creator, rva.logger)
 	if err != nil {
 		return err
 	}
 
-	limaCmd := rva.creator.CreateWithoutStdio("remove", limaInstanceName)
-	rva.logger.Info("Removing existing Finch virtual machine...")
-	logs, err := limaCmd.CombinedOutput()
-	if err != nil {
-		rva.logger.Errorf("Finch virtual machine failed to remove, debug logs: %s", logs)
-		return err
-	}
-	rva.logger.Info("Finch virtual machine removed successfully")
-	return nil
+	return rva.removeVM(false)
 }
 
 func (rva *removeVMAction) assertVMIsStopped(creator command.LimaCmdCreator, logger flog.Logger) error {
@@ -68,4 +70,27 @@ func (rva *removeVMAction) assertVMIsStopped(creator command.LimaCmdCreator, log
 	default:
 		return nil
 	}
+}
+
+func (rva *removeVMAction) removeVM(force bool) error {
+	limaCmd := rva.createVMRemoveCommand(force)
+	if force {
+		rva.logger.Info("Forcibly removing Finch virtual machine...")
+	} else {
+		rva.logger.Info("Removing existing Finch virtual machine...")
+	}
+	logs, err := limaCmd.CombinedOutput()
+	if err != nil {
+		rva.logger.Errorf("Finch virtual machine failed to remove, debug logs: %s", logs)
+		return err
+	}
+	rva.logger.Info("Finch virtual machine removed successfully")
+	return nil
+}
+
+func (rva *removeVMAction) createVMRemoveCommand(force bool) command.Command {
+	if force {
+		return rva.creator.CreateWithoutStdio("remove", "--force", limaInstanceName)
+	}
+	return rva.creator.CreateWithoutStdio("remove", limaInstanceName)
 }

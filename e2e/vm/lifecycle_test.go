@@ -23,6 +23,20 @@ var testVMLifecycle = func(o *option.Option) {
 				gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Running"))
 			})
 
+			ginkgo.It("should be able to force stop the virtual machine", func() {
+				command.Run(o, "images")
+				command.New(o, virtualMachineRootCmd, "stop", "--force").WithTimeoutInSeconds(90).Run()
+				command.RunWithoutSuccessfulExit(o, "images")
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(120).Run()
+			})
+
+			ginkgo.It("should be able to force remove the virtual machine", func() {
+				command.Run(o, "images")
+				command.New(o, virtualMachineRootCmd, "remove", "--force").WithTimeoutInSeconds(60).Run()
+				command.RunWithoutSuccessfulExit(o, "images")
+				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+			})
+
 			ginkgo.It("should be able to stop the virtual machine", func() {
 				command.Run(o, "images")
 				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
@@ -43,11 +57,17 @@ var testVMLifecycle = func(o *option.Option) {
 			ginkgo.It("should be able to start the virtual machine", func() {
 				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(120).Run()
 				command.Run(o, "images")
+				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
 			})
 
 			ginkgo.It("should be able to remove the virtual machine", func() {
-				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
 				command.New(o, virtualMachineRootCmd, "remove").WithTimeoutInSeconds(60).Run()
+				command.RunWithoutSuccessfulExit(o, "images")
+				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
+			})
+			ginkgo.It("should be able to force remove the virtual machine", func() {
+				command.New(o, virtualMachineRootCmd, "remove", "--force").WithTimeoutInSeconds(60).Run()
 				command.RunWithoutSuccessfulExit(o, "images")
 			})
 		})
