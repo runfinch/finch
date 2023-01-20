@@ -244,11 +244,21 @@ test-unit:
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
 #
-# Container tests have to be run before VM tests according to the current code setup.
+# Container tests and VM tests can be run in any order, but they must be run sequentially.
 # For more details, see the package-level comment of the e2e package.
 .PHONY: test-e2e
-test-e2e:
+test-e2e: test-e2e-vm-serial
+
+.PHONY: test-e2e-vm-serial
+test-e2e-vm-serial: test-e2e-container
+	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
+
+.PHONY: test-e2e-container
+test-e2e-container:
 	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/container -test.v -ginkgo.v --installed="$(INSTALLED)"
+
+.PHONY: test-e2e-vm
+test-e2e-vm:
 	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
 
 .PHONY: gen-code

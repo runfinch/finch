@@ -228,15 +228,24 @@ Keeping a good unit test coverage will be part of pull request review. You can r
 
 See `test-e2e` section in [`Makefile`](./Makefile) for more reference.
 
+In this repository, there are two suites of E2E tests: `container` tests and `vm` tests.
+
 If the e2e test scenarios you are going to contribute
 
 - are in generic container development workflow
 - can be shared by finch-core by replacing test subject from "finch" to "limactl ..."
 - E.g.: pull, push, build, run, etc.
 
-implement them in common-tests repo and then import them in [`./e2e/e2e_test.go`](./e2e/e2e_test.go) in finch CLI and finch-core. The detailed flow can be found [here](https://github.com/runfinch/common-tests#sync-between-tests-and-code).
+they belong with the `container` tests. Implement them in common-tests repo and then import them in [`./e2e/container/container_test.go`](./e2e/container/container_test.go) in finch CLI and `./e2e/e2e_test.go` in finch-core. The detailed flow can be found [here](https://github.com/runfinch/common-tests#sync-between-tests-and-code).
 
-Otherwise, it means that the scenarios are specific to finch CLI (e.g., version, VM lifecycle, etc.), and you should implement them under `./e2e/` (e.g., `./e2e/version.go`) and import them in `./e2e/e2e_test.go`.
+Otherwise, it means that the scenarios are specific to finch CLI (e.g., version, VM lifecycle, etc.), and belong with the `vm` tests. You should implement them under `./e2e/vm/` (e.g., `./e2e/vm/version_test.go`) and import them in `./e2e/vm/vm_test.go`.
+
+If you want to run just one of the two suites, append the suite name to the end of the Makefile target:
+
+```sh
+make test-e2e-container
+make test-e2e-vm
+```
 
 To save time while developing e2e tests, use the [`Focus`](https://onsi.github.io/ginkgo/#focused-specs) decorator while running tests, but be sure to remove it before PR-ing your changes.
 
