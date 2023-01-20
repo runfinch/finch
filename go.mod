@@ -8,10 +8,10 @@ require (
 	github.com/google/go-licenses v1.5.0
 	github.com/lima-vm/lima v0.14.2
 	github.com/onsi/ginkgo/v2 v2.7.0
-	github.com/onsi/gomega v1.24.2
+	github.com/onsi/gomega v1.25.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.5
-	github.com/runfinch/common-tests v0.2.0
+	github.com/runfinch/common-tests v0.3.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/afero v1.9.3
 	github.com/spf13/cobra v1.6.1

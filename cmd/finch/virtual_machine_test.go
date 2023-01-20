@@ -21,7 +21,7 @@ func TestVirtualMachineCommand(t *testing.T) {
 	assert.Equal(t, cmd.Use, virtualMachineRootCmd)
 
 	// check the number of subcommand for vm
-	assert.Equal(t, len(cmd.Commands()), 4)
+	assert.Equal(t, len(cmd.Commands()), 5)
 }
 
 func TestPostVMStartInitAction_runAdapter(t *testing.T) {
