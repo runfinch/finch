@@ -27,7 +27,11 @@ func TestVM(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// The VM should be spined up in SynchronizedBeforeSuite of e2e/container.
+	ginkgo.SynchronizedBeforeSuite(func() []byte {
+		command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
+		return nil
+	}, func(bytes []byte) {})
+
 	ginkgo.SynchronizedAfterSuite(func() {
 		command.New(o, "vm", "stop").WithTimeoutInSeconds(60).Run()
 		command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()

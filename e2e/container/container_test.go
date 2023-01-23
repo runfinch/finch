@@ -24,12 +24,16 @@ func TestContainer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// The VM should be cleaned up in SynchronizedAfterSuite of e2e/vm.
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
 		command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
 		tests.SetupLocalRegistry(o)
 		return nil
 	}, func(bytes []byte) {})
+
+	ginkgo.SynchronizedAfterSuite(func() {
+		command.New(o, "vm", "stop").WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()
+	}, func() {})
 
 	ginkgo.Describe(description, func() {
 		tests.Pull(o)
