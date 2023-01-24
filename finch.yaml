@@ -149,7 +149,11 @@ provision:
   script: |
     #!/bin/bash
     sudo chown $USER /mnt/lima-finch
-    sudo mount --bind /mnt/lima-finch ~/.local/share/containerd
+    mkdir -p /mnt/lima-finch/containerd
+    mkdir -p /mnt/lima-finch/nerdctl
+    mkdir -p ~/.local/share/nerdctl
+    sudo mount --bind /mnt/lima-finch/containerd ~/.local/share/containerd
+    sudo mount --bind /mnt/lima-finch/nerdctl ~/.local/share/nerdctl
     systemctl --user restart containerd.service
 
 # Probe scripts to check readiness.
