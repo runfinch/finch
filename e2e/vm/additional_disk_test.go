@@ -28,7 +28,7 @@ var testAdditionalDisk = func(o *option.Option) {
 			oldPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
 			gomega.Expect(oldPsOutput).Should(gomega.ContainSubstring(containerName))
 
-			command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+			command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 			command.Run(o, virtualMachineRootCmd, "remove")
 
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(240).Run()

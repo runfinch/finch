@@ -33,7 +33,7 @@ func TestVM(t *testing.T) {
 	}, func(bytes []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
-		command.New(o, "vm", "stop").WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "stop").WithTimeoutInSeconds(90).Run()
 		command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()
 	}, func() {})
 
