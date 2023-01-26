@@ -129,7 +129,7 @@ export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
 
 Clone the repo and make sure to include the submodules by adding `--recurse-submodules`. For example:
 
-```
+```shell
 git clone --recurse-submodules https://github.com/runfinch/finch.git
 ```
 
