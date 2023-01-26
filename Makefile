@@ -20,9 +20,6 @@ VDE_INSTALL ?= /opt/finch
 UNAME := $(shell uname -m)
 ARCH ?= $(UNAME)
 SUPPORTED_ARCH = false
-CORE_URL ?= https://artifact.runfinch.com/finch-core-0.1.1.tar.gz
-CORE_FILENAME := finch-core
-CORE_OUTDIR := $(CURDIR)/$(CORE_FILENAME)/_output
 CORE_VDE_PREFIX ?= $(OUTDIR)/dependencies/vde/opt/finch
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
@@ -61,20 +58,14 @@ all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qe
 
 .PHONY: finch-core
 finch-core:
-	mkdir -p $(CURDIR)/$(CORE_FILENAME)
-	curl -L $(CORE_URL) > "$(CURDIR)/$(CORE_FILENAME).tar.gz"
-	tar -zvxf $(CURDIR)/finch-core.tar.gz -C $(CORE_FILENAME) --strip-component=1
-	rm "$(CORE_FILENAME).tar.gz"
-
-	cd $(CURDIR)/$(CORE_FILENAME) && \
+	cd deps/finch-core && \
 		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
 		$(MAKE)
 
 	mkdir -p _output
-	cd $(CORE_FILENAME)/_output && tar c * | tar Cvx  $(OUTDIR)
-	rm -r $(CURDIR)/$(CORE_FILENAME)
+	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: lima-and-qemu
@@ -292,7 +283,6 @@ mdlint-ctr:
 .PHONY: clean
 clean:
 	-@rm -rf $(OUTDIR) 2>/dev/null || true
-	-@rm -rf $(CORE_FILENAME) 2>/dev/null || true
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true
