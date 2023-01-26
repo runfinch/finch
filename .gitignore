@@ -9,6 +9,5 @@ _vde_output/
 **/*.img
 tmp/
 .vscode/
-finch-core/
 tools_bin/
 test-coverage.*

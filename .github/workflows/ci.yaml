@@ -90,6 +90,7 @@ jobs:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0
           persist-credentials: false
+          submodules: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch

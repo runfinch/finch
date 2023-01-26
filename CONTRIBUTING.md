@@ -127,9 +127,15 @@ export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
 
 ### Build
 
+Clone the repo and make sure to include the submodules by adding `--recurse-submodules`. For example:
+
+```shell
+git clone --recurse-submodules https://github.com/runfinch/finch.git
+```
+
 After cloning the repo, run `make` to build the binary.
 
-The binary in _output can be directly used. E.g. initializing the vm and display the version
+The binary in `_output` can be directly used. E.g. initializing the vm and display the version
 
 ```sh
 ./_output/bin/finch vm init
