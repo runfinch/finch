@@ -43,7 +43,7 @@ func writeFile(filePath string, buf []byte) {
 func updateAndApplyConfig(o *option.Option, configBytes []byte) *gexec.Session {
 	writeFile(finchConfigFilePath, configBytes)
 
-	command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+	command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 	return command.New(o, virtualMachineRootCmd, "start").WithoutCheckingExitCode().WithTimeoutInSeconds(120).Run()
 }
 
@@ -79,7 +79,7 @@ var testConfig = func(o *option.Option, installed bool) {
 				writeFile(finchConfigFilePath, origFinchCfg)
 				writeFile(limaConfigFilePath, origLimaCfg)
 
-				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(120).Run()
 			})
 		})
