@@ -133,6 +133,12 @@ Clone the repo and make sure to include the submodules by adding `--recurse-subm
 git clone --recurse-submodules https://github.com/runfinch/finch.git
 ```
 
+If the repo is already cloned, but the submodules are not pulled yet, the following command can be run to pull all of the submodules without re-cloning:
+
+```shell
+git submodule update --init --recursive
+```
+
 After cloning the repo, run `make` to build the binary.
 
 The binary in `_output` can be directly used. E.g. initializing the vm and display the version
@@ -215,7 +221,7 @@ before you submit your code:
 
 #### Unit Testing - Parallel by Default
 
-```make test-unit```
+`make test-unit`
 
 For each unit test case (i.e., in both `TestXXX` and the function passed to `t.Run`), `t.Parallel` should be added by default. It should only be skipped under special situations (e.g., `T.Setenv` is used in that test).
 
@@ -230,7 +236,7 @@ Keeping a good unit test coverage will be part of pull request review. You can r
 
 #### E2E Testing Guidelines
 
-```make test-e2e```
+`make test-e2e`
 
 See `test-e2e` section in [`Makefile`](./Makefile) for more reference.
 
