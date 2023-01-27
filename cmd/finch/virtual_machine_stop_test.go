@@ -11,7 +11,6 @@ import (
 	"github.com/runfinch/finch/pkg/mocks"
 
 	"github.com/golang/mock/gomock"
-	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,14 +27,10 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 	testCases := []struct {
 		name    string
 		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *gomock.Controller)
-		cmd     *cobra.Command
 		args    []string
 	}{
 		{
 			name: "should stop the instance",
-			cmd: &cobra.Command{
-				Use: "stop",
-			},
 			args: []string{},
 			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -45,6 +40,18 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("stop", limaInstanceName).Return(command)
+				command.EXPECT().CombinedOutput()
+				logger.EXPECT().Info(gomock.Any()).AnyTimes()
+			},
+		},
+		{
+			name: "should force stop the instance",
+			args: []string{
+				"--force",
+			},
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+				command := mocks.NewCommand(ctrl)
+				creator.EXPECT().CreateWithoutStdio("stop", "--force", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
 				logger.EXPECT().Info(gomock.Any()).AnyTimes()
 			},
@@ -59,9 +66,11 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
-
 			tc.mockSvc(logger, lcc, ctrl)
-			assert.NoError(t, newStopVMAction(lcc, logger).runAdapter(tc.cmd, tc.args))
+
+			cmd := newStopVMCommand(lcc, logger)
+			cmd.SetArgs(tc.args)
+			assert.NoError(t, cmd.Execute())
 		})
 	}
 }
@@ -73,6 +82,7 @@ func TestStopVMAction_run(t *testing.T) {
 		name    string
 		wantErr error
 		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *gomock.Controller)
+		force   bool
 	}{
 		{
 			name:    "should stop the instance",
@@ -89,6 +99,7 @@ func TestStopVMAction_run(t *testing.T) {
 				logger.EXPECT().Info("Stopping existing Finch virtual machine...")
 				logger.EXPECT().Info("Finch virtual machine stopped successfully")
 			},
+			force: false,
 		},
 		{
 			name:    "stopped VM",
@@ -99,6 +110,7 @@ func TestStopVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 			},
+			force: false,
 		},
 		{
 			name:    "nonexistent VM",
@@ -109,6 +121,7 @@ func TestStopVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 			},
+			force: false,
 		},
 		{
 			name:    "unknown VM status",
@@ -119,6 +132,7 @@ func TestStopVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Broken")
 			},
+			force: false,
 		},
 		{
 			name:    "status command returns an error",
@@ -128,6 +142,7 @@ func TestStopVMAction_run(t *testing.T) {
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
 			},
+			force: false,
 		},
 		{
 			name:    "should print error if virtual machine failed to stop",
@@ -145,6 +160,19 @@ func TestStopVMAction_run(t *testing.T) {
 				logger.EXPECT().Info("Stopping existing Finch virtual machine...")
 				logger.EXPECT().Errorf("Finch virtual machine failed to stop, debug logs: %s", logs)
 			},
+			force: false,
+		},
+		{
+			name:    "should force stop virtual machine",
+			wantErr: nil,
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+				command := mocks.NewCommand(ctrl)
+				creator.EXPECT().CreateWithoutStdio("stop", "--force", limaInstanceName).Return(command)
+				command.EXPECT().CombinedOutput()
+				logger.EXPECT().Info("Forcibly stopping Finch virtual machine...")
+				logger.EXPECT().Info("Finch virtual machine stopped successfully")
+			},
+			force: true,
 		},
 	}
 
@@ -158,7 +186,7 @@ func TestStopVMAction_run(t *testing.T) {
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 
 			tc.mockSvc(logger, lcc, ctrl)
-			err := newStopVMAction(lcc, logger).run()
+			err := newStopVMAction(lcc, logger).run(tc.force)
 			assert.Equal(t, tc.wantErr, err)
 		})
 	}

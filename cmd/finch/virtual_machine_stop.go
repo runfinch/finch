@@ -20,6 +20,8 @@ func newStopVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger)
 		RunE:  newStopVMAction(limaCmdCreator, logger).runAdapter,
 	}
 
+	stopVMCommand.Flags().BoolP("force", "f", false, "forcibly stop finch VM")
+
 	return stopVMCommand
 }
 
@@ -33,24 +35,24 @@ func newStopVMAction(creator command.LimaCmdCreator, logger flog.Logger) *stopVM
 }
 
 func (sva *stopVMAction) runAdapter(cmd *cobra.Command, args []string) error {
-	return sva.run()
+	force, err := cmd.Flags().GetBool("force")
+	if err != nil {
+		return err
+	}
+	return sva.run(force)
 }
 
-func (sva *stopVMAction) run() error {
+func (sva *stopVMAction) run(force bool) error {
+	if force {
+		return sva.stopVM(force)
+	}
+
 	err := sva.assertVMIsRunning(sva.creator, sva.logger)
 	if err != nil {
 		return err
 	}
 
-	limaCmd := sva.creator.CreateWithoutStdio("stop", limaInstanceName)
-	sva.logger.Info("Stopping existing Finch virtual machine...")
-	logs, err := limaCmd.CombinedOutput()
-	if err != nil {
-		sva.logger.Errorf("Finch virtual machine failed to stop, debug logs: %s", logs)
-		return err
-	}
-	sva.logger.Info("Finch virtual machine stopped successfully")
-	return nil
+	return sva.stopVM(false)
 }
 
 func (sva *stopVMAction) assertVMIsRunning(creator command.LimaCmdCreator, logger flog.Logger) error {
@@ -66,4 +68,27 @@ func (sva *stopVMAction) assertVMIsRunning(creator command.LimaCmdCreator, logge
 	default:
 		return nil
 	}
+}
+
+func (sva *stopVMAction) stopVM(force bool) error {
+	limaCmd := sva.createLimaStopCommand(force)
+	if force {
+		sva.logger.Info("Forcibly stopping Finch virtual machine...")
+	} else {
+		sva.logger.Info("Stopping existing Finch virtual machine...")
+	}
+	logs, err := limaCmd.CombinedOutput()
+	if err != nil {
+		sva.logger.Errorf("Finch virtual machine failed to stop, debug logs: %s", logs)
+		return err
+	}
+	sva.logger.Info("Finch virtual machine stopped successfully")
+	return nil
+}
+
+func (sva *stopVMAction) createLimaStopCommand(force bool) command.Command {
+	if force {
+		return sva.creator.CreateWithoutStdio("stop", "--force", limaInstanceName)
+	}
+	return sva.creator.CreateWithoutStdio("stop", limaInstanceName)
 }
