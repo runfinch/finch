@@ -13,16 +13,40 @@ permissions:
   contents: read # This is required for actions/checkout
 
 env:
-  CASK: finch
   FORK_REPO: https://github.com/AnqiPang/homebrew-cask.git
-  FORK_BRANCH: v0.3.0
+
 
 jobs:
+  get-latest-tag:
+    name: Get the latest release tag
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.latesttag.outputs.tag }}
+      version: ${{ steps.latestversion.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+            fetch-depth: 0
+      - name: 'Get the latest tag'
+        id: latesttag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: v0.1.0
+      - name: 'Convert tag to version'
+        id: latestversion
+        run: |
+          version=${{ steps.latesttag.outputs.tag }}
+          if [[  $version == v* ]]; then
+            version="${version:1}"
+          fi
+          echo "version=$version" >> ${GITHUB_OUTPUT}
+
   # TODO: fix the arm64 test installer.
   # Currently the first time of calling any Finch command in arm64 hosts triggered by Github action will fail by
   # the error "Error: Process completed with exit code 137." So the arm64 job will fail.
   # We temporarily use follow-up manual steps to complete and clean up it.
   macos-arm64-test-installer:
+    needs: get-latest-tag
     strategy:
       fail-fast: false
       matrix:
@@ -36,10 +60,12 @@ jobs:
     timeout-minutes: 60
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
+      FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
+      FINCH_VESRION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: "v0.3.0"
+          ref: ${{ env.FINCH_TAG }}
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -58,23 +84,23 @@ jobs:
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
-          git remote rm fork-repo || true
-          git remote add fork-repo ${{ env.FORK_REPO }}
-          git fetch fork-repo
-          git checkout -B ${{ env.FORK_BRANCH }} fork-repo/${{ env.FORK_BRANCH }}
-      - name: Cask Syntax
-        run: |
-          brew audit --cask --online ${{ env.CASK }}
-          brew style --fix ${{ env.CASK }}
+          # git remote rm fork-repo || true
+          # git remote add fork-repo ${{ env.FORK_REPO }}
+          # git fetch fork-repo
+          # git checkout -B ${{ env.FORK_BRANCH }} fork-repo/${{ env.FORK_BRANCH }}
+          echo "Update the local Finch cask with version $FINCH_VERSION"
+          brew bump-cask-pr --write-only --version=${FINCH_VERSION} finch
       - name: Silently install
         run: |
           brew install --cask finch
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
+        if: ${{ always() }}
         run: brew uninstall --cask finch
 
   macos-amd64-test-installer:
+    needs: get-latest-tag
     strategy:
       fail-fast: false
       matrix:
@@ -89,10 +115,12 @@ jobs:
     timeout-minutes: 60
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
+      FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
+      FINCH_VESRION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: "v0.3.0"
+          ref: ${{ env.FINCH_TAG }}
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -111,18 +139,30 @@ jobs:
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
-          git remote rm fork-repo || true
-          git remote add fork-repo ${{ env.FORK_REPO }}
-          git fetch fork-repo
-          git checkout -B ${{ env.FORK_BRANCH }} fork-repo/${{ env.FORK_BRANCH }}
-      - name: Cask Syntax
-        run: |
-          brew audit --cask --online ${{ env.CASK }}
-          brew style --fix ${{ env.CASK }}
+          # git remote rm fork-repo || true
+          # git remote add fork-repo ${{ env.FORK_REPO }}
+          # git fetch fork-repo
+          # git checkout -B ${{ env.FORK_BRANCH }} fork-repo/${{ env.FORK_BRANCH }}
+          echo "Update the local Finch cask with version $FINCH_VERSION"
+          brew bump-cask-pr --write-only --version=${FINCH_VERSION} finch
       - name: Silently install
         run: |
           brew install --cask finch
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
+        if: ${{ always() }}
         run: brew uninstall --cask finch
+
+  pr-to-homebrew:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+      - name: Open a pull request to homebrwe-cask
+        run: brew bump-cask-pr --version=${FINCH_VERSION} finch
+        env:
+          FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
+        
