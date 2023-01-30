@@ -6,7 +6,6 @@
 name: Release Homebrew
 on:
   workflow_dispatch:
-  push:
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -84,10 +83,6 @@ jobs:
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
-          # git remote rm fork-repo || true
-          # git remote add fork-repo ${{ env.FORK_REPO }}
-          # git fetch fork-repo
-          # git checkout -B ${{ env.FORK_BRANCH }} fork-repo/${{ env.FORK_BRANCH }}
           echo "Update the local Finch cask with version $FINCH_VERSION"
           brew bump-cask-pr --write-only --version=${FINCH_VERSION} finch
       - name: Silently install
@@ -139,10 +134,6 @@ jobs:
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
-          # git remote rm fork-repo || true
-          # git remote add fork-repo ${{ env.FORK_REPO }}
-          # git fetch fork-repo
-          # git checkout -B ${{ env.FORK_BRANCH }} fork-repo/${{ env.FORK_BRANCH }}
           echo "Update the local Finch cask with version $FINCH_VERSION"
           brew bump-cask-pr --write-only --version=${FINCH_VERSION} finch
       - name: Silently install
