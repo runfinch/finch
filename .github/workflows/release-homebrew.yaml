@@ -155,6 +155,7 @@ jobs:
         run: brew uninstall --cask finch
 
   pr-to-homebrew:
+    needs: [macos-arm64-test-installer, macos-amd64-test-installer]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Homebrew
