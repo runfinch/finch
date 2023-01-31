@@ -25,12 +25,14 @@ jobs:
       - name: 'Get the latest tag'
         id: latesttag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        with:
-          fallback: v0.1.0
       - name: 'Convert tag to version'
         id: latestversion
         run: |
           version=${{ steps.latesttag.outputs.tag }}
+          if [ -z $version ]; then
+            echo ERROR: Failed to get the latest tag
+            exit 1
+          fi
           if [[  $version == v* ]]; then
             version="${version:1}"
           fi
