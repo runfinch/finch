@@ -6,6 +6,7 @@
 name: Release Homebrew
 on:
   workflow_dispatch:
+  push:
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -75,7 +76,8 @@ jobs:
           if pgrep '^socket_vmnet'; then
             sudo pkill '^socket_vmnet'
           fi
-          brew uninstall --cask finch || true
+          cd $(brew --repo homebrew/cask) 
+          brew uninstall --cask ./Casks/finch.rb || true
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -87,12 +89,15 @@ jobs:
           brew bump-cask-pr --write-only --version=${FINCH_VERSION} finch
       - name: Silently install
         run: |
-          brew install --cask finch
+          cd $(brew --repo homebrew/cask)
+          brew install --cask ./Casks/finch.rb
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
         if: ${{ always() }}
-        run: brew uninstall --cask finch
+        run: |
+          cd $(brew --repo homebrew/cask)
+          brew uninstall --cask ./Casks/finch.rb
 
   macos-amd64-test-installer:
     needs: get-latest-tag
@@ -126,7 +131,8 @@ jobs:
           if pgrep '^socket_vmnet'; then
             sudo pkill '^socket_vmnet'
           fi 
-          brew uninstall --cask finch || true
+          cd $(brew --repo homebrew/cask) 
+          brew uninstall --cask ./Casks/finch.rb || true
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -138,12 +144,15 @@ jobs:
           brew bump-cask-pr --write-only --version=${FINCH_VERSION} finch
       - name: Silently install
         run: |
+          brew install --cask ./Casks/finch.rb
           brew install --cask finch
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
         if: ${{ always() }}
-        run: brew uninstall --cask finch
+        run: |
+          cd $(brew --repo homebrew/cask)
+          brew uninstall --cask ./Casks/finch.rb
 
   pr-to-homebrew:
     needs: [macos-arm64-test-installer, macos-amd64-test-installer]
