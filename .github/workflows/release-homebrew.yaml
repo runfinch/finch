@@ -6,15 +6,10 @@
 name: Release Homebrew
 on:
   workflow_dispatch:
-  push:
 
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read # This is required for actions/checkout
-
-env:
-  FORK_REPO: https://github.com/AnqiPang/homebrew-cask.git
-
 
 jobs:
   get-latest-tag:
@@ -81,7 +76,7 @@ jobs:
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
-      - name: Checkout the Fork Repo
+      - name: Bump local cask version
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
@@ -136,7 +131,7 @@ jobs:
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
-      - name: Checkout the Fork Repo
+      - name: Bump local cask version
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
