@@ -144,8 +144,8 @@ jobs:
           brew bump-cask-pr --write-only -f --version=${FINCH_VERSION} finch
       - name: Silently install
         run: |
+          cd $(brew --repo homebrew/cask)
           brew install --cask ./Casks/finch.rb
-          brew install --cask finch
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
