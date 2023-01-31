@@ -85,8 +85,8 @@ jobs:
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
-          echo "Update the local Finch cask with version $FINCH_VERSION"
-          brew bump-cask-pr --write-only --version=${FINCH_VERSION} finch
+          echo "Update the local Finch cask with version ${FINCH_VERSION}"
+          brew bump-cask-pr --write-only -f --version=${FINCH_VERSION} finch
       - name: Silently install
         run: |
           cd $(brew --repo homebrew/cask)
@@ -140,8 +140,8 @@ jobs:
         run: |
           brew update-reset 
           cd $(brew --repo homebrew/cask)
-          echo "Update the local Finch cask with version $FINCH_VERSION"
-          brew bump-cask-pr --write-only --version=${FINCH_VERSION} finch
+          echo "Update the local Finch cask with version ${FINCH_VERSION}"
+          brew bump-cask-pr --write-only -f --version=${FINCH_VERSION} finch
       - name: Silently install
         run: |
           brew install --cask ./Casks/finch.rb
