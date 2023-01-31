@@ -6,9 +6,9 @@
 name: Release Homebrew
 on:
   workflow_dispatch:
+  push:
 
 permissions:
-  id-token: write # This is required for requesting the JWT
   contents: read # This is required for actions/checkout
 
 jobs:
@@ -56,7 +56,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     env:
-      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VESRION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
@@ -111,7 +110,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     env:
-      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VESRION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
