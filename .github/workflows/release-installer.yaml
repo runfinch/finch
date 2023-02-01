@@ -5,6 +5,8 @@
 # This not only refers to the cleanup described in https://github.com/runfinch/finch/issues/106 for arm hosts.
 # Currently tests on amd64 hosts sometimes also need manual cleanup via SSHing to the host.
 # TODO: Remove the "release" runner tag when installer tests are stable.
+# TODO: Trigger release-homebrew.yaml workflow after this workflow completes successfully.
+# TODO: Add a job to upload the installer to the github release.
 name: Release Installer
 on:
   workflow_dispatch:
