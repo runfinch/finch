@@ -6,7 +6,6 @@
 name: Release Homebrew
 on:
   workflow_dispatch:
-  push:
 
 permissions:
   contents: read # This is required for actions/checkout
