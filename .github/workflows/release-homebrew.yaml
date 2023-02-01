@@ -7,9 +7,6 @@ name: Release Homebrew
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read # This is required for actions/checkout
-
 jobs:
   get-latest-tag:
     name: Get the latest release tag
@@ -93,6 +90,10 @@ jobs:
         run: |
           cd $(brew --repo homebrew/cask)
           brew uninstall --cask ./Casks/finch.rb
+          if [ -d "/Applications/Finch" ]; then
+            echo ERROR: Finch is not uninstalled
+            exit 1
+          fi
 
   macos-amd64-test-installer:
     needs: get-latest-tag
@@ -147,6 +148,10 @@ jobs:
         run: |
           cd $(brew --repo homebrew/cask)
           brew uninstall --cask ./Casks/finch.rb
+          if [ -d "/Applications/Finch" ]; then
+            echo ERROR: Finch is not uninstalled
+            exit 1
+          fi
 
   pr-to-homebrew:
     needs: [macos-arm64-test-installer, macos-amd64-test-installer]
