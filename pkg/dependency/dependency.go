@@ -6,6 +6,7 @@
 package dependency
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/runfinch/finch/pkg/flog"
@@ -53,13 +54,12 @@ func (g *Group) installOptional(logger flog.Logger) error {
 		}
 		err := dep.Install()
 		if err != nil {
-			// TODO: switch to https://github.com/uber-go/multierr
 			errs = append(errs, err)
 		}
 	}
 
 	if len(errs) > 0 {
-		return fmt.Errorf("%s: %v", g.errMsg, errs)
+		return fmt.Errorf("%s: %w", g.errMsg, errors.Join(errs...))
 	}
 
 	return nil
@@ -76,13 +76,12 @@ func InstallOptionalDeps(groups []*Group, logger flog.Logger) error {
 	for _, group := range groups {
 		err := group.installOptional(logger)
 		if err != nil {
-			// TODO: switch to https://github.com/uber-go/multierr
 			errs = append(errs, err)
 		}
 	}
 
 	if len(errs) > 0 {
-		return fmt.Errorf("failed to install dependencies: %v", errs)
+		return fmt.Errorf("failed to install dependencies: %w", errors.Join(errs...))
 	}
 
 	return nil

@@ -254,9 +254,11 @@ func TestInitVMAction_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
 				lca.EXPECT().Apply().Return(errors.New("load config fails"))
-				logger.EXPECT().Errorf("Dependency error: %v", fmt.Errorf("failed to install dependencies: %v",
-					[]error{fmt.Errorf("%s: %v", "mock_error_msg", []error{errors.New("dependency error occurs")})},
-				))
+				logger.EXPECT().Errorf("Dependency error: %v",
+					fmt.Errorf("failed to install dependencies: %w",
+						errors.Join(fmt.Errorf("%s: %w", "mock_error_msg", errors.Join(errors.New("dependency error occurs")))),
+					),
+				)
 			},
 		},
 		{
