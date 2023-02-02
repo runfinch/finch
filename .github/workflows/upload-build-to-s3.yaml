@@ -53,6 +53,7 @@ jobs:
 
       - name: Make macos amd64 build
         run: |
+          brew install go lz4 automake autoconf libtool
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
