@@ -1,6 +1,6 @@
 name: Upload installer
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Trigger this workflow from tag
 
 permissions:
   id-token: write   # This is required for requesting the JWT
@@ -23,7 +23,7 @@ jobs:
       - name: Upload installers to release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ needs.get-latest-tag.outputs.tag }}
+          tag_name: ${GITHUB_REF_NAME}
           files: |
             Finch-${GITHUB_REF_NAME}-aarch64.pkg
             Finch-${GITHUB_REF_NAME}-x86_64.pkg
