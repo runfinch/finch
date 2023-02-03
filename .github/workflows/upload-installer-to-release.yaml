@@ -1,15 +1,14 @@
+#TODO: 
 name: Upload installer
 on:
   workflow_dispatch: # Trigger this workflow from tag
 
 permissions:
   id-token: write   # This is required for requesting the JWT
-
+  contents: write   # This is required for uploading the release assets
 jobs:         
   upload-installers:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1
