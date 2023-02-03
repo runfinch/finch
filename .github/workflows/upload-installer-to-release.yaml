@@ -23,7 +23,8 @@ jobs:
       - name: Upload installers to release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${GITHUB_REF_NAME}
+          tag_name: ${{  github.ref_name }}
           files: |
-            Finch-${GITHUB_REF_NAME}-aarch64.pkg
-            Finch-${GITHUB_REF_NAME}-x86_64.pkg
+            echo "Run with tag ${{  github.ref_name }}"
+            Finch-${{  github.ref_name }}-aarch64.pkg
+            Finch-${{  github.ref_name }}-x86_64.pkg
