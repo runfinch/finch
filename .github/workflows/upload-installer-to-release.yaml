@@ -1,0 +1,29 @@
+name: Upload installer
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:         
+  upload-installers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: download-installer-session
+          aws-region: ${{ secrets.REGION }}
+      - name: Download installers
+        run: |
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
+      - name: Upload installers to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.get-latest-tag.outputs.tag }}
+          files: |
+            Finch-${GITHUB_REF_NAME}-aarch64.pkg
+            Finch-${GITHUB_REF_NAME}-x86_64.pkg
