@@ -1,4 +1,4 @@
-#TODO: 
+#TODO: merge this workflow to the release-installer.yaml after the issue on arm hosts is fixed
 name: Upload installer
 on:
   workflow_dispatch: # Trigger this workflow from tag
@@ -25,6 +25,5 @@ jobs:
         with:
           tag_name: ${{  github.ref_name }}
           files: |
-            echo "Run with tag ${{  github.ref_name }}"
             Finch-${{  github.ref_name }}-aarch64.pkg
             Finch-${{  github.ref_name }}-x86_64.pkg
