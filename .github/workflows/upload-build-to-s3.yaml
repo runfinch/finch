@@ -23,6 +23,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+          submodules: true
 
       - name: Make macos arm64 build
         run: |
@@ -50,6 +51,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+          submodules: true
 
       - name: Make macos amd64 build
         run: |
