@@ -107,4 +107,3 @@ jobs:
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
         run: rm -rf Finch-${GITHUB_REF_NAME}-x86_64.pkg
-
