@@ -5,6 +5,8 @@
 # This not only refers to the cleanup described in https://github.com/runfinch/finch/issues/106 for arm hosts.
 # Currently tests on amd64 hosts sometimes also need manual cleanup via SSHing to the host.
 # TODO: Remove the "release" runner tag when installer tests are stable.
+# TODO: Trigger release-homebrew.yaml workflow after this workflow completes successfully.
+# TODO: Add a job to upload the installer to the github release.
 name: Release Installer
 on:
   workflow_dispatch:
@@ -27,7 +29,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [[self-hosted, macos, arm64, 11.7, release], [self-hosted, macos, arm64, 12.6, release], [self-hosted, macos, arm64, 13.0, release]]
+        os: [
+              [self-hosted, macos, arm64, 11.7, release], 
+              [self-hosted, macos, arm64, 12.6, release], 
+              [self-hosted, macos, arm64, 13.0, release]
+            ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     env:
@@ -69,7 +75,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [[self-hosted, macos, amd64, 10.15, release], [self-hosted, macos, amd64, 11.7, release], [self-hosted, macos, amd64, 12.6, release], [self-hosted, macos, amd64, 13.0, release]]
+        os: [
+              [self-hosted, macos, amd64, 10.15, release], 
+              [self-hosted, macos, amd64, 11.7, release], 
+              [self-hosted, macos, amd64, 12.6, release], 
+              [self-hosted, macos, amd64, 13.0, release]
+            ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     env:
