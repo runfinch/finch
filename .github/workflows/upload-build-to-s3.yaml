@@ -23,6 +23,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+          submodules: true
 
       - name: Make macos arm64 build
         run: |
@@ -50,9 +51,11 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+          submodules: true
 
       - name: Make macos amd64 build
         run: |
+          brew install go lz4 automake autoconf libtool
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
