@@ -23,7 +23,9 @@ jobs:
       - name: Upload installers to release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{  github.ref_name }}
+          tag_name: ${{ github.ref_name }}
           files: |
-            Finch-${{  github.ref_name }}-aarch64.pkg
-            Finch-${{  github.ref_name }}-x86_64.pkg
+            Finch-${{ github.ref_name }}-aarch64.pkg
+            Finch-${{ github.ref_name }}-x86_64.pkg
+      - name: Delete installers
+        run: rm -rf Finch-${{ github.ref_name }}-aarch64.pkg Finch-${{ github.ref_name }}-x86_64.pkg
