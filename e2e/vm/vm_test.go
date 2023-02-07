@@ -48,6 +48,7 @@ func TestVM(t *testing.T) {
 		testFinchConfigFile(o)
 		testVersion(o)
 		testVirtualizationFrameworkAndRosetta(o, *e2e.Installed)
+		testSupportBundle(o)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)

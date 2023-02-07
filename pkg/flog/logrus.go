@@ -45,6 +45,11 @@ func (l *Logrus) Warnln(args ...interface{}) {
 	logrus.Warnln(args...)
 }
 
+// Warnf logs a message at level Warn.
+func (l *Logrus) Warnf(format string, args ...interface{}) {
+	logrus.Warnf(format, args...)
+}
+
 // Error logs a message at level Error.
 func (l *Logrus) Error(args ...interface{}) {
 	logrus.Error(args...)

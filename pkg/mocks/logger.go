@@ -180,6 +180,23 @@ func (mr *LoggerMockRecorder) SetLevel(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetLevel", reflect.TypeOf((*Logger)(nil).SetLevel), arg0)
 }
 
+// Warnf mocks base method.
+func (m *Logger) Warnf(arg0 string, arg1 ...interface{}) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	m.ctrl.Call(m, "Warnf", varargs...)
+}
+
+// Warnf indicates an expected call of Warnf.
+func (mr *LoggerMockRecorder) Warnf(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Warnf", reflect.TypeOf((*Logger)(nil).Warnf), varargs...)
+}
+
 // Warnln mocks base method.
 func (m *Logger) Warnln(arg0 ...interface{}) {
 	m.ctrl.T.Helper()

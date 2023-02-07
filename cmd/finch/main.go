@@ -9,16 +9,16 @@ import (
 	"io"
 	"os"
 
-	"github.com/runfinch/finch/pkg/disk"
-
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
 	"github.com/runfinch/finch/pkg/dependency/vmnet"
+	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/fssh"
 	"github.com/runfinch/finch/pkg/path"
+	"github.com/runfinch/finch/pkg/support"
 	"github.com/runfinch/finch/pkg/system"
 	"github.com/runfinch/finch/pkg/version"
 
@@ -88,6 +88,13 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		fp.QEMUBinDir(),
 		system.NewStdLib(),
 	)
+	supportBundleBuilder := support.NewBundleBuilder(
+		logger,
+		fs,
+		support.NewBundleConfig(fp, system.NewStdLib().Env("HOME")),
+		fp,
+		ecc,
+	)
 
 	// append nerdctl commands
 	allCommands := initializeNerdctlCommands(lcc, logger, fs)
@@ -95,6 +102,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 	allCommands = append(allCommands,
 		newVersionCommand(lcc, logger, stdOut),
 		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc),
+		newSupportBundleCommand(logger, supportBundleBuilder, lcc),
 	)
 
 	rootCmd.AddCommand(allCommands...)
