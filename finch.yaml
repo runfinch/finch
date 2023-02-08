@@ -149,11 +149,18 @@ provision:
   script: |
     #!/bin/bash
     sudo chown $USER /mnt/lima-finch
-    mkdir -p /mnt/lima-finch/containerd
-    mkdir -p /mnt/lima-finch/nerdctl
-    mkdir -p ~/.local/share/nerdctl
+    # https://github.com/containerd/nerdctl/blob/main/extras/rootless/containerd-rootless.sh#L146
+    mkdir -p /mnt/lima-finch/containerd ~/.local/share/containerd
     sudo mount --bind /mnt/lima-finch/containerd ~/.local/share/containerd
+    # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#dataroot
+    mkdir -p /mnt/lima-finch/nerdctl ~/.local/share/nerdctl
     sudo mount --bind /mnt/lima-finch/nerdctl ~/.local/share/nerdctl
+    # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#netconfpath
+    mkdir -p /mnt/lima-finch/cni-config ~/.config/cni
+    sudo mount --bind /mnt/lima-finch/cni-config ~/.config/cni
+    # https://github.com/containerd/nerdctl/blob/main/extras/rootless/containerd-rootless.sh#L150
+    mkdir -p /mnt/lima-finch/cni-local ~/.local/share/cni
+    sudo mount --bind /mnt/lima-finch/cni-local ~/.local/share/cni
     systemctl --user restart containerd.service
 
 # Probe scripts to check readiness.
