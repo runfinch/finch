@@ -28,6 +28,7 @@ const (
 // UserDataDiskManager is used to check the user data disk configuration and create it if needed.
 type UserDataDiskManager interface {
 	EnsureUserDataDisk() error
+	DeleteUserDataDisk(force bool) error
 }
 
 // fs functions required for setting up the user data disk.
@@ -90,6 +91,31 @@ func (m *userDataDiskManager) EnsureUserDataDisk() error {
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *userDataDiskManager) DeleteUserDataDisk(force bool) error {
+	if force {
+		cmd := m.lcc.CreateWithoutStdio("disk", "delete", "--force", diskName)
+		if err := cmd.Run(); err != nil {
+			return err
+		}
+
+		return m.fs.RemoveAll(m.finch.UserDataDiskPath(m.homeDir))
+	}
+
+	if m.limaDiskExists() {
+		cmd := m.lcc.CreateWithoutStdio("disk", "delete", diskName)
+		err := cmd.Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	if m.persistentDiskExists() {
+		return m.fs.Remove(m.finch.UserDataDiskPath(m.homeDir))
 	}
 
 	return nil

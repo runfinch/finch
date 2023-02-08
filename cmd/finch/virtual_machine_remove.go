@@ -6,6 +6,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/runfinch/finch/pkg/disk"
+
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -14,25 +16,27 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 )
 
-func newRemoveVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger) *cobra.Command {
+func newRemoveVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger, dm disk.UserDataDiskManager) *cobra.Command {
 	removeVMCommand := &cobra.Command{
 		Use:   "remove",
 		Short: "Remove the virtual machine instance",
-		RunE:  newRemoveVMAction(limaCmdCreator, logger).runAdapter,
+		RunE:  newRemoveVMAction(limaCmdCreator, logger, dm).runAdapter,
 	}
 
 	removeVMCommand.Flags().BoolP("force", "f", false, "forcibly remove finch VM")
+	removeVMCommand.Flags().Bool("user-data", false, "remove persistent containerd and nerdctl data")
 
 	return removeVMCommand
 }
 
 type removeVMAction struct {
-	creator command.LimaCmdCreator
-	logger  flog.Logger
+	creator     command.LimaCmdCreator
+	logger      flog.Logger
+	diskManager disk.UserDataDiskManager
 }
 
-func newRemoveVMAction(creator command.LimaCmdCreator, logger flog.Logger) *removeVMAction {
-	return &removeVMAction{creator: creator, logger: logger}
+func newRemoveVMAction(creator command.LimaCmdCreator, logger flog.Logger, dm disk.UserDataDiskManager) *removeVMAction {
+	return &removeVMAction{creator: creator, logger: logger, diskManager: dm}
 }
 
 func (rva *removeVMAction) runAdapter(cmd *cobra.Command, args []string) error {
@@ -40,12 +44,30 @@ func (rva *removeVMAction) runAdapter(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	return rva.run(force)
+	deleteDisk, err := cmd.Flags().GetBool("user-data")
+	if err != nil {
+		return err
+	}
+	return rva.run(force, deleteDisk)
 }
 
-func (rva *removeVMAction) run(force bool) error {
+func (rva *removeVMAction) run(force bool, deleteDisk bool) error {
 	if force {
-		return rva.removeVM(force)
+		err := rva.removeVM(force)
+		if err != nil {
+			return err
+		}
+
+		if deleteDisk {
+			rva.logger.Info("Forcibly deleting user data...")
+			err := rva.diskManager.DeleteUserDataDisk(force)
+			if err != nil {
+				return err
+			}
+			rva.logger.Info("Successfully deleted user data.")
+		}
+
+		return nil
 	}
 
 	err := rva.assertVMIsStopped(rva.creator, rva.logger)
@@ -53,7 +75,21 @@ func (rva *removeVMAction) run(force bool) error {
 		return err
 	}
 
-	return rva.removeVM(false)
+	err = rva.removeVM(false)
+	if err != nil {
+		return err
+	}
+
+	if deleteDisk {
+		rva.logger.Info("Deleting user data...")
+		err := rva.diskManager.DeleteUserDataDisk(false)
+		if err != nil {
+			return err
+		}
+		rva.logger.Info("Successfully deleted user data.")
+	}
+
+	return nil
 }
 
 func (rva *removeVMAction) assertVMIsStopped(creator command.LimaCmdCreator, logger flog.Logger) error {

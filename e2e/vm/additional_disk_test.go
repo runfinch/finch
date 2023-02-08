@@ -39,5 +39,18 @@ var testAdditionalDisk = func(o *option.Option) {
 			newPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
 			gomega.Expect(newPsOutput).Should(gomega.Equal(oldPsOutput))
 		})
+		ginkgo.It("Removes the user data on `finch vm remove --user-data`", func() {
+			command.Run(o, "pull", savedImage)
+			oldImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
+			gomega.Expect(oldImagesOutput).Should(gomega.ContainSubstring(savedImage))
+
+			command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
+			command.Run(o, virtualMachineRootCmd, "remove", "--user-data")
+
+			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(240).Run()
+
+			newImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
+			gomega.Expect(newImagesOutput).ShouldNot(gomega.Equal(oldImagesOutput))
+		})
 	})
 }

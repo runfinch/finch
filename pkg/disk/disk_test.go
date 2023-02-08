@@ -151,3 +151,91 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 		})
 	}
 }
+
+func TestUserDataDiskManager_DeleteUserDataDisk(t *testing.T) {
+	t.Parallel()
+
+	finch := fpath.Finch("mock_finch")
+	homeDir := "mock_home"
+	mockListArgs := []string{"disk", "ls", diskName, "--json"}
+
+	//nolint:lll // line cannot be shortened without losing functionality
+	listSuccessOutput := []byte("{\"name\":\"finch\",\"size\":5,\"dir\":\"mock_dir\",\"instance\":\"\",\"instanceDir\":\"\",\"mountPoint\":\"/mnt/lima-finch\"}")
+
+	testCases := []struct {
+		name    string
+		wantErr error
+		mockSvc func(*mocks.LimaCmdCreator, *mocks.MockdiskFS, *mocks.Command)
+		force   bool
+	}{
+		{
+			name:    "delete disk",
+			wantErr: nil,
+			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command) {
+				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
+
+				lcc.EXPECT().CreateWithoutStdio("disk", "delete", diskName).Return(cmd)
+				cmd.EXPECT().Run().Return(nil)
+
+				dfs.EXPECT().Stat(finch.UserDataDiskPath(homeDir)).Return(nil, nil)
+
+				dfs.EXPECT().Remove(finch.UserDataDiskPath(homeDir)).Return(nil)
+			},
+			force: false,
+		},
+		{
+			name:    "delete disk but lima disk does not exist",
+			wantErr: nil,
+			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command) {
+				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+				cmd.EXPECT().Output().Return([]byte(""), nil)
+
+				dfs.EXPECT().Stat(finch.UserDataDiskPath(homeDir)).Return(nil, nil)
+
+				dfs.EXPECT().Remove(finch.UserDataDiskPath(homeDir)).Return(nil)
+			},
+			force: false,
+		},
+		{
+			name:    "delete disk but persistent disk does not exist",
+			wantErr: nil,
+			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command) {
+				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
+
+				lcc.EXPECT().CreateWithoutStdio("disk", "delete", diskName).Return(cmd)
+				cmd.EXPECT().Run().Return(nil)
+
+				dfs.EXPECT().Stat(finch.UserDataDiskPath(homeDir)).Return(nil, fs.ErrNotExist)
+			},
+			force: false,
+		},
+		{
+			name:    "forcibly delete disk",
+			wantErr: nil,
+			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command) {
+				lcc.EXPECT().CreateWithoutStdio("disk", "delete", "--force", diskName).Return(cmd)
+				cmd.EXPECT().Run().Return(nil)
+				dfs.EXPECT().RemoveAll(finch.UserDataDiskPath(homeDir)).Return(nil)
+			},
+			force: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			lcc := mocks.NewLimaCmdCreator(ctrl)
+			dfs := mocks.NewMockdiskFS(ctrl)
+			cmd := mocks.NewCommand(ctrl)
+			tc.mockSvc(lcc, dfs, cmd)
+			dm := NewUserDataDiskManager(lcc, dfs, finch, homeDir)
+			err := dm.DeleteUserDataDisk(tc.force)
+			assert.Equal(t, tc.wantErr, err)
+		})
+	}
+}
