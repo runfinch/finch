@@ -6,10 +6,10 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -33,12 +33,16 @@ type nerdctlCommandCreator struct {
 	creator    command.LimaCmdCreator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
+	fs         afero.Fs
 }
 
-func newNerdctlCommandCreator(creator command.LimaCmdCreator, systemDeps NerdctlCommandSystemDeps,
+func newNerdctlCommandCreator(
+	creator command.LimaCmdCreator,
+	systemDeps NerdctlCommandSystemDeps,
 	logger flog.Logger,
+	fs afero.Fs,
 ) *nerdctlCommandCreator {
-	return &nerdctlCommandCreator{creator: creator, systemDeps: systemDeps, logger: logger}
+	return &nerdctlCommandCreator{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
 }
 
 func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.Command {
@@ -49,7 +53,7 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 		// the args passed to nerdctlCommand.run will be empty because
 		// cobra will try to parse `-d alpine` as if alpine is the value of the `-d` flag.
 		DisableFlagParsing: true,
-		RunE:               newNerdctlCommand(ncc.creator, ncc.systemDeps, ncc.logger).runAdapter,
+		RunE:               newNerdctlCommand(ncc.creator, ncc.systemDeps, ncc.logger, ncc.fs).runAdapter,
 	}
 
 	return command
@@ -59,10 +63,11 @@ type nerdctlCommand struct {
 	creator    command.LimaCmdCreator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
+	fs         afero.Fs
 }
 
-func newNerdctlCommand(creator command.LimaCmdCreator, systemDeps NerdctlCommandSystemDeps, logger flog.Logger) *nerdctlCommand {
-	return &nerdctlCommand{creator: creator, systemDeps: systemDeps, logger: logger}
+func newNerdctlCommand(creator command.LimaCmdCreator, systemDeps NerdctlCommandSystemDeps, logger flog.Logger, fs afero.Fs) *nerdctlCommand {
+	return &nerdctlCommand{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
 }
 
 func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
@@ -99,7 +104,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 			}
 
 		case strings.HasPrefix(arg, "--env-file"):
-			shouldSkip, addEnvs, err := handleEnvFile(nc.systemDeps, arg, args[i+1])
+			shouldSkip, addEnvs, err := handleEnvFile(nc.fs, nc.systemDeps, arg, args[i+1])
 			if err != nil {
 				return err
 			}
@@ -220,7 +225,7 @@ func handleEnv(systemDeps NerdctlCommandSystemDeps, arg, arg2 string) (bool, str
 	return skip, ""
 }
 
-func handleEnvFile(systemDeps NerdctlCommandSystemDeps, arg, arg2 string) (bool, []string, error) {
+func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 string) (bool, []string, error) {
 	var (
 		filename string
 		skip     bool
@@ -234,11 +239,11 @@ func handleEnvFile(systemDeps NerdctlCommandSystemDeps, arg, arg2 string) (bool,
 		filename = arg[11:]
 	}
 
-	file, err := os.Open(filepath.Clean(filename))
+	file, err := fs.Open(filepath.Clean(filename))
 	if err != nil {
 		return false, []string{}, err
 	}
-	defer file.Close() //nolint:errcheck,gosec // close of a file in O_RDONLY mode has no gosec issue
+	defer file.Close() //nolint:errcheck // We did not write to the file, and the file will be closed when the CLI process exits anyway.
 
 	scanner := bufio.NewScanner(file)
 

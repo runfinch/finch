@@ -10,8 +10,10 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/mocks"
@@ -26,7 +28,7 @@ var testStdoutRs = []command.Replacement{
 func TestNerdctlCommandCreator_create(t *testing.T) {
 	t.Parallel()
 
-	cmd := newNerdctlCommandCreator(nil, nil, nil).create("build", "build description")
+	cmd := newNerdctlCommandCreator(nil, nil, nil, nil).create("build", "build description")
 	assert.Equal(t, cmd.Name(), "build")
 	assert.Equal(t, cmd.DisableFlagParsing, true)
 }
@@ -69,7 +71,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(lcc, logger, ctrl)
 
-			assert.NoError(t, newNerdctlCommand(lcc, ncsd, logger).runAdapter(tc.cmd, tc.args))
+			assert.NoError(t, newNerdctlCommand(lcc, ncsd, logger, nil).runAdapter(tc.cmd, tc.args))
 		})
 	}
 }
@@ -82,14 +84,21 @@ func TestNerdctlCommand_run(t *testing.T) {
 		cmdName string
 		args    []string
 		wantErr error
-		mockSvc func(*mocks.LimaCmdCreator, *mocks.NerdctlCommandSystemDeps, *mocks.Logger, *gomock.Controller)
+		mockSvc func(*testing.T, *mocks.LimaCmdCreator, *mocks.NerdctlCommandSystemDeps, *mocks.Logger, *gomock.Controller, afero.Fs)
 	}{
 		{
 			name:    "happy path",
 			cmdName: "build",
 			args:    []string{"-t", "demo", "."},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -105,7 +114,14 @@ func TestNerdctlCommand_run(t *testing.T) {
 			args:    []string{"-t", "demo", "."},
 			wantErr: fmt.Errorf("instance %q is stopped, run `finch %s start` to start the instance",
 				limaInstanceName, virtualMachineRootCmd),
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -119,7 +135,14 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: fmt.Errorf(
 				"instance %q does not exist, run `finch %s init` to create a new instance",
 				limaInstanceName, virtualMachineRootCmd),
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
@@ -131,7 +154,14 @@ func TestNerdctlCommand_run(t *testing.T) {
 			cmdName: "build",
 			args:    []string{"-t", "demo", "."},
 			wantErr: errors.New("unrecognized system status"),
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
@@ -143,7 +173,14 @@ func TestNerdctlCommand_run(t *testing.T) {
 			cmdName: "build",
 			args:    []string{"-t", "demo", "."},
 			wantErr: errors.New("get status error"),
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
@@ -154,7 +191,14 @@ func TestNerdctlCommand_run(t *testing.T) {
 			cmdName: "pull",
 			args:    []string{"test:tag", "--debug"},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -170,7 +214,14 @@ func TestNerdctlCommand_run(t *testing.T) {
 			cmdName: "run",
 			args:    []string{"--rm", "-e", "ARG1=val1", "--env=ARG2", "-eARG3", "alpine:latest", "env"},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -188,7 +239,14 @@ func TestNerdctlCommand_run(t *testing.T) {
 			cmdName: "run",
 			args:    []string{"--rm", "--env=ARG2", "-eARG3", "alpine:latest", "env"},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -202,11 +260,95 @@ func TestNerdctlCommand_run(t *testing.T) {
 			},
 		},
 		{
+			name:    "with --env-file flag replacement",
+			cmdName: "run",
+			args:    []string{"--rm", "--env-file=/env-file", "alpine:latest", "env"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				envFileStr := "# a comment\nARG1=val1\n  ARG2\n\n  # a 2nd comment\nNOTSETARG\n  "
+				require.NoError(t, afero.WriteFile(fs, "/env-file", []byte(envFileStr), 0o600))
+
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				c := mocks.NewCommand(ctrl)
+				ncsd.EXPECT().LookupEnv("ARG2")
+				ncsd.EXPECT().LookupEnv("NOTSETARG")
+				lcc.EXPECT().
+					Create("shell", limaInstanceName, nerdctlCmdName, "run", "-e", "ARG1=val1", "--rm", "alpine:latest", "env").
+					Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "with --env-file flag replacement and existing env value",
+			cmdName: "run",
+			args:    []string{"--rm", "--env-file", "/env-file", "alpine:latest", "env"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				envFileStr := "# a comment\n  ARG2\n\n  # a 2nd comment\nNOTSETARG\n  "
+				require.NoError(t, afero.WriteFile(fs, "/env-file", []byte(envFileStr), 0o600))
+
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				c := mocks.NewCommand(ctrl)
+				ncsd.EXPECT().LookupEnv("ARG2").Return("val2", true)
+				ncsd.EXPECT().LookupEnv("NOTSETARG")
+				lcc.EXPECT().
+					Create("shell", limaInstanceName, nerdctlCmdName, "run", "-e", "ARG2=val2", "--rm", "alpine:latest", "env").
+					Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "with --env-file flag, but the specified file does not exist",
+			cmdName: "run",
+			args:    []string{"--rm", "--env-file", "/env-file", "alpine:latest", "env"},
+			wantErr: &os.PathError{Op: "open", Path: "/env-file", Err: afero.ErrFileNotFound},
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+			},
+		},
+		{
 			name:    "with --help flag",
 			cmdName: "pull",
 			args:    []string{"test:tag", "--help"},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -220,7 +362,14 @@ func TestNerdctlCommand_run(t *testing.T) {
 			cmdName: "pull",
 			args:    []string{"test:tag", "--help"},
 			wantErr: fmt.Errorf("failed to replace"),
-			mockSvc: func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -241,73 +390,11 @@ func TestNerdctlCommand_run(t *testing.T) {
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			tc.mockSvc(lcc, ncsd, logger, ctrl)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ncsd, logger).run(tc.cmdName, tc.args))
+			fs := afero.NewMemMapFs()
+			tc.mockSvc(t, lcc, ncsd, logger, ctrl, fs)
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
 		})
 	}
-	t.Run("with --env-file flag replacement", func(t *testing.T) {
-		t.Parallel()
-		f, err := os.CreateTemp("", "envfiletest")
-		assert.NoError(t, err)
-		defer func() {
-			f.Close()           //nolint:errcheck,gosec //temp file during unit test
-			os.Remove(f.Name()) //nolint:errcheck,gosec //temp file during unit test
-		}()
-		envFileStr := "# a comment\nARG1=val1\n  ARG2\n\n  # a 2nd comment\nNOTSETARG\n  "
-		_, err = f.Write([]byte(envFileStr))
-		assert.NoError(t, err)
-		cmdName := "run"
-		args := []string{"--rm", fmt.Sprintf("--env-file=%s", f.Name()), "alpine:latest", "env"}
-		mockSvc := func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
-			getVMStatusC := mocks.NewCommand(ctrl)
-			lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-			getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
-			logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-			c := mocks.NewCommand(ctrl)
-			ncsd.EXPECT().LookupEnv("ARG2")
-			ncsd.EXPECT().LookupEnv("NOTSETARG")
-			lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run", "-e", "ARG1=val1", "--rm", "alpine:latest", "env").Return(c)
-			c.EXPECT().Run()
-		}
-		ctrl := gomock.NewController(t)
-		lcc := mocks.NewLimaCmdCreator(ctrl)
-		ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
-		logger := mocks.NewLogger(ctrl)
-		mockSvc(lcc, ncsd, logger, ctrl)
-		assert.Equal(t, nil, newNerdctlCommand(lcc, ncsd, logger).run(cmdName, args))
-	})
-
-	t.Run("with --env-file flag replacement and existing env value", func(t *testing.T) {
-		t.Parallel()
-		f, err := os.CreateTemp("", "envfiletest")
-		assert.NoError(t, err)
-		defer func() {
-			f.Close()           //nolint:errcheck,gosec //temp file during unit test
-			os.Remove(f.Name()) //nolint:errcheck,gosec //temp file during unit test
-		}()
-		envFileStr := "# a comment\n  ARG2\n\n  # a 2nd comment\nNOTSETARG\n  "
-		_, err = f.Write([]byte(envFileStr))
-		assert.NoError(t, err)
-		cmdName := "run"
-		args := []string{"--rm", "--env-file", f.Name(), "alpine:latest", "env"}
-		mockSvc := func(lcc *mocks.LimaCmdCreator, ncsd *mocks.NerdctlCommandSystemDeps, logger *mocks.Logger, ctrl *gomock.Controller) {
-			getVMStatusC := mocks.NewCommand(ctrl)
-			lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-			getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
-			logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-			c := mocks.NewCommand(ctrl)
-			ncsd.EXPECT().LookupEnv("ARG2").Return("val2", true)
-			ncsd.EXPECT().LookupEnv("NOTSETARG")
-			lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run", "-e", "ARG2=val2", "--rm", "alpine:latest", "env").Return(c)
-			c.EXPECT().Run()
-		}
-		ctrl := gomock.NewController(t)
-		lcc := mocks.NewLimaCmdCreator(ctrl)
-		ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
-		logger := mocks.NewLogger(ctrl)
-		mockSvc(lcc, ncsd, logger, ctrl)
-		assert.Equal(t, nil, newNerdctlCommand(lcc, ncsd, logger).run(cmdName, args))
-	})
 }
 
 func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
@@ -368,7 +455,7 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			assert.True(t, newNerdctlCommand(lcc, ncsd, logger).shouldReplaceForHelp(tc.cmdName, tc.args))
+			assert.True(t, newNerdctlCommand(lcc, ncsd, logger, nil).shouldReplaceForHelp(tc.cmdName, tc.args))
 		})
 	}
 }

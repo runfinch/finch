@@ -90,7 +90,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 	)
 
 	// append nerdctl commands
-	allCommands := initializeNerdctlCommands(lcc, logger)
+	allCommands := initializeNerdctlCommands(lcc, logger, fs)
 	// append finch specific commands
 	allCommands = append(allCommands,
 		newVersionCommand(lcc, logger, stdOut),
@@ -124,8 +124,8 @@ func virtualMachineCommands(
 	)
 }
 
-func initializeNerdctlCommands(lcc command.LimaCmdCreator, logger flog.Logger) []*cobra.Command {
-	nerdctlCommandCreator := newNerdctlCommandCreator(lcc, system.NewStdLib(), logger)
+func initializeNerdctlCommands(lcc command.LimaCmdCreator, logger flog.Logger, fs afero.Fs) []*cobra.Command {
+	nerdctlCommandCreator := newNerdctlCommandCreator(lcc, system.NewStdLib(), logger, fs)
 	var allNerdctlCommands []*cobra.Command
 	for cmdName, cmdDescription := range nerdctlCmds {
 		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))
