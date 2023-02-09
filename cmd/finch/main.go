@@ -125,7 +125,7 @@ func virtualMachineCommands(
 }
 
 func initializeNerdctlCommands(lcc command.LimaCmdCreator, logger flog.Logger) []*cobra.Command {
-	nerdctlCommandCreator := newNerdctlCommandCreator(lcc, logger)
+	nerdctlCommandCreator := newNerdctlCommandCreator(lcc, system.NewStdLib(), logger)
 	var allNerdctlCommands []*cobra.Command
 	for cmdName, cmdDescription := range nerdctlCmds {
 		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))
