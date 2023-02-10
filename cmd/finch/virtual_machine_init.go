@@ -78,7 +78,7 @@ func (iva *initVMAction) run() error {
 
 	err = dependency.InstallOptionalDeps(iva.optionalDepGroups, iva.logger)
 	if err != nil {
-		iva.logger.Error(fmt.Sprintf("Dependency error: %s", err))
+		iva.logger.Errorf("Dependency error: %v", err)
 	}
 
 	err = iva.limaConfigApplier.Apply()

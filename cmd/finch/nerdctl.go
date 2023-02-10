@@ -4,27 +4,45 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"path/filepath"
+	"strings"
 
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
+	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
+	"github.com/runfinch/finch/pkg/lima"
+	"github.com/runfinch/finch/pkg/system"
 
 	"k8s.io/apimachinery/pkg/util/sets"
-
-	"github.com/runfinch/finch/pkg/command"
-	"github.com/runfinch/finch/pkg/lima"
 )
 
 const nerdctlCmdName = "nerdctl"
 
-type nerdctlCommandCreator struct {
-	creator command.LimaCmdCreator
-	logger  flog.Logger
+// NerdctlCommandSystemDeps contains the system dependencies for newNerdctlCommand.
+//
+//go:generate mockgen -copyright_file=../../copyright_header -destination=../../pkg/mocks/nerdctl_cmd_system_deps.go -package=mocks -mock_names NerdctlCommandSystemDeps=NerdctlCommandSystemDeps -source=nerdctl.go NerdctlCommandSystemDeps
+type NerdctlCommandSystemDeps interface {
+	system.EnvChecker
 }
 
-func newNerdctlCommandCreator(creator command.LimaCmdCreator, logger flog.Logger) *nerdctlCommandCreator {
-	return &nerdctlCommandCreator{creator: creator, logger: logger}
+type nerdctlCommandCreator struct {
+	creator    command.LimaCmdCreator
+	systemDeps NerdctlCommandSystemDeps
+	logger     flog.Logger
+	fs         afero.Fs
+}
+
+func newNerdctlCommandCreator(
+	creator command.LimaCmdCreator,
+	systemDeps NerdctlCommandSystemDeps,
+	logger flog.Logger,
+	fs afero.Fs,
+) *nerdctlCommandCreator {
+	return &nerdctlCommandCreator{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
 }
 
 func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.Command {
@@ -35,19 +53,21 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 		// the args passed to nerdctlCommand.run will be empty because
 		// cobra will try to parse `-d alpine` as if alpine is the value of the `-d` flag.
 		DisableFlagParsing: true,
-		RunE:               newNerdctlCommand(ncc.creator, ncc.logger).runAdapter,
+		RunE:               newNerdctlCommand(ncc.creator, ncc.systemDeps, ncc.logger, ncc.fs).runAdapter,
 	}
 
 	return command
 }
 
 type nerdctlCommand struct {
-	creator command.LimaCmdCreator
-	logger  flog.Logger
+	creator    command.LimaCmdCreator
+	systemDeps NerdctlCommandSystemDeps
+	logger     flog.Logger
+	fs         afero.Fs
 }
 
-func newNerdctlCommand(creator command.LimaCmdCreator, logger flog.Logger) *nerdctlCommand {
-	return &nerdctlCommand{creator: creator, logger: logger}
+func newNerdctlCommand(creator command.LimaCmdCreator, systemDeps NerdctlCommandSystemDeps, logger flog.Logger, fs afero.Fs) *nerdctlCommand {
+	return &nerdctlCommand{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
 }
 
 func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
@@ -59,18 +79,63 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	if err != nil {
 		return err
 	}
+	var (
+		nerdctlArgs, envs, fileEnvs []string
+		skip                        bool
+	)
 
-	var nerdctlArgs []string
-	for _, arg := range args {
-		if arg == "--debug" {
-			// explicitly setting log level to avoid `--debug` flag being interpreted as nerdctl command
-			nc.logger.SetLevel(flog.Debug)
+	for i, arg := range args {
+		// parsing environment values from the command line may pre-fetch and
+		// consume the next argument; this loop variable will skip these pre-consumed
+		// entries from the command line
+		if skip {
+			skip = false
 			continue
 		}
-		nerdctlArgs = append(nerdctlArgs, arg)
+		switch {
+		case arg == "--debug":
+			// explicitly setting log level to avoid `--debug` flag being interpreted as nerdctl command
+			nc.logger.SetLevel(flog.Debug)
+		case argIsEnv(arg):
+			shouldSkip, addEnv := handleEnv(nc.systemDeps, arg, args[i+1])
+			skip = shouldSkip
+			if addEnv != "" {
+				envs = append(envs, addEnv)
+			}
+
+		case strings.HasPrefix(arg, "--env-file"):
+			shouldSkip, addEnvs, err := handleEnvFile(nc.fs, nc.systemDeps, arg, args[i+1])
+			if err != nil {
+				return err
+			}
+			skip = shouldSkip
+			fileEnvs = append(fileEnvs, addEnvs...)
+		default:
+			nerdctlArgs = append(nerdctlArgs, arg)
+		}
+	}
+	// to handle environment variables properly, we add all entries found via
+	// env-file includes to the map first and then all command line environment
+	// flags, making sure that command line overrides environment file options,
+	// and that later command line flags override earlier ones
+	envVars := make(map[string]string)
+
+	for _, e := range fileEnvs {
+		evar, eval, _ := strings.Cut(e, "=")
+		envVars[evar] = eval
+	}
+	for _, e := range envs {
+		evar, eval, _ := strings.Cut(e, "=")
+		envVars[evar] = eval
 	}
 
-	limaArgs := append([]string{"shell", limaInstanceName, nerdctlCmdName, cmdName}, nerdctlArgs...)
+	var finalArgs []string
+	for key, val := range envVars {
+		finalArgs = append(finalArgs, "-e", fmt.Sprintf("%s=%s", key, val))
+	}
+	finalArgs = append(finalArgs, nerdctlArgs...)
+
+	limaArgs := append([]string{"shell", limaInstanceName, nerdctlCmdName, cmdName}, finalArgs...)
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
 		return nc.creator.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
@@ -120,6 +185,92 @@ func (nc *nerdctlCommand) shouldReplaceForHelp(cmdName string, args []string) bo
 	}
 
 	return false
+}
+
+func argIsEnv(arg string) bool {
+	if strings.HasPrefix(arg, "-e") || (strings.HasPrefix(arg, "--env") && !strings.HasPrefix(arg, "--env-file")) {
+		return true
+	}
+	return false
+}
+
+func handleEnv(systemDeps NerdctlCommandSystemDeps, arg, arg2 string) (bool, string) {
+	var (
+		envVar string
+		skip   bool
+	)
+	switch arg {
+	case "-e", "--env":
+		skip = true
+		envVar = arg2
+	default:
+		// flag and value are in the same string
+		if strings.HasPrefix(arg, "-e") {
+			envVar = arg[2:]
+		} else {
+			// only other case is "--env="; skip that prefix
+			envVar = arg[6:]
+		}
+	}
+
+	if strings.Contains(envVar, "=") {
+		return skip, envVar
+	}
+	// if no value was provided we need to check the OS environment
+	// for a value and only set if it exists in the current env
+	if val, ok := systemDeps.LookupEnv(envVar); ok {
+		return skip, fmt.Sprintf("%s=%s", envVar, val)
+	}
+	// no value found; do not set the variable in the env
+	return skip, ""
+}
+
+func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 string) (bool, []string, error) {
+	var (
+		filename string
+		skip     bool
+	)
+
+	switch arg {
+	case "--env-file":
+		skip = true
+		filename = arg2
+	default:
+		filename = arg[11:]
+	}
+
+	file, err := fs.Open(filepath.Clean(filename))
+	if err != nil {
+		return false, []string{}, err
+	}
+	defer file.Close() //nolint:errcheck // We did not write to the file, and the file will be closed when the CLI process exits anyway.
+
+	scanner := bufio.NewScanner(file)
+
+	var envs []string
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if len(line) == 0 {
+			continue
+		}
+		switch {
+		case strings.HasPrefix(line, "#"):
+			// ignore comments
+			continue
+		case !strings.Contains(line, "="):
+			// only has the variable name; need to lookup value
+			if val, ok := systemDeps.LookupEnv(line); ok {
+				envs = append(envs, fmt.Sprintf("%s=%s", line, val))
+			}
+		default:
+			// contains a name and value
+			envs = append(envs, line)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return skip, []string{}, err
+	}
+	return skip, envs, nil
 }
 
 var nerdctlCmds = map[string]string{
