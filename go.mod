@@ -3,6 +3,7 @@ module github.com/runfinch/finch
 go 1.18
 
 require (
+	github.com/docker/docker v23.0.1+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.0
 	github.com/lima-vm/lima v0.14.2
@@ -27,11 +28,14 @@ require (
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/containerd/containerd v1.6.14 // indirect
 	github.com/containers/gvisor-tap-vsock v0.4.1-0.20220920072955-5b1aff8ba743 // indirect
+	github.com/docker/go-connections v0.4.0 // indirect
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
 	github.com/insomniacslk/dhcp v0.0.0-20220504074936-1ca156eafb9f // indirect
 	github.com/miekg/dns v1.1.50 // indirect
+	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/u-root/uio v0.0.0-20210528114334-82958018845c // indirect
 	golang.org/x/sync v0.1.0 // indirect
