@@ -26,7 +26,7 @@ require (
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
-	github.com/containerd/containerd v1.6.14 // indirect
+	github.com/containerd/containerd v1.6.18 // indirect
 	github.com/containers/gvisor-tap-vsock v0.4.1-0.20220920072955-5b1aff8ba743 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
