@@ -12,7 +12,7 @@ permissions:
   contents: read    # This is required for actions/checkout
 
 jobs:
-  macos-arm64-build:
+  macos-aarch64-build:
     runs-on: ['self-hosted', 'macos', 'arm64', '11.7']
     timeout-minutes: 60
     steps:
@@ -25,22 +25,22 @@ jobs:
           persist-credentials: false
           submodules: true
 
-      - name: Make macos arm64 build
+      - name: Make macos aarch64 build
         run: |
           brew install go lz4 automake autoconf libtool
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch.app/Contents/Resources/resources
-          tar -zcvf finch.arm64."$(date '+%s').tar.gz" _output
+          tar -zcvf finch.${GITHUB_REF_NAME}.aarch64.tar.gz _output
 
-      - name: Upload macos arm64 build
+      - name: Upload macos aarch64 build
         uses: actions/upload-artifact@v2
         with:
-          name: finch.macos-arm64
-          path: finch.arm64.*.tar.gz
+          name: finch.macos-aarch64
+          path: finch.${GITHUB_REF_NAME}.aarch64.tar.gz
           if-no-files-found: error
 
-  macos-x86-build:
+  macos-x86_64-build:
     runs-on: ['self-hosted', 'macos', 'amd64', '10.15']
     timeout-minutes: 60
     steps:
@@ -53,27 +53,27 @@ jobs:
           persist-credentials: false
           submodules: true
 
-      - name: Make macos amd64 build
+      - name: Make macos x86_64 build
         run: |
           brew install go lz4 automake autoconf libtool
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch.app/Contents/Resources/resources
-          tar -zcvf finch.amd64."$(date '+%s').tar.gz" _output
+          tar -zcvf finch.${GITHUB_REF_NAME}.x86_64.tar.gz _output
 
-      - name: Upload macos amd64 build
+      - name: Upload macos x86_64 build
         uses: actions/upload-artifact@v2
         with:
-          name: finch.macos-amd64
-          path: finch.amd64.*.tar.gz
+          name: finch.macos-x86_64
+          path: finch.${GITHUB_REF_NAME}.x86_64.tar.gz
           if-no-files-found: error
 
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs:
-      - macos-x86-build
-      - macos-arm64-build
+      - macos-x86_64-build
+      - macos-aarch64-build
     steps:
       - uses: actions/checkout@v3
         with:
@@ -87,19 +87,19 @@ jobs:
           role-session-name: dependency-upload-session
           aws-region: ${{ secrets.REGION }}
 
-      - name: Download macos arm64 build
+      - name: Download macos aarch64 build
         uses: actions/download-artifact@v2
         with:
-          name: finch.macos-arm64
+          name: finch.macos-aarch64
           path: build
 
-      - name: Download macos amd64 build
+      - name: Download macos x86_64 build
         uses: actions/download-artifact@v2
         with:
-          name: finch.macos-amd64
+          name: finch.macos-x86_64
           path: build
       # TODO: Change destination bucket after creating automation for signing.
       - name: "Upload to S3"
         run: |
-          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/aarch64/ --recursive --exclude "*" --include "finch.arm64*"
-          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/x86-64/ --recursive --exclude "*" --include "finch.amd64*"
+          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/aarch64/ --recursive --exclude "*" --include "finch.${GITHUB_REF_NAME}.aarch64.tar.gz"
+          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/x86-64/ --recursive --exclude "*" --include "finch.${GITHUB_REF_NAME}.x86_64.tar.gz"
