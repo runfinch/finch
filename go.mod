@@ -7,8 +7,8 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.0
 	github.com/lima-vm/lima v0.14.2
-	github.com/onsi/ginkgo/v2 v2.8.0
-	github.com/onsi/gomega v1.26.0
+	github.com/onsi/ginkgo/v2 v2.8.1
+	github.com/onsi/gomega v1.27.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.5
 	github.com/runfinch/common-tests v0.5.0
