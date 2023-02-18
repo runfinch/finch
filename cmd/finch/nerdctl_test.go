@@ -337,7 +337,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			},
 		},
 		{
-			name:    "with --add-host flag and special IP",
+			name:    "with --add-host flag and special IP by space",
 			cmdName: "run",
 			args:    []string{"--rm", "--add-host", "name:host-gateway", "alpine:latest"},
 			wantErr: nil,
@@ -361,7 +361,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			},
 		},
 		{
-			name:    "with --add-host flag but without using special IP",
+			name:    "with --add-host flag but without using special IP by space",
 			cmdName: "run",
 			args:    []string{"--rm", "--add-host", "name:0.0.0.0", "alpine:latest"},
 			wantErr: nil,
@@ -404,6 +404,53 @@ func TestNerdctlCommand_run(t *testing.T) {
 				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
 					"--rm", "--add-host", "alpine:latest").Return(c)
 				c.EXPECT().Run().Return(errors.New("run cmd error"))
+			},
+		},
+		{
+			name:    "with --add-host flag and special IP by equal",
+			cmdName: "run",
+			args:    []string{"--rm", "--add-host=name:host-gateway", "alpine:latest"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				logger.EXPECT().Debugf(`Resolving special IP "host-gateway" to %q for host %q`, "192.168.5.2", "name")
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+					"--rm", "--add-host=name:192.168.5.2", "alpine:latest").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "with --add-host flag but without using special IP by equal",
+			cmdName: "run",
+			args:    []string{"--rm", "--add-host=name:0.0.0.0", "alpine:latest"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+					"--rm", "--add-host=name:0.0.0.0", "alpine:latest").Return(c)
+				c.EXPECT().Run()
 			},
 		},
 		{
