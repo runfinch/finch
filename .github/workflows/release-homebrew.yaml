@@ -50,8 +50,11 @@ jobs:
     timeout-minutes: 60
     env:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
-      FINCH_VESRION: ${{ needs.get-latest-tag.outputs.version }}
+      FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19.x
       - uses: actions/checkout@v3
         with:
           ref: ${{ env.FINCH_TAG }}
@@ -65,9 +68,12 @@ jobs:
       - name: Bump local cask version
         run: |
           brew update-reset 
+          # disable the default behaviour of downloading JSON files from formulae.brew.sh for pacakge installation since Homebrew 4.0.0
+          # Ref. https://brew.sh/2023/02/16/homebrew-4.0.0/
+          export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          echo "Update the local Finch cask with version ${FINCH_VERSION}"
-          brew bump-cask-pr --write-only -f --version=${FINCH_VERSION} finch
+          echo "Update the local Finch cask with version $FINCH_VERSION"
+          brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
       - name: Silently install
         run: |
           cd $(brew --repo homebrew/cask)
@@ -100,8 +106,11 @@ jobs:
     timeout-minutes: 60
     env:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
-      FINCH_VESRION: ${{ needs.get-latest-tag.outputs.version }}
+      FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19.x
       - uses: actions/checkout@v3
         with:
           ref: ${{ env.FINCH_TAG }}
@@ -115,9 +124,10 @@ jobs:
       - name: Bump local cask version
         run: |
           brew update-reset 
+          export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          echo "Update the local Finch cask with version ${FINCH_VERSION}"
-          brew bump-cask-pr --write-only -f --version=${FINCH_VERSION} finch
+          echo "Update the local Finch cask with version $FINCH_VERSION"
+          brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
       - name: Silently install
         run: |
           cd $(brew --repo homebrew/cask)
