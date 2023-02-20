@@ -42,10 +42,10 @@ func Test_updateEnvironment(t *testing.T) {
 			name: "happy path",
 			user: "mock_user",
 			mockSvc: func(t *testing.T, fs afero.Fs) {
-				require.NoError(t, afero.WriteFile(fs, "/home/mock_user.linux/.bashrc", []byte(""), 0o644))
+				require.NoError(t, afero.WriteFile(fs, "/root/.bashrc", []byte(""), 0o644))
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
+				fileBytes, err := afero.ReadFile(fs, "/root/.bashrc")
 				require.NoError(t, err)
 				assert.Equal(t, []byte("\n"+`export DOCKER_CONFIG="/Users/mock_user/.finch"`+"\n"), fileBytes)
 			},
@@ -59,14 +59,14 @@ func Test_updateEnvironment(t *testing.T) {
 					t,
 					afero.WriteFile(
 						fs,
-						"/home/mock_user.linux/.bashrc",
+						"/root/.bashrc",
 						[]byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`),
 						0o644,
 					),
 				)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
+				fileBytes, err := afero.ReadFile(fs, "/root/.bashrc")
 				require.NoError(t, err)
 				assert.Equal(t, []byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`), fileBytes)
 			},
@@ -79,7 +79,7 @@ func Test_updateEnvironment(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {},
 			want: fmt.Errorf(
 				"failed to read config file: %w",
-				&fs.PathError{Op: "open", Path: "/home/mock_user.linux/.bashrc", Err: errors.New("file does not exist")},
+				&fs.PathError{Op: "open", Path: "/root/.bashrc", Err: errors.New("file does not exist")},
 			),
 		},
 	}

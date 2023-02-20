@@ -62,7 +62,7 @@ func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string, s
 //
 // [registry nerdctl docs]: https://github.com/containerd/nerdctl/blob/master/docs/registry.md
 func updateEnvironment(fs afero.Fs, user string) error {
-	profileFilePath := fmt.Sprintf("/home/%s.linux/.bashrc", user)
+	profileFilePath := "/root/.bashrc"
 	profBuf, err := afero.ReadFile(fs, profileFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to read config file: %w", err)
@@ -145,7 +145,7 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 	sftpFs := sftpfs.New(sftpClient)
 
 	// rootless hardcoded to true for now to match our os.yaml file
-	if err := updateNerdctlConfig(sftpFs, user, true); err != nil {
+	if err := updateNerdctlConfig(sftpFs, user, false); err != nil {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}
 
