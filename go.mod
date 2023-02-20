@@ -7,8 +7,8 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.0
 	github.com/lima-vm/lima v0.14.2
-	github.com/onsi/ginkgo/v2 v2.8.0
-	github.com/onsi/gomega v1.26.0
+	github.com/onsi/ginkgo/v2 v2.8.1
+	github.com/onsi/gomega v1.27.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.5
 	github.com/runfinch/common-tests v0.5.0
@@ -74,7 +74,7 @@ require (
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/net v0.6.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
