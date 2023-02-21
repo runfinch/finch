@@ -425,7 +425,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				logger.EXPECT().Debugf(`Resolving special IP "host-gateway" to %q for host %q`, "192.168.5.2", "name")
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run",
 					"--rm", "--add-host=name:192.168.5.2", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -448,7 +448,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run",
 					"--rm", "--add-host=name:0.0.0.0", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
