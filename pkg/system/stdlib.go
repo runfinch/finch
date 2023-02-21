@@ -61,3 +61,11 @@ func (s *StdLib) NumCPU() int {
 func (s *StdLib) ReadMemStats(st *runtime.MemStats) {
 	runtime.ReadMemStats(st)
 }
+
+func (s *StdLib) Arch() string {
+	return runtime.GOARCH
+}
+
+func (s *StdLib) OS() string {
+	return runtime.GOOS
+}

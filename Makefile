@@ -54,7 +54,7 @@ arch-test:
 	@if [ $(SUPPORTED_ARCH) != "true" ]; then echo "Unsupported architecture: $(ARCH)"; exit "1"; fi
 
 .PHONY: all
-all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
+all: arch-test finch networks.yaml config.yaml lima-and-qemu finch-core finch.yaml
 
 .PHONY: finch-core
 finch-core:
@@ -62,10 +62,11 @@ finch-core:
 		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		$(MAKE)
+		$(MAKE) all lima
 
 	mkdir -p _output
 	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
+	cd deps/finch-core/src/lima/_output && tar c * | tar Cvx  $(OUTDIR)/lima
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: lima-and-qemu

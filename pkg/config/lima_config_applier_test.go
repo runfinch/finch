@@ -4,9 +4,7 @@
 package config
 
 import (
-	"errors"
 	"fmt"
-	"io/fs"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -26,19 +24,154 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 		name         string
 		config       *Finch
 		path         string
-		mockSvc      func(fs afero.Fs, l *mocks.Logger)
+		isInit       bool
+		mockSvc      func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps)
 		postRunCheck func(t *testing.T, fs afero.Fs)
 		want         error
 	}{
 		{
 			name: "happy path",
 			config: &Finch{
-				Memory: pointer.String("2GiB"),
-				CPUs:   pointer.Int(4),
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(4),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
 			},
-			path: "/lima.yaml",
-			mockSvc: func(fs afero.Fs, l *mocks.Logger) {
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("12.6.1"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+`, limaCfg.Provision[0].Script)
+			},
+			want: nil,
+		},
+		{
+			name: "updates vmType and removes cross-arch provisioning script and network config",
+			config: &Finch{
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(4),
+				VMType:  pointer.String("vz"),
+				Rosetta: pointer.Bool(true),
+			},
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
+cpus: 8
+vmType: "qemu"
+provision:
+- mode: system
+  script: |
+    # cross-arch tools
+    #!/bin/bash
+    dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+`), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				deps.EXPECT().OS().Return("darwin")
+				deps.EXPECT().Arch().Return("arm64")
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "vz", *limaCfg.VMType)
+				require.Equal(t, "virtiofs", *limaCfg.MountType)
+				require.Equal(t, true, limaCfg.Rosetta.Enabled)
+				require.Equal(t, true, limaCfg.Rosetta.BinFmt)
+				require.Len(t, limaCfg.Provision, 0)
+			},
+			want: nil,
+		},
+		{
+			name: "updates vmType from vz to qemu and adds cross-arch provisioning script",
+			config: &Finch{
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(4),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+			},
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
+cpus: 8
+vmType: "vz"
+rosetta:
+  enabled: true
+  binfmt: true
+`), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "qemu", *limaCfg.VMType)
+				require.Equal(t, false, limaCfg.Rosetta.Enabled)
+				require.Equal(t, false, limaCfg.Rosetta.BinFmt)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+`, limaCfg.Provision[0].Script)
+			},
+			want: nil,
+		},
+		{
+			name: "does not update lima config because isInit == false",
+			config: &Finch{
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(4),
+				VMType:  pointer.String("vz"),
+				Rosetta: pointer.Bool(false),
+			},
+			path:   "/lima.yaml",
+			isInit: false,
+			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
+cpus: 8
+vmType: "qemu"
+mountType: "reverse-sshfs"
+provision:
+- mode: system
+  script: |
+    # cross-arch tools
+    #!/bin/bash
+    dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+`), 0o600)
 				require.NoError(t, err)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
@@ -50,27 +183,56 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "qemu", *limaCfg.VMType)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+`, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
 		{
-			name:    "lima config file does not exist",
-			config:  nil,
-			path:    "/lima.yaml",
-			mockSvc: func(afs afero.Fs, l *mocks.Logger) {},
-			postRunCheck: func(t *testing.T, mFs afero.Fs) {
-				_, err := afero.ReadFile(mFs, "/lima.yaml")
-				require.Equal(t, err, &fs.PathError{Op: "open", Path: "/lima.yaml", Err: errors.New("file does not exist")})
+			name: "lima config file does not exist",
+			config: &Finch{
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(4),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
 			},
-			want: fmt.Errorf("failed to load the lima config file: %w",
-				&fs.PathError{Op: "open", Path: "/lima.yaml", Err: errors.New("file does not exist")},
-			),
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("12.6.1"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+`, limaCfg.Provision[0].Script)
+			},
+			want: nil,
 		},
 		{
 			name:   "lima config file does not contain valid YAML",
 			config: nil,
 			path:   "/lima.yaml",
-			mockSvc: func(fs afero.Fs, l *mocks.Logger) {
+			isInit: true,
+			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("this isn't YAML"), 0o600)
 				require.NoError(t, err)
 			},
@@ -91,33 +253,35 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				Memory:                pointer.String("2GiB"),
 				CPUs:                  pointer.Int(4),
 				AdditionalDirectories: []AdditionalDirectory{{pointer.String("/Volumes")}},
+				VMType:                pointer.String("qemu"),
+				Rosetta:               pointer.Bool(false),
 			},
-			path: "/lima.yaml",
-			mockSvc: func(fs afero.Fs, l *mocks.Logger) {
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				buf, err := afero.ReadFile(fs, "/lima.yaml")
 				require.NoError(t, err)
 
-				// limayaml.LimaYAML has a required "images" field which will also get marshaled
-				wantYaml := `images: []
-cpus: 4
-memory: 2GiB
-mounts:
-    - location: /Volumes
-      writable: true
-`
-				require.Equal(t, wantYaml, string(buf))
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, 1, len(limaCfg.Mounts))
 				require.Equal(t, "/Volumes", limaCfg.Mounts[0].Location)
 				require.Equal(t, true, *limaCfg.Mounts[0].Writable)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+`, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -129,11 +293,14 @@ mounts:
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
+			cmd := mocks.NewCommand(ctrl)
+			cmdCreator := mocks.NewCommandCreator(ctrl)
+			deps := mocks.NewLimaConfigApplierSystemDeps(ctrl)
 			l := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
 
-			tc.mockSvc(fs, l)
-			got := NewLimaApplier(tc.config, fs, tc.path).Apply()
+			tc.mockSvc(fs, l, cmd, cmdCreator, deps)
+			got := NewLimaApplier(tc.config, cmdCreator, fs, tc.path, deps).Apply(tc.isInit)
 
 			require.Equal(t, tc.want, got)
 			tc.postRunCheck(t, fs)

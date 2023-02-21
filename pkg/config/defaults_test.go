@@ -31,8 +31,10 @@ func Test_applyDefaults(t *testing.T) {
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(2),
-				Memory: pointer.String("3GiB"),
+				CPUs:    pointer.Int(2),
+				Memory:  pointer.String("3GiB"),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
 			},
 		},
 		{
@@ -44,8 +46,10 @@ func Test_applyDefaults(t *testing.T) {
 				deps.EXPECT().NumCPU().Return(8)
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(2),
-				Memory: pointer.String("4GiB"),
+				CPUs:    pointer.Int(2),
+				Memory:  pointer.String("4GiB"),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
 			},
 		},
 		{
@@ -58,8 +62,10 @@ func Test_applyDefaults(t *testing.T) {
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(6),
-				Memory: pointer.String("3GiB"),
+				CPUs:    pointer.Int(6),
+				Memory:  pointer.String("3GiB"),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
 			},
 		},
 		{
@@ -71,8 +77,10 @@ func Test_applyDefaults(t *testing.T) {
 				mem.EXPECT().TotalMemory().Return(uint64(1_073_741_824))
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(2),
-				Memory: pointer.String("2GiB"),
+				CPUs:    pointer.Int(2),
+				Memory:  pointer.String("2GiB"),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
 			},
 		},
 	}

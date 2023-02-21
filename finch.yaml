@@ -77,10 +77,6 @@ mounts:
   # 🔵 This file: true (only for "/tmp/lima")
   writable: true
 
-# Mount type for above mounts, such as "reverse-sshfs" (from sshocker) or "9p" (EXPERIMENTAL, from QEMU’s virtio-9p-pci, aka virtfs)
-# 🟢 Builtin default: "reverse-sshfs"
-mountType: reverse-sshfs
-
 # Lima disks to attach to the instance. The disks will be accessible from inside the
 # instance, labeled by name. (e.g. if the disk is named "data", it will be labeled
 # "lima-data" inside the instance). The disk will be mounted inside the instance at
@@ -134,16 +130,14 @@ containerd:
 # multiple times, e.g. when the host VM is being restarted.
 # 🟢 Builtin default: null
 provision:
-# Install packages needed for QEMU user-mode emulation
-- mode: system
-  script: |
-    #!/bin/bash
-    dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
 - mode: boot
   script: |
     systemctl stop NetworkManager-wait-online.service
     systemctl reset-failed NetworkManager-wait-online.service
     systemctl mask NetworkManager-wait-online.service
+- mode: boot
+  script: |
+    modprobe virtiofs
 # # `user` is executed without the root privilege
 - mode: user
   script: |

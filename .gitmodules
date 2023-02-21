@@ -1,3 +1,4 @@
 [submodule "deps/finch-core"]
 	path = deps/finch-core
-	url = https://github.com/runfinch/finch-core.git
+	url = https://github.com/pendo324/finch-core.git
+	branch = lima-with-vz-extra-disk

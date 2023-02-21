@@ -38,5 +38,13 @@ func applyDefaults(cfg *Finch, deps LoadSystemDeps, mem fmemory.Memory) *Finch {
 		}
 	}
 
+	if cfg.VMType == nil {
+		cfg.VMType = pointer.String("qemu")
+	}
+
+	if cfg.Rosetta == nil {
+		cfg.Rosetta = pointer.Bool(false)
+	}
+
 	return cfg
 }
