@@ -117,7 +117,7 @@ func virtualMachineCommands(
 		logger,
 		optionalDepGroups,
 		config.NewLimaApplier(fc, fs, fp.LimaOverrideConfigPath()),
-		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), system.NewStdLib()),
+		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath()),
 		fp,
 		fs,
 		disk.NewUserDataDiskManager(lcc, &afero.OsFs{}, fp, system.NewStdLib().Env("HOME")),

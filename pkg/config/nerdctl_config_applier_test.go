@@ -191,15 +191,14 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 		name       string
 		path       string
 		remoteAddr string
-		mockSvc    func(t *testing.T, fs afero.Fs, d *mocks.Dialer, sd *mocks.NerdctlConfigApplierSystemDeps)
+		mockSvc    func(t *testing.T, fs afero.Fs, d *mocks.Dialer)
 		want       error
 	}{
 		{
 			name:       "private key path doesn't exist",
 			path:       "/private-key",
 			remoteAddr: "",
-			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer, sd *mocks.NerdctlConfigApplierSystemDeps) {
-				sd.EXPECT().Env("USER").Return("user")
+			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer) {
 			},
 			want: fmt.Errorf(
 				"failed to create ssh client config: %w",
@@ -213,11 +212,10 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			name:       "dialer fails to create the ssh connection",
 			path:       "/private-key",
 			remoteAddr: "deadbeef",
-			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer, sd *mocks.NerdctlConfigApplierSystemDeps) {
+			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer) {
 				err := afero.WriteFile(fs, "/private-key", []byte(fakeSSHKey), 0o600)
 				require.NoError(t, err)
 
-				sd.EXPECT().Env("USER").Return("user")
 				d.EXPECT().Dial("tcp", "deadbeef", gomock.Any()).Return(nil, fmt.Errorf("some error"))
 			},
 			want: fmt.Errorf("failed to setup ssh client: %w", fmt.Errorf("some error")),
@@ -232,10 +230,9 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			fs := afero.NewMemMapFs()
 			d := mocks.NewDialer(ctrl)
-			sd := mocks.NewNerdctlConfigApplierSystemDeps(ctrl)
 
-			tc.mockSvc(t, fs, d, sd)
-			got := NewNerdctlApplier(d, fs, tc.path, sd).Apply(tc.remoteAddr)
+			tc.mockSvc(t, fs, d)
+			got := NewNerdctlApplier(d, fs, tc.path).Apply(tc.remoteAddr)
 
 			assert.Equal(t, tc.want, got)
 		})

@@ -15,7 +15,6 @@ import (
 	"github.com/spf13/afero/sftpfs"
 
 	"github.com/runfinch/finch/pkg/fssh"
-	"github.com/runfinch/finch/pkg/system"
 )
 
 const (
@@ -23,30 +22,21 @@ const (
 	nerdctlRootfulCfgPath = "/etc/nerdctl/nerdctl.toml"
 )
 
-// NerdctlConfigApplierSystemDeps contains the system dependencies required for NewNerdctlApplier.
-//
-//go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_nerdctl_config_applier_system_deps.go -package=mocks -mock_names NerdctlConfigApplierSystemDeps=NerdctlConfigApplierSystemDeps . NerdctlConfigApplierSystemDeps
-type NerdctlConfigApplierSystemDeps interface {
-	system.EnvGetter
-}
-
 type nerdctlConfigApplier struct {
 	dialer         fssh.Dialer
 	fs             afero.Fs
 	privateKeyPath string
-	systemDeps     NerdctlConfigApplierSystemDeps
 }
 
 var _ NerdctlConfigApplier = (*nerdctlConfigApplier)(nil)
 
 // NewNerdctlApplier creates a new NerdctlConfigApplier that
 // applies nerdctl configuration changes by SSHing to the lima VM to update the nerdctl configuration file in it.
-func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string, systemDeps NerdctlConfigApplierSystemDeps) NerdctlConfigApplier {
+func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string) NerdctlConfigApplier {
 	return &nerdctlConfigApplier{
 		dialer:         dialer,
 		fs:             fs,
 		privateKeyPath: privateKeyPath,
-		systemDeps:     systemDeps,
 	}
 }
 
@@ -126,7 +116,7 @@ func updateNerdctlConfig(fs afero.Fs, user string, rootless bool) error {
 
 // Apply gets SSH and SFTP clients and uses them to update the nerdctl config.
 func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
-	user := nca.systemDeps.Env("USER")
+	user := "root"
 	sshCfg, err := fssh.NewClientConfig(nca.fs, user, nca.privateKeyPath)
 	if err != nil {
 		return fmt.Errorf("failed to create ssh client config: %w", err)
@@ -144,7 +134,7 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 
 	sftpFs := sftpfs.New(sftpClient)
 
-	// rootless hardcoded to true for now to match our os.yaml file
+	// rootless hardcoded to false for now to match our finch.yaml file
 	if err := updateNerdctlConfig(sftpFs, user, false); err != nil {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}

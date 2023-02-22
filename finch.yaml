@@ -148,11 +148,9 @@ provision:
 - mode: user
   script: |
     #!/bin/bash
-    # We need create /etc/nerdctl directory as root and make it writeable by non root user because the sftp client in https://github.com/runfinch/finch/blob/main/pkg/config/nerdctl_config_applier.go#L140 cannot run as root.
-    sudo mkdir -p /etc/nerdctl
-    sudo chown $USER /etc/nerdctl
-    sudo chmod 755 /root/
-    sudo chown $USER /root/.bashrc
+
+    # To allow root user to ssh into the vm. 
+    sudo cp ~/.ssh/authorized_keys /root/.ssh/
     sudo chown $USER /mnt/lima-finch
 
     # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#dataroot
@@ -163,6 +161,7 @@ provision:
     sudo mkdir -p /mnt/lima-finch/cni-config /etc/cni/
     sudo mount --bind /mnt/lima-finch/cni-config /etc/cni/
 
+    # https://github.com/containerd/containerd/blob/main/docs/ops.md#base-configuration
     sudo mkdir -p /var/lib/containerd
     sudo mount --bind /mnt/lima-finch /var/lib/containerd
 
