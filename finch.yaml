@@ -149,7 +149,7 @@ provision:
   script: |
     #!/bin/bash
 
-    # To allow root user to ssh into the vm. 
+    # Enable SSHing into the VM as root (e.g., in `nerdctlConfigApplier.Apply`).
     sudo cp ~/.ssh/authorized_keys /root/.ssh/
     sudo chown $USER /mnt/lima-finch
 
@@ -163,7 +163,7 @@ provision:
 
     # https://github.com/containerd/containerd/blob/main/docs/ops.md#base-configuration
     sudo mkdir -p /var/lib/containerd
-    sudo mount --bind /mnt/lima-finch /var/lib/containerd
+    sudo mount --bind /mnt/lima-finch/containerd /var/lib/containerd
 
     sudo systemctl restart containerd.service  
 
