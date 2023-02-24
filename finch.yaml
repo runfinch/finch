@@ -165,8 +165,11 @@ provision:
     sudo mkdir -p /var/lib/containerd
     sudo mount --bind /mnt/lima-finch/containerd /var/lib/containerd
 
-    sudo systemctl restart containerd.service  
+    https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L148-L150
+    sudo mkdir -p /mnt/lima-finch/cni
+    sudo mount --bind /mnt/lima-finch/cni /var/lib/cni
 
+    sudo systemctl restart containerd.service  
 
 # Probe scripts to check readiness.
 # 🟢 Builtin default: null
