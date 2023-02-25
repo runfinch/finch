@@ -16,7 +16,7 @@ jobs:
     runs-on: ['self-hosted', 'macos', 'arm64', '11.7']
     timeout-minutes: 60
     steps:
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
           go-version: 1.19.x
       - uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
     runs-on: ['self-hosted', 'macos', 'amd64', '10.15']
     timeout-minutes: 60
     steps:
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
           go-version: 1.19.x
       - uses: actions/checkout@v3
