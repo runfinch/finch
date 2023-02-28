@@ -153,7 +153,7 @@ provision:
     sudo cp ~/.ssh/authorized_keys /root/.ssh/
     sudo chown $USER /mnt/lima-finch
 
-   # https://github.com/containerd/containerd/blob/main/docs/ops.md#base-configuration
+    # https://github.com/containerd/containerd/blob/main/docs/ops.md#base-configuration
     sudo mkdir -p /var/lib/containerd
     sudo mount --bind /mnt/lima-finch/containerd /var/lib/containerd
 
