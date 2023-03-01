@@ -153,20 +153,22 @@ provision:
     sudo cp ~/.ssh/authorized_keys /root/.ssh/
     sudo chown $USER /mnt/lima-finch
     
-    # This code mounts /mnt/lima-finch to both rootless and rootful dataroots to enable rootless container startup within the rootful vm configuration.
+    # This block of configuration facilitates the startup of rootless containers created prior to this change within the rootful vm configuration by mounting /mnt/lima-finch to both rootless and rootful dataroots.   
+    
     # https://github.com/containerd/containerd/blob/main/docs/ops.md#base-configuration
     sudo mkdir -p /mnt/lima-finch/containerd /var/lib/containerd
     sudo mount --bind /mnt/lima-finch/containerd /var/lib/containerd
+    
+    # https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L144-L146
+    # XDG_DATA_HOME & ~/.local/share: https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L51
     mkdir ~/.local/share/containerd
     sudo mount --bind /mnt/lima-finch/containerd ~/.local/share/containerd
-
 
     # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#dataroot
     sudo mkdir -p /mnt/lima-finch/nerdctl /var/lib/nerdctl
     sudo mount --bind /mnt/lima-finch/nerdctl /var/lib/nerdctl
     mkdir -p ~/.local/share/nerdctl
     sudo mount --bind /mnt/lima-finch/nerdctl ~/.local/share/nerdctl
-
 
     # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#netconfpath
     sudo mkdir -p /mnt/lima-finch/cni-config /etc/cni/
