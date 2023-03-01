@@ -146,7 +146,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	}
 	finalArgs = append(finalArgs, nerdctlArgs...)
 
-	limaArgs := append([]string{"shell", limaInstanceName, nerdctlCmdName, cmdName}, finalArgs...)
+	limaArgs := append([]string{"shell", limaInstanceName, "sudo", nerdctlCmdName, cmdName}, finalArgs...)
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
 		return nc.creator.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)

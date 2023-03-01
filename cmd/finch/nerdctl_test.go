@@ -54,7 +54,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "info").Return(c)
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "info").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -104,7 +104,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "build", "-t", "demo", ".").Return(c)
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "build", "-t", "demo", ".").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -205,7 +205,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				logger.EXPECT().SetLevel(flog.Debug)
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "pull", "test:tag").Return(c)
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "pull", "test:tag").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -229,7 +229,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				c := mocks.NewCommand(ctrl)
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("ARG3")
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run",
 					"-e", "ARG1=val1", "--rm", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
@@ -254,7 +254,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				c := mocks.NewCommand(ctrl)
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("ARG3").Return("val3", true)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run",
 					"-e", "ARG3=val3", "--rm", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
@@ -283,7 +283,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
 				lcc.EXPECT().
-					Create("shell", limaInstanceName, nerdctlCmdName, "run", "-e", "ARG1=val1", "--rm", "alpine:latest", "env").
+					Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run", "-e", "ARG1=val1", "--rm", "alpine:latest", "env").
 					Return(c)
 				c.EXPECT().Run()
 			},
@@ -312,7 +312,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG2").Return("val2", true)
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
 				lcc.EXPECT().
-					Create("shell", limaInstanceName, nerdctlCmdName, "run", "-e", "ARG2=val2", "--rm", "alpine:latest", "env").
+					Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run", "-e", "ARG2=val2", "--rm", "alpine:latest", "env").
 					Return(c)
 				c.EXPECT().Run()
 			},
@@ -355,7 +355,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				logger.EXPECT().Debugf(`Resolving special IP "host-gateway" to %q for host %q`, "192.168.5.2", "name")
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run",
 					"--rm", "--add-host", "name:192.168.5.2", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -378,7 +378,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run",
 					"--rm", "--add-host", "name:0.0.0.0", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -401,7 +401,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run",
 					"--rm", "--add-host", "alpine:latest").Return(c)
 				c.EXPECT().Run().Return(errors.New("run cmd error"))
 			},
@@ -425,7 +425,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				logger.EXPECT().Debugf(`Resolving special IP "host-gateway" to %q for host %q`, "192.168.5.2", "name")
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run",
 					"--rm", "--add-host=name:192.168.5.2", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -448,7 +448,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, nerdctlCmdName, "run",
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", nerdctlCmdName, "run",
 					"--rm", "--add-host=name:0.0.0.0", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -471,7 +471,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				lcc.EXPECT().RunWithReplacingStdout(
-					testStdoutRs, "shell", limaInstanceName, nerdctlCmdName, "pull", "test:tag", "--help").Return(nil)
+					testStdoutRs, "shell", limaInstanceName, "sudo", nerdctlCmdName, "pull", "test:tag", "--help").Return(nil)
 			},
 		},
 		{
@@ -492,7 +492,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				lcc.EXPECT().RunWithReplacingStdout(
-					testStdoutRs, "shell", limaInstanceName, nerdctlCmdName, "pull", "test:tag", "--help").
+					testStdoutRs, "shell", limaInstanceName, "sudo", nerdctlCmdName, "pull", "test:tag", "--help").
 					Return(fmt.Errorf("failed to replace"))
 			},
 		},

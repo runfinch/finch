@@ -89,7 +89,7 @@ func (va *versionAction) printVersion() error {
 		return errors.New("detailed version info is unavailable because VM is not running")
 	}
 
-	limaArgs := []string{"shell", limaInstanceName, "nerdctl", "version", "--format", "json"}
+	limaArgs := []string{"shell", limaInstanceName, "sudo", "nerdctl", "version", "--format", "json"}
 	out, err := va.creator.CreateWithoutStdio(limaArgs...).Output()
 	if err != nil {
 		return fmt.Errorf("failed to create the nerdctl version command: %w", err)
