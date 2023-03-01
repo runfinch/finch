@@ -152,22 +152,33 @@ provision:
     # Enable SSHing into the VM as root (e.g., in `nerdctlConfigApplier.Apply`).
     sudo cp ~/.ssh/authorized_keys /root/.ssh/
     sudo chown $USER /mnt/lima-finch
-
+    
+    # This code mounts /mnt/lima-finch to both rootless and rootful dataroots to enable rootless container startup within the rootful vm configuration.
     # https://github.com/containerd/containerd/blob/main/docs/ops.md#base-configuration
     sudo mkdir -p /var/lib/containerd
     sudo mount --bind /mnt/lima-finch/containerd /var/lib/containerd
+    mkdir ~/.local/share/containerd
+    sudo mount --bind /mnt/lima-finch/containerd ~/.local/share/containerd
+
 
     # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#dataroot
     sudo mkdir -p /mnt/lima-finch/nerdctl /var/lib/nerdctl
     sudo mount --bind /mnt/lima-finch/nerdctl /var/lib/nerdctl
+    mkdir -p ~/.local/share/nerdctl
+    sudo mount --bind /mnt/lima-finch/nerdctl ~/.local/share/nerdctl
+
 
     # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#netconfpath
     sudo mkdir -p /mnt/lima-finch/cni-config /etc/cni/
     sudo mount --bind /mnt/lima-finch/cni-config /etc/cni/
+    mkdir -p ~/.config/cni
+    sudo mount --bind /mnt/lima-finch/cni-config ~/.config/cni
 
     # https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L148-L150
     sudo mkdir -p /mnt/lima-finch/cni
     sudo mount --bind /mnt/lima-finch/cni /var/lib/cni
+    mkdir -p  ~/.local/share/cni
+    sudo mount --bind /mnt/lima-finch/cni  ~/.local/share/cni
 
     sudo systemctl restart containerd.service  
 
