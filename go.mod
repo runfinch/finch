@@ -6,7 +6,7 @@ require (
 	github.com/docker/docker v23.0.1+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.0
-	github.com/lima-vm/lima v0.14.2
+	github.com/lima-vm/lima v0.15.0
 	github.com/onsi/ginkgo/v2 v2.8.4
 	github.com/onsi/gomega v1.27.2
 	github.com/pelletier/go-toml v1.9.5
@@ -24,10 +24,10 @@ require (
 )
 
 require (
-	github.com/Microsoft/go-winio v0.5.2 // indirect
+	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
-	github.com/containerd/containerd v1.6.18 // indirect
-	github.com/containers/gvisor-tap-vsock v0.4.1-0.20220920072955-5b1aff8ba743 // indirect
+	github.com/containerd/containerd v1.6.19 // indirect
+	github.com/containers/gvisor-tap-vsock v0.5.0 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -36,16 +36,16 @@ require (
 	github.com/google/gopacket v1.1.19 // indirect
 	github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1 // indirect
 	github.com/insomniacslk/dhcp v0.0.0-20220504074936-1ca156eafb9f // indirect
-	github.com/miekg/dns v1.1.50 // indirect
+	github.com/miekg/dns v1.1.51 // indirect
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/u-root/uio v0.0.0-20210528114334-82958018845c // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
+	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
 	google.golang.org/genproto v0.0.0-20220815135757-37a418bb8959 // indirect
-	google.golang.org/grpc v1.48.0 // indirect
+	google.golang.org/grpc v1.51.0-dev // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gvisor.dev/gvisor v0.0.0-20220908032458-edc830a43ba6 // indirect
+	gvisor.dev/gvisor v0.0.0-20221216231429-a78e892a26d2 // indirect
 	inet.af/tcpproxy v0.0.0-20220326234310-be3ee21c9fa0 // indirect
 )
 
@@ -53,7 +53,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/go-units v0.5.0
 	github.com/emirpasic/gods v1.12.0 // indirect
-	github.com/fatih/color v1.13.0 // indirect
+	github.com/fatih/color v1.14.1 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/goccy/go-yaml v1.9.8 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -64,7 +64,7 @@ require (
 	github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/otiai10/copy v1.6.0 // indirect
