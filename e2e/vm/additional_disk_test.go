@@ -29,10 +29,9 @@ var testAdditionalDisk = func(o *option.Option) {
 			gomega.Expect(oldImagesOutput).Should(gomega.ContainSubstring(savedImage))
 
 			command.Run(o, "volume", "create", userVolume)
+			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", userVolume)
 			command.Run(o, "run", "--name", containerName, "-v", fmt.Sprintf("%s:/myvolume", userVolume),
 				savedImage, "sh", "-c", fmt.Sprintf("touch /myvolume/%s; ls /myvolume", userFile))
-
-			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", userVolume)
 			ginkgo.DeferCleanup(command.Run, o, "rm", containerName)
 			oldPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
 			gomega.Expect(oldPsOutput).Should(gomega.ContainSubstring(containerName))
