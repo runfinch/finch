@@ -22,7 +22,7 @@ const (
 
 var testAdditionalDisk = func(o *option.Option) {
 	ginkgo.Describe("Additional disk", ginkgo.Serial, func() {
-		ginkgo.FIt("Retains container user data after the VM is deleted", func() {
+		ginkgo.It("Retains container user data after the VM is deleted", func() {
 			command.Run(o, "pull", savedImage)
 			ginkgo.DeferCleanup(command.Run, o, "rmi", savedImage)
 			oldImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
