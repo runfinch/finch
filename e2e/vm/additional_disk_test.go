@@ -49,7 +49,7 @@ var testAdditionalDisk = func(o *option.Option) {
 			gomega.Expect(newImagesOutput).Should(gomega.Equal(oldImagesOutput))
 
 			newPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
-			gomega.Expect(newPsOutput).Should(gomega.ContainSubstring(oldPsOutput))
+			gomega.Expect(newPsOutput).Should(gomega.Equal(oldPsOutput))
 
 			networks := command.StdoutStr(o, "network", "ls")
 			gomega.Expect(networks).Should(gomega.ContainSubstring(userNetwork))
