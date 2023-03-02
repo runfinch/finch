@@ -23,7 +23,7 @@ jobs:
   # 1. Ssh to the arm64 hosts.
   # 2. Run `cd ar/_work/finch/finch`.
   # 3. Run `INSTALLED=true make test-e2e` to complete the installer e2e tests.
-  # 4. Run `sudo bash /Applications/Finch.app/Contents/Resources/resources/uninstall.sh` to uninstall Finch.
+  # 4. Run `sudo /Applications/Finch/uninstall.sh` to uninstall Finch.
   # 5. Run `rm -rf Finch-<version>-aarch64.pkg` to delete the pkg.
   macos-arm64-test-installer:
     strategy:
@@ -67,7 +67,7 @@ jobs:
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
-        run: echo 'y' | sudo bash /Applications/Finch.app/Contents/Resources/resources/uninstall.sh 
+        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
         run: rm -rf Finch-${GITHUB_REF_NAME}-aarch64.pkg
 
@@ -115,6 +115,6 @@ jobs:
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
-        run: echo 'y' | sudo bash /Applications/Finch.app/Contents/Resources/resources/uninstall.sh 
+        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
         run: rm -rf Finch-${GITHUB_REF_NAME}-x86_64.pkg

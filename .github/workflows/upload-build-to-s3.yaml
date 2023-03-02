@@ -30,7 +30,7 @@ jobs:
           brew install go lz4 automake autoconf libtool
           make clean
           make download-licenses 
-          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch.app/Contents/Resources/resources
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
           tar -zcvf finch.arm64."$(date '+%s').tar.gz" _output
 
       - name: Upload macos arm64 build
@@ -58,7 +58,7 @@ jobs:
           brew install go lz4 automake autoconf libtool
           make clean
           make download-licenses 
-          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch.app/Contents/Resources/resources
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
           tar -zcvf finch.amd64."$(date '+%s').tar.gz" _output
 
       - name: Upload macos amd64 build
