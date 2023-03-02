@@ -29,7 +29,8 @@ var testAdditionalDisk = func(o *option.Option) {
 			gomega.Expect(oldImagesOutput).Should(gomega.ContainSubstring(savedImage))
 
 			command.Run(o, "volume", "create", userVolume)
-			command.Run(o, "run", "--name", containerName, "-v", fmt.Sprintf("%s:/myvolume", userVolume), savedImage, "sh", "-c", fmt.Sprintf("touch /myvolume/%s; ls /myvolume", userFile))
+			command.Run(o, "run", "--name", containerName, "-v", fmt.Sprintf("%s:/myvolume", userVolume),
+				savedImage, "sh", "-c", fmt.Sprintf("touch /myvolume/%s; ls /myvolume", userFile))
 
 			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", userVolume)
 			ginkgo.DeferCleanup(command.Run, o, "rm", containerName)
@@ -53,7 +54,6 @@ var testAdditionalDisk = func(o *option.Option) {
 			networks := command.StdoutStr(o, "network", "ls")
 			gomega.Expect(networks).Should(gomega.ContainSubstring(userNetwork))
 			gomega.Expect(command.StdoutStr(o, "start", "--attach", containerName)).Should(gomega.Equal(userFile))
-
 		})
 	})
 }
