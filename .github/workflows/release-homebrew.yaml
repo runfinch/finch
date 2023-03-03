@@ -145,7 +145,7 @@ jobs:
           fi
 
   pr-to-homebrew:
-    needs: [macos-arm64-test-installer, macos-amd64-test-installer]
+    needs: [get-latest-tag, macos-arm64-test-installer, macos-amd64-test-installer]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Homebrew
