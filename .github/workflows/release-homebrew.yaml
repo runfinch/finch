@@ -93,7 +93,7 @@ jobs:
         if: ${{ always() }}
         run: |
           cd $(brew --repo homebrew/cask)
-          brew uninstall --cask ./Casks/finch.rb
+          brew uninstall --zap --cask ./Casks/finch.rb
           if [ -d "/Applications/Finch" ]; then
             echo ERROR: Finch is not uninstalled
             exit 1
