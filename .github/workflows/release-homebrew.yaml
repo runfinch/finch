@@ -60,6 +60,14 @@ jobs:
           ref: ${{ env.FINCH_TAG }}
       - name: Clean up previous files
         run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
           cd $(brew --repo homebrew/cask) 
           brew uninstall --cask ./Casks/finch.rb || true
       - name: Set up Homebrew
@@ -116,6 +124,14 @@ jobs:
           ref: ${{ env.FINCH_TAG }}
       - name: Clean up previous files
         run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
           cd $(brew --repo homebrew/cask) 
           brew uninstall --cask ./Casks/finch.rb || true
       - name: Set up Homebrew
@@ -138,7 +154,7 @@ jobs:
         if: ${{ always() }}
         run: |
           cd $(brew --repo homebrew/cask)
-          brew uninstall --cask ./Casks/finch.rb
+          brew uninstall --zap --cask ./Casks/finch.rb
           if [ -d "/Applications/Finch" ]; then
             echo ERROR: Finch is not uninstalled
             exit 1
@@ -146,7 +162,7 @@ jobs:
 
   pr-to-homebrew:
     needs: [get-latest-tag, macos-arm64-test-installer, macos-amd64-test-installer]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
