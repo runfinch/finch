@@ -54,7 +54,7 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: download-installer-session
@@ -101,7 +101,7 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: download-installer-session

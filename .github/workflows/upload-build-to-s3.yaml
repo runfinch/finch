@@ -83,7 +83,7 @@ jobs:
           persist-credentials: false
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: dependency-upload-session
