@@ -1,0 +1,28 @@
+name: Sync Submodules
+
+# Pulls changes from the main branch of submodules daily at 9:00 UTC and opens a PR.
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update sub modules
+        run: |
+          git submodule update --remote
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: bump submodules
+          signoff: true
+          title: 'build(deps): Bump submodules'
