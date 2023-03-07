@@ -54,7 +54,8 @@ jobs:
     steps:
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.19.x
+          go-version-file: go.mod
+          cache: true
       - uses: actions/checkout@v3
         with:
           ref: ${{ env.FINCH_TAG }}
@@ -118,7 +119,8 @@ jobs:
     steps:
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.19.x
+          go-version-file: go.mod
+          cache: true
       - uses: actions/checkout@v3
         with:
           ref: ${{ env.FINCH_TAG }}
