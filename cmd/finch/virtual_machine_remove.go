@@ -81,7 +81,7 @@ func (rva *removeVMAction) removeVM(force bool) error {
 	}
 	logs, err := limaCmd.CombinedOutput()
 	if err != nil {
-		rva.logger.Errorf("Finch virtual machine failed to remove, debug logs: %s", logs)
+		rva.logger.Errorf("Finch virtual machine failed to remove, debug logs:\n%s", logs)
 		return err
 	}
 	rva.logger.Info("Finch virtual machine removed successfully")
