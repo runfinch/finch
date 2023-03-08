@@ -18,6 +18,7 @@ jobs:
       - name: Update sub modules
         run: |
           git submodule update --remote
+          ./.github/bin/update-os-image.sh
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v4
