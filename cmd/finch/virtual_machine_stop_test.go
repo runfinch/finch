@@ -158,7 +158,7 @@ func TestStopVMAction_run(t *testing.T) {
 				command.EXPECT().CombinedOutput().Return(logs, errors.New("error"))
 				creator.EXPECT().CreateWithoutStdio("stop", limaInstanceName).Return(command)
 				logger.EXPECT().Info("Stopping existing Finch virtual machine...")
-				logger.EXPECT().Errorf("Finch virtual machine failed to stop, debug logs: %s", logs)
+				logger.EXPECT().Errorf("Finch virtual machine failed to stop, debug logs:\n%s", logs)
 			},
 			force: false,
 		},

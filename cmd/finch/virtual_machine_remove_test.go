@@ -159,7 +159,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 				command.EXPECT().CombinedOutput().Return(logs, errors.New("failed to remove instance"))
 				creator.EXPECT().CreateWithoutStdio("remove", limaInstanceName).Return(command)
 				logger.EXPECT().Info("Removing existing Finch virtual machine...")
-				logger.EXPECT().Errorf("Finch virtual machine failed to remove, debug logs: %s", logs)
+				logger.EXPECT().Errorf("Finch virtual machine failed to remove, debug logs:\n%s", logs)
 			},
 			force: false,
 		},

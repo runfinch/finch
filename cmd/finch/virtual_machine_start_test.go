@@ -305,7 +305,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc.EXPECT().CreateWithoutStdio("start", limaInstanceName).Return(command)
 
 				logger.EXPECT().Info("Starting existing Finch virtual machine...")
-				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs: %s", logs)
+				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
 			},
 		},
 	}

@@ -289,7 +289,7 @@ func TestInitVMAction_run(t *testing.T) {
 					mockBaseYamlFilePath, "--tty=false").Return(command)
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
-				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs: %s", logs)
+				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
 			},
 		},
 	}
