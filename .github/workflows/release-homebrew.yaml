@@ -99,7 +99,6 @@ jobs:
           make
       - name: Multiple instances of Finch test
         run: |
-          pwd
           # start two Finch VM instances
           ./_output/bin/finch vm init
           finch vm init
@@ -191,20 +190,18 @@ jobs:
           make
       - name: Multiple instances of Finch test
         run: |
-          pwd
           # start two Finch VM instances
           ./_output/bin/finch vm init
           finch vm init
           # start a container in each VM instance
           ./_output/bin/finch pull alpine
           finch pull alpine
-          ./_output/bin/finch run -d --name test-ctr1 alpine
-          finch run -d --name test-ctr2 alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
           ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
           finch vm stop && finch vm remove
       - name: Clean up multiple instance test
         run: |
-          pwd
           sudo rm -rf ./_output
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)

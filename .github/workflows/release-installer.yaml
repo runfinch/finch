@@ -70,7 +70,6 @@ jobs:
       - name: Download from S3
         run: |
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
-          pwd
       - name: Silently install
         run: sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
       - name: Build project
@@ -93,7 +92,6 @@ jobs:
           finch vm stop && finch vm remove
       - name: Clean up multiple instance test
         run: |
-          pwd
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
           rm -rf Finch-${GITHUB_REF_NAME}-aarch64.pkg
@@ -152,7 +150,6 @@ jobs:
       - name: Download from S3
         run: |
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
-          pwd
       - name: Silently install
         run: |
           sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
@@ -176,7 +173,6 @@ jobs:
           finch vm stop && finch vm remove
       - name: Clean up multiple instance test
         run: |
-          pwd
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
           rm -rf Finch-${GITHUB_REF_NAME}-x86_64.pkg
