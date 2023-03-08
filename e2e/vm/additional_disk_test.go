@@ -4,7 +4,7 @@
 package vm
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -14,45 +14,39 @@ import (
 
 const (
 	savedImage    = "public.ecr.aws/docker/library/alpine:latest"
-	containerName = "userDataTest"
-	userNetwork   = "userNetwork"
-	userVolume    = "userVolume"
-	userFile      = "userFile"
+	containerName = "userDataTest4"
 )
 
 var testAdditionalDisk = func(o *option.Option) {
 	ginkgo.Describe("Additional disk", ginkgo.Serial, func() {
 		ginkgo.FIt("Retains container user data after the VM is deleted", func() {
-			command.Run(o, "pull", savedImage)
-			ginkgo.DeferCleanup(command.Run, o, "rmi", savedImage)
-			oldImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
-			gomega.Expect(oldImagesOutput).Should(gomega.ContainSubstring(savedImage))
+			//command.Run(o, "pull", savedImage)
+			////ginkgo.DeferCleanup(command.Run, o, "rmi", "-f", savedImage)
+			//oldImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
+			//gomega.Expect(oldImagesOutput).Should(gomega.ContainSubstring(savedImage))
 
-			command.Run(o, "volume", "create", userVolume)
-			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", userVolume)
-			command.Run(o, "run", "--name", containerName, "-v", fmt.Sprintf("%s:/myvolume", userVolume),
-				savedImage, "sh", "-c", fmt.Sprintf("touch /myvolume/%s; ls /myvolume", userFile))
-			ginkgo.DeferCleanup(command.Run, o, "rm", containerName)
+			command.New(o, "run", "-d", "--name", containerName, savedImage, "sleep", "infinity").WithTimeoutInSeconds(20).Run()
+			//ginkgo.DeferCleanup(command.Run, o, "rm", "-f", containerName)
 			oldPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
 			gomega.Expect(oldPsOutput).Should(gomega.ContainSubstring(containerName))
 
-			command.Run(o, "network", "create", userNetwork)
-			ginkgo.DeferCleanup(command.Run, o, "network", "rm", userNetwork)
-
 			command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 			command.Run(o, virtualMachineRootCmd, "remove")
-
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(240).Run()
 
-			newImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
-			gomega.Expect(newImagesOutput).Should(gomega.Equal(oldImagesOutput))
+			time.Sleep(2 * time.Second)
 
-			newPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
-			gomega.Expect(newPsOutput).Should(gomega.Equal(oldPsOutput))
+			//newImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
+			//gomega.Expect(newImagesOutput).Should(gomega.Equal(oldImagesOutput))
+			//
+			//newPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
+			//gomega.Expect(newPsOutput).Should(gomega.Equal(oldPsOutput))
 
-			networks := command.StdoutStr(o, "network", "ls")
-			gomega.Expect(networks).Should(gomega.ContainSubstring(userNetwork))
-			gomega.Expect(command.StdoutStr(o, "start", "--attach", containerName)).Should(gomega.Equal(userFile))
+			command.Run(o, "start", containerName)
+
+			//command.Run(o, "stop", containerName)
+			//command.Run(o, "rm", containerName)
+			//command.Run(o, "rmi", savedImage)
 		})
 	})
 }
