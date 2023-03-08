@@ -15,55 +15,44 @@ import (
 const (
 	savedImage    = "public.ecr.aws/docker/library/alpine:latest"
 	containerName = "userDataTest"
-	volumeName    = "userVolume"
-	networkName   = "userNetwork"
-	text          = "foo"
+	userNetwork   = "userNetwork"
+	userVolume    = "userVolume"
+	userFile      = "userFile"
 )
 
 var testAdditionalDisk = func(o *option.Option) {
 	ginkgo.Describe("Additional disk", ginkgo.Serial, func() {
-		ginkgo.It("should retain all user data and able to start the created container after the VM is deleted", func() {
+		ginkgo.FIt("Retains container user data after the VM is deleted", func() {
 			command.Run(o, "pull", savedImage)
-			gomega.Expect(command.StdoutAsLines(o, "images", "--format", "{{.Name}}")).
-				Should(gomega.ContainElement(savedImage))
 			ginkgo.DeferCleanup(command.Run, o, "rmi", savedImage)
+			oldImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
+			gomega.Expect(oldImagesOutput).Should(gomega.ContainSubstring(savedImage))
 
-			command.Run(o, "volume", "create", volumeName)
-			gomega.Expect(command.StdoutAsLines(o, "volume", "ls", "--format", "{{.Name}}")).
-				Should(gomega.ContainElement(volumeName))
-			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", volumeName)
+			command.Run(o, "volume", "create", userVolume)
+			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", userVolume)
+			command.Run(o, "run", "--name", containerName, "-v", fmt.Sprintf("%s:/myvolume", userVolume),
+				savedImage, "sh", "-c", fmt.Sprintf("touch /myvolume/%s; ls /myvolume", userFile))
+			ginkgo.DeferCleanup(command.Run, o, "rm", containerName)
+			oldPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
+			gomega.Expect(oldPsOutput).Should(gomega.ContainSubstring(containerName))
 
-			command.Run(o, "network", "create", networkName)
-			gomega.Expect(command.StdoutAsLines(o, "network", "ls", "--format", "{{.Name}}")).
-				Should(gomega.ContainElement(networkName))
-			ginkgo.DeferCleanup(command.Run, o, "network", "rm", networkName)
-
-			command.Run(o, "run", "-d", "--name", containerName, "-v", fmt.Sprintf("%s:/tmp", volumeName), savedImage,
-				"sh", "-c", fmt.Sprintf("echo %s > /tmp/test.txt; sleep infinity", text))
-			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", containerName)
-
-			gomega.Expect(command.StdoutAsLines(o, "ps", "--all", "--format", "{{.Names}}")).
-				Should(gomega.ContainElement(containerName))
+			command.Run(o, "network", "create", userNetwork)
+			ginkgo.DeferCleanup(command.Run, o, "network", "rm", userNetwork)
 
 			command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 			command.Run(o, virtualMachineRootCmd, "remove")
+
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(240).Run()
 
-			imagesOutput := command.StdoutAsLines(o, "images", "--format", "{{.Name}}")
-			gomega.Expect(imagesOutput).Should(gomega.ContainElement(savedImage))
+			newImagesOutput := command.StdoutStr(o, "images", "--format", "{{.Name}}")
+			gomega.Expect(newImagesOutput).Should(gomega.Equal(oldImagesOutput))
 
-			psOutput := command.StdoutAsLines(o, "ps", "--all", "--format", "{{.Names}}")
-			gomega.Expect(psOutput).Should(gomega.ContainElement(containerName))
+			newPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
+			gomega.Expect(newPsOutput).Should(gomega.Equal(oldPsOutput))
 
-			volumeOutput := command.StdoutAsLines(o, "volume", "ls", "--format", "{{.Name}}")
-			gomega.Expect(volumeOutput).Should(gomega.ContainElement(volumeName))
-
-			networkOutput := command.StdoutAsLines(o, "network", "ls", "--format", "{{.Name}}")
-			gomega.Expect(networkOutput).Should(gomega.ContainElement(networkName))
-
-			command.Run(o, "start", containerName)
-			textOutput := command.StdoutStr(o, "exec", containerName, "cat", "/tmp/test.txt")
-			gomega.Expect(textOutput).Should(gomega.Equal(text))
+			networks := command.StdoutStr(o, "network", "ls")
+			gomega.Expect(networks).Should(gomega.ContainSubstring(userNetwork))
+			gomega.Expect(command.StdoutStr(o, "start", "--attach", containerName)).Should(gomega.Equal(userFile))
 		})
 	})
 }
