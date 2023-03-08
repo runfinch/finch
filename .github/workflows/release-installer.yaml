@@ -43,11 +43,18 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-      - uses: actions/checkout@v3
+      - name: Checkout the tag
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
           sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
           if pgrep '^qemu-system'; then
             sudo pkill '^qemu-system'
           fi
@@ -63,8 +70,35 @@ jobs:
       - name: Download from S3
         run: |
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
+          pwd
       - name: Silently install
         run: sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
+      - name: Build project
+        run: |
+          brew install go lz4 automake autoconf libtool
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          which libtool
+          make
+      - name: Multiple instances of Finch test
+        run: |
+          # start two Finch VM instances
+          ./_output/bin/finch vm init
+          finch vm init
+          # start a container in each VM instance
+          ./_output/bin/finch pull alpine
+          finch pull alpine
+          ./_output/bin/finch run -d --name test-ctr1 alpine
+          finch run -d --name test-ctr2 alpine
+          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
+          finch vm stop && finch vm remove
+      - name: Clean up multiple instance test
+        run: |
+          pwd
+          sudo rm -rf ./_output
+          echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+          rm -rf Finch-${GITHUB_REF_NAME}-aarch64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
+          sudo installer -pkg $HOME/ar/_work/finch/finch/Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
@@ -91,11 +125,18 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-      - uses: actions/checkout@v3
+      - name: Checkout the tag
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
           sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
           if pgrep '^qemu-system'; then
             sudo pkill '^qemu-system'
           fi
@@ -111,9 +152,36 @@ jobs:
       - name: Download from S3
         run: |
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
+          pwd
       - name: Silently install
         run: |
           sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
+      - name: Build project
+        run: |
+          brew install go lz4 automake autoconf libtool
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          which libtool
+          make
+      - name: Multiple instances of Finch test
+        run: |
+          # start two Finch VM instances
+          ./_output/bin/finch vm init
+          finch vm init
+          # start a container in each VM instance
+          ./_output/bin/finch pull alpine
+          finch pull alpine
+          ./_output/bin/finch run -d --name test-ctr1 alpine
+          finch run -d --name test-ctr2 alpine
+          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
+          finch vm stop && finch vm remove
+      - name: Clean up multiple instance test
+        run: |
+          pwd
+          sudo rm -rf ./_output
+          echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+          rm -rf Finch-${GITHUB_REF_NAME}-x86_64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
+          sudo installer -pkg $HOME/ar/_work/finch/finch/Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
