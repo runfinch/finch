@@ -88,6 +88,15 @@ jobs:
           finch pull alpine
           ./_output/bin/finch run --name test-ctr1 alpine
           finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist"
+            exit 1
+          fi
           # clean up the VMs
           ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
           finch vm stop && finch vm remove
@@ -95,9 +104,7 @@ jobs:
         run: |
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
-          rm -rf Finch-${GITHUB_REF_NAME}-aarch64.pkg
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
-          sudo installer -pkg $HOME/ar/_work/finch/finch/Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
@@ -170,6 +177,15 @@ jobs:
           finch pull alpine
           ./_output/bin/finch run --name test-ctr1 alpine
           finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist"
+            exit 1
+          fi
           # clean up the VMs
           ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
           finch vm stop && finch vm remove
@@ -177,9 +193,7 @@ jobs:
         run: |
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
-          rm -rf Finch-${GITHUB_REF_NAME}-x86_64.pkg
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
-          sudo installer -pkg $HOME/ar/_work/finch/finch/Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
