@@ -6,7 +6,6 @@ package vm
 import (
 	"fmt"
 
-	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
@@ -30,8 +29,8 @@ var testAdditionalDisk = func(o *option.Option) {
 
 			command.Run(o, "volume", "create", userVolume)
 			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", userVolume)
-			command.Run(o, "run", "--name", containerName, "-v", fmt.Sprintf("%s:/myvolume", userVolume),
-				savedImage, "sh", "-c", fmt.Sprintf("touch /myvolume/%s; ls /myvolume", userFile))
+			command.Run(o, "run", "-d", "--name", containerName, "-v", fmt.Sprintf("%s:/myvolume", userVolume),
+				savedImage, "sh", "-c", "echo foo > /myvolume/test.txt; sleep infinity")
 			ginkgo.DeferCleanup(command.Run, o, "rm", containerName)
 			oldPsOutput := command.StdoutStr(o, "ps", "--all", "--format", "{{.Names}}")
 			gomega.Expect(oldPsOutput).Should(gomega.ContainSubstring(containerName))
@@ -52,7 +51,8 @@ var testAdditionalDisk = func(o *option.Option) {
 
 			networks := command.StdoutStr(o, "network", "ls")
 			gomega.Expect(networks).Should(gomega.ContainSubstring(userNetwork))
-			gomega.Expect(command.StdoutStr(o, "start", "--attach", containerName)).Should(gomega.Equal(userFile))
+			command.Run(o, "start", containerName)
+			command.Run(o, "exec", containerName, "cat", "/myvolume/test.txt")
 		})
 	})
 }
