@@ -86,8 +86,9 @@ jobs:
           # start a container in each VM instance
           ./_output/bin/finch pull alpine
           finch pull alpine
-          ./_output/bin/finch run -d --name test-ctr1 alpine
-          finch run -d --name test-ctr2 alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
+          # clean up the VMs
           ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
           finch vm stop && finch vm remove
       - name: Clean up multiple instance test
@@ -167,8 +168,9 @@ jobs:
           # start a container in each VM instance
           ./_output/bin/finch pull alpine
           finch pull alpine
-          ./_output/bin/finch run -d --name test-ctr1 alpine
-          finch run -d --name test-ctr2 alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
+          # clean up the VMs
           ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
           finch vm stop && finch vm remove
       - name: Clean up multiple instance test
