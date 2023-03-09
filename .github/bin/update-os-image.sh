@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -euxo pipefail
 # Set OS hash directory in finch-core as base directory for searching latest OS images.
 OS_BASE_IMAGE_HASH_DIR="./deps/finch-core/hashes/"
 

@@ -24,6 +24,5 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: bump submodules
           signoff: true
           title: 'build(deps): Bump submodules'
