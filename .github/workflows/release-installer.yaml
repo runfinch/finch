@@ -104,6 +104,9 @@ jobs:
         run: |
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+          # Need to resintall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
+          # that caused the VM initialization failure in the e2e test. 
+          # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
           sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
