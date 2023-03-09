@@ -16,7 +16,7 @@ const (
 	savedImage    = "public.ecr.aws/docker/library/alpine:latest"
 	containerName = "test-ctr"
 	volumeName    = "test-volume"
-	networkName   = "bridge"
+	networkName   = "test-network"
 )
 
 var testAdditionalDisk = func(o *option.Option) {
