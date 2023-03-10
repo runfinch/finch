@@ -16,9 +16,9 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const USER_MODE_EMULATION_INSTALLATION_SCRIPT_HEADER = "# cross-arch tools"
+const userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
 
-// LoadSystemDeps contains the system dependencies for Load.
+// LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_lima_config_applier_system_deps.go -package=mocks -mock_names LimaConfigApplierSystemDeps=LimaConfigApplierSystemDeps . LimaConfigApplierSystemDeps
 type LimaConfigApplierSystemDeps interface {
@@ -145,7 +145,7 @@ func toggleUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML, enabl
 			Script: fmt.Sprintf(`%s
 #!/bin/bash
 dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
-`, USER_MODE_EMULATION_INSTALLATION_SCRIPT_HEADER)})
+`, userModeEmulationProvisioningScriptHeader)})
 	} else if hasScript && !enabled {
 		if len(limaCfg.Provision) > 0 {
 			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
@@ -158,7 +158,7 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 	var scriptIdx int
 	for idx, prov := range limaCfg.Provision {
 		trimmed := strings.Trim(prov.Script, " ")
-		if !hasCrossArchToolInstallationScript && strings.HasPrefix(trimmed, USER_MODE_EMULATION_INSTALLATION_SCRIPT_HEADER) {
+		if !hasCrossArchToolInstallationScript && strings.HasPrefix(trimmed, userModeEmulationProvisioningScriptHeader) {
 			hasCrossArchToolInstallationScript = true
 			scriptIdx = idx
 		}
