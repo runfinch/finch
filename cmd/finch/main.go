@@ -41,6 +41,14 @@ func (r Rectangle) Area() float64 {
 	return 0
 }
 
+type Square struct {
+	Width float64
+}
+
+func (r Square) Area() float64 {
+	return 1
+}
+
 func computeArea(shape Shape) float64 {
 	return shape.Area()
 }
@@ -49,6 +57,9 @@ func main() {
 	println(computeArea(&Rectangle{
 		Width:  0,
 		Height: 0,
+	}))
+	println(computeArea(&Square{
+		Width: 1,
 	}))
 	logger := flog.NewLogrus()
 	stdLib := system.NewStdLib()
