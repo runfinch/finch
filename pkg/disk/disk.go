@@ -157,7 +157,6 @@ func (m *userDataDiskManager) getDiskInfo(diskPath string) (*qemuDiskInfo, error
 		"--output=json",
 		diskPath,
 	).CombinedOutput()
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to get disk info for disk at %q: %w", diskPath, err)
 	}
