@@ -28,7 +28,28 @@ import (
 
 const finchRootCmd = "finch"
 
+type Shape interface {
+	Area() float64
+}
+
+type Rectangle struct {
+	Width  float64
+	Height float64
+}
+
+func (r Rectangle) Area() float64 {
+	return 0
+}
+
+func computeArea(shape Shape) float64 {
+	return shape.Area()
+}
+
 func main() {
+	println(computeArea(&Rectangle{
+		Width:  0,
+		Height: 0,
+	}))
 	logger := flog.NewLogrus()
 	stdLib := system.NewStdLib()
 	fs := afero.NewOsFs()
