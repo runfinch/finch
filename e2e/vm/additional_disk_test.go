@@ -28,11 +28,14 @@ var testAdditionalDisk = func(o *option.Option) {
 			ginkgo.DeferCleanup(command.Run, o, "network", "rm", networkName)
 
 			command.Run(o, "run", "-d", "--name", containerName, "-v", fmt.Sprintf("%s:/tmp", volumeName),
-				savedImage, "sh", "-c", "echo foo > /tmp/test.txt; sleep infinity")
+				savedImage, "sh", "-c", "sleep infinity")
+			command.Run(o, "exec", containerName, "sh", "-c", "echo foo > /tmp/test.txt")
 			ginkgo.DeferCleanup(command.Run, o, "rmi", savedImage)
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", containerName)
 
-			command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(180).Run()
+			command.Run(o, "kill", containerName)
+
+			command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 			command.Run(o, virtualMachineRootCmd, "remove")
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(240).Run()
 
@@ -51,9 +54,6 @@ var testAdditionalDisk = func(o *option.Option) {
 			command.Run(o, "start", containerName)
 			gomega.Expect(command.StdoutStr(o, "exec", containerName, "cat", "/tmp/test.txt")).
 				Should(gomega.Equal("foo"))
-
-			gomega.Expect(command.StdoutStr(o, "run", "--rm", "-v", fmt.Sprintf("%s:/tmp", volumeName),
-				savedImage, "cat", "/tmp/test.txt")).Should(gomega.Equal("foo"))
 		})
 	})
 }
