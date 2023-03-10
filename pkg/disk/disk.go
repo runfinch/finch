@@ -30,7 +30,7 @@ type UserDataDiskManager interface {
 	EnsureUserDataDisk() error
 }
 
-type QemuDiskInfo struct {
+type qemuDiskInfo struct {
 	VirtualSize int    `json:"virtual-size"`
 	Filename    string `json:"filename"`
 	Format      string `json:"format"`
@@ -150,7 +150,7 @@ func (m *userDataDiskManager) limaDiskExists() bool {
 	return diskListOutput.Name == diskName
 }
 
-func (m *userDataDiskManager) getDiskInfo(diskPath string) (*QemuDiskInfo, error) {
+func (m *userDataDiskManager) getDiskInfo(diskPath string) (*qemuDiskInfo, error) {
 	out, err := m.ecc.Create(
 		path.Join(m.finch.QEMUBinDir(), "qemu-img"),
 		"info",
@@ -162,12 +162,12 @@ func (m *userDataDiskManager) getDiskInfo(diskPath string) (*QemuDiskInfo, error
 		return nil, fmt.Errorf("failed to get disk info for disk at %q: %w", diskPath, err)
 	}
 
-	var diskInfoJson QemuDiskInfo
-	if err = json.Unmarshal(out, &diskInfoJson); err != nil {
+	var diskInfoJSON qemuDiskInfo
+	if err = json.Unmarshal(out, &diskInfoJSON); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal disk info JSON for disk at %q: %w", diskPath, err)
 	}
 
-	return &diskInfoJson, nil
+	return &diskInfoJSON, nil
 }
 
 func (m *userDataDiskManager) convertToRaw(diskPath string) error {
