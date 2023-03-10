@@ -21,11 +21,17 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name         string
-		config       *Finch
-		path         string
-		isInit       bool
-		mockSvc      func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps)
+		name    string
+		config  *Finch
+		path    string
+		isInit  bool
+		mockSvc func(
+			fs afero.Fs,
+			l *mocks.Logger,
+			cmd *mocks.Command,
+			creator *mocks.CommandCreator,
+			deps *mocks.LimaConfigApplierSystemDeps,
+		)
 		postRunCheck func(t *testing.T, fs afero.Fs)
 		want         error
 	}{
@@ -39,7 +45,13 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 			},
 			path:   "/lima.yaml",
 			isInit: true,
-			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("12.6.1"), nil)
@@ -73,7 +85,13 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 			},
 			path:   "/lima.yaml",
 			isInit: true,
-			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
 cpus: 8
 vmType: "qemu"
@@ -117,7 +135,13 @@ provision:
 			},
 			path:   "/lima.yaml",
 			isInit: true,
-			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
 cpus: 8
 vmType: "vz"
@@ -160,7 +184,13 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 			},
 			path:   "/lima.yaml",
 			isInit: false,
-			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
 cpus: 8
 vmType: "qemu"
@@ -203,7 +233,13 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 			},
 			path:   "/lima.yaml",
 			isInit: true,
-			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("12.6.1"), nil)
@@ -232,7 +268,13 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 			config: nil,
 			path:   "/lima.yaml",
 			isInit: true,
-			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("this isn't YAML"), 0o600)
 				require.NoError(t, err)
 			},
@@ -258,7 +300,13 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 			},
 			path:   "/lima.yaml",
 			isInit: true,
-			mockSvc: func(fs afero.Fs, l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, deps *mocks.LimaConfigApplierSystemDeps) {
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)

@@ -9,11 +9,12 @@ import (
 	"strings"
 
 	"github.com/lima-vm/lima/pkg/limayaml"
-	"github.com/runfinch/finch/pkg/command"
-	"github.com/runfinch/finch/pkg/system"
 	"github.com/spf13/afero"
 	"github.com/xorcare/pointer"
 	"gopkg.in/yaml.v3"
+
+	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/system"
 )
 
 const userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
@@ -38,7 +39,13 @@ var _ LimaConfigApplier = (*limaConfigApplier)(nil)
 
 // NewLimaApplier creates a new LimaConfigApplier that
 // applies lima configuration changes by writing to the lima config file on the disk.
-func NewLimaApplier(cfg *Finch, cmdCreator command.Creator, fs afero.Fs, limaConfigPath string, systemDeps LimaConfigApplierSystemDeps) LimaConfigApplier {
+func NewLimaApplier(
+	cfg *Finch,
+	cmdCreator command.Creator,
+	fs afero.Fs,
+	limaConfigPath string,
+	systemDeps LimaConfigApplierSystemDeps,
+) LimaConfigApplier {
 	return &limaConfigApplier{
 		cfg:            cfg,
 		cmdCreator:     cmdCreator,
@@ -101,14 +108,13 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 // applyInit changes settings that will only apply to the VM after a new init.
 func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
 	hasSupport, hasSupportErr := lca.supportsVirtualizationFramework()
-	if *lca.cfg.Rosetta == true &&
+	if *lca.cfg.Rosetta &&
 		lca.systemDeps.OS() == "darwin" &&
 		lca.systemDeps.Arch() == "arm64" {
-
 		if hasSupportErr != nil {
 			return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasSupportErr)
 		}
-		if hasSupport == false {
+		if !hasSupport {
 			return nil, fmt.Errorf(`system does not have virtualization framework support, change vmType to "qemu"`)
 		}
 
@@ -145,7 +151,8 @@ func toggleUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML, enabl
 			Script: fmt.Sprintf(`%s
 #!/bin/bash
 dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
-`, userModeEmulationProvisioningScriptHeader)})
+`, userModeEmulationProvisioningScriptHeader),
+		})
 	} else if hasScript && !enabled {
 		if len(limaCfg.Provision) > 0 {
 			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
@@ -175,7 +182,7 @@ func (lca *limaConfigApplier) supportsVirtualizationFramework() (bool, error) {
 	}
 
 	splitVer := strings.Split(string(out), ".")
-	if len(splitVer) <= 0 {
+	if len(splitVer) == 0 {
 		return false, fmt.Errorf("unexpected result from string split: %v", splitVer)
 	}
 
