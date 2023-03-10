@@ -72,12 +72,12 @@ type RuntimeCPUGetter interface {
 	NumCPU() int
 }
 
-// RuntimeCPUGetter mocks out runtime.GOARCH.
+// RuntimeArchGetter mocks out runtime.GOARCH.
 type RuntimeArchGetter interface {
 	Arch() string
 }
 
-// RuntimeCPUGetter mocks out runtime.GOOS.
+// RuntimeOSGetter mocks out runtime.GOOS.
 type RuntimeOSGetter interface {
 	OS() string
 }
