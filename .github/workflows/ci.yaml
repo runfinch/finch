@@ -82,7 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [[self-hosted, macos, amd64, 11.7], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 11.7], [self-hosted, macos, arm64, 12.6]]
+        os: [[self-hosted, macos, amd64, 13], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 13], [self-hosted, macos, arm64, 12.6]]
     runs-on: ${{ matrix.os }} 
     steps:
       - uses: actions/checkout@v3
