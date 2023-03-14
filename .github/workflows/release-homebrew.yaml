@@ -106,6 +106,23 @@ jobs:
           finch pull alpine
           ./_output/bin/finch run --name test-ctr1 alpine
           finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
+            exit 1
+          fi
+          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
+            exit 1
+          fi
+          if finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
+            exit 1
+          fi
           # clean up the VMs
           ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
           finch vm stop && finch vm remove
@@ -200,6 +217,23 @@ jobs:
           finch pull alpine
           ./_output/bin/finch run --name test-ctr1 alpine
           finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
+            exit 1
+          fi
+          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
+            exit 1
+          fi
+          if finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
+            exit 1
+          fi
           # clean up the VMs
           ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
           finch vm stop && finch vm remove
