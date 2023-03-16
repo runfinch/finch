@@ -39,7 +39,7 @@ jobs:
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
           cache: true
@@ -129,7 +129,7 @@ jobs:
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
           cache: true
