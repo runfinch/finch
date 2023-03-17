@@ -9,6 +9,7 @@ import (
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
+
 	"github.com/runfinch/common-tests/command"
 
 	"github.com/runfinch/finch/e2e"
@@ -42,6 +43,7 @@ func TestVM(t *testing.T) {
 		testAdditionalDisk(o)
 		testConfig(o, *e2e.Installed)
 		testVersion(o)
+		testVirtualizationFrameworkAndRosetta(o, *e2e.Installed)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)

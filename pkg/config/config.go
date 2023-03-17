@@ -13,11 +13,14 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"strconv"
+	"strings"
 
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
+	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/system"
@@ -148,4 +151,28 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 	}
 
 	return defCfg, nil
+}
+
+func SupportsVirtualizationFramework(cmdCreator command.Creator) (bool, error) {
+	cmd := cmdCreator.Create("sw_vers", "-productVersion")
+	out, err := cmd.Output()
+	if err != nil {
+		return false, fmt.Errorf("failed to run sw_vers command: %w", err)
+	}
+
+	splitVer := strings.Split(string(out), ".")
+	if len(splitVer) == 0 {
+		return false, fmt.Errorf("unexpected result from string split: %v", splitVer)
+	}
+
+	majorVersionInt, err := strconv.ParseInt(splitVer[0], 10, 64)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse split sw_vers output (%s) into int: %w", splitVer[0], err)
+	}
+
+	if majorVersionInt >= 11 {
+		return true, nil
+	}
+
+	return false, nil
 }

@@ -5,7 +5,6 @@ package config
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/lima-vm/lima/pkg/limayaml"
@@ -107,7 +106,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 
 // applyInit changes settings that will only apply to the VM after a new init.
 func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
-	hasSupport, hasSupportErr := lca.supportsVirtualizationFramework()
+	hasSupport, hasSupportErr := SupportsVirtualizationFramework(lca.cmdCreator)
 	if *lca.cfg.Rosetta &&
 		lca.systemDeps.OS() == "darwin" &&
 		lca.systemDeps.Arch() == "arm64" {
@@ -172,28 +171,4 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 	}
 
 	return scriptIdx, hasCrossArchToolInstallationScript
-}
-
-func (lca *limaConfigApplier) supportsVirtualizationFramework() (bool, error) {
-	cmd := lca.cmdCreator.Create("sw_vers", "-productVersion")
-	out, err := cmd.Output()
-	if err != nil {
-		return false, fmt.Errorf("failed to run sw_vers command: %w", err)
-	}
-
-	splitVer := strings.Split(string(out), ".")
-	if len(splitVer) == 0 {
-		return false, fmt.Errorf("unexpected result from string split: %v", splitVer)
-	}
-
-	majorVersionInt, err := strconv.ParseInt(splitVer[0], 10, 64)
-	if err != nil {
-		return false, fmt.Errorf("failed to parse split sw_vers output (%s) into int: %w", splitVer[0], err)
-	}
-
-	if majorVersionInt >= 11 {
-		return true, nil
-	}
-
-	return false, nil
 }
