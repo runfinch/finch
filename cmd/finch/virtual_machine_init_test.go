@@ -254,9 +254,11 @@ func TestInitVMAction_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
 				lca.EXPECT().Apply().Return(errors.New("load config fails"))
-				logger.EXPECT().Error(fmt.Sprintf("Dependency error: failed to install dependencies: %v",
-					[]error{fmt.Errorf("%s: %v", "mock_error_msg", []error{errors.New("dependency error occurs")})},
-				))
+				logger.EXPECT().Errorf("Dependency error: %v",
+					fmt.Errorf("failed to install dependencies: %w",
+						errors.Join(fmt.Errorf("%s: %w", "mock_error_msg", errors.Join(errors.New("dependency error occurs")))),
+					),
+				)
 			},
 		},
 		{
@@ -287,7 +289,7 @@ func TestInitVMAction_run(t *testing.T) {
 					mockBaseYamlFilePath, "--tty=false").Return(command)
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
-				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs: %s", logs)
+				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
 			},
 		},
 	}

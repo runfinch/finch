@@ -56,7 +56,7 @@ If you're new to containers, that is so exciting! Give the command above a try a
 To build an image, try a quick example from the finch client repository.
 
 ```sh
-git clone git@github.com:runfinch/finch.git
+git clone https://github.com/runfinch/finch.git
 cd finch/contrib/hello-finch
 finch build . -t hello-finch
 ..
@@ -105,6 +105,16 @@ memory: 4GiB
 additional_directories:
   # the path of each additional directory.
   - path: /Volumes
+```
+
+### FAQ
+
+This section contains frequently-asked questions regarding working with Finch.
+
+#### How to shell into the VM?
+
+```sh
+LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl shell finch
 ```
 
 ## What's next?

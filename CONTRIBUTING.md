@@ -139,9 +139,13 @@ If the repo is already cloned, but the submodules are not pulled yet, the follow
 git submodule update --init --recursive
 ```
 
-After cloning the repo, run `make` to build the binary.
+After cloning the repo, run the following command to make subsequent `git pull` to also update submodules to the versions specified in the upstream branch.
 
-The binary in `_output` can be directly used. E.g. initializing the vm and display the version
+```shell
+git config submodule.recurse true
+```
+
+Then run `make` to build the binary. The binary in `_output` can be directly used. E.g. initializing the vm and display the version
 
 ```sh
 ./_output/bin/finch vm init

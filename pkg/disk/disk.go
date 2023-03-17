@@ -116,7 +116,10 @@ func (m *userDataDiskManager) limaDiskExists() bool {
 
 func (m *userDataDiskManager) createLimaDisk() error {
 	cmd := m.lcc.CreateWithoutStdio("disk", "create", diskName, "--size", diskSize)
-	return cmd.Run()
+	if logs, err := cmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("failed to create disk, debug logs:\n%s", logs)
+	}
+	return nil
 }
 
 func (m *userDataDiskManager) attachPersistentDiskToLimaDisk() error {
@@ -165,5 +168,8 @@ func (m *userDataDiskManager) limaDiskIsLocked() bool {
 
 func (m *userDataDiskManager) unlockLimaDisk() error {
 	cmd := m.lcc.CreateWithoutStdio("disk", "unlock", diskName)
-	return cmd.Run()
+	if logs, err := cmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("failed to unlock disk, debug logs:\n%s", logs)
+	}
+	return nil
 }

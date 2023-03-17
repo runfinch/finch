@@ -39,7 +39,7 @@ func TestContainer(t *testing.T) {
 		tests.Pull(o)
 		tests.Rm(o)
 		tests.Rmi(o)
-		tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified})
+		tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified, DefaultHostGatewayIP: "192.168.5.2"})
 		tests.Start(o)
 		tests.Stop(o)
 		tests.Cp(o)

@@ -1,0 +1,31 @@
+#TODO: merge this workflow to the release-installer.yaml after the issue on arm hosts is fixed
+name: Upload installer
+on:
+  workflow_dispatch: # Trigger this workflow from tag
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: write   # This is required for uploading the release assets
+jobs:         
+  upload-installers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: download-installer-session
+          aws-region: ${{ secrets.REGION }}
+      - name: Download installers
+        run: |
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
+      - name: Upload installers to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            Finch-${{ github.ref_name }}-aarch64.pkg
+            Finch-${{ github.ref_name }}-x86_64.pkg
+      - name: Delete installers
+        run: rm -rf Finch-${{ github.ref_name }}-aarch64.pkg Finch-${{ github.ref_name }}-x86_64.pkg

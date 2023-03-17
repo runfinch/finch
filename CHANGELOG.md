@@ -1,5 +1,59 @@
 # Changelog
 
+## [0.4.1](https://github.com/runfinch/finch/compare/v0.4.0...v0.4.1) (2023-03-02)
+
+
+### Bug Fixes
+
+* parse --add-host special ip with equal sign ([#229](https://github.com/runfinch/finch/issues/229)) ([fb4b62b](https://github.com/runfinch/finch/commit/fb4b62bc6987ed786da8f1a351ea8200206be941))
+* switch from rootless containers to rootful containers ([#232](https://github.com/runfinch/finch/issues/232)) ([ae43a07](https://github.com/runfinch/finch/commit/ae43a0779c778cc3656724f84b5cdfd8ab087798))
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/containerd/containerd from 1.6.14 to 1.6.18 ([#223](https://github.com/runfinch/finch/issues/223)) ([7480222](https://github.com/runfinch/finch/commit/748022258bcdb9f25b41d64cdffdee250c9e6274))
+* **deps:** bump github.com/lima-vm/lima from 0.14.2 to 0.15.0 ([#247](https://github.com/runfinch/finch/issues/247)) ([007081e](https://github.com/runfinch/finch/commit/007081e6f1d07071b3e0535a87009f985702b2ee))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.8.0 to 2.8.3 ([#233](https://github.com/runfinch/finch/issues/233)) ([1185372](https://github.com/runfinch/finch/commit/1185372b672e76373e4b7e798de9725bf6ecba50))
+* **deps:** bump github.com/onsi/ginkgo/v2 from 2.8.3 to 2.8.4 ([#245](https://github.com/runfinch/finch/issues/245)) ([5e64716](https://github.com/runfinch/finch/commit/5e647165f7dfccd185d2c0fa94c565309a5a54b0))
+* **deps:** Bump github.com/onsi/gomega from 1.26.0 to 1.27.1 ([#234](https://github.com/runfinch/finch/issues/234)) ([cd43781](https://github.com/runfinch/finch/commit/cd43781b37750579905fc4e32d63f17ad1ec678f))
+* **deps:** bump github.com/onsi/gomega from 1.27.1 to 1.27.2 ([#246](https://github.com/runfinch/finch/issues/246)) ([863c51e](https://github.com/runfinch/finch/commit/863c51e7262e720a93cfea90cf01b0477fd1a2d2))
+* **deps:** Bump github.com/runfinch/common-tests from 0.5.0 to 0.6.0 ([#235](https://github.com/runfinch/finch/issues/235)) ([4a33a2e](https://github.com/runfinch/finch/commit/4a33a2e63c72e687030c70b13dcc5c5748606b86))
+* **deps:** Bump github.com/spf13/afero from 1.9.3 to 1.9.4 ([#241](https://github.com/runfinch/finch/issues/241)) ([58f26e6](https://github.com/runfinch/finch/commit/58f26e66be84cc6e566960fd81276fff5ee124c0))
+* **deps:** bump github.com/stretchr/testify from 1.8.1 to 1.8.2 ([#244](https://github.com/runfinch/finch/issues/244)) ([984af70](https://github.com/runfinch/finch/commit/984af7008db46eb9e4eecac3050d05f6f76ebcca))
+* **deps:** Bump golang.org/x/crypto from 0.5.0 to 0.6.0 ([#212](https://github.com/runfinch/finch/issues/212)) ([e1a36cf](https://github.com/runfinch/finch/commit/e1a36cf9ff39c1273761ca810e357e6200f31de8))
+* **deps:** bump k8s.io/apimachinery from 0.26.1 to 0.26.2 ([#251](https://github.com/runfinch/finch/issues/251)) ([4a7268e](https://github.com/runfinch/finch/commit/4a7268ede5d6f9d2fc3e30f167d2a4ebc91bb5f2))
+* update os image versions ([#255](https://github.com/runfinch/finch/issues/255)) ([576765b](https://github.com/runfinch/finch/commit/576765b2913b714d274bc1ab8b418f9ce9421b9d))
+
+## [0.4.0](https://github.com/runfinch/finch/compare/v0.3.0...v0.4.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* persists nerdctl user data ([#182](https://github.com/runfinch/finch/issues/182))
+
+### Features
+
+* adds a --force flag to vm stop and remove ([#178](https://github.com/runfinch/finch/issues/178)) ([d499a7d](https://github.com/runfinch/finch/commit/d499a7d712bcc726f331ff07f0e0855ddc9046fa))
+* Support special IP host-gateway in --add-host flag ([#216](https://github.com/runfinch/finch/issues/216)) ([9a38c8e](https://github.com/runfinch/finch/commit/9a38c8e6bc8aa155cda0cdc5b4d80bb12bac8eb8))
+
+
+### Bug Fixes
+
+* correctly handle local environment value pass-through ([#158](https://github.com/runfinch/finch/issues/158)) ([e138f10](https://github.com/runfinch/finch/commit/e138f1053fe9219ae6584e49d38c43f306b75e6b))
+* persists nerdctl user data ([#182](https://github.com/runfinch/finch/issues/182)) ([59f372c](https://github.com/runfinch/finch/commit/59f372cb0875f800015abe989d4eba6b8df92e42))
+* persists network user data ([#211](https://github.com/runfinch/finch/issues/211)) ([f6baf82](https://github.com/runfinch/finch/commit/f6baf82171d6c487efb21bc0eb45d772124e04b2))
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/google/go-licenses from 1.5.0 to 1.6.0 ([#168](https://github.com/runfinch/finch/issues/168)) ([bb5674c](https://github.com/runfinch/finch/commit/bb5674c846a094d06203449c83a90bd4eaf71a53))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.7.0 to 2.7.1 ([#193](https://github.com/runfinch/finch/issues/193)) ([7aaa381](https://github.com/runfinch/finch/commit/7aaa381cebc0e5306fc78f0de576f4065eb89cd8))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.7.1 to 2.8.0 ([#200](https://github.com/runfinch/finch/issues/200)) ([596ed33](https://github.com/runfinch/finch/commit/596ed337f03a4a1f861aceaa6844b1acc55355aa))
+* **deps:** Bump github.com/onsi/gomega from 1.25.0 to 1.26.0 ([#183](https://github.com/runfinch/finch/issues/183)) ([12661b7](https://github.com/runfinch/finch/commit/12661b789f6b9162392d698f07a69e34ae391ab8))
+* **deps:** Bump golang.org/x/tools from 0.5.0 to 0.6.0 ([#215](https://github.com/runfinch/finch/issues/215)) ([decf250](https://github.com/runfinch/finch/commit/decf250bae9e1cce8c0cb78daee62e7160fc0027))
+* **deps:** Bump k8s.io/apimachinery from 0.26.0 to 0.26.1 ([#174](https://github.com/runfinch/finch/issues/174)) ([829b0bc](https://github.com/runfinch/finch/commit/829b0bc05824203e60609264c18d075c1eea845b))
+* make finch-core a submodule instead of downloading archives ([#188](https://github.com/runfinch/finch/issues/188)) ([b08f588](https://github.com/runfinch/finch/commit/b08f588cd13b7a1a7c457f279b74489e9df09fb5))
+
 ## [0.3.0](https://github.com/runfinch/finch/compare/v0.2.0...v0.3.0) (2023-01-18)
 
 
