@@ -41,12 +41,20 @@ jobs:
     steps:
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.19.x
-      - uses: actions/checkout@v3
+          go-version-file: go.mod
+          cache: true
+      - name: Checkout the tag
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
           sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
           if pgrep '^qemu-system'; then
             sudo pkill '^qemu-system'
           fi
@@ -64,6 +72,41 @@ jobs:
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
       - name: Silently install
         run: sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
+      - name: Build project
+        run: |
+          brew install go lz4 automake autoconf libtool
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+      - name: Multiple instances of Finch test
+        run: |
+          # start two Finch VM instances
+          ./_output/bin/finch vm init
+          finch vm init
+          # start a container in each VM instance
+          ./_output/bin/finch pull alpine
+          finch pull alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist"
+            exit 1
+          fi
+          # clean up the VMs
+          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
+          finch vm stop && finch vm remove
+      - name: Clean up multiple instance test
+        run: |
+          sudo rm -rf ./_output
+          echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+          # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
+          # that caused the VM initialization failure in the e2e test. 
+          # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
@@ -88,12 +131,20 @@ jobs:
     steps:
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.19.x
-      - uses: actions/checkout@v3
+          go-version-file: go.mod
+          cache: true
+      - name: Checkout the tag
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
           sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
           if pgrep '^qemu-system'; then
             sudo pkill '^qemu-system'
           fi
@@ -111,6 +162,38 @@ jobs:
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
       - name: Silently install
         run: |
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
+      - name: Build project
+        run: |
+          brew install go lz4 automake autoconf libtool
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+      - name: Multiple instances of Finch test
+        run: |
+          # start two Finch VM instances
+          ./_output/bin/finch vm init
+          finch vm init
+          # start a container in each VM instance
+          ./_output/bin/finch pull alpine
+          finch pull alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist"
+            exit 1
+          fi
+          # clean up the VMs
+          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
+          finch vm stop && finch vm remove
+      - name: Clean up multiple instance test
+        run: |
+          sudo rm -rf ./_output
+          echo 'y' | sudo bash /Applications/Finch/uninstall.sh
           sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e

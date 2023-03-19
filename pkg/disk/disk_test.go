@@ -55,7 +55,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
 				lcc.EXPECT().CreateWithoutStdio(mockCreateArgs).Return(cmd)
-				cmd.EXPECT().Run().Return(nil)
+				cmd.EXPECT().CombinedOutput().Return(nil, nil)
 
 				dfs.EXPECT().Stat(finch.UserDataDiskPath(homeDir)).Return(nil, fs.ErrNotExist)
 				dfs.EXPECT().Stat(path.Dir(finch.UserDataDiskPath(homeDir))).Return(nil, nil)
@@ -107,7 +107,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
 				lcc.EXPECT().CreateWithoutStdio(mockCreateArgs).Return(cmd)
-				cmd.EXPECT().Run().Return(nil)
+				cmd.EXPECT().CombinedOutput().Return(nil, nil)
 
 				dfs.EXPECT().Stat(finch.UserDataDiskPath(homeDir)).Return(nil, nil)
 
@@ -130,7 +130,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 
 				dfs.EXPECT().Stat(lockPath).Return(nil, nil)
 				lcc.EXPECT().CreateWithoutStdio(mockUnlockArgs).Return(cmd)
-				cmd.EXPECT().Run().Return(nil)
+				cmd.EXPECT().CombinedOutput().Return(nil, nil)
 			},
 		},
 	}

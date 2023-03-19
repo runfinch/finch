@@ -18,11 +18,10 @@ jobs:
       - name: Update sub modules
         run: |
           git submodule update --remote
-
+          ./.github/bin/update-os-image.sh
       - name: Create PR
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: bump submodules
           signoff: true
           title: 'build(deps): Bump submodules'
