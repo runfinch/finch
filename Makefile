@@ -283,6 +283,7 @@ mdlint-ctr:
 .PHONY: clean
 clean:
 	-@rm -rf $(OUTDIR) 2>/dev/null || true
+	-@rm -rf ./deps/finch-core/_output || true
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true
