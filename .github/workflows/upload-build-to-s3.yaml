@@ -16,7 +16,7 @@ jobs:
     runs-on: ['self-hosted', 'macos', 'arm64', '11.7']
     timeout-minutes: 60
     steps:
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
           cache: true
@@ -45,7 +45,7 @@ jobs:
     runs-on: ['self-hosted', 'macos', 'amd64', '10.15']
     timeout-minutes: 60
     steps:
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
           cache: true

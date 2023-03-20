@@ -52,7 +52,7 @@ jobs:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
           cache: true
@@ -148,7 +148,7 @@ jobs:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
           cache: true
