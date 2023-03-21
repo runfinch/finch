@@ -52,16 +52,16 @@ jobs:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: go.mod
-          cache: true
       - uses: actions/checkout@v3
         with:
           ref: ${{ env.FINCH_TAG }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+          cache: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -165,16 +165,16 @@ jobs:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: go.mod
-          cache: true
       - uses: actions/checkout@v3
         with:
           ref: ${{ env.FINCH_TAG }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+          cache: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch

@@ -39,10 +39,6 @@ jobs:
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: go.mod
-          cache: true
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
@@ -50,6 +46,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+          cache: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -137,10 +137,6 @@ jobs:
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: go.mod
-          cache: true
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
@@ -148,6 +144,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+          cache: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
