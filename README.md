@@ -118,15 +118,20 @@ LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl she
 ```
 
 #### How to authenticate to GCR(Google Container Registry) or AR(Artifact Registry)?
+
+_Note that it's a temporary workaround way, the feature is tracked in this [ticket](https://github.com/runfinch/finch/issues/309)._
+
 Create a [GCP Service Account](https://cloud.google.com/iam/docs/service-accounts-create#creating), grant `Owner` role, and download the key as a JSON file to the $HOME directory.
 
 Then shell into the VM by running the following command:
+
 ```sh
 LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl shell finch
 ```
 
 In the VM, go to the directory where the above key JSON file exists and run command:
-```sh 
+
+```sh
 cat <your_key_json> | nerdctl login -u _json_key --password-stdin gcr.io
 ```
 
