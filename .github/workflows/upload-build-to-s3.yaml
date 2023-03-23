@@ -16,15 +16,15 @@ jobs:
     runs-on: ['self-hosted', 'macos', 'arm64', '11.7']
     timeout-minutes: 60
     steps:
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: go.mod
-          cache: true
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
 
       - name: Make macos arm64 build
         run: |
@@ -45,15 +45,15 @@ jobs:
     runs-on: ['self-hosted', 'macos', 'amd64', '10.15']
     timeout-minutes: 60
     steps:
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: go.mod
-          cache: true
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
 
       - name: Make macos amd64 build
         run: |
