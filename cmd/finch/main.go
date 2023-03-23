@@ -111,16 +111,16 @@ func virtualMachineCommands(
 	fc *config.Finch,
 ) *cobra.Command {
 	optionalDepGroups := []*dependency.Group{vmnet.NewDependencyGroup(ecc, lcc, fs, fp, logger)}
-
+	stdLib := system.NewStdLib()
 	return newVirtualMachineCommand(
 		lcc,
 		logger,
 		optionalDepGroups,
 		config.NewLimaApplier(fc, fs, fp.LimaOverrideConfigPath()),
-		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), system.NewStdLib().Env("USER")),
+		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), stdLib.Env("USER")),
 		fp,
 		fs,
-		disk.NewUserDataDiskManager(lcc, &afero.OsFs{}, fp, system.NewStdLib().Env("HOME")),
+		disk.NewUserDataDiskManager(lcc, &afero.OsFs{}, fp, stdLib.Env("HOME")),
 	)
 }
 
