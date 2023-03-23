@@ -26,17 +26,19 @@ type nerdctlConfigApplier struct {
 	dialer         fssh.Dialer
 	fs             afero.Fs
 	privateKeyPath string
+	hostUser       string
 }
 
 var _ NerdctlConfigApplier = (*nerdctlConfigApplier)(nil)
 
 // NewNerdctlApplier creates a new NerdctlConfigApplier that
 // applies nerdctl configuration changes by SSHing to the lima VM to update the nerdctl configuration file in it.
-func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string) NerdctlConfigApplier {
+func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser string) NerdctlConfigApplier {
 	return &nerdctlConfigApplier{
 		dialer:         dialer,
 		fs:             fs,
 		privateKeyPath: privateKeyPath,
+		hostUser:       hostUser,
 	}
 }
 
@@ -52,7 +54,7 @@ func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string) N
 //
 // [registry nerdctl docs]: https://github.com/containerd/nerdctl/blob/master/docs/registry.md
 func updateEnvironment(fs afero.Fs, user string) error {
-	profileFilePath := "/root/.bashrc"
+	profileFilePath := fmt.Sprintf("/home/%s.linux/.bashrc", user)
 	profBuf, err := afero.ReadFile(fs, profileFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to read config file: %w", err)
@@ -139,7 +141,7 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}
 
-	if err := updateEnvironment(sftpFs, user); err != nil {
+	if err := updateEnvironment(sftpFs, nca.hostUser); err != nil {
 		return fmt.Errorf("failed to update the user's .profile file: %w", err)
 	}
 	return nil
