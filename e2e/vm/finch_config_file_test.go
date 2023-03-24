@@ -20,7 +20,7 @@ import (
 // is written to ~/.finch/config.json file.
 var testFinchConfigFile = func(o *option.Option) {
 	ginkgo.Describe("finch config file", func() {
-		ginkgo.FIt("should store login credentials", func() {
+		ginkgo.It("should store login credentials", func() {
 			filename := "htpasswd"
 			registryImage := "public.ecr.aws/docker/library/registry:latest"
 			registryContainer := "registry"
