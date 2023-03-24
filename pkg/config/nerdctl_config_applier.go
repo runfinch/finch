@@ -48,6 +48,9 @@ func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser
 // The [GNU docs for Bash] explain how these files work together in more details.
 // The default location of DOCKER_CONFIG is ~/.docker/config.json. This config change sets the location to
 // ~/.finch/config.json, but from the perspective of macOS (/Users/<user>/.finch/config.json).
+// The reason that we don't set environment variables inside /root/.bashrc is that the vars inside it are
+// not able to be picked up even if we specify `sudo -E`. We have to switch to root user in order to access them, while
+// normally we would access the VM as the regular user.
 // For more information on the variable, see the registry nerdctl docs.
 //
 // [GNU docs for Bash]: https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html
