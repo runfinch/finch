@@ -88,8 +88,9 @@ func (va *versionAction) printVersion() error {
 	if status != lima.Running {
 		return errors.New("detailed version info is unavailable because VM is not running")
 	}
-
-	limaArgs := []string{"shell", limaInstanceName, "sudo", "nerdctl", "version", "--format", "json"}
+	// Add -E to sudo command in order to preserve existing environment variables, more info:
+	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
+	limaArgs := []string{"shell", limaInstanceName, "sudo", "-E", "nerdctl", "version", "--format", "json"}
 	out, err := va.creator.CreateWithoutStdio(limaArgs...).Output()
 	if err != nil {
 		return fmt.Errorf("failed to create the nerdctl version command: %w", err)
