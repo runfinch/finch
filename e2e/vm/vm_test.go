@@ -73,6 +73,9 @@ var resetVM = func(o *option.Option, installed bool) string {
 	ginkgo.DeferCleanup(func() {
 		writeFile(finchConfigFilePath, origFinchCfg)
 		writeFile(limaConfigFilePath, origLimaCfg)
+		command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
+		command.New(o, virtualMachineRootCmd, "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
+		command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 	})
 
 	return limaConfigFilePath
