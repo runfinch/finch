@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 
@@ -19,6 +20,7 @@ import (
 	"github.com/xorcare/pointer"
 	"gopkg.in/yaml.v3"
 
+	"github.com/runfinch/finch/e2e"
 	finch_cmd "github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 )
@@ -65,7 +67,24 @@ var testConfig = func(o *option.Option, installed bool) {
 	ginkgo.Describe("Config", ginkgo.Serial, func() {
 		var limaConfigFilePath string
 		ginkgo.BeforeEach(func() {
-			limaConfigFilePath = resetVM(o, installed)
+			origFinchCfg := readFile(finchConfigFilePath)
+			limaConfigFilePath = defaultLimaConfigFilePath
+			if installed {
+				path, err := exec.LookPath(e2e.InstalledTestSubject)
+				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+				realFinchPath, err := filepath.EvalSymlinks(path)
+				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+				limaConfigFilePath = filepath.Join(realFinchPath, "../../lima/data/_config/override.yaml")
+			}
+			origLimaCfg := readFile(limaConfigFilePath)
+
+			ginkgo.DeferCleanup(func() {
+				writeFile(finchConfigFilePath, origFinchCfg)
+				writeFile(limaConfigFilePath, origLimaCfg)
+
+				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(120).Run()
+			})
 		})
 
 		ginkgo.It("updates config values when a config file is present", func() {
