@@ -171,7 +171,7 @@ func SupportsVirtualizationFramework(cmdCreator command.Creator) (bool, error) {
 		return false, fmt.Errorf("failed to parse split sw_vers output (%s) into int: %w", splitVer[0], err)
 	}
 
-	if majorVersionInt >= 11 {
+	if majorVersionInt >= 13 {
 		return true, nil
 	}
 

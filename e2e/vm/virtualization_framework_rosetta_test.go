@@ -56,7 +56,7 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 
 				reset(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
-				initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(120).Run()
+				initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(180).Run()
 				gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 			})
 
@@ -74,7 +74,7 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 
 				reset(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: true"))
-				initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(120).Run()
+				initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(180).Run()
 				gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 			})
 

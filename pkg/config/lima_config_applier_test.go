@@ -54,7 +54,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
-				cmd.EXPECT().Output().Return([]byte("12.6.1"), nil)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
@@ -242,7 +242,7 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
-				cmd.EXPECT().Output().Return([]byte("12.6.1"), nil)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
