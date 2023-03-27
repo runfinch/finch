@@ -153,6 +153,7 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 	return defCfg, nil
 }
 
+// SupportsVirtualizationFramework checks if the user's system supports Virtualization.framework.
 func SupportsVirtualizationFramework(cmdCreator command.Creator) (bool, error) {
 	cmd := cmdCreator.Create("sw_vers", "-productVersion")
 	out, err := cmd.Output()
