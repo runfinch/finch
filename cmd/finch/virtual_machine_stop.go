@@ -79,7 +79,7 @@ func (sva *stopVMAction) stopVM(force bool) error {
 	}
 	logs, err := limaCmd.CombinedOutput()
 	if err != nil {
-		sva.logger.Errorf("Finch virtual machine failed to stop, debug logs: %s", logs)
+		sva.logger.Errorf("Finch virtual machine failed to stop, debug logs:\n%s", logs)
 		return err
 	}
 	sva.logger.Info("Finch virtual machine stopped successfully")

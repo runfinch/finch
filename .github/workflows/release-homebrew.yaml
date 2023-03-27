@@ -50,13 +50,28 @@ jobs:
     timeout-minutes: 60
     env:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
-      FINCH_VESRION: ${{ needs.get-latest-tag.outputs.version }}
+      FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ env.FINCH_TAG }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
       - name: Clean up previous files
         run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
           cd $(brew --repo homebrew/cask) 
           brew uninstall --cask ./Casks/finch.rb || true
       - name: Set up Homebrew
@@ -65,20 +80,68 @@ jobs:
       - name: Bump local cask version
         run: |
           brew update-reset 
+          # disable the default behaviour of downloading JSON files from formulae.brew.sh for pacakge installation since Homebrew 4.0.0
+          # Ref. https://brew.sh/2023/02/16/homebrew-4.0.0/
+          export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          echo "Update the local Finch cask with version ${FINCH_VERSION}"
-          brew bump-cask-pr --write-only -f --version=${FINCH_VERSION} finch
+          echo "Update the local Finch cask with version $FINCH_VERSION"
+          brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
       - name: Silently install
         run: |
+          export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
           brew install --cask ./Casks/finch.rb
+      - name: Build project
+        run: |
+          brew install go lz4 automake autoconf libtool
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+      - name: Multiple instances of Finch test
+        run: |
+          # start two Finch VM instances
+          ./_output/bin/finch vm init
+          finch vm init
+          # start a container in each VM instance
+          ./_output/bin/finch pull alpine
+          finch pull alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
+            exit 1
+          fi
+          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
+            exit 1
+          fi
+          if finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
+            exit 1
+          fi
+          # clean up the VMs
+          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
+          finch vm stop && finch vm remove
+      - name: Clean up multiple instance test
+        run: |
+          sudo rm -rf ./_output
+          export HOMEBREW_NO_INSTALL_FROM_API=1
+          cd $(brew --repo homebrew/cask)
+          # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
+          # that caused the VM initialization failure in the e2e test. 
+          # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
+          brew reinstall --cask ./Casks/finch.rb
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
         if: ${{ always() }}
         run: |
           cd $(brew --repo homebrew/cask)
-          brew uninstall --cask ./Casks/finch.rb
+          brew uninstall --zap --cask ./Casks/finch.rb
           if [ -d "/Applications/Finch" ]; then
             echo ERROR: Finch is not uninstalled
             exit 1
@@ -100,13 +163,28 @@ jobs:
     timeout-minutes: 60
     env:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
-      FINCH_VESRION: ${{ needs.get-latest-tag.outputs.version }}
+      FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ env.FINCH_TAG }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
       - name: Clean up previous files
         run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
           cd $(brew --repo homebrew/cask) 
           brew uninstall --cask ./Casks/finch.rb || true
       - name: Set up Homebrew
@@ -115,28 +193,71 @@ jobs:
       - name: Bump local cask version
         run: |
           brew update-reset 
+          export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          echo "Update the local Finch cask with version ${FINCH_VERSION}"
-          brew bump-cask-pr --write-only -f --version=${FINCH_VERSION} finch
+          echo "Update the local Finch cask with version $FINCH_VERSION"
+          brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
       - name: Silently install
         run: |
+          export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
           brew install --cask ./Casks/finch.rb
+      - name: Build project
+        run: |
+          brew install go lz4 automake autoconf libtool
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+      - name: Multiple instances of Finch test
+        run: |
+          # start two Finch VM instances
+          ./_output/bin/finch vm init
+          finch vm init
+          # start a container in each VM instance
+          ./_output/bin/finch pull alpine
+          finch pull alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
+            exit 1
+          fi
+          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
+            exit 1
+          fi
+          if finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
+            exit 1
+          fi
+          # clean up the VMs
+          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
+          finch vm stop && finch vm remove
+      - name: Clean up multiple instance test
+        run: |
+          sudo rm -rf ./_output
+          export HOMEBREW_NO_INSTALL_FROM_API=1
+          cd $(brew --repo homebrew/cask)
+          brew reinstall --cask ./Casks/finch.rb
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
         if: ${{ always() }}
         run: |
           cd $(brew --repo homebrew/cask)
-          brew uninstall --cask ./Casks/finch.rb
+          brew uninstall --zap --cask ./Casks/finch.rb
           if [ -d "/Applications/Finch" ]; then
             echo ERROR: Finch is not uninstalled
             exit 1
           fi
-
+          
   pr-to-homebrew:
-    needs: [macos-arm64-test-installer, macos-amd64-test-installer]
-    runs-on: ubuntu-latest
+    needs: [get-latest-tag, macos-arm64-test-installer, macos-amd64-test-installer]
+    runs-on: macos-latest
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -145,5 +266,5 @@ jobs:
         run: brew bump-cask-pr --version=${FINCH_VERSION} finch
         env:
           FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
-          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
         

@@ -87,7 +87,7 @@ func TestGroup_instalOptional(t *testing.T) {
 			mockSvc: func(l *mocks.Logger) {
 				l.EXPECT().Infoln("description")
 			},
-			want: fmt.Errorf("%s: %v", "error message", []error{errors.New("installation failed")}),
+			want: fmt.Errorf("%s: %w", "error message", errors.Join(errors.New("installation failed"))),
 		},
 	}
 
@@ -185,8 +185,10 @@ func TestInstallOptionalDeps(t *testing.T) {
 			mockSvc: func(l *mocks.Logger) {
 				l.EXPECT().Infoln("dep group 1 description")
 			},
-			want: fmt.Errorf("failed to install dependencies: %v",
-				[]error{fmt.Errorf("%s: %v", "dep group 1 error message", []error{errors.New("installation failed")})},
+			want: fmt.Errorf("failed to install dependencies: %w",
+				errors.Join(
+					fmt.Errorf("%s: %w", "dep group 1 error message", errors.Join(errors.New("installation failed"))),
+				),
 			),
 		},
 	}

@@ -112,8 +112,14 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 			}
 			skip = shouldSkip
 			fileEnvs = append(fileEnvs, addEnvs...)
-		case arg == "--add-host":
-			args[i+1] = resolveIP(args[i+1], nc.logger)
+		case strings.HasPrefix(arg, "--add-host"):
+			switch arg {
+			case "--add-host":
+				args[i+1] = resolveIP(args[i+1], nc.logger)
+			default:
+				resolvedIP := resolveIP(arg[11:], nc.logger)
+				arg = fmt.Sprintf("%s%s", arg[0:11], resolvedIP)
+			}
 			nerdctlArgs = append(nerdctlArgs, arg)
 		default:
 			nerdctlArgs = append(nerdctlArgs, arg)
@@ -140,7 +146,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	}
 	finalArgs = append(finalArgs, nerdctlArgs...)
 
-	limaArgs := append([]string{"shell", limaInstanceName, nerdctlCmdName, cmdName}, finalArgs...)
+	limaArgs := append([]string{"shell", limaInstanceName, "sudo", nerdctlCmdName, cmdName}, finalArgs...)
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
 		return nc.creator.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)

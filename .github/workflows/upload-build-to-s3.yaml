@@ -16,21 +16,22 @@ jobs:
     runs-on: ['self-hosted', 'macos', 'arm64', '11.7']
     timeout-minutes: 60
     steps:
-      - uses: actions/setup-go@v2
-        with:
-          go-version: 1.19.x
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
 
       - name: Make macos aarch64 build
         run: |
           brew install go lz4 automake autoconf libtool
           make clean
           make download-licenses 
-          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch.app/Contents/Resources/resources
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
           tar -zcvf finch.${GITHUB_REF_NAME}.aarch64.tar.gz _output
 
       - name: Upload macos aarch64 build
@@ -44,21 +45,22 @@ jobs:
     runs-on: ['self-hosted', 'macos', 'amd64', '10.15']
     timeout-minutes: 60
     steps:
-      - uses: actions/setup-go@v2
-        with:
-          go-version: 1.19.x
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
 
       - name: Make macos x86_64 build
         run: |
           brew install go lz4 automake autoconf libtool
           make clean
           make download-licenses 
-          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch.app/Contents/Resources/resources
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
           tar -zcvf finch.${GITHUB_REF_NAME}.x86_64.tar.gz _output
 
       - name: Upload macos x86_64 build
@@ -81,7 +83,7 @@ jobs:
           persist-credentials: false
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: dependency-upload-session

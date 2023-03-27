@@ -264,9 +264,11 @@ func TestStartVMAction_run(t *testing.T) {
 
 				lca.EXPECT().Apply().Return(errors.New("load config fails"))
 
-				logger.EXPECT().Errorf("Dependency error: %v", fmt.Errorf("failed to install dependencies: %v",
-					[]error{fmt.Errorf("%s: %v", "mock_error_msg", []error{errors.New("dependency error occurs")})},
-				))
+				logger.EXPECT().Errorf("Dependency error: %v",
+					fmt.Errorf("failed to install dependencies: %w",
+						errors.Join(fmt.Errorf("%s: %w", "mock_error_msg", errors.Join(errors.New("dependency error occurs")))),
+					),
+				)
 			},
 		},
 		{
@@ -303,7 +305,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc.EXPECT().CreateWithoutStdio("start", limaInstanceName).Return(command)
 
 				logger.EXPECT().Info("Starting existing Finch virtual machine...")
-				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs: %s", logs)
+				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
 			},
 		},
 	}
