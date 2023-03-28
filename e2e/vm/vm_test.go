@@ -45,6 +45,7 @@ func TestVM(t *testing.T) {
 		testVMLifecycle(o)
 		testAdditionalDisk(o)
 		testConfig(o, *e2e.Installed)
+		testFinchConfigFile(o)
 		testVersion(o)
 		testVirtualizationFrameworkAndRosetta(o, *e2e.Installed)
 	})

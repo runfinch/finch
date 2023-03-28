@@ -26,17 +26,19 @@ type nerdctlConfigApplier struct {
 	dialer         fssh.Dialer
 	fs             afero.Fs
 	privateKeyPath string
+	hostUser       string
 }
 
 var _ NerdctlConfigApplier = (*nerdctlConfigApplier)(nil)
 
 // NewNerdctlApplier creates a new NerdctlConfigApplier that
 // applies nerdctl configuration changes by SSHing to the lima VM to update the nerdctl configuration file in it.
-func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string) NerdctlConfigApplier {
+func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser string) NerdctlConfigApplier {
 	return &nerdctlConfigApplier{
 		dialer:         dialer,
 		fs:             fs,
 		privateKeyPath: privateKeyPath,
+		hostUser:       hostUser,
 	}
 }
 
@@ -46,13 +48,16 @@ func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string) N
 // The [GNU docs for Bash] explain how these files work together in more details.
 // The default location of DOCKER_CONFIG is ~/.docker/config.json. This config change sets the location to
 // ~/.finch/config.json, but from the perspective of macOS (/Users/<user>/.finch/config.json).
+// The reason that we don't set environment variables inside /root/.bashrc is that the vars inside it are
+// not able to be picked up even if we specify `sudo -E`. We have to switch to root user in order to access them, while
+// normally we would access the VM as the regular user.
 // For more information on the variable, see the registry nerdctl docs.
 //
 // [GNU docs for Bash]: https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html
 //
 // [registry nerdctl docs]: https://github.com/containerd/nerdctl/blob/master/docs/registry.md
 func updateEnvironment(fs afero.Fs, user string) error {
-	profileFilePath := "/root/.bashrc"
+	profileFilePath := fmt.Sprintf("/home/%s.linux/.bashrc", user)
 	profBuf, err := afero.ReadFile(fs, profileFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to read config file: %w", err)
@@ -139,7 +144,7 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}
 
-	if err := updateEnvironment(sftpFs, user); err != nil {
+	if err := updateEnvironment(sftpFs, nca.hostUser); err != nil {
 		return fmt.Errorf("failed to update the user's .profile file: %w", err)
 	}
 	return nil
