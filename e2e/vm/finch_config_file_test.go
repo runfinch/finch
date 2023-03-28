@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -45,8 +46,7 @@ var testFinchConfigFile = func(o *option.Option) {
 				registryImage)
 			ginkgo.DeferCleanup(command.Run, o, "rmi", registryImage)
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", registryContainer)
-			command.Run(o, "images")
-			command.Run(o, "ps", "-a")
+			time.Sleep(2 * time.Second)
 			registry := fmt.Sprintf(`localhost:%d`, port)
 			command.Run(o, "login", registry, "-u", "testUser", "-p", "testPassword")
 
