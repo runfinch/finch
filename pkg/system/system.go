@@ -71,3 +71,13 @@ type StderrGetter interface {
 type RuntimeCPUGetter interface {
 	NumCPU() int
 }
+
+// RuntimeArchGetter mocks out runtime.GOARCH.
+type RuntimeArchGetter interface {
+	Arch() string
+}
+
+// RuntimeOSGetter mocks out runtime.GOOS.
+type RuntimeOSGetter interface {
+	OS() string
+}

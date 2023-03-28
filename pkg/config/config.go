@@ -13,10 +13,14 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"strconv"
+	"strings"
 
+	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
+	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/system"
@@ -35,6 +39,17 @@ type Finch struct {
 	// For example, if you want to mount a directory into a container, and that directory is not under your home directory,
 	// then you'll need to specify this field to add that directory or any ascendant of it as a work directory.
 	AdditionalDirectories []AdditionalDirectory `yaml:"additional_directories,omitempty"`
+	// VMType sets which technology to use for Finch's VM.
+	// Currently supports `qemu` and `vz` (Virtualization.framework).
+	// Also sets mountType to "virtiofs", instead of the default "reverse-sshfs"
+	// Requires macOS 13.0 or later.
+	// This setting will only be applied on vm init.
+	VMType *limayaml.VMType `yaml:"vmType,omitempty"`
+	// Use Rosetta 2 when available. Forces vmType to "vz" (Virtualization.framework) if set to `true`.
+	// Requires macOS 13.0 or later and an Apple Silicon (ARM64) mac.
+	// Has no effect on systems where Rosetta 2 is not available (Intel/AMD64 macs, or macOS < 13.0).
+	// This setting will only be applied on vm init.
+	Rosetta *bool `yaml:"rosetta,omitempty"`
 }
 
 // Nerdctl is a copy from github.com/containerd/nerdctl/cmd/nerdctl/main.go
@@ -58,7 +73,7 @@ type Nerdctl struct {
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_lima_config_applier.go -package=mocks -mock_names LimaConfigApplier=LimaConfigApplier . LimaConfigApplier
 type LimaConfigApplier interface {
-	Apply() error
+	Apply(isInit bool) error
 }
 
 // NerdctlConfigApplier applies nerdctl configuration changes.
@@ -136,4 +151,29 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 	}
 
 	return defCfg, nil
+}
+
+// SupportsVirtualizationFramework checks if the user's system supports Virtualization.framework.
+func SupportsVirtualizationFramework(cmdCreator command.Creator) (bool, error) {
+	cmd := cmdCreator.Create("sw_vers", "-productVersion")
+	out, err := cmd.Output()
+	if err != nil {
+		return false, fmt.Errorf("failed to run sw_vers command: %w", err)
+	}
+
+	splitVer := strings.Split(string(out), ".")
+	if len(splitVer) == 0 {
+		return false, fmt.Errorf("unexpected result from string split: %v", splitVer)
+	}
+
+	majorVersionInt, err := strconv.ParseInt(splitVer[0], 10, 64)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse split sw_vers output (%s) into int: %w", splitVer[0], err)
+	}
+
+	if majorVersionInt >= 13 {
+		return true, nil
+	}
+
+	return false, nil
 }

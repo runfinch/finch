@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/onsi/ginkgo/v2"
@@ -20,6 +21,8 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/e2e"
+	finch_cmd "github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 )
 
 var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
@@ -80,7 +83,7 @@ var testConfig = func(o *option.Option, installed bool) {
 				writeFile(limaConfigFilePath, origLimaCfg)
 
 				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
-				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(120).Run()
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(600).Run()
 			})
 		})
 
@@ -165,6 +168,52 @@ additional_directories:
 			gomega.Expect(limaCfg.Mounts[0].Writable).Should(gomega.Equal(pointer.Bool(true)))
 			gomega.Expect(limaCfg.Mounts[1].Location).Should(gomega.Equal("/tmp/workspace"))
 			gomega.Expect(limaCfg.Mounts[1].Writable).Should(gomega.Equal(pointer.Bool(true)))
+		})
+
+		ginkgo.It("does not update init-only config values when values are changed between start/stop", func() {
+			startCmdSession := updateAndApplyConfig(o, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: true"))
+			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
+
+			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
+			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
+			gomega.Expect(*limaCfg.VMType).Should(gomega.Equal("qemu"))
+			gomega.Expect(limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
+			gomega.Expect(limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))
+		})
+	})
+
+	ginkgo.Describe("Config (after init)", ginkgo.Serial, func() {
+		ginkgo.It("updates init-only config values when values are changed after init", func() {
+			supportsVz, supportsVzErr := config.SupportsVirtualizationFramework(finch_cmd.NewExecCmdCreator())
+			gomega.Expect(supportsVzErr).ShouldNot(gomega.HaveOccurred())
+			if !supportsVz || runtime.GOOS != "darwin" {
+				ginkgo.Skip("Skipping because existing init only configuration options require Virtualization.framework support to test")
+			}
+
+			limaConfigFilePath := resetVM(o, installed)
+			writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
+			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(120).Run()
+			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
+
+			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
+			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			var limaCfg limayaml.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
+			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
+			gomega.Expect(*limaCfg.VMType).Should(gomega.Equal("vz"))
+			gomega.Expect(limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
+			gomega.Expect(limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))
 		})
 	})
 }

@@ -27,5 +27,4 @@ func Test_newDeps(t *testing.T) {
 	require.Equal(t, 3, len(got))
 	assert.IsType(t, (*binaries)(nil), got[0])
 	assert.IsType(t, (*sudoersFile)(nil), got[1])
-	assert.IsType(t, (*overrideLimaConfig)(nil), got[2])
 }

@@ -41,7 +41,12 @@ cpus: 8
 				// 12_884_901_888 == 12GiB
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
 			},
-			want:    &Finch{Memory: pointer.String("4GiB"), CPUs: pointer.Int(8)},
+			want: &Finch{
+				Memory:  pointer.String("4GiB"),
+				CPUs:    pointer.Int(8),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+			},
 			wantErr: nil,
 		},
 		{
@@ -52,7 +57,12 @@ cpus: 8
 				deps.EXPECT().NumCPU().Return(4).Times(2)
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(2)
 			},
-			want:    &Finch{Memory: pointer.String("3GiB"), CPUs: pointer.Int(2)},
+			want: &Finch{
+				Memory:  pointer.String("3GiB"),
+				CPUs:    pointer.Int(2),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+			},
 			wantErr: nil,
 		},
 		{
@@ -63,7 +73,12 @@ cpus: 8
 				deps.EXPECT().NumCPU().Return(4).Times(2)
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(1)
 			},
-			want:    &Finch{Memory: pointer.String("2GiB"), CPUs: pointer.Int(2)},
+			want: &Finch{
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(2),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+			},
 			wantErr: nil,
 		},
 		{
@@ -74,7 +89,12 @@ cpus: 8
 				deps.EXPECT().NumCPU().Return(4).Times(2)
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(2)
 			},
-			want:    &Finch{Memory: pointer.String("3GiB"), CPUs: pointer.Int(2)},
+			want: &Finch{
+				Memory:  pointer.String("3GiB"),
+				CPUs:    pointer.Int(2),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+			},
 			wantErr: nil,
 		},
 		{
@@ -85,7 +105,12 @@ cpus: 8
 				deps.EXPECT().NumCPU().Return(4).Times(1)
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(1)
 			},
-			want:    &Finch{Memory: pointer.String("3GiB"), CPUs: pointer.Int(2)},
+			want: &Finch{
+				Memory:  pointer.String("3GiB"),
+				CPUs:    pointer.Int(2),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+			},
 			wantErr: nil,
 		},
 		{
