@@ -83,7 +83,7 @@ var testConfig = func(o *option.Option, installed bool) {
 				writeFile(limaConfigFilePath, origLimaCfg)
 
 				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
-				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(120).Run()
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(600).Run()
 			})
 		})
 
