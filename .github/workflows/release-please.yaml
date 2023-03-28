@@ -40,7 +40,7 @@ jobs:
                 "hidden":false
               },
               {
-                "type":"expr",
+                "type":"exp",
                 "section":"Experimental",
                 "hidden":false
               }
