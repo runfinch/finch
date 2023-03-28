@@ -103,7 +103,7 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
       - name: Install Rosetta 2
-        run: echo "A" | softwareupdate --install-rosetta 
+        run: echo "A" | softwareupdate --install-rosetta || true 
       - run: brew install go lz4 automake autoconf libtool 
       - name: Build project
         run: |
