@@ -38,6 +38,11 @@ jobs:
                 "type":"build",
                 "section":"Build System or External Dependencies",
                 "hidden":false
+              },
+              {
+                "type":"expr",
+                "section":"Experimental",
+                "hidden":true
               }
             ]
           # Before we are at v1.0.0
