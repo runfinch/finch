@@ -42,7 +42,7 @@ jobs:
               {
                 "type":"expr",
                 "section":"Experimental",
-                "hidden":true
+                "hidden":false
               }
             ]
           # Before we are at v1.0.0
