@@ -36,7 +36,7 @@ var testFinchConfigFile = func(o *option.Option) {
 			htpasswdDir := filepath.Dir(ffs.CreateTempFile(filename, htpasswd))
 			ginkgo.DeferCleanup(os.RemoveAll, htpasswdDir)
 			port := fnet.GetFreePort()
-			command.Run(o, "run",
+			containerID := command.StdoutStr(o, "run",
 				"-dp", fmt.Sprintf("%d:5000", port),
 				"--name", registryContainer,
 				"-v", fmt.Sprintf("%s:/auth", htpasswdDir),
@@ -46,7 +46,9 @@ var testFinchConfigFile = func(o *option.Option) {
 				registryImage)
 			ginkgo.DeferCleanup(command.Run, o, "rmi", registryImage)
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", registryContainer)
-			time.Sleep(2 * time.Second)
+			for command.StdoutStr(o, "inspect", "-f", "{{.State.Running}}", containerID) != "true" {
+				time.Sleep(1 * time.Second)
+			}
 			registry := fmt.Sprintf(`localhost:%d`, port)
 			command.Run(o, "login", registry, "-u", "testUser", "-p", "testPassword")
 
