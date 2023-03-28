@@ -39,10 +39,6 @@ jobs:
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: go.mod
-          cache: true
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
@@ -50,6 +46,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -89,11 +89,19 @@ jobs:
           finch run --name test-ctr2 alpine
           # check whether containers exist
           if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
-            echo "ERROR: The container test-ctr1 doesn't exist"
+            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
+            exit 1
+          fi
+          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
             exit 1
           fi
           if ! finch ps -a | grep 'test-ctr2'; then
-            echo "ERROR: The container test-ctr2 doesn't exist"
+            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
+            exit 1
+          fi
+          if finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
             exit 1
           fi
           # clean up the VMs
@@ -129,10 +137,6 @@ jobs:
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: go.mod
-          cache: true
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
@@ -140,6 +144,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -180,11 +188,19 @@ jobs:
           finch run --name test-ctr2 alpine
           # check whether containers exist
           if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
-            echo "ERROR: The container test-ctr1 doesn't exist"
+            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
+            exit 1
+          fi
+          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
             exit 1
           fi
           if ! finch ps -a | grep 'test-ctr2'; then
-            echo "ERROR: The container test-ctr2 doesn't exist"
+            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
+            exit 1
+          fi
+          if finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
             exit 1
           fi
           # clean up the VMs

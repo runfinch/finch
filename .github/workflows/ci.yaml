@@ -82,7 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [[self-hosted, macos, amd64, 11.7], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 11.7], [self-hosted, macos, arm64, 12.6]]
+        os: [[self-hosted, macos, amd64, 13], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 13], [self-hosted, macos, arm64, 12.6]]
     runs-on: ${{ matrix.os }} 
     steps:
       - uses: actions/checkout@v3
@@ -102,6 +102,8 @@ jobs:
           if pgrep '^socket_vmnet'; then
             sudo pkill '^socket_vmnet'
           fi
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
       - run: brew install go lz4 automake autoconf libtool 
       - name: Build project
         run: |

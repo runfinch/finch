@@ -37,15 +37,15 @@ func (m *LimaConfigApplier) EXPECT() *LimaConfigApplierMockRecorder {
 }
 
 // Apply mocks base method.
-func (m *LimaConfigApplier) Apply() error {
+func (m *LimaConfigApplier) Apply(arg0 bool) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Apply")
+	ret := m.ctrl.Call(m, "Apply", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Apply indicates an expected call of Apply.
-func (mr *LimaConfigApplierMockRecorder) Apply() *gomock.Call {
+func (mr *LimaConfigApplierMockRecorder) Apply(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Apply", reflect.TypeOf((*LimaConfigApplier)(nil).Apply))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Apply", reflect.TypeOf((*LimaConfigApplier)(nil).Apply), arg0)
 }
