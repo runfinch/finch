@@ -42,7 +42,7 @@ type Finch struct {
 	// VMType sets which technology to use for Finch's VM.
 	// Currently supports `qemu` and `vz` (Virtualization.framework).
 	// Also sets mountType to "virtiofs", instead of the default "reverse-sshfs"
-	// Requires macOS macOS 11.0 or later.
+	// Requires macOS 13.0 or later.
 	// This setting will only be applied on vm init.
 	VMType *limayaml.VMType `yaml:"vmType,omitempty"`
 	// Use Rosetta 2 when available. Forces vmType to "vz" (Virtualization.framework) if set to `true`.
