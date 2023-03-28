@@ -35,13 +35,13 @@ jobs:
                 "hidden":false
               },
               {
-                "type":"build",
-                "section":"Build System or External Dependencies",
+                "type":"exp",
+                "section":"Experimental",
                 "hidden":false
               },
               {
-                "type":"exp",
-                "section":"Experimental",
+                "type":"build",
+                "section":"Build System or External Dependencies",
                 "hidden":false
               }
             ]
