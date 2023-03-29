@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.5.0](https://github.com/runfinch/finch/compare/v0.4.1...v0.5.0) (2023-03-29)
+
+
+### Features
+
+* adds support bundles ([#210](https://github.com/runfinch/finch/issues/210)) ([cc6be65](https://github.com/runfinch/finch/commit/cc6be6577c97697e99112a7b693eff2664b747ef))
+
+
+### Bug Fixes
+
+* Correctly set and pick up environment variables ([#315](https://github.com/runfinch/finch/issues/315)) ([05227ce](https://github.com/runfinch/finch/commit/05227ce03055223bc7ffd10c634cc75a9632634e))
+* print debug logs after newline ([#273](https://github.com/runfinch/finch/issues/273)) ([8faa7de](https://github.com/runfinch/finch/commit/8faa7de81bbb5eb222c5abb4b1239ef8b27e15cb))
+* print debug logs when lima disk command fails ([#270](https://github.com/runfinch/finch/issues/270)) ([78a3f50](https://github.com/runfinch/finch/commit/78a3f5002e10442bf818015de55b940cd4bcf19d))
+
+
+### Experimental
+
+* **feat:** enable Virtualization.framework and Rosetta ([#282](https://github.com/runfinch/finch/issues/282)) ([fd3bf19](https://github.com/runfinch/finch/commit/fd3bf19ae454b493fd7f9b1b85a5522881020af1))
+
+
+### Build System or External Dependencies
+
+* clean up finch-core _output directory in clean target ([#290](https://github.com/runfinch/finch/issues/290)) ([4684a95](https://github.com/runfinch/finch/commit/4684a959205a1f701ede8b59e7822354cb7d0d70))
+* **deps:** bump github.com/onsi/ginkgo/v2 from 2.8.4 to 2.9.0 ([#265](https://github.com/runfinch/finch/issues/265)) ([7e2d49e](https://github.com/runfinch/finch/commit/7e2d49e8b09c4167a6e3ad5df4a6f6d9ab9ca728))
+* **deps:** bump github.com/onsi/ginkgo/v2 from 2.9.0 to 2.9.1 ([#285](https://github.com/runfinch/finch/issues/285)) ([d741a03](https://github.com/runfinch/finch/commit/d741a03ac368673432a29f45f5fdaa6f6580fbc9))
+* **deps:** Bump github.com/onsi/gomega from 1.27.3 to 1.27.5 ([#312](https://github.com/runfinch/finch/issues/312)) ([e078234](https://github.com/runfinch/finch/commit/e07823454ba86701ff7316e8c44e78d1c5ceb454))
+* **deps:** bump github.com/runfinch/common-tests from 0.6.1 to 0.6.2 ([#300](https://github.com/runfinch/finch/issues/300)) ([dd626a0](https://github.com/runfinch/finch/commit/dd626a024203ec28bba46bf1e1c65b1b6644334d))
+* **deps:** bump github.com/spf13/afero from 1.9.4 to 1.9.5 ([#263](https://github.com/runfinch/finch/issues/263)) ([a0e277f](https://github.com/runfinch/finch/commit/a0e277f8cba008e2422d11fac26f33640a2ab160))
+* **deps:** bump golang.org/x/crypto from 0.6.0 to 0.7.0 ([#264](https://github.com/runfinch/finch/issues/264)) ([ec1c07f](https://github.com/runfinch/finch/commit/ec1c07ff3567396fb0f5a461ece2b048133cce68))
+* **deps:** bump golang.org/x/tools from 0.6.0 to 0.7.0 ([#268](https://github.com/runfinch/finch/issues/268)) ([8072e39](https://github.com/runfinch/finch/commit/8072e39172831c8f3c18b8d17b186ec4a421d830))
+* **deps:** bump k8s.io/apimachinery from 0.26.2 to 0.26.3 ([#306](https://github.com/runfinch/finch/issues/306)) ([fe392cb](https://github.com/runfinch/finch/commit/fe392cb07cb4ca50b064bbb6f6667b7942047ffb))
+* **deps:** Bump lima version ([#302](https://github.com/runfinch/finch/issues/302)) ([0269743](https://github.com/runfinch/finch/commit/026974314254df1e4047ea5130ba50464608bb1d))
+* **deps:** Bump submodules ([#281](https://github.com/runfinch/finch/issues/281)) ([d4fd1f6](https://github.com/runfinch/finch/commit/d4fd1f6902d51985c829808c65738e38f7e2cdd1))
+* **deps:** Bump submodules ([#304](https://github.com/runfinch/finch/issues/304)) ([b38af9f](https://github.com/runfinch/finch/commit/b38af9fe0e5c4ffb3eb94641d70dd16e3fe7c833))
+* **deps:** Bump submodules ([#307](https://github.com/runfinch/finch/issues/307)) ([1a914ec](https://github.com/runfinch/finch/commit/1a914ec11c9fcbbb56982c3361a3716ab7a946b2))
+* **deps:** Bump submodules ([#319](https://github.com/runfinch/finch/issues/319)) ([e671224](https://github.com/runfinch/finch/commit/e671224bdb87983bce0db6e797ccfe71fb5dfc63))
+
 ## [0.4.1](https://github.com/runfinch/finch/compare/v0.4.0...v0.4.1) (2023-03-02)
 
 
