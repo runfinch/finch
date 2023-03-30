@@ -127,7 +127,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [
-              [self-hosted, macos, amd64, 10.15, release], 
               [self-hosted, macos, amd64, 11.7, release], 
               [self-hosted, macos, amd64, 12.6, release], 
               [self-hosted, macos, amd64, 13.0, release]
