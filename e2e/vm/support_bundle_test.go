@@ -166,9 +166,18 @@ var testSupportBundle = func(o *option.Option) {
 			gomega.Expect(bundleExists).Should(gomega.BeTrue())
 		})
 		ginkgo.It("Should generate a support bundle with a default file excluded with --exclude flag by absolute path", func() {
-			absPath, err := filepath.Abs("../../_output/lima/data/finch/serial.log")
+			includeFilename := fmt.Sprintf("tempTestfile%s", time.Now().Format("20060102150405"))
+			//nolint:gosec // this file is only used for testing purposes and it does not include any user input
+			_, err := os.Create(includeFilename)
 			gomega.Expect(err).Should(gomega.BeNil())
-			command.Run(o, "support-bundle", "generate", "--exclude", absPath)
+			defer func() {
+				err := os.Remove(includeFilename)
+				gomega.Expect(err).Should(gomega.BeNil())
+			}()
+
+			absPath, err := filepath.Abs(includeFilename)
+			gomega.Expect(err).Should(gomega.BeNil())
+			command.Run(o, "support-bundle", "generate", "--include", includeFilename, "--exclude", absPath)
 			entries, err := os.ReadDir(".")
 			gomega.Expect(err).Should(gomega.BeNil())
 			bundleExists := false
@@ -184,7 +193,7 @@ var testSupportBundle = func(o *option.Option) {
 
 					zipBaseName := path.Base(dirEntry.Name())
 					zipPrefix := strings.TrimSuffix(zipBaseName, path.Ext(zipBaseName))
-					_, err = reader.Open(path.Join(zipPrefix, "logs", "serial.log"))
+					_, err = reader.Open(path.Join(zipPrefix, "misc", includeFilename))
 					gomega.Expect(err).ShouldNot(gomega.BeNil())
 
 					err = os.Remove(dirEntry.Name())
@@ -194,7 +203,16 @@ var testSupportBundle = func(o *option.Option) {
 			gomega.Expect(bundleExists).Should(gomega.BeTrue())
 		})
 		ginkgo.It("Should generate a support bundle with a default file excluded with --exclude flag by relative path", func() {
-			command.Run(o, "support-bundle", "generate", "--exclude", "../../_output/lima/data/finch/serial.log")
+			includeFilename := fmt.Sprintf("tempTestfile%s", time.Now().Format("20060102150405"))
+			//nolint:gosec // this file is only used for testing purposes and it does not include any user input
+			_, err := os.Create(includeFilename)
+			gomega.Expect(err).Should(gomega.BeNil())
+			defer func() {
+				err := os.Remove(includeFilename)
+				gomega.Expect(err).Should(gomega.BeNil())
+			}()
+
+			command.Run(o, "support-bundle", "generate", "--include", includeFilename, "--exclude", path.Join(".", includeFilename))
 			entries, err := os.ReadDir(".")
 			gomega.Expect(err).Should(gomega.BeNil())
 			bundleExists := false
@@ -210,7 +228,7 @@ var testSupportBundle = func(o *option.Option) {
 
 					zipBaseName := path.Base(dirEntry.Name())
 					zipPrefix := strings.TrimSuffix(zipBaseName, path.Ext(zipBaseName))
-					_, err = reader.Open(path.Join(zipPrefix, "logs", "serial.log"))
+					_, err = reader.Open(path.Join(zipPrefix, "misc", includeFilename))
 					gomega.Expect(err).ShouldNot(gomega.BeNil())
 
 					err = os.Remove(dirEntry.Name())

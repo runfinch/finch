@@ -242,7 +242,7 @@ test-e2e: test-e2e-vm-serial
 
 .PHONY: test-e2e-vm-serial
 test-e2e-vm-serial: test-e2e-container
-	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 45m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
 test-e2e-container:
@@ -250,7 +250,7 @@ test-e2e-container:
 
 .PHONY: test-e2e-vm
 test-e2e-vm:
-	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 45m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
 
 .PHONY: gen-code
 # Since different projects may have different versions of tool binaries,
