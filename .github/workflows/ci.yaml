@@ -57,7 +57,7 @@ jobs:
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a Github Action,
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
           version: v1.51.2
-          args: --fix=false
+          args: --fix=false --timeout=5m
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     steps:
