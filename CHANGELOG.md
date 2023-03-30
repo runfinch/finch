@@ -36,6 +36,7 @@
 * **deps:** Bump submodules ([#304](https://github.com/runfinch/finch/issues/304)) ([b38af9f](https://github.com/runfinch/finch/commit/b38af9fe0e5c4ffb3eb94641d70dd16e3fe7c833))
 * **deps:** Bump submodules ([#307](https://github.com/runfinch/finch/issues/307)) ([1a914ec](https://github.com/runfinch/finch/commit/1a914ec11c9fcbbb56982c3361a3716ab7a946b2))
 * **deps:** Bump submodules ([#319](https://github.com/runfinch/finch/issues/319)) ([e671224](https://github.com/runfinch/finch/commit/e671224bdb87983bce0db6e797ccfe71fb5dfc63))
+* **deps:** Bump submodules ([#332](https://github.com/runfinch/finch/issues/332)) ([5923ae2](https://github.com/runfinch/finch/commit/5923ae2933e6cb2e9bf9e74db4584679af56c471))
 
 ## [0.4.1](https://github.com/runfinch/finch/compare/v0.4.0...v0.4.1) (2023-03-02)
 
