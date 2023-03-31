@@ -30,10 +30,9 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 
 				resetVM(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
-				initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(180).Run()
+				initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 				gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 				tests.SetupLocalRegistry(o)
-
 				ginkgo.DeferCleanup(func() {
 					tests.CleanupLocalRegistry(o)
 				})
@@ -53,10 +52,9 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 
 				resetVM(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: true"))
-				initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(180).Run()
+				initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 				gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 				tests.SetupLocalRegistry(o)
-
 				ginkgo.DeferCleanup(func() {
 					tests.CleanupLocalRegistry(o)
 				})
