@@ -42,7 +42,7 @@ jobs:
           if-no-files-found: error
 
   macos-x86_64-build:
-    runs-on: ['self-hosted', 'macos', 'amd64', '10.15']
+    runs-on: ['self-hosted', 'macos', 'amd64', '11.7']
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
