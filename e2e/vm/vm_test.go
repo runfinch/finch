@@ -5,7 +5,9 @@
 package vm
 
 import (
+	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"testing"
 
@@ -81,4 +83,17 @@ var resetVM = func(o *option.Option, installed bool) string {
 	})
 
 	return limaConfigFilePath
+}
+
+var resetDisks = func(o *option.Option, installed bool) {
+	if installed {
+		path, err := exec.LookPath(e2e.InstalledTestSubject)
+		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+		realFinchPath, err := filepath.EvalSymlinks(path)
+		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+		gomega.Expect(os.RemoveAll(filepath.Join(realFinchPath, "../../lima/data/_disks")))
+	} else {
+		gomega.Expect(os.RemoveAll("../../_output/lima/data/_disks")).ShouldNot(gomega.HaveOccurred())
+	}
+	gomega.Expect(os.RemoveAll(path.Join(os.Getenv("HOME"), ".finch", ".disks"))).ShouldNot(gomega.HaveOccurred())
 }
