@@ -101,7 +101,7 @@ var resetDisks = func(o *option.Option, installed bool) {
 	realDiskPath, err := os.Readlink(filepath.Join(dataDiskDir, "finch/datadisk"))
 	if err == nil {
 		gomega.Expect(os.Remove(realDiskPath)).ShouldNot(gomega.HaveOccurred())
-	} else if !errors.Is(err, fs.ErrExist) {
+	} else if !errors.Is(err, fs.ErrNotExist) {
 		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 	}
 	gomega.Expect(os.RemoveAll(dataDiskDir)).ShouldNot(gomega.HaveOccurred())
