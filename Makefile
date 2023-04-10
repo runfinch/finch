@@ -56,6 +56,9 @@ arch-test:
 .PHONY: all
 all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
 
+.PHONY: all-local
+all-local: arch-test finch networks.yaml config.yaml lima-and-qemu local-core finch.yaml
+
 .PHONY: finch-core
 finch-core:
 	cd deps/finch-core && \
@@ -66,6 +69,19 @@ finch-core:
 
 	mkdir -p _output
 	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
+	rm -rf $(OUTDIR)/lima-template
+
+.PHONY: local-core
+local-core:
+	cd deps/finch-core && \
+		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
+		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
+		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
+		$(MAKE) lima lima-socket-vmnet
+
+	mkdir -p _output
+	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
+	cd deps/finch-core/src/lima/_output && tar c * | tar Cvx  $(OUTDIR)/lima
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: lima-and-qemu
