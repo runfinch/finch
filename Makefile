@@ -57,7 +57,7 @@ arch-test:
 all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
 
 .PHONY: all-local
-all-local: arch-test finch networks.yaml config.yaml lima-and-qemu finch-core finch.yaml
+all-local: arch-test finch networks.yaml config.yaml lima-and-qemu local-core finch.yaml
 
 .PHONY: finch-core
 finch-core:
