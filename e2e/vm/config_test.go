@@ -47,7 +47,7 @@ func updateAndApplyConfig(o *option.Option, configBytes []byte) *gexec.Session {
 	writeFile(finchConfigFilePath, configBytes)
 
 	command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
-	return command.New(o, virtualMachineRootCmd, "start").WithoutCheckingExitCode().WithTimeoutInSeconds(120).Run()
+	return command.New(o, virtualMachineRootCmd, "start").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
 }
 
 // testConfig updates the finch config file and ensures that its settings are applied properly.
@@ -83,7 +83,7 @@ var testConfig = func(o *option.Option, installed bool) {
 				writeFile(limaConfigFilePath, origLimaCfg)
 
 				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
-				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(600).Run()
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
 			})
 		})
 
@@ -199,7 +199,7 @@ additional_directories:
 
 			limaConfigFilePath := resetVM(o, installed)
 			writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
-			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(120).Run()
+			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
