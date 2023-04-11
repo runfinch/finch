@@ -140,6 +140,21 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		envVars[evar] = eval
 	}
 
+	passedEnvs := []string{"COSIGN_PASSWORD"}
+	var passedEnvArgs []string
+	for _, e := range passedEnvs {
+		v, b := nc.systemDeps.LookupEnv(e)
+		if b {
+			passedEnvArgs = append(passedEnvArgs, fmt.Sprintf("%s=%s", e, v))
+		}
+	}
+
+	// Add -E to sudo command in order to preserve existing environment variables, more info:
+	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
+	limaArgs := append([]string{"shell", limaInstanceName, "sudo", "-E"}, passedEnvArgs...)
+
+	limaArgs = append(limaArgs, []string{nerdctlCmdName, cmdName}...)
+
 	var finalArgs []string
 	for key, val := range envVars {
 		finalArgs = append(finalArgs, "-e", fmt.Sprintf("%s=%s", key, val))
@@ -147,7 +162,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	finalArgs = append(finalArgs, nerdctlArgs...)
 	// Add -E to sudo command in order to preserve existing environment variables, more info:
 	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
-	limaArgs := append([]string{"shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, cmdName}, finalArgs...)
+	limaArgs = append(limaArgs, finalArgs...)
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
 		return nc.creator.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
