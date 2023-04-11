@@ -83,7 +83,7 @@ var testConfig = func(o *option.Option, installed bool) {
 				writeFile(limaConfigFilePath, origLimaCfg)
 
 				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
-				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(600).Run()
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
 			})
 		})
 
@@ -199,7 +199,7 @@ additional_directories:
 
 			limaConfigFilePath := resetVM(o, installed)
 			writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
-			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(240).Run()
+			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 
 			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
