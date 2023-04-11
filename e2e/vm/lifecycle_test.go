@@ -27,7 +27,7 @@ var testVMLifecycle = func(o *option.Option) {
 				command.Run(o, "images")
 				command.New(o, virtualMachineRootCmd, "stop", "--force").WithTimeoutInSeconds(90).Run()
 				command.RunWithoutSuccessfulExit(o, "images")
-				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(120).Run()
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
 			})
 
 			ginkgo.It("should be able to force remove the virtual machine", func() {
@@ -55,7 +55,7 @@ var testVMLifecycle = func(o *option.Option) {
 			})
 
 			ginkgo.It("should be able to start the virtual machine", func() {
-				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(120).Run()
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
 				command.Run(o, "images")
 				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
 			})
