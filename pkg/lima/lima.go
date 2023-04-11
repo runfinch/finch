@@ -30,7 +30,7 @@ const (
 	Unknown
 	QEMU              VMType = "qemu"
 	VZ                VMType = "vz"
-	NonexistentVMType VMType = "Nonexistant"
+	NonexistentVMType VMType = "nonexistant"
 	UnknownVMType     VMType = "unknown"
 )
 
