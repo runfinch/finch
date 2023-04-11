@@ -24,7 +24,7 @@ func Test_newDeps(t *testing.T) {
 	t.Parallel()
 
 	got := newDeps(nil, nil, nil, "", nil)
-	require.Equal(t, 3, len(got))
+	require.Len(t, got, 2)
 	assert.IsType(t, (*binaries)(nil), got[0])
 	assert.IsType(t, (*sudoersFile)(nil), got[1])
 }

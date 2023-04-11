@@ -4,6 +4,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -21,11 +22,12 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name    string
-		config  *Finch
-		path    string
-		isInit  bool
-		mockSvc func(
+		name          string
+		config        *Finch
+		path          string
+		isInit        bool
+		depInstallErr error
+		mockSvc       func(
 			fs afero.Fs,
 			l *mocks.Logger,
 			cmd *mocks.Command,
@@ -43,8 +45,9 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				VMType:  pointer.String("qemu"),
 				Rosetta: pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			path:          "/lima.yaml",
+			isInit:        true,
+			depInstallErr: nil,
 			mockSvc: func(
 				fs afero.Fs,
 				l *mocks.Logger,
@@ -68,6 +71,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "finch-shared", limaCfg.Networks[0].Lima)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
 dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
@@ -83,8 +87,9 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 				VMType:  pointer.String("vz"),
 				Rosetta: pointer.Bool(true),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			path:          "/lima.yaml",
+			isInit:        true,
+			depInstallErr: nil,
 			mockSvc: func(
 				fs afero.Fs,
 				l *mocks.Logger,
@@ -122,6 +127,7 @@ provision:
 				require.Equal(t, true, limaCfg.Rosetta.Enabled)
 				require.Equal(t, true, limaCfg.Rosetta.BinFmt)
 				require.Len(t, limaCfg.Provision, 0)
+				require.Equal(t, pointer.Bool(true), limaCfg.Networks[0].VZNAT)
 			},
 			want: nil,
 		},
@@ -133,8 +139,9 @@ provision:
 				VMType:  pointer.String("qemu"),
 				Rosetta: pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			path:          "/lima.yaml",
+			isInit:        true,
+			depInstallErr: nil,
 			mockSvc: func(
 				fs afero.Fs,
 				l *mocks.Logger,
@@ -167,6 +174,58 @@ rosetta:
 				require.Equal(t, false, limaCfg.Rosetta.BinFmt)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "finch-shared", limaCfg.Networks[0].Lima)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+`, limaCfg.Provision[0].Script)
+			},
+			want: nil,
+		},
+		{
+			name: "doesn't add socket_vmnet network config even though vmType == qemu because dep error",
+			config: &Finch{
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(4),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+			},
+			path:          "/lima.yaml",
+			isInit:        true,
+			depInstallErr: errors.New("deps install error"),
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
+cpus: 8
+vmType: "vz"
+rosetta:
+  enabled: true
+  binfmt: true
+`), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "qemu", *limaCfg.VMType)
+				require.Equal(t, []limayaml.Network(nil), limaCfg.Networks)
+				require.Equal(t, false, limaCfg.Rosetta.Enabled)
+				require.Equal(t, false, limaCfg.Rosetta.BinFmt)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
 dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
@@ -182,8 +241,9 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 				VMType:  pointer.String("vz"),
 				Rosetta: pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: false,
+			path:          "/lima.yaml",
+			isInit:        false,
+			depInstallErr: nil,
 			mockSvc: func(
 				fs afero.Fs,
 				l *mocks.Logger,
@@ -231,8 +291,9 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 				VMType:  pointer.String("qemu"),
 				Rosetta: pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			path:          "/lima.yaml",
+			isInit:        true,
+			depInstallErr: nil,
 			mockSvc: func(
 				fs afero.Fs,
 				l *mocks.Logger,
@@ -256,6 +317,7 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "finch-shared", limaCfg.Networks[0].Lima)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
 dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
@@ -264,10 +326,11 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 			want: nil,
 		},
 		{
-			name:   "lima config file does not contain valid YAML",
-			config: nil,
-			path:   "/lima.yaml",
-			isInit: true,
+			name:          "lima config file does not contain valid YAML",
+			config:        nil,
+			path:          "/lima.yaml",
+			isInit:        true,
+			depInstallErr: nil,
 			mockSvc: func(
 				fs afero.Fs,
 				l *mocks.Logger,
@@ -298,8 +361,9 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 				VMType:                pointer.String("qemu"),
 				Rosetta:               pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			path:          "/lima.yaml",
+			isInit:        true,
+			depInstallErr: nil,
 			mockSvc: func(
 				fs afero.Fs,
 				l *mocks.Logger,
@@ -326,6 +390,7 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 				require.Equal(t, "/Volumes", limaCfg.Mounts[0].Location)
 				require.Equal(t, true, *limaCfg.Mounts[0].Writable)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "finch-shared", limaCfg.Networks[0].Lima)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
 dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
@@ -348,7 +413,7 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 			fs := afero.NewMemMapFs()
 
 			tc.mockSvc(fs, l, cmd, cmdCreator, deps)
-			got := NewLimaApplier(tc.config, cmdCreator, fs, tc.path, deps).Apply(tc.isInit)
+			got := NewLimaApplier(tc.config, cmdCreator, fs, tc.path, deps).Apply(tc.isInit, tc.depInstallErr)
 
 			require.Equal(t, tc.want, got)
 			tc.postRunCheck(t, fs)

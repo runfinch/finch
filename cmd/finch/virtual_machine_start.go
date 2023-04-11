@@ -74,7 +74,7 @@ func (sva *startVMAction) run() error {
 		sva.logger.Errorf("Dependency error: %v", err)
 	}
 
-	err = sva.limaConfigApplier.Apply(false)
+	err = sva.limaConfigApplier.Apply(false, err)
 	if err != nil {
 		return err
 	}

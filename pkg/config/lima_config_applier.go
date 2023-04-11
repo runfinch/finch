@@ -56,7 +56,7 @@ func NewLimaApplier(
 
 // Apply writes Lima-specific config values from Finch's config to the supplied lima config file path.
 // Apply will create a lima config file at the path if it does not exist.
-func (lca *limaConfigApplier) Apply(isInit bool) error {
+func (lca *limaConfigApplier) Apply(isInit bool, depInstallErr error) error {
 	if cfgExists, err := afero.Exists(lca.fs, lca.limaConfigPath); err != nil {
 		return fmt.Errorf("error checking if file at path %s exists, error: %w", lca.limaConfigPath, err)
 	} else if !cfgExists {
@@ -85,7 +85,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 	}
 
 	if isInit {
-		cfgAfterInit, err := lca.applyInit(&limaCfg)
+		cfgAfterInit, err := lca.applyInit(&limaCfg, depInstallErr)
 		if err != nil {
 			return fmt.Errorf("failed to apply init-only config values: %w", err)
 		}
@@ -105,7 +105,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 }
 
 // applyInit changes settings that will only apply to the VM after a new init.
-func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
+func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML, depInstallErr error) (*limayaml.LimaYAML, error) {
 	hasSupport, hasSupportErr := SupportsVirtualizationFramework(lca.cmdCreator)
 	if *lca.cfg.Rosetta &&
 		lca.systemDeps.OS() == "darwin" &&
@@ -139,6 +139,8 @@ func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.L
 		toggleUserModeEmulationInstallationScript(limaCfg, true)
 	}
 
+	setNetworkMode(limaCfg, depInstallErr, *lca.cfg.VMType)
+
 	return limaCfg, nil
 }
 
@@ -171,4 +173,16 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 	}
 
 	return scriptIdx, hasCrossArchToolInstallationScript
+}
+
+func setNetworkMode(limaCfg *limayaml.LimaYAML, depInstallErr error, vmType string) {
+	if vmType == "qemu" && depInstallErr == nil {
+		limaCfg.Networks = append(limaCfg.Networks, limayaml.Network{
+			Lima: "finch-shared",
+		})
+	} else if vmType == "vz" {
+		limaCfg.Networks = append(limaCfg.Networks, limayaml.Network{
+			VZNAT: pointer.Bool(true),
+		})
+	}
 }

@@ -70,7 +70,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 
-				lca.EXPECT().Apply(false).Return(nil)
+				lca.EXPECT().Apply(false, nil).Return(nil)
 
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
@@ -145,7 +145,7 @@ func TestStartVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 
-				lca.EXPECT().Apply(false).Return(nil)
+				lca.EXPECT().Apply(false, nil).Return(nil)
 
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
@@ -262,13 +262,11 @@ func TestStartVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 
-				lca.EXPECT().Apply(false).Return(errors.New("load config fails"))
-
-				logger.EXPECT().Errorf("Dependency error: %v",
-					fmt.Errorf("failed to install dependencies: %w",
-						errors.Join(fmt.Errorf("%s: %w", "mock_error_msg", errors.Join(errors.New("dependency error occurs")))),
-					),
+				dependencyErr := fmt.Errorf("failed to install dependencies: %w",
+					errors.Join(fmt.Errorf("%s: %w", "mock_error_msg", errors.Join(errors.New("dependency error occurs")))),
 				)
+				lca.EXPECT().Apply(false, dependencyErr).Return(errors.New("load config fails"))
+				logger.EXPECT().Errorf("Dependency error: %v", dependencyErr)
 			},
 		},
 		{
@@ -295,7 +293,7 @@ func TestStartVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 
-				lca.EXPECT().Apply(false).Return(nil)
+				lca.EXPECT().Apply(false, nil).Return(nil)
 
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
