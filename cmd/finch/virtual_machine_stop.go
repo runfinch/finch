@@ -39,20 +39,26 @@ func (sva *stopVMAction) runAdapter(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
+	if !force {
+		if vmType, err := lima.GetVMType(sva.creator, sva.logger, limaInstanceName); err == nil {
+			if vmType == "vz" {
+				force = true
+			}
+		} else {
+			return err
+		}
+	}
+
 	return sva.run(force)
 }
 
 func (sva *stopVMAction) run(force bool) error {
-	vmType, err := lima.GetVMType(sva.creator, sva.logger, limaInstanceName)
-	if err != nil {
-		return err
-	}
-
-	if force || vmType == lima.VZ {
+	if force {
 		return sva.stopVM(force)
 	}
 
-	err = sva.assertVMIsRunning(sva.creator, sva.logger)
+	err := sva.assertVMIsRunning(sva.creator, sva.logger)
 	if err != nil {
 		return err
 	}
