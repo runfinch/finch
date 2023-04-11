@@ -42,7 +42,7 @@ func (sva *stopVMAction) runAdapter(cmd *cobra.Command, args []string) error {
 
 	if !force {
 		if vmType, err := lima.GetVMType(sva.creator, sva.logger, limaInstanceName); err == nil {
-			if vmType == "vz" {
+			if vmType == lima.VZ {
 				force = true
 			}
 		} else {
