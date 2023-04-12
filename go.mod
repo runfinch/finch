@@ -20,7 +20,7 @@ require (
 	golang.org/x/crypto v0.7.0
 	golang.org/x/tools v0.8.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.26.3
+	k8s.io/apimachinery v0.27.0
 )
 
 require (
@@ -39,6 +39,7 @@ require (
 	github.com/miekg/dns v1.1.51 // indirect
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/u-root/uio v0.0.0-20210528114334-82958018845c // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
@@ -84,5 +85,5 @@ require (
 	gopkg.in/src-d/go-billy.v4 v4.3.2 // indirect
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	k8s.io/klog/v2 v2.80.1 // indirect
+	k8s.io/klog/v2 v2.90.1 // indirect
 )
