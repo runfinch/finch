@@ -92,3 +92,82 @@ func TestGetVMStatus(t *testing.T) {
 		})
 	}
 }
+
+func TestGetVMType(t *testing.T) {
+	t.Parallel()
+
+	instanceName := "finch"
+	mockArgs := []string{"ls", "-f", "{{.VMType}}", instanceName}
+	testCases := []struct {
+		name    string
+		want    lima.VMType
+		wantErr error
+		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *mocks.Command)
+	}{
+		{
+			name:    "qemu VM",
+			want:    lima.QEMU,
+			wantErr: nil,
+			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
+				cmd.EXPECT().Output().Return([]byte("qemu"), nil)
+				logger.EXPECT().Debugf("VMType of virtual machine: %s", "qemu")
+			},
+		},
+		{
+			name:    "vz VM",
+			want:    lima.VZ,
+			wantErr: nil,
+			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
+				cmd.EXPECT().Output().Return([]byte("vz"), nil)
+				logger.EXPECT().Debugf("VMType of virtual machine: %s", "vz")
+			},
+		},
+		{
+			name:    "nonexistent VM",
+			want:    lima.NonexistentVMType,
+			wantErr: nil,
+			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
+				cmd.EXPECT().Output().Return([]byte(" "), nil)
+				logger.EXPECT().Debugf("VMType of virtual machine: %s", "")
+			},
+		},
+		{
+			name:    "unknown VM type",
+			want:    lima.UnknownVMType,
+			wantErr: errors.New("unrecognized VMType"),
+			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
+				cmd.EXPECT().Output().Return([]byte("Broken "), nil)
+				logger.EXPECT().Debugf("VMType of virtual machine: %s", "Broken")
+			},
+		},
+		{
+			name:    "type command returns an error",
+			want:    lima.UnknownVMType,
+			wantErr: errors.New("get VMType error"),
+			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
+				cmd.EXPECT().Output().Return([]byte("Broken "), errors.New("get VMType error"))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			creator := mocks.NewLimaCmdCreator(ctrl)
+			statusCmd := mocks.NewCommand(ctrl)
+			logger := mocks.NewLogger(ctrl)
+			tc.mockSvc(creator, logger, statusCmd)
+			got, err := lima.GetVMType(creator, logger, instanceName)
+			assert.Equal(t, tc.wantErr, err)
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}
