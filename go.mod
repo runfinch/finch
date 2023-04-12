@@ -11,7 +11,7 @@ require (
 	github.com/onsi/gomega v1.27.5
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.5
-	github.com/runfinch/common-tests v0.6.4
+	github.com/runfinch/common-tests v0.6.5
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/afero v1.9.5
 	github.com/spf13/cobra v1.7.0
