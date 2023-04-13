@@ -1,0 +1,21 @@
+version: 2
+updates:
+- package-ecosystem: "gomod"
+  directory: "/"
+  schedule:
+    interval: "daily"
+  commit-message:
+    # When a dependency is updated,
+    # we want release-please to treat the corresponding commit as a releasable unit
+    # because it may contain a security fix.
+    #
+    # Re. how that is achieved, see `changelog-types` in workflows/release-please.yml.
+    prefix: "build"
+    include: "scope"
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "daily"
+  commit-message:
+    prefix: "ci"
+    include: "scope"

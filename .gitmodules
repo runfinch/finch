@@ -1,0 +1,3 @@
+[submodule "deps/finch-core"]
+	path = deps/finch-core
+	url = https://github.com/runfinch/finch-core.git

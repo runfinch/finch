@@ -1,0 +1,122 @@
+# - When a third-party action is added (i.e., `uses`), please also add it to `download-licenses` in Makefile.
+# - When a job is added/removed/renamed, please make corresponding changes in ci-docs.yaml.
+name: CI
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'contrib/**'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'contrib/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gen-code-no-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: make gen-code
+      - run: git diff --exit-code
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          # Since this repository is not meant to be used as a library,
+          # we don't need to test the latest 2 major releases like Go does: https://go.dev/doc/devel/release#policy.
+          go-version-file: go.mod
+          cache: true
+      - run: make test-unit
+  # It's recommended to run golangci-lint in a job separate from other jobs (go test, etc) because different jobs run in parallel.
+  go-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          # Pin the version in case all the builds start to fail at the same time.
+          # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a Github Action,
+          # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
+          version: v1.51.2
+          args: --fix=false --timeout=5m
+  go-mod-tidy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
+      # TODO: Use `go mod tidy --check` after https://github.com/golang/go/issues/27005 is fixed.
+      - run: go mod tidy
+      - run: git diff --exit-code
+  check-licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: make check-licenses
+  e2e-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [[self-hosted, macos, amd64, 13], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 13], [self-hosted, macos, arm64, 12.6]]
+    runs-on: ${{ matrix.os }} 
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - name: Clean up previous files
+        run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
+      - run: brew install go lz4 automake autoconf libtool 
+      - name: Build project
+        run: |
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          which libtool
+          make
+      - run: make test-e2e
+  mdlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: avto-dev/markdown-lint@v1
+        with:
+          args: '**/*.md'
+          # CHANGELOG.md is only updated by release-please bot.
+          ignore: 'CHANGELOG.md'
