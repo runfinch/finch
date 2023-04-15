@@ -122,6 +122,14 @@ func (bin *binaries) Install() error {
 		return fmt.Errorf("error changing owner of files in directory %s, err: %w", installationPathBinDir, err)
 	}
 
+	// in most cases this should not be needed, as the permissions should be copied from the build artifacts,
+	// but the permissions can end up being wrong when Finch is built on a shell that has a restrictive umask.
+	chmodBinCmd := bin.cmdCreator.Create("sudo", "chmod", "755", bin.installationPathSocketVmnetExe())
+	_, err = chmodBinCmd.Output()
+	if err != nil {
+		return fmt.Errorf("error setting correct permissions for socket_vmnet binary, err: %w", err)
+	}
+
 	return nil
 }
 

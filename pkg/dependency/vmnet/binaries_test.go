@@ -176,12 +176,13 @@ func TestBinaries_Install(t *testing.T) {
 		{
 			name: "happy path",
 			mockSvc: func(cmd *mocks.Command, creator *mocks.CommandCreator) {
-				cmd.EXPECT().Output().Times(4)
+				cmd.EXPECT().Output().Times(5)
 
 				creator.EXPECT().Create("sudo", "mkdir", "-p", "/opt/finch").Return(cmd)
 				creator.EXPECT().Create("sudo", "cp", "-rp", "mock_prefix/dependencies/lima-socket_vmnet/opt/finch", "/opt").Return(cmd)
 				creator.EXPECT().Create("sudo", "chown", "root:wheel", "/opt/finch").Return(cmd)
 				creator.EXPECT().Create("sudo", "chown", "-R", "root:wheel", "/opt/finch/bin").Return(cmd)
+				creator.EXPECT().Create("sudo", "chmod", "755", "/opt/finch/bin/socket_vmnet").Return(cmd)
 			},
 			want: nil,
 		},
@@ -229,6 +230,20 @@ func TestBinaries_Install(t *testing.T) {
 				creator.EXPECT().Create("sudo", "chown", "-R", "root:wheel", "/opt/finch/bin").Return(cmd)
 			},
 			want: fmt.Errorf("error changing owner of files in directory %s, err: %w", "/opt/finch/bin", errors.New("chown -R error")),
+		},
+		{
+			name: "sudo chmod of the binary throws an error",
+			mockSvc: func(cmd *mocks.Command, creator *mocks.CommandCreator) {
+				cmd.EXPECT().Output().Times(4)
+				cmd.EXPECT().Output().Return([]byte{}, errors.New("sudo chmod error"))
+
+				creator.EXPECT().Create("sudo", "mkdir", "-p", "/opt/finch").Return(cmd)
+				creator.EXPECT().Create("sudo", "cp", "-rp", "mock_prefix/dependencies/lima-socket_vmnet/opt/finch", "/opt").Return(cmd)
+				creator.EXPECT().Create("sudo", "chown", "root:wheel", "/opt/finch").Return(cmd)
+				creator.EXPECT().Create("sudo", "chown", "-R", "root:wheel", "/opt/finch/bin").Return(cmd)
+				creator.EXPECT().Create("sudo", "chmod", "755", "/opt/finch/bin/socket_vmnet").Return(cmd)
+			},
+			want: fmt.Errorf("error setting correct permissions for socket_vmnet binary, err: %w", errors.New("sudo chmod error")),
 		},
 	}
 
