@@ -28,17 +28,11 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 		name    string
 		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *gomock.Controller)
 		args    []string
-		wantErr error
 	}{
 		{
 			name: "should stop the instance",
 			args: []string{},
 			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
-				getVMTypeC := mocks.NewCommand(ctrl)
-				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.VMType}}", limaInstanceName).Return(getVMTypeC)
-				getVMTypeC.EXPECT().Output().Return([]byte("qemu"), nil)
-				logger.EXPECT().Debugf("VMType of virtual machine: %s", "qemu")
-
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -49,7 +43,6 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 				command.EXPECT().CombinedOutput()
 				logger.EXPECT().Info(gomock.Any()).AnyTimes()
 			},
-			wantErr: nil,
 		},
 		{
 			name: "should force stop the instance",
@@ -62,33 +55,6 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 				command.EXPECT().CombinedOutput()
 				logger.EXPECT().Info(gomock.Any()).AnyTimes()
 			},
-			wantErr: nil,
-		},
-		{
-			name: "should stop the instance and use --force even when not specified if VMType == vz",
-			args: []string{},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
-				getVMTypeC := mocks.NewCommand(ctrl)
-				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.VMType}}", limaInstanceName).Return(getVMTypeC)
-				getVMTypeC.EXPECT().Output().Return([]byte("vz"), nil)
-				logger.EXPECT().Debugf("VMType of virtual machine: %s", "vz")
-
-				command := mocks.NewCommand(ctrl)
-				creator.EXPECT().CreateWithoutStdio("stop", "--force", limaInstanceName).Return(command)
-				command.EXPECT().CombinedOutput()
-				logger.EXPECT().Info(gomock.Any()).AnyTimes()
-			},
-			wantErr: nil,
-		},
-		{
-			name: "get VMType returns an error",
-			args: []string{},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
-				getVMTypeC := mocks.NewCommand(ctrl)
-				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.VMType}}", limaInstanceName).Return(getVMTypeC)
-				getVMTypeC.EXPECT().Output().Return([]byte("unknown"), errors.New("unrecognized VMType"))
-			},
-			wantErr: errors.New("unrecognized VMType"),
 		},
 	}
 
@@ -104,8 +70,7 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 
 			cmd := newStopVMCommand(lcc, logger)
 			cmd.SetArgs(tc.args)
-			err := cmd.Execute()
-			assert.Equal(t, tc.wantErr, err)
+			assert.NoError(t, cmd.Execute())
 		})
 	}
 }
