@@ -75,6 +75,12 @@ func (s *sudoersFile) Install() error {
 		return fmt.Errorf("failed to write to the sudoers file: %w", err)
 	}
 
+	// explicitly set permissions to ensure that the file is readable by the user
+	_, err = s.execCmdCreator.Create("sudo", "chmod", "644", s.path()).Output()
+	if err != nil {
+		return fmt.Errorf("failed to set correct permissions for sudoers file: %w", err)
+	}
+
 	return nil
 }
 

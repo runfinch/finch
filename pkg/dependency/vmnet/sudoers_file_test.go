@@ -133,6 +133,8 @@ func TestSudoers_Install(t *testing.T) {
 				ec.EXPECT().Create("sudo", "tee", "/etc/sudoers.d/finch-lima").Return(cmd)
 				cmd.EXPECT().SetStdin(bytes.NewReader(mockSudoersOut))
 				cmd.EXPECT().Output().Return(mockSudoersOut, nil)
+				ec.EXPECT().Create("sudo", "chmod", "644", "/etc/sudoers.d/finch-lima").Return(cmd)
+				cmd.EXPECT().Output().Return([]byte{}, nil)
 			},
 			want: nil,
 		},
@@ -165,6 +167,25 @@ func TestSudoers_Install(t *testing.T) {
 				cmd.EXPECT().Output().Return(mockSudoersOut, errors.New("sudo tee command error"))
 			},
 			want: fmt.Errorf("failed to write to the sudoers file: %w", errors.New("sudo tee command error")),
+		},
+		{
+			name: "sudo chmod command throws err",
+			mockSvc: func(t *testing.T, cmd *mocks.Command, mFs afero.Fs, ec *mocks.CommandCreator, lc *mocks.LimaCmdCreator) {
+				sudoersData := []byte("test data")
+				mockSudoersOut := []byte("mock_sudoers_out")
+
+				err := afero.WriteFile(mFs, "/etc/sudoers.d/finch-lima", sudoersData, 0o666)
+				require.NoError(t, err)
+
+				lc.EXPECT().CreateWithoutStdio("sudoers").Return(cmd)
+				cmd.EXPECT().Output().Return(mockSudoersOut, nil)
+				ec.EXPECT().Create("sudo", "tee", "/etc/sudoers.d/finch-lima").Return(cmd)
+				cmd.EXPECT().SetStdin(bytes.NewReader(mockSudoersOut))
+				cmd.EXPECT().Output().Return(mockSudoersOut, nil)
+				ec.EXPECT().Create("sudo", "chmod", "644", "/etc/sudoers.d/finch-lima").Return(cmd)
+				cmd.EXPECT().Output().Return([]byte{}, errors.New("sudo chmod command error"))
+			},
+			want: fmt.Errorf("failed to set correct permissions for sudoers file: %w", errors.New("sudo chmod command error")),
 		},
 	}
 
