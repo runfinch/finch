@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	alpineImage   = "public.ecr.aws/docker/library/alpine:latest"
+	alpineImage   = "public.ecr.aws/docker/library/alpine:3"
 	registryImage = "public.ecr.aws/docker/library/registry:latest"
 )
 
@@ -77,9 +77,9 @@ var testCosign = func(o *option.Option) {
 			gomega.Expect(command.RunWithoutSuccessfulExit(o, "run", "-d", "--verify=cosign", "--cosign-key=./cosign_data/test-2.pub",
 				tag).Err.Contents()).Should(gomega.ContainSubstring("no matching signatures"))
 			gomega.Expect(command.RunWithoutSuccessfulExit(o, "pull", "--verify=cosign", "--cosign-key=./cosign_data/test-2.pub",
-				alpineImage).Err.Contents()).Should(gomega.ContainSubstring("no matching signatures"))
+				alpineImage).Err.Contents()).Should(gomega.ContainSubstring("no signatures found for image"))
 			gomega.Expect(command.RunWithoutSuccessfulExit(o, "run", "-d", "--verify=cosign", "--cosign-key=./cosign_data/test-2.pub",
-				alpineImage).Err.Contents()).Should(gomega.ContainSubstring("no matching signatures"))
+				alpineImage).Err.Contents()).Should(gomega.ContainSubstring("no signatures found for image"))
 		})
 	})
 }
