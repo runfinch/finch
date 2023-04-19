@@ -184,8 +184,8 @@ additional_directories:
 			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
 			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
 			gomega.Expect(*limaCfg.VMType).Should(gomega.Equal("qemu"))
-			gomega.Expect(limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
-			gomega.Expect(limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))
+			gomega.Expect(*limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
+			gomega.Expect(*limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))
 		})
 	})
 
