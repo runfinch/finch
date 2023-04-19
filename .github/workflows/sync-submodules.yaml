@@ -21,7 +21,7 @@ jobs:
           ./.github/bin/update-os-image.sh
 
       - name: Create PR
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           signoff: true

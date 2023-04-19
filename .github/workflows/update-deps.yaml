@@ -31,7 +31,7 @@ jobs:
           ./.github/bin/update-lima-dep.sh -d ${{ secrets.DEPENDENCY_BUCKET_NAME }} -a {{ secrets.ARTIFACT_BUCKET_NAME }}
 
       - name: create PR
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v5
         with:
           # A Personal Access Token instead of the default `GITHUB_TOKEN` is required
           # to trigger the checks (e.g., e2e tests) on the created pull request.
