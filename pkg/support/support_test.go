@@ -31,8 +31,6 @@ func TestSupport_NewBundleBuilder(t *testing.T) {
 }
 
 func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
-	t.Parallel()
-
 	testCases := []struct {
 		name    string
 		mockSvc func(*mocks.Logger, *mocks.BundleConfig, *mocks.CommandCreator, *mocks.Command)
@@ -190,8 +188,6 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			ctrl := gomock.NewController(t)
 			fs := afero.NewMemMapFs()
 			logger := mocks.NewLogger(ctrl)

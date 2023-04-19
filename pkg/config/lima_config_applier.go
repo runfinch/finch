@@ -117,8 +117,8 @@ func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.L
 			return nil, fmt.Errorf(`system does not have virtualization framework support, change vmType to "qemu"`)
 		}
 
-		limaCfg.Rosetta.Enabled = true
-		limaCfg.Rosetta.BinFmt = true
+		limaCfg.Rosetta.Enabled = pointer.Bool(true)
+		limaCfg.Rosetta.BinFmt = pointer.Bool(true)
 		limaCfg.VMType = pointer.String("vz")
 		limaCfg.MountType = pointer.String("virtiofs")
 		toggleUserModeEmulationInstallationScript(limaCfg, false)
