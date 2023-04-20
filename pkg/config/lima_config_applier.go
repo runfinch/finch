@@ -83,6 +83,10 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 			Location: *ad.Path, Writable: pointer.Bool(true),
 		})
 	}
+	if limaCfg.Rosetta.Enabled == nil {
+		limaCfg.Rosetta.Enabled = pointer.Bool(false)
+		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
+	}
 
 	if isInit {
 		cfgAfterInit, err := lca.applyInit(&limaCfg)
@@ -117,8 +121,8 @@ func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.L
 			return nil, fmt.Errorf(`system does not have virtualization framework support, change vmType to "qemu"`)
 		}
 
-		limaCfg.Rosetta.Enabled = true
-		limaCfg.Rosetta.BinFmt = true
+		limaCfg.Rosetta.Enabled = pointer.Bool(true)
+		limaCfg.Rosetta.BinFmt = pointer.Bool(true)
 		limaCfg.VMType = pointer.String("vz")
 		limaCfg.MountType = pointer.String("virtiofs")
 		toggleUserModeEmulationInstallationScript(limaCfg, false)
@@ -134,7 +138,8 @@ func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.L
 		} else if *lca.cfg.VMType == "qemu" {
 			limaCfg.MountType = pointer.String("reverse-sshfs")
 		}
-		limaCfg.Rosetta = limayaml.Rosetta{}
+		limaCfg.Rosetta.Enabled = pointer.Bool(false)
+		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
 		limaCfg.VMType = lca.cfg.VMType
 		toggleUserModeEmulationInstallationScript(limaCfg, true)
 	}
