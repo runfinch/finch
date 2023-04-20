@@ -163,8 +163,8 @@ rosetta:
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "qemu", *limaCfg.VMType)
-				require.Equal(t, (*bool)(nil), limaCfg.Rosetta.Enabled)
-				require.Equal(t, (*bool)(nil), limaCfg.Rosetta.BinFmt)
+				require.Equal(t, false, *limaCfg.Rosetta.Enabled)
+				require.Equal(t, false, *limaCfg.Rosetta.BinFmt)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
