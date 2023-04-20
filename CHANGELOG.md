@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.6.0](https://github.com/runfinch/finch/compare/v0.5.0...v0.6.0) (2023-04-20)
+
+
+### Features
+
+* add experimental support for Cosign signing and verification ([#296](https://github.com/runfinch/finch/issues/296)) ([84c2634](https://github.com/runfinch/finch/commit/84c2634b7c1226ba9746d0cda4d22ec571454160))
+
+
+### Bug Fixes
+
+* always force stop when using Virtualization.framework ([#350](https://github.com/runfinch/finch/issues/350)) ([c521f1f](https://github.com/runfinch/finch/commit/c521f1f65d406094c653b7a78d0009285b9fc627))
+* explicitly set permissions for socket_vmnet dependencies ([#363](https://github.com/runfinch/finch/issues/363)) ([0801b88](https://github.com/runfinch/finch/commit/0801b8841776e7a08d2a0826bbca535310b02f37))
+
+
+### Build System or External Dependencies
+
+* add local-core Makefile target ([#351](https://github.com/runfinch/finch/issues/351)) ([f86c56f](https://github.com/runfinch/finch/commit/f86c56f68273cc4d8c9584477793fc7efa148e76))
+* **deps:** Bump github.com/docker/docker from 23.0.1+incompatible to 23.0.2+incompatible ([#320](https://github.com/runfinch/finch/issues/320)) ([ee3df9a](https://github.com/runfinch/finch/commit/ee3df9a31e4ebab872001ba7756a81a49aaa9ad5))
+* **deps:** Bump github.com/docker/docker from 23.0.2+incompatible to 23.0.3+incompatible ([#343](https://github.com/runfinch/finch/issues/343)) ([6cfbb9f](https://github.com/runfinch/finch/commit/6cfbb9ffa3a9bc3b3c06235dffbc6c7625d5aede))
+* **deps:** Bump github.com/lima-vm/lima from 0.15.0 to 0.15.1 ([#365](https://github.com/runfinch/finch/issues/365)) ([1d3ee98](https://github.com/runfinch/finch/commit/1d3ee985427e601bf3f5659c3bba13467ec01ce0))
+* **deps:** Bump github.com/onsi/gomega from 1.27.5 to 1.27.6 ([#331](https://github.com/runfinch/finch/issues/331)) ([fe388a3](https://github.com/runfinch/finch/commit/fe388a31f830f854abacb06729ddf710040e9e62))
+* **deps:** Bump github.com/runfinch/common-tests from 0.6.4 to 0.6.5 ([#357](https://github.com/runfinch/finch/issues/357)) ([dc84864](https://github.com/runfinch/finch/commit/dc848640b719c623dbf606439e6e3e1d9dcd02d6))
+* **deps:** Bump github.com/runfinch/common-tests version from v0.6.2 to v0.6.3 ([#328](https://github.com/runfinch/finch/issues/328)) ([1c44b3e](https://github.com/runfinch/finch/commit/1c44b3e270aa2e2ebb237e86f17f3a9519ec124b))
+* **deps:** Bump github.com/spf13/cobra from 1.6.1 to 1.7.0 ([#341](https://github.com/runfinch/finch/issues/341)) ([6a77f72](https://github.com/runfinch/finch/commit/6a77f721f35779bd112d5e1206bf034940a43a23))
+* **deps:** Bump golang.org/x/crypto from 0.7.0 to 0.8.0 ([#349](https://github.com/runfinch/finch/issues/349)) ([82b27c9](https://github.com/runfinch/finch/commit/82b27c9bb1424ef47fe05cf805aebc337af3bc5e))
+* **deps:** Bump golang.org/x/tools from 0.7.0 to 0.8.0 ([#348](https://github.com/runfinch/finch/issues/348)) ([aaca2c9](https://github.com/runfinch/finch/commit/aaca2c994a2c146e751c43fbb4fabb78041da98d))
+* **deps:** Bump k8s.io/apimachinery from 0.26.3 to 0.27.1 ([#366](https://github.com/runfinch/finch/issues/366)) ([b93d3a8](https://github.com/runfinch/finch/commit/b93d3a8ed8eef42321200ac1386b61765e0b8348))
+* **deps:** Bump lima version ([#354](https://github.com/runfinch/finch/issues/354)) ([c721ee6](https://github.com/runfinch/finch/commit/c721ee69f470eaf81b24fc043f088713fce88ad6))
+* **deps:** Bump lima version ([#362](https://github.com/runfinch/finch/issues/362)) ([5e03a4d](https://github.com/runfinch/finch/commit/5e03a4d40c63a8fcc5a79bdda2ebfec6f993db3c))
+* **deps:** Bump lima version ([#368](https://github.com/runfinch/finch/issues/368)) ([8e4dfe4](https://github.com/runfinch/finch/commit/8e4dfe4092a959d853549ed980e1c36a9e630be8))
+* **deps:** Bump submodules ([#340](https://github.com/runfinch/finch/issues/340)) ([daed9e2](https://github.com/runfinch/finch/commit/daed9e24228b82b6d45c2eb43e86101b2a4420c9))
+* **deps:** Bump submodules ([#371](https://github.com/runfinch/finch/issues/371)) ([19fc0c5](https://github.com/runfinch/finch/commit/19fc0c5d16a6d2fb876b05575420a8080c8a3562))
+
 ## [0.5.0](https://github.com/runfinch/finch/compare/v0.4.1...v0.5.0) (2023-03-29)
 
 
