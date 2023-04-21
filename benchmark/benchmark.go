@@ -23,6 +23,13 @@ const InstalledTestSubject = "finch"
 // Installed indicates whether the tests are run against installed application.
 var Installed = flag.Bool("installed", false, "the flag to show whether the tests are run against installed application")
 
+type Metrics struct {
+	PeakCPUUsage    float64
+	AverageCPUUsage float64
+	TotalCPUTime    time.Duration
+	DiskUsageDelta  int64
+}
+
 // GetSubject returns the testing subject based on INSTALLED flag.
 func GetSubject() (string, error) {
 	wd, err := os.Getwd()
@@ -45,16 +52,16 @@ func Wrapper(b *testing.B, targetFunc func(), cleanupFunc func()) {
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		b.StartTimer()
-		peakCPU, avgCPU, totalCPUTime, diskUsageDelta, err := measureMetrics(targetFunc)
+		metrics, err := measureMetrics(targetFunc)
 		if err != nil {
 			b.Fatal("Error measuring metrics:", err)
 			return
 		}
 		b.StopTimer()
-		peakCPUSum += peakCPU
-		avgCPUSum += avgCPU
-		totalCPUTimeSum += totalCPUTime
-		diskUsageDeltaSum += diskUsageDelta
+		peakCPUSum += metrics.PeakCPUUsage
+		avgCPUSum += metrics.AverageCPUUsage
+		totalCPUTimeSum += metrics.TotalCPUTime
+		diskUsageDeltaSum += metrics.DiskUsageDelta
 		cleanupFunc()
 	}
 	b.ReportMetric(peakCPUSum/float64(b.N), "%cpu_peak/op")
@@ -63,7 +70,7 @@ func Wrapper(b *testing.B, targetFunc func(), cleanupFunc func()) {
 	b.ReportMetric(float64(diskUsageDeltaSum/int64(b.N)), "disk_bytes/op")
 }
 
-func measureMetrics(f func()) (float64, float64, time.Duration, int64, error) { //nolint:unparam // make it extensible for future error handling
+func measureMetrics(f func()) (Metrics, error) { //nolint:unparam // make it extensible for future error handling
 	done := make(chan struct{})
 	var cpuUsage []float64
 	var startTime time.Time
@@ -132,5 +139,10 @@ func measureMetrics(f func()) (float64, float64, time.Duration, int64, error) { 
 
 	diskUsageDelta := int64(diskUsageBefore - diskUsageAfter)
 
-	return peakCPU, avgCPU, totalCPUTime, diskUsageDelta, nil
+	return Metrics{
+		PeakCPUUsage:    peakCPU,
+		AverageCPUUsage: avgCPU,
+		TotalCPUTime:    totalCPUTime,
+		DiskUsageDelta:  diskUsageDelta,
+	}, nil
 }
