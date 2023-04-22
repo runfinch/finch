@@ -23,6 +23,8 @@ const InstalledTestSubject = "finch"
 // Installed indicates whether the tests are run against installed application.
 var Installed = flag.Bool("installed", false, "the flag to show whether the tests are run against installed application")
 
+// Metrics includes all the additional metrics that Finch benchmark reports,
+// except testing.B natively supported metrics like execution time and memory.
 type Metrics struct {
 	PeakCPUUsage    float64
 	AverageCPUUsage float64
