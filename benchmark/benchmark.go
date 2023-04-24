@@ -15,6 +15,7 @@ import (
 
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/disk"
+	"github.com/sirupsen/logrus"
 )
 
 // InstalledTestSubject is the test subject when Finch is installed.
@@ -32,13 +33,14 @@ type Metrics struct {
 	DiskUsageDelta  int64
 }
 
-func addMetrics(m1 Metrics, m2 Metrics) Metrics {
-	return Metrics{
-		PeakCPUUsage:    m1.PeakCPUUsage + m2.PeakCPUUsage,
-		AverageCPUUsage: m1.AverageCPUUsage + m2.AverageCPUUsage,
-		TotalCPUTime:    m1.TotalCPUTime + m2.TotalCPUTime,
-		DiskUsageDelta:  m1.DiskUsageDelta + m2.DiskUsageDelta,
-	}
+// Add combines the values of the current Metrics instance with the values
+// of another Metrics instance passed as an argument. It updates the current
+// instance's fields by adding the corresponding values from the other instance.
+func (m *Metrics) Add(other Metrics) {
+	m.PeakCPUUsage += other.PeakCPUUsage
+	m.AverageCPUUsage += other.AverageCPUUsage
+	m.TotalCPUTime += other.TotalCPUTime
+	m.DiskUsageDelta += other.DiskUsageDelta
 }
 
 // GetSubject returns the testing subject based on INSTALLED flag.
@@ -67,7 +69,7 @@ func Wrapper(b *testing.B, targetFunc func(), cleanupFunc func()) {
 			return
 		}
 		b.StopTimer()
-		metricsSum = addMetrics(metricsSum, metrics)
+		metricsSum.Add(metrics)
 		cleanupFunc()
 	}
 	b.ReportMetric(metricsSum.PeakCPUUsage/float64(b.N), "%cpu_peak/op")
@@ -93,7 +95,7 @@ func measureMetrics(f func()) (Metrics, error) { //nolint:unparam // make it ext
 	go func() {
 		before, err := disk.Usage("/")
 		if err != nil {
-			fmt.Printf("Error getting disk usage before: %v\n", err)
+			logrus.Errorf("Error getting disk usage before: %v", err)
 			wg.Done()
 			return
 		}
@@ -116,7 +118,7 @@ func measureMetrics(f func()) (Metrics, error) { //nolint:unparam // make it ext
 
 				after, err := disk.Usage("/")
 				if err != nil {
-					fmt.Printf("Error getting disk usage after: %v\n", err)
+					logrus.Errorf("Error getting disk usage after: %v", err)
 					wg.Done()
 					return
 				}
