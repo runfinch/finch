@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1681978466454,
+  "lastUpdate": 1682359728199,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -65,6 +65,42 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkVMInit",
             "value": 355096314574,
             "unit": "ns/op\t   17280 B/op\t      34 allocs/op",
+            "extra": "1 times\n3 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ningziwe@amazon.com",
+            "name": "Ziwen Ning",
+            "username": "ningziwen"
+          },
+          "committer": {
+            "email": "ningziwe@amazon.com",
+            "name": "Ziwen Ning",
+            "username": "ningziwen"
+          },
+          "distinct": true,
+          "id": "bd003b3e39bd88154aaabdd430e5e903a1155f4f",
+          "message": "add verbose",
+          "timestamp": "2023-04-24T10:56:33-07:00",
+          "tree_id": "1a7b826eea6a8e77ec1420328c53a14ad772f6c8",
+          "url": "https://github.com/runfinch/finch/commit/bd003b3e39bd88154aaabdd430e5e903a1155f4f"
+        },
+        "date": 1682359727108,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkVMInit",
+            "value": 264626006025,
+            "unit": "ns/op\t   17280 B/op\t      34 allocs/op",
+            "extra": "1 times\n3 procs"
+          },
+          {
+            "name": "BenchmarkVMStart",
+            "value": 81866297589,
+            "unit": "ns/op\t   17232 B/op\t      30 allocs/op",
             "extra": "1 times\n3 procs"
           }
         ]
