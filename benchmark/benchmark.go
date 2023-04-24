@@ -32,6 +32,15 @@ type Metrics struct {
 	DiskUsageDelta  int64
 }
 
+func addMetrics(m1 Metrics, m2 Metrics) Metrics {
+	return Metrics{
+		PeakCPUUsage:    m1.PeakCPUUsage + m2.PeakCPUUsage,
+		AverageCPUUsage: m1.AverageCPUUsage + m2.AverageCPUUsage,
+		TotalCPUTime:    m1.TotalCPUTime + m2.TotalCPUTime,
+		DiskUsageDelta:  m1.DiskUsageDelta + m2.DiskUsageDelta,
+	}
+}
+
 // GetSubject returns the testing subject based on INSTALLED flag.
 func GetSubject() (string, error) {
 	wd, err := os.Getwd()
@@ -48,9 +57,7 @@ func GetSubject() (string, error) {
 
 // Wrapper reports the benchmarking metrics of targetFunc to testing.B.
 func Wrapper(b *testing.B, targetFunc func(), cleanupFunc func()) {
-	var peakCPUSum, avgCPUSum float64
-	var totalCPUTimeSum time.Duration
-	var diskUsageDeltaSum int64
+	metricsSum := Metrics{}
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		b.StartTimer()
@@ -60,16 +67,13 @@ func Wrapper(b *testing.B, targetFunc func(), cleanupFunc func()) {
 			return
 		}
 		b.StopTimer()
-		peakCPUSum += metrics.PeakCPUUsage
-		avgCPUSum += metrics.AverageCPUUsage
-		totalCPUTimeSum += metrics.TotalCPUTime
-		diskUsageDeltaSum += metrics.DiskUsageDelta
+		metricsSum = addMetrics(metricsSum, metrics)
 		cleanupFunc()
 	}
-	b.ReportMetric(peakCPUSum/float64(b.N), "%cpu_peak/op")
-	b.ReportMetric(avgCPUSum/float64(b.N), "%cpu_avg/op")
-	b.ReportMetric(totalCPUTimeSum.Seconds()/float64(b.N), "cpu_seconds/op")
-	b.ReportMetric(float64(diskUsageDeltaSum/int64(b.N)), "disk_bytes/op")
+	b.ReportMetric(metricsSum.PeakCPUUsage/float64(b.N), "%cpu_peak/op")
+	b.ReportMetric(metricsSum.AverageCPUUsage/float64(b.N), "%cpu_avg/op")
+	b.ReportMetric(metricsSum.TotalCPUTime.Seconds()/float64(b.N), "cpu_seconds/op")
+	b.ReportMetric(float64(metricsSum.DiskUsageDelta/int64(b.N)), "disk_bytes/op")
 }
 
 func measureMetrics(f func()) (Metrics, error) { //nolint:unparam // make it extensible for future error handling
