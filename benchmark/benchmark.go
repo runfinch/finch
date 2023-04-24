@@ -78,17 +78,21 @@ func Wrapper(b *testing.B, targetFunc func(), cleanupFunc func()) {
 	b.ReportMetric(float64(metricsSum.DiskUsageDelta/int64(b.N)), "disk_bytes/op")
 }
 
-func measureMetrics(f func()) (Metrics, error) { //nolint:unparam // make it extensible for future error handling
+func measureMetrics(targetFunc func()) (Metrics, error) { //nolint:unparam // make it extensible for future error handling
 	done := make(chan struct{})
 	var cpuUsage []float64
 	var startTime time.Time
 	var diskUsageBefore, diskUsageAfter uint64
 
 	wg := sync.WaitGroup{}
+	// Increment the WaitGroup counter by 1 to indicate that the main goroutine
+	// should wait for the target function (which runs in another goroutine)
+	// to complete its execution. The value 1 is used because there's only
+	// one goroutine running the target function.
 	wg.Add(1)
 
 	go func() {
-		f()
+		targetFunc()
 		done <- struct{}{}
 	}()
 
