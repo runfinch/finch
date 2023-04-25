@@ -22,14 +22,12 @@ func BenchmarkVMInit(b *testing.B) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StartTimer()
+	benchmark.Wrapper(b, func() {
 		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "init").Run()) //nolint:gosec // testing only
-		b.StopTimer()
+	}, func() {
 		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "stop", "-f").Run())   //nolint:gosec // testing only
-		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "remove", "-f").Run()) //nolint:gosec // testing only
-	}
+		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "remove", "-f").Run()) //nolint:gosec // testing only	})
+	})
 }
 
 func BenchmarkVMStart(b *testing.B) {
@@ -40,11 +38,10 @@ func BenchmarkVMStart(b *testing.B) {
 	assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "init").Run())       //nolint:gosec // testing only
 	assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "stop", "-f").Run()) //nolint:gosec // testing only
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StartTimer()
+	benchmark.Wrapper(b, func() {
 		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "start").Run()) //nolint:gosec // testing only
-		b.StopTimer()
+	}, func() {
 		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "stop", "-f").Run()) //nolint:gosec // testing only
-	}
+	})
 	assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "remove", "-f").Run()) //nolint:gosec // testing only
 }

@@ -29,13 +29,11 @@ func BenchmarkContainerRun(b *testing.B) {
 		b.Fatal(err)
 	}
 	assert.NoError(b, exec.Command(subject, "pull", alpineImage).Run()) //nolint:gosec // testing only
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StartTimer()
+	benchmark.Wrapper(b, func() {
 		assert.NoError(b, exec.Command(subject, "run", "--name", testContainerName, alpineImage).Run()) //nolint:gosec // testing only
-		b.StopTimer()
+	}, func() {
 		assert.NoError(b, exec.Command(subject, "rm", "--force", testContainerName).Run()) //nolint:gosec // testing only
-	}
+	})
 	assert.NoError(b, exec.Command(subject, "rmi", "--force", alpineImage).Run()) //nolint:gosec // testing only
 }
 
@@ -55,11 +53,9 @@ func BenchmarkImageBuild(b *testing.B) {
 	assert.NoError(b, err)
 	buildContext := filepath.Dir(dockerFilePath)
 	defer os.RemoveAll(buildContext) //nolint:errcheck // testing only
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StartTimer()
+	benchmark.Wrapper(b, func() {
 		assert.NoError(b, exec.Command(subject, "build", "--tag", testImageName, buildContext).Run()) //nolint:gosec // testing only
-		b.StopTimer()
+	}, func() {
 		assert.NoError(b, exec.Command(subject, "rmi", "--force", testImageName).Run()) //nolint:gosec // testing only
-	}
+	})
 }
