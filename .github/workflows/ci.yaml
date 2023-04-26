@@ -82,7 +82,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [[self-hosted, macos, amd64, 13], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 13], [self-hosted, macos, arm64, 12.6]]
+        os: 
+          [
+            [self-hosted, macos, amd64, 13, test], 
+            [self-hosted, macos, amd64, 12, test], 
+            [self-hosted, macos, arm64, 13, test], 
+            [self-hosted, macos, arm64, 12, test]
+          ]
     runs-on: ${{ matrix.os }} 
     steps:
       - uses: actions/checkout@v3
@@ -108,7 +114,6 @@ jobs:
       - name: Build project
         run: |
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          which libtool
           make
       - run: make test-e2e
   mdlint:

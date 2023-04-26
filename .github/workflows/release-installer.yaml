@@ -30,9 +30,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [
-              [self-hosted, macos, arm64, 11.7, release], 
-              [self-hosted, macos, arm64, 12.6, release], 
-              [self-hosted, macos, arm64, 13.0, release]
+              [self-hosted, macos, arm64, 11, release], 
+              [self-hosted, macos, arm64, 12, release], 
+              [self-hosted, macos, arm64, 13, release]
             ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -127,9 +127,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [
-              [self-hosted, macos, amd64, 11.7, release], 
-              [self-hosted, macos, amd64, 12.6, release], 
-              [self-hosted, macos, amd64, 13.0, release]
+              [self-hosted, macos, amd64, 11, release], 
+              [self-hosted, macos, amd64, 12, release], 
+              [self-hosted, macos, amd64, 13, release]
             ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
