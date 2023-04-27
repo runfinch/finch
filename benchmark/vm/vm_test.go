@@ -5,43 +5,23 @@
 package vm
 
 import (
-	"os/exec"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 
 	"github.com/runfinch/finch/benchmark"
 )
 
-const (
-	virtualMachineRootCmd = "vm"
-)
-
-func BenchmarkVMInit(b *testing.B) {
-	subject, err := benchmark.GetSubject()
+func BenchmarkVM(b *testing.B) {
+	suite := &benchmark.Suite{}
+	err := suite.Setup()
 	if err != nil {
 		b.Fatal(err)
 	}
-	benchmark.Wrapper(b, func() {
-		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "init").Run()) //nolint:gosec // testing only
-	}, func() {
-		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "stop", "-f").Run())   //nolint:gosec // testing only
-		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "remove", "-f").Run()) //nolint:gosec // testing only	})
-	})
-}
 
-func BenchmarkVMStart(b *testing.B) {
-	subject, err := benchmark.GetSubject()
-	if err != nil {
-		b.Fatal(err)
-	}
-	assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "init").Run())       //nolint:gosec // testing only
-	assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "stop", "-f").Run()) //nolint:gosec // testing only
-	b.ResetTimer()
-	benchmark.Wrapper(b, func() {
-		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "start").Run()) //nolint:gosec // testing only
-	}, func() {
-		assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "stop", "-f").Run()) //nolint:gosec // testing only
+	b.Run("BenchmarkVMInit", func(b *testing.B) {
+		suite.BenchmarkVMInit(b)
 	})
-	assert.NoError(b, exec.Command(subject, virtualMachineRootCmd, "remove", "-f").Run()) //nolint:gosec // testing only
+
+	b.Run("BenchmarkVMStart", func(b *testing.B) {
+		suite.BenchmarkVMStart(b)
+	})
 }
