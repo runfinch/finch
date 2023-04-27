@@ -46,7 +46,13 @@ jobs:
   e2e-tests:
     strategy:
       matrix:
-        os: [[self-hosted, macos, amd64, 13], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 13], [self-hosted, macos, arm64, 12.6]]
+        os: 
+          [
+            [self-hosted, macos, amd64, 13, test], 
+            [self-hosted, macos, amd64, 12, test], 
+            [self-hosted, macos, arm64, 13, test], 
+            [self-hosted, macos, arm64, 12, test]
+          ]
     runs-on: ${{ matrix.os }} 
     steps:
       - run: echo "Skipping CI for docs & contrib files"
