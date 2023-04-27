@@ -10,10 +10,6 @@ import (
 	"github.com/runfinch/finch/benchmark"
 )
 
-const (
-	virtualMachineRootCmd = "vm"
-)
-
 func BenchmarkVM(b *testing.B) {
 	suite := &benchmark.Suite{}
 	err := suite.Setup()

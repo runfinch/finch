@@ -35,19 +35,19 @@ func (suite *Suite) Setup() error {
 }
 
 func (suite *Suite) InitVM() error {
-	return exec.Command(suite.subject, virtualMachineRootCmd, "init").Run()
+	return exec.Command(suite.subject, virtualMachineRootCmd, "init").Run() // #nosec G204
 }
 
 func (suite *Suite) StartVM() error {
-	return exec.Command(suite.subject, virtualMachineRootCmd, "start", "-f").Run()
+	return exec.Command(suite.subject, virtualMachineRootCmd, "start", "-f").Run() // #nosec G204
 }
 
 func (suite *Suite) StopVM() error {
-	return exec.Command(suite.subject, virtualMachineRootCmd, "stop", "-f").Run()
+	return exec.Command(suite.subject, virtualMachineRootCmd, "stop", "-f").Run() // #nosec G204
 }
 
 func (suite *Suite) RemoveVM() error {
-	return exec.Command(suite.subject, virtualMachineRootCmd, "remove", "-f").Run()
+	return exec.Command(suite.subject, virtualMachineRootCmd, "remove", "-f").Run() // #nosec G204
 }
 
 func (suite *Suite) BenchmarkVMInit(b *testing.B) {
