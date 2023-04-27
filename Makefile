@@ -268,6 +268,10 @@ test-e2e-container:
 test-e2e-vm:
 	go test -ldflags $(LDFLAGS) -timeout 45m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
 
+.PHONY: test-benchmark
+test-benchmark:
+	cd benchmark/all && go test -ldflags $(LDFLAGS) -bench=. -benchmem --installed="$(INSTALLED)"
+
 .PHONY: test-benchmark-vm
 test-benchmark-vm:
 	cd benchmark/vm && go test -ldflags $(LDFLAGS) -bench=. -benchmem --installed="$(INSTALLED)"

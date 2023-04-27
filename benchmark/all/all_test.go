@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-// Package container runs benchmark tests related to container development of Finch.
-package container
+// Package all runs all the benchmark tests of Finch.
+package all
 
 import (
 	"testing"
@@ -10,9 +10,22 @@ import (
 	"github.com/runfinch/finch/benchmark"
 )
 
-func BenchmarkContainer(b *testing.B) {
+func BenchmarkAll(b *testing.B) {
 	suite := &benchmark.Suite{}
 	err := suite.Setup()
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.Run("BenchmarkVMInit", func(b *testing.B) {
+		suite.BenchmarkVMInit(b)
+	})
+
+	b.Run("BenchmarkVMStart", func(b *testing.B) {
+		suite.BenchmarkVMStart(b)
+	})
+
+	err = suite.InitVM()
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -24,4 +37,13 @@ func BenchmarkContainer(b *testing.B) {
 	b.Run("BenchmarkImageBuild", func(b *testing.B) {
 		suite.BenchmarkImageBuild(b)
 	})
+
+	err = suite.StopVM()
+	if err != nil {
+		b.Fatal(err)
+	}
+	err = suite.RemoveVM()
+	if err != nil {
+		b.Fatal(err)
+	}
 }
