@@ -187,6 +187,13 @@ download-licenses:
 
     ### dependencies in tools.go - end ###
 
+    ### dependencies in benchmark.yaml - start ###
+
+	mkdir -p "$(LICENSEDIR)/github.com/benchmark-action/github-action-benchmark"
+	curl https://raw.githubusercontent.com/benchmark-action/github-action-benchmark/master/LICENSE.txt --output "$(LICENSEDIR)/github.com/benchmark-action/github-action-benchmark/LICENSE.txt"
+
+    ### dependencies in benchmark.yaml - end ###
+
     ### dependencies in ci.yaml - start ###
 
 	mkdir -p "$(LICENSEDIR)/github.com/actions/checkout"
