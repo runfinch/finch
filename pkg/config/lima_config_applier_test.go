@@ -70,7 +70,18 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
-dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
 `, limaCfg.Provision[0].Script)
 			},
 			want: nil,
@@ -100,7 +111,18 @@ provision:
   script: |
     # cross-arch tools
     #!/bin/bash
-    dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+    qemu_pkgs=""
+    if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+      qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+    elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+      qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+    elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+      qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+    fi
+
+    if [[ $qemu_pkgs ]]; then
+      dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+    fi
 `), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
@@ -169,7 +191,18 @@ rosetta:
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
-dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
 `, limaCfg.Provision[0].Script)
 			},
 			want: nil,
@@ -200,7 +233,18 @@ provision:
   script: |
     # cross-arch tools
     #!/bin/bash
-    dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+    qemu_pkgs=""
+    if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+      qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+    elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+      qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+    elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+      qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+    fi
+
+    if [[ $qemu_pkgs ]]; then
+      dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+    fi
 `), 0o600)
 				require.NoError(t, err)
 			},
@@ -218,7 +262,18 @@ provision:
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
-dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
 `, limaCfg.Provision[0].Script)
 			},
 			want: nil,
@@ -258,7 +313,18 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
-dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
 `, limaCfg.Provision[0].Script)
 			},
 			want: nil,
@@ -328,7 +394,18 @@ dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-us
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
-dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
 `, limaCfg.Provision[0].Script)
 			},
 			want: nil,
