@@ -111,11 +111,14 @@ jobs:
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true 
       - run: brew install go lz4 automake autoconf libtool 
+        shell: zsh
       - name: Build project
         run: |
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
+        shell: zsh
       - run: make test-e2e
+        shell: zsh
   mdlint:
     runs-on: ubuntu-latest
     steps:
