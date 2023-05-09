@@ -34,13 +34,13 @@ ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = aarch64
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/aarch64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-37-1.7.aarch64-20230417202010.qcow2
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.aarch64-20230508162858.qcow2
 	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1681767597.tar.gz
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-37-1.7.x86_64-20230417202006.qcow2
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230508162554.qcow2
 	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1681767607.tar.gz
 endif
 
