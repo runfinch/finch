@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.1](https://github.com/runfinch/finch/compare/v0.6.0...v0.6.1) (2023-05-15)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/docker from 23.0.3+incompatible to 23.0.5+incompatible ([#382](https://github.com/runfinch/finch/issues/382)) ([3e0581c](https://github.com/runfinch/finch/commit/3e0581cc0f86efcd9ce7b7dc8c9384fb1e6af785))
+* **deps:** Bump github.com/docker/docker from 23.0.5+incompatible to 23.0.6+incompatible ([#394](https://github.com/runfinch/finch/issues/394)) ([f44bc2e](https://github.com/runfinch/finch/commit/f44bc2eb14011640f7a25218bbc18a82d533e76a))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.9.2 to 2.9.3 ([#390](https://github.com/runfinch/finch/issues/390)) ([7102994](https://github.com/runfinch/finch/commit/710299445ed287c67114b277be7bd2a29715956b))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.9.3 to 2.9.5 ([#400](https://github.com/runfinch/finch/issues/400)) ([65458f1](https://github.com/runfinch/finch/commit/65458f1b0c20705e724ac07356d87dd47ae2000c))
+* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.23.3 to 3.23.4 ([#389](https://github.com/runfinch/finch/issues/389)) ([76b31c0](https://github.com/runfinch/finch/commit/76b31c0c453935f22588523f65888e103581cd89))
+* **deps:** Bump golang.org/x/crypto from 0.8.0 to 0.9.0 ([#397](https://github.com/runfinch/finch/issues/397)) ([f15c2ee](https://github.com/runfinch/finch/commit/f15c2ee576416c0cb25de45438bd894ca6b1fdcb))
+* **deps:** Bump submodules ([#375](https://github.com/runfinch/finch/issues/375)) ([70fe4c3](https://github.com/runfinch/finch/commit/70fe4c3e0320f237d2e4501fbe2bc4d3320ef3e9))
+
 ## [0.6.0](https://github.com/runfinch/finch/compare/v0.5.0...v0.6.0) (2023-04-20)
 
 
