@@ -74,6 +74,7 @@ jobs:
           fi
           cd $(brew --repo homebrew/cask) 
           brew uninstall --cask ./Casks/finch.rb || true
+        shell: zsh {0}
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -86,16 +87,19 @@ jobs:
           cd $(brew --repo homebrew/cask)
           echo "Update the local Finch cask with version $FINCH_VERSION"
           brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
+        shell: zsh {0}
       - name: Silently install
         run: |
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
           brew install --cask ./Casks/finch.rb
+        shell: zsh {0}
       - name: Build project
         run: |
           brew install go lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
+        shell: zsh {0}
       - name: Multiple instances of Finch test
         run: |
           # start two Finch VM instances
@@ -135,6 +139,7 @@ jobs:
           # that caused the VM initialization failure in the e2e test. 
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
           brew reinstall --cask ./Casks/finch.rb
+        shell: zsh {0}
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
@@ -146,7 +151,7 @@ jobs:
             echo ERROR: Finch is not uninstalled
             exit 1
           fi
-
+        shell: zsh {0}
   macos-amd64-test-installer:
     needs: get-latest-tag
     strategy:
@@ -186,6 +191,7 @@ jobs:
           fi
           cd $(brew --repo homebrew/cask) 
           brew uninstall --cask ./Casks/finch.rb || true
+        shell: zsh {0}
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -196,16 +202,19 @@ jobs:
           cd $(brew --repo homebrew/cask)
           echo "Update the local Finch cask with version $FINCH_VERSION"
           brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
+        shell: zsh {0}
       - name: Silently install
         run: |
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
           brew install --cask ./Casks/finch.rb
+        shell: zsh {0}
       - name: Build project
         run: |
           brew install go lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
+        shell: zsh {0}
       - name: Multiple instances of Finch test
         run: |
           # start two Finch VM instances
@@ -242,6 +251,7 @@ jobs:
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
           brew reinstall --cask ./Casks/finch.rb
+        shell: zsh {0}
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
@@ -253,7 +263,7 @@ jobs:
             echo ERROR: Finch is not uninstalled
             exit 1
           fi
-          
+        shell: zsh {0}
   pr-to-homebrew:
     needs: [get-latest-tag, macos-arm64-test-installer, macos-amd64-test-installer]
     runs-on: macos-latest
@@ -263,6 +273,7 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
       - name: Open a pull request to homebrwe-cask
         run: brew bump-cask-pr --version=${FINCH_VERSION} finch
+        shell: zsh {0}
         env:
           FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}

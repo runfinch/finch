@@ -21,6 +21,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+          ref: 0.6.1
       - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
@@ -33,6 +34,7 @@ jobs:
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
           tar -zcvf finch.${GITHUB_REF_NAME}.aarch64.tar.gz _output
+        shell: zsh {0}
 
       - name: Upload macos aarch64 build
         uses: actions/upload-artifact@v2
@@ -42,7 +44,7 @@ jobs:
           if-no-files-found: error
 
   macos-x86_64-build:
-    runs-on: [self-hosted, macos, amd64, 11.7, release]
+    runs-on: [self-hosted, macos, amd64, 11, release]
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
@@ -50,6 +52,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+          ref: 0.6.1
       - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
@@ -62,6 +65,7 @@ jobs:
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
           tar -zcvf finch.${GITHUB_REF_NAME}.x86_64.tar.gz _output
+        shell: zsh {0}
 
       - name: Upload macos x86_64 build
         uses: actions/upload-artifact@v2
