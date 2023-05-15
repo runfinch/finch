@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
-          ref: 0.6.1
+          ref: v0.6.1
       - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
@@ -52,7 +52,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
-          ref: 0.6.1
+          ref: v0.6.1
       - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
