@@ -42,7 +42,7 @@ jobs:
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
-          ref: 0.6.1
+          ref: v0.6.1
           fetch-depth: 0
           persist-credentials: false
           submodules: true
@@ -140,7 +140,7 @@ jobs:
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
-          ref: 0.6.1
+          ref: v0.6.1
           fetch-depth: 0
           persist-credentials: false
           submodules: true
