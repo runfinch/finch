@@ -73,6 +73,8 @@ jobs:
         shell: zsh {0}
       - name: Silently install
         run: sudo installer -pkg Finch-v0.6.1-aarch64.pkg -target /
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
           brew install go lz4 automake autoconf libtool
@@ -173,6 +175,8 @@ jobs:
       - name: Silently install
         run: |
           sudo installer -pkg Finch-v0.6.1-x86_64.pkg -target /
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
           brew install go lz4 automake autoconf libtool

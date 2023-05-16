@@ -18,14 +18,14 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Download installers
         run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-v0.6.1-aarch64.pkg Finch-v0.6.1-aarch64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-v0.6.1-x86_64.pkg Finch-v0.6.1-x86_64.pkg
       - name: Upload installers to release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: v0.6.1
           files: |
-            Finch-${{ github.ref_name }}-aarch64.pkg
-            Finch-${{ github.ref_name }}-x86_64.pkg
+            Finch-v0.6.1-aarch64.pkg
+            Finch-v0.6.1-x86_64.pkg
       - name: Delete installers
-        run: rm -rf Finch-${{ github.ref_name }}-aarch64.pkg Finch-${{ github.ref_name }}-x86_64.pkg
+        run: rm -rf Finch-v0.6.1-aarch64.pkg Finch-v0.6.1-x86_64.pkg

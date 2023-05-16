@@ -94,6 +94,8 @@ jobs:
           cd $(brew --repo homebrew/cask)
           brew install --cask ./Casks/finch.rb
         shell: zsh {0}
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true
       - name: Build project
         run: |
           brew install go lz4 automake autoconf libtool
@@ -209,6 +211,8 @@ jobs:
           cd $(brew --repo homebrew/cask)
           brew install --cask ./Casks/finch.rb
         shell: zsh {0}
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
           brew install go lz4 automake autoconf libtool
