@@ -42,7 +42,7 @@ jobs:
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
-          ref: v0.6.1
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
@@ -69,10 +69,10 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Download from S3
         run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-v0.6.1-aarch64.pkg Finch-v0.6.1-aarch64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
         shell: zsh {0}
       - name: Silently install
-        run: sudo installer -pkg Finch-v0.6.1-aarch64.pkg -target /
+        run: sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
@@ -118,13 +118,13 @@ jobs:
           # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
           # that caused the VM initialization failure in the e2e test. 
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
-          sudo installer -pkg Finch-v0.6.1-aarch64.pkg -target /
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
-        run: rm -rf Finch-v0.6.1-aarch64.pkg
+        run: rm -rf Finch-${GITHUB_REF_NAME}-aarch64.pkg
 
   macos-amd64-test-installer:
     strategy:
@@ -143,7 +143,7 @@ jobs:
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
-          ref: v0.6.1
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
@@ -170,11 +170,11 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Download from S3
         run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-v0.6.1-x86_64.pkg Finch-v0.6.1-x86_64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
         shell: zsh {0}
       - name: Silently install
         run: |
-          sudo installer -pkg Finch-v0.6.1-x86_64.pkg -target /
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
@@ -217,10 +217,10 @@ jobs:
         run: |
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
-          sudo installer -pkg Finch-v0.6.1-x86_64.pkg -target /
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
-        run: rm -rf Finch-v0.6.1-x86_64.pkg
+        run: rm -rf Finch-${GITHUB_REF_NAME}-x86_64.pkg
