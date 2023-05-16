@@ -70,13 +70,17 @@ jobs:
       - name: Download from S3
         run: |
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
+        shell: zsh {0}
       - name: Silently install
         run: sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
           brew install go lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
+        shell: zsh {0}
       - name: Multiple instances of Finch test
         run: |
           # start two Finch VM instances
@@ -167,14 +171,18 @@ jobs:
       - name: Download from S3
         run: |
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
+        shell: zsh {0}
       - name: Silently install
         run: |
           sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
           brew install go lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
+        shell: zsh {0}
       - name: Multiple instances of Finch test
         run: |
           # start two Finch VM instances
