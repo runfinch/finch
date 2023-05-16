@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - benchmark-test
     paths-ignore:
       - '**.md'
       - 'contrib/**'
