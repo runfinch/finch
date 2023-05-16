@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683143194327,
+  "lastUpdate": 1684271040344,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -191,6 +191,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1298690666,
             "unit": "ns/op\t         0.9748 %cpu_avg/op\t        54.55 %cpu_peak/op\t         1.299 cpu_seconds/op\t   3547136 disk_bytes/op\t   65752 B/op\t    1271 allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ningziwe@amazon.com",
+            "name": "Ziwen Ning",
+            "username": "ningziwen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cc679ef266c7da49e9339d69130f242d8285bc96",
+          "message": "ci: remove setup-go and explicitly set shell in benchmark (#401)\n\nIssue #, if available:\r\n\r\n*Description of changes:*\r\nFix the workflow failure happened recently.\r\nhttps://github.com/runfinch/finch/actions/runs/4920343212/jobs/8789029862\r\n\r\n*Testing done:*\r\nIn feature branch.\r\n\r\n\r\n- [ X ] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Ziwen Ning <ningziwe@amazon.com>",
+          "timestamp": "2023-05-16T13:59:41-07:00",
+          "tree_id": "ce9148fa0e13ad776e232868257642729f8bf853",
+          "url": "https://github.com/runfinch/finch/commit/cc679ef266c7da49e9339d69130f242d8285bc96"
+        },
+        "date": 1684271038983,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 60938075750,
+            "unit": "ns/op\t         0.4824 %cpu_avg/op\t        66.67 %cpu_peak/op\t        60.94 cpu_seconds/op\t2509930496 disk_bytes/op\t 2738240 B/op\t   57767 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24052628167,
+            "unit": "ns/op\t         0.5687 %cpu_avg/op\t        45.45 %cpu_peak/op\t        24.05 cpu_seconds/op\t -15908864 disk_bytes/op\t 1069120 B/op\t   22745 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 372893125,
+            "unit": "ns/op\t         0.8285 %cpu_avg/op\t        12.18 %cpu_peak/op\t         0.3728 cpu_seconds/op\t         0 disk_bytes/op\t   26821 B/op\t     398 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1379727083,
+            "unit": "ns/op\t         0.6775 %cpu_avg/op\t        25.00 %cpu_peak/op\t         1.380 cpu_seconds/op\t   3592192 disk_bytes/op\t   71288 B/op\t    1348 allocs/op",
             "extra": "1 times\n8 procs"
           }
         ]
