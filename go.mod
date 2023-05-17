@@ -3,7 +3,7 @@ module github.com/runfinch/finch
 go 1.20
 
 require (
-	github.com/docker/docker v23.0.6+incompatible
+	github.com/docker/docker v24.0.0+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.0
 	github.com/lima-vm/lima v0.15.1
