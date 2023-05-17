@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684271121572,
+  "lastUpdate": 1684340940410,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -239,6 +239,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1619110035,
             "unit": "ns/op\t         0.2828 %cpu_avg/op\t        26.67 %cpu_peak/op\t         1.619 cpu_seconds/op\t   3629056 disk_bytes/op\t   82408 B/op\t    1608 allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "06d86b2bc348db9f0d8d02678faee556719b883d",
+          "message": "build(deps): Bump submodules (#402)\n\nAutomated changes by\r\n[create-pull-request](https://github.com/peter-evans/create-pull-request)\r\nGitHub action\r\n\r\nSigned-off-by: GitHub <noreply@github.com>\r\nCo-authored-by: vsiravar <vsiravar@users.noreply.github.com>",
+          "timestamp": "2023-05-17T16:24:01Z",
+          "tree_id": "288eddf483f6ff89d0e83c6e089da366bce0295d",
+          "url": "https://github.com/runfinch/finch/commit/06d86b2bc348db9f0d8d02678faee556719b883d"
+        },
+        "date": 1684340939563,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 76734595288,
+            "unit": "ns/op\t         0.3309 %cpu_avg/op\t        88.89 %cpu_peak/op\t        76.73 cpu_seconds/op\t2664726528 disk_bytes/op\t 3457832 B/op\t   72417 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 26843850385,
+            "unit": "ns/op\t         0.3533 %cpu_avg/op\t        35.71 %cpu_peak/op\t        26.84 cpu_seconds/op\t   -106496 disk_bytes/op\t 1191792 B/op\t   25521 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 478470499,
+            "unit": "ns/op\t         0.6975 %cpu_avg/op\t        17.15 %cpu_peak/op\t         0.4784 cpu_seconds/op\t         0 disk_bytes/op\t   30976 B/op\t     503 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1807805626,
+            "unit": "ns/op\t         0.5643 %cpu_avg/op\t        20.00 %cpu_peak/op\t         1.808 cpu_seconds/op\t  20406272 disk_bytes/op\t   91376 B/op\t    1793 allocs/op",
             "extra": "1 times\n12 procs"
           }
         ]
