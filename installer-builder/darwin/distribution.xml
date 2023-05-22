@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<installer-script minSpecVersion="1.000000">
+    <title>Finch</title>
+    <background mime-type="image/png" file="banner.png" scaling="proportional"/>
+    <background-darkAqua mime-type="image/png" file="banner.png" scaling="proportional"/>
+    <welcome file="welcome.html" mime-type="text/html" />
+    <conclusion file="conclusion.html" mime-type="text/html" />
+    <license file="LICENSE.txt"/>
+    <options customize="never" allow-external-scripts="no" hostArchitectures="__ARCH__"/>
+    <domains enable_localSystem="true" />
+    <installation-check script="installCheck();"/>
+    <script>
+    function installCheck() {
+        if(!(system.compareVersions(system.version.ProductVersion, '10.15.0') >= 0)) {
+            my.result.title = 'Unable to install';
+            my.result.message = 'Finch requires Mac OS 10.15 or later.';
+            my.result.type = 'Fatal';
+            return false;
+        }
+        if(system.files.fileExistsAtPath('/Applications/Finch/')) {
+            my.result.title = 'Previous Installation Detected';
+            my.result.message = 'A previous installation of Finch exists at /Applications/Finch/. This installer will remove the previous installation prior to installing. Please back up any data and remove existing virtual machine before proceeding.';
+            my.result.type = 'Warning';
+            return false;
+        }
+        return true;
+    }
+    </script>
+    <choices-outline>
+        <line choice="Finch"/>
+    </choices-outline>
+    <choice id="Finch" title="Finch">
+        <pkg-ref id="Finch.pkg"/>
+    </choice>
+    <pkg-ref id="Finch.pkg" auth="Root">Finch.pkg</pkg-ref>
+</installer-script>

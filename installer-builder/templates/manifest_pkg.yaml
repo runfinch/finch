@@ -1,0 +1,11 @@
+type: :app
+os: :osx
+name: Finch.pkg
+outputs:
+- label: macos
+  path: Finch.pkg
+app:
+  :identifier: com.amazon.aws.finch
+  signing_requirements:
+    certificate_type: :developerIDInstallerDistribution
+    app_id_prefix: 94KV3E626L
