@@ -12,7 +12,7 @@ permissions:
   contents: read    # This is required for actions/checkout
 
 jobs:
-  macos-aarch64-build:
+  macos-aarch64-pkg-build:
     runs-on: [self-hosted, macos, arm64, 11, release]
     timeout-minutes: 60
     steps:
@@ -32,17 +32,21 @@ jobs:
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
-          tar -zcvf finch.${GITHUB_REF_NAME}.aarch64.tar.gz _output
         shell: zsh {0}
 
-      - name: Upload macos aarch64 build
-        uses: actions/upload-artifact@v2
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          name: finch.macos-aarch64
-          path: finch.*.aarch64.tar.gz
-          if-no-files-found: error
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: dependency-upload-session
+          aws-region: ${{ secrets.REGION }}
 
-  macos-x86_64-build:
+      - name: generate pkg
+        run: |
+          ./installer-builder/tools/release-installer.sh aarch64 ${GITHUB_REF_NAME} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
+        shell: zsh {0}
+
+  macos-x86-64-pkg-build:
     runs-on: [self-hosted, macos, amd64, 11, release]
     timeout-minutes: 60
     steps:
@@ -62,27 +66,7 @@ jobs:
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
-          tar -zcvf finch.${GITHUB_REF_NAME}.x86_64.tar.gz _output
         shell: zsh {0}
-
-      - name: Upload macos x86_64 build
-        uses: actions/upload-artifact@v2
-        with:
-          name: finch.macos-x86_64
-          path: finch.*.x86_64.tar.gz
-          if-no-files-found: error
-
-  release:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs:
-      - macos-x86_64-build
-      - macos-aarch64-build
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          persist-credentials: false
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -91,19 +75,211 @@ jobs:
           role-session-name: dependency-upload-session
           aws-region: ${{ secrets.REGION }}
 
-      - name: Download macos aarch64 build
-        uses: actions/download-artifact@v2
-        with:
-          name: finch.macos-aarch64
-          path: build
-
-      - name: Download macos x86_64 build
-        uses: actions/download-artifact@v2
-        with:
-          name: finch.macos-x86_64
-          path: build
-      # TODO: Change destination bucket after creating automation for signing.
-      - name: "Upload to S3"
+      - name: generate pkg
         run: |
-          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/aarch64/ --recursive --exclude "*" --include "finch.${GITHUB_REF_NAME}.aarch64.tar.gz"
-          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/x86-64/ --recursive --exclude "*" --include "finch.${GITHUB_REF_NAME}.x86_64.tar.gz"
+          ./installer-builder/tools/release-installer.sh x86_64 ${GITHUB_REF_NAME} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
+        shell: zsh {0}
+
+  macos-aarch64-pkg-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [
+              [self-hosted, macos, arm64, 11, release], 
+              [self-hosted, macos, arm64, 12, release], 
+              [self-hosted, macos, arm64, 13, release]
+            ]
+    runs-on: ${{ matrix.os }}
+    needs:
+      - macos-aarch64-pkg-build
+    timeout-minutes: 60
+    env:
+      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
+    steps:
+      - name: Checkout the tag
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Clean up previous files
+        run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: download-installer-session
+          aws-region: ${{ secrets.REGION }}
+      - name: Download from S3
+        run: |
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
+        shell: zsh {0}
+      - name: Silently install
+        run: sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
+      - name: Build project
+        run: |
+          brew install go lz4 automake autoconf libtool
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+        shell: zsh {0}
+      - name: Multiple instances of Finch test
+        run: |
+          # start two Finch VM instances
+          ./_output/bin/finch vm init
+          finch vm init
+          # start a container in each VM instance
+          ./_output/bin/finch pull alpine
+          finch pull alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
+            exit 1
+          fi
+          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
+            exit 1
+          fi
+          if finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
+            exit 1
+          fi
+          # clean up the VMs
+          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
+          finch vm stop && finch vm remove
+      - name: Clean up multiple instance test
+        run: |
+          sudo rm -rf ./_output
+          echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+          # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
+          # that caused the VM initialization failure in the e2e test. 
+          # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg -target /
+      - name: Run e2e tests
+        run: INSTALLED=true make test-e2e
+      - name: Silently uninstall
+        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+      - name: Delete installer
+        run: rm -rf Finch-${GITHUB_REF_NAME}-aarch64.pkg
+
+  macos-x86-64-pkg-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [
+              [self-hosted, macos, amd64, 11, release], 
+              [self-hosted, macos, amd64, 12, release], 
+              [self-hosted, macos, amd64, 13, release]
+            ]
+    runs-on: ${{ matrix.os }}
+    needs:
+      - macos-x86-64-pkg-build
+    timeout-minutes: 60
+    env:
+      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
+    steps:
+      - name: Checkout the tag
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Clean up previous files
+        run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: download-installer-session
+          aws-region: ${{ secrets.REGION }}
+      - name: Download from S3
+        run: |
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
+        shell: zsh {0}
+      - name: Silently install
+        run: |
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
+      - name: Build project
+        run: |
+          brew install go lz4 automake autoconf libtool
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+        shell: zsh {0}
+      - name: Multiple instances of Finch test
+        run: |
+          # start two Finch VM instances
+          ./_output/bin/finch vm init
+          finch vm init
+          # start a container in each VM instance
+          ./_output/bin/finch pull alpine
+          finch pull alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
+            exit 1
+          fi
+          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
+            exit 1
+          fi
+          if finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
+            exit 1
+          fi
+          # clean up the VMs
+          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
+          finch vm stop && finch vm remove
+      - name: Clean up multiple instance test
+        run: |
+          sudo rm -rf ./_output
+          echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+          sudo installer -pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg -target /
+      - name: Run e2e tests
+        run: INSTALLED=true make test-e2e
+      - name: Silently uninstall
+        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+      - name: Delete installer
+        run: rm -rf Finch-${GITHUB_REF_NAME}-x86_64.pkg

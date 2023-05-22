@@ -1,0 +1,25 @@
+#!/bin/bash
+
+echo "Post installation process started..."
+
+#Change permissions in home directory
+echo "Change permissions for product home directory."
+cd /Applications/Finch
+chmod -R 777 .
+chmod -R 755 /Applications/Finch/dependencies/lima-socket_vmnet/opt/finch
+[ -d /usr/local/bin ] || mkdir /usr/local/bin
+
+sudo ln -sf /Applications/Finch/bin/finch /usr/local/bin/finch
+sudo pkill '^socket_vmnet'
+sudo pkill '^qemu-system-'
+sudo rm -rf "/Applications/Finch/lima/data/finch/"
+sudo rm -rf "/Applications/Finch/lima/data/_config/override.yaml"
+sudo rm -rf "/Applications/Finch/lima/data/_config/user"
+sudo rm -rf "/Applications/Finch/lima/data/_config/user.pub"
+sudo rm -rf "/Applications/Finch/lima/data/_networks/"
+sudo rm -rf "/Applications/Finch/lima/data/_disks/"
+sudo rm -rf "/opt/finch/"
+sudo rm -rf "/private/var/run/finch-lima"
+sudo rm -rf "/private/etc/sudoers.d/finch-lima"
+
+echo "Post installation process finished."

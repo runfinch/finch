@@ -1,0 +1,14 @@
+type: :app
+os: :osx
+name: EXECUTABLES_TO_SIGN
+outputs:
+- label: macos
+  path: EXECUTABLES_TO_SIGN
+app:
+  :identifier: com.amazon.aws.finch
+  signing_requirements:
+    certificate_type: :developerIDAppDistribution
+    app_id_prefix: 94KV3E626L
+    signing_args:
+      entitlements_path: SIGNING_METADATA/entitlements.plist
+  embedded_requirements:
