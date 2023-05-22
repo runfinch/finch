@@ -21,7 +21,7 @@ require (
 	golang.org/x/crypto v0.9.0
 	golang.org/x/tools v0.9.1
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.27.1
+	k8s.io/apimachinery v0.27.2
 )
 
 require (
