@@ -1,32 +1,11 @@
 #!/bin/bash
 
-#Generate application uninstallers for macOS.
-
-#Parameters
-DATE=`date +%Y-%m-%d`
-TIME=`date +%H:%M:%S`
-LOG_PREFIX="[$DATE $TIME]"
-
-#Functions
-log_info() {
-    echo "${LOG_PREFIX}[INFO]" $1
-}
-
-log_warn() {
-    echo "${LOG_PREFIX}[WARN]" $1
-}
-
-log_error() {
-    echo "${LOG_PREFIX}[ERROR]" $1
-}
-
 #Check running user
 if (( $EUID != 0 )); then
     echo "Please run as root."
     exit
 fi
 
-echo "Welcome to Finch Uninstaller"
 echo "The following packages will be REMOVED:"
 echo "  Finch-__VERSION__"
 while true; do
@@ -36,8 +15,6 @@ while true; do
     echo "Please answer with 'y' or 'n'"
 done
 
-
-#Need to replace these with install preparation script
 VERSION=__VERSION__
 PRODUCT_HOME=/Applications/Finch
 
@@ -50,7 +27,6 @@ if [ "$$(readlink "/usr/local/bin/finch")" = "${PRODUCT_HOME}/bin/finch" ]; then
 -@rm -rf ${PRODUCT_HOME}/config.yaml 2>/dev/null || true
 
 echo "[1/3] [DONE] Successfully deleted shortcut links"
-
 
 #forget from pkgutil
 pkgutil --forget "org.Finch.$VERSION" > /dev/null 2>&1

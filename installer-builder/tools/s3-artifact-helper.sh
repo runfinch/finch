@@ -19,25 +19,18 @@ cleanUpSigningArtifactInS3Buckets() {
 }
 
 #$1: arch(x86_64, aarch64)
-#$2: build bucket
 downloadFinchBuild() {
-    s3BucketName="s3://${2}"
-    s3FolderName="$s3BucketName/${1//_/-}"
-    [ $1 = "x86_64" ] && alias="amd64" || alias="arm64"
-    buildPath=$(aws s3 ls $s3FolderName --recursive | grep "finch.*tar.gz" | sort -r | head -1 | awk '{print $4}')
-    echo $buildPath
-    aws s3 cp "$s3BucketName/$buildPath" $OUTPUT_ROOT_PATH/${1}$ORIGIN_PATH/${1}.tar --no-progress
-    tar xzvf "$OUTPUT_ROOT_PATH/${1}$ORIGIN_PATH/${1}.tar" -C "$OUTPUT_ROOT_PATH/${1}$ORIGIN_PATH"
+    cp -r ./_output "$OUTPUT_ROOT_PATH/${1}$ORIGIN_PATH"
 }
 
 #$1: arch(x86_64, aarch64)
-#$2 executable bucket
+#$2: executable bucket
 uploadUnsignedExecutables() {
     aws s3 cp $OUTPUT_ROOT_PATH/${1}$EXECUTABLES_UNSIGNED_PATH/package.tar.gz s3://${2}-${1//_/-}/pre-signed/package.tar.gz --no-progress
 }
 
 #$1: arch(x86_64, aarch64)
-#$2 executable bucket
+#$2: executable bucket
 downloadSignedExecutables() {
     attempts=0
     while [ $attempts -lt $MAX_RETRY ]
@@ -59,7 +52,7 @@ downloadSignedExecutables() {
 }
 
 #$1: arch(x86_64, aarch64)
-#$2 pkg bucket
+#$2: pkg bucket
 uploadUnsignedPkg() {
     aws s3 cp $OUTPUT_ROOT_PATH/${1}$INSTALLER_UNSIGNED_PATH/package.tar.gz s3://${2}-${1//_/-}/pre-signed/package.tar.gz --no-progress
 }

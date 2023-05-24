@@ -6,12 +6,11 @@ source ./installer-builder/tools/s3-artifact-helper.sh
 #Finch version is required
 ARCH=${1}
 FINCH_VERSION=${2}
-DEPENDENCY_BUCKET_NAME=${3}
-INSTALLER_PRIVATE_BUCKET_NAME=${4}
-EXECUTABLE_BUCKET=${5}
-PKG_BUCKET=${6}
-NOTARIZATION_ACCOUNT=${7}
-NOTARIZATION_CREDENTIAL=${8}
+INSTALLER_PRIVATE_BUCKET_NAME=${3}
+EXECUTABLE_BUCKET=${4}
+PKG_BUCKET=${5}
+NOTARIZATION_ACCOUNT=${6}
+NOTARIZATION_CREDENTIAL=${7}
 
 releaseInstaller() {
     echo "Finch Installer Generation Started"
@@ -20,7 +19,7 @@ releaseInstaller() {
     initializeOutputFolder $ARCH
 
     echo "(2/12) Download Finch build from S3"
-    downloadFinchBuild $ARCH $DEPENDENCY_BUCKET_NAME
+    downloadFinchBuild $ARCH
 
     echo "(3/12) Extract executables"
     bash ./installer-builder/tools/extract-executables.sh $ARCH
