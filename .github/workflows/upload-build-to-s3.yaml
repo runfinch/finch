@@ -91,7 +91,6 @@ jobs:
             ]
     runs-on: ${{ matrix.os }}
     needs:
-      - macos-x86_64-build
       - macos-aarch64-build
     timeout-minutes: 60
     env:
@@ -194,6 +193,9 @@ jobs:
               [self-hosted, macos, amd64, 13, release]
             ]
     runs-on: ${{ matrix.os }}
+    needs:
+      - macos-x86_64-build
+      - macos-aarch64-build
     timeout-minutes: 60
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
