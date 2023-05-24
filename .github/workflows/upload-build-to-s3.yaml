@@ -80,7 +80,7 @@ jobs:
           ./installer-builder/tools/release-installer.sh x86_64 ${GITHUB_REF_NAME} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
         shell: zsh {0}
 
-  macos-arm64-test-installer:
+  macos-aarch64-installer-test:
     strategy:
       fail-fast: false
       matrix:
@@ -183,7 +183,7 @@ jobs:
       - name: Delete installer
         run: rm -rf Finch-${GITHUB_REF_NAME}-aarch64.pkg
 
-  macos-amd64-test-installer:
+  macos-x86_64-installer-test:
     strategy:
       fail-fast: false
       matrix:

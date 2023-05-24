@@ -20,6 +20,8 @@ cleanUpSigningArtifactInS3Buckets() {
 
 #$1: arch(x86_64, aarch64)
 downloadFinchBuild() {
+    pwd
+    echo "$OUTPUT_ROOT_PATH/${1}$ORIGIN_PATH"
     cp -r ./_output "$OUTPUT_ROOT_PATH/${1}$ORIGIN_PATH"
 }
 
