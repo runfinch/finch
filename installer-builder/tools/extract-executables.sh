@@ -20,21 +20,21 @@ packageUnsignedExecutables() {
     tar -cvzf  ../package.tar.gz manifest.yaml artifact.gz
 }
 
-#$1 is the executable name
+#$1: the executable name
 updateEntitlement() {
     echo "    $1:" >> ./installer-builder/output/executables/unsigned/package/manifest.yaml
     echo "      signing_args:" >> ./installer-builder/output/executables/unsigned/package/manifest.yaml
     echo "        entitlements_path: SIGNING_METADATA/entitlements.plist" >> ./installer-builder/output/executables/unsigned/package/manifest.yaml
 }
 
-#$1 is the executable name
+#$1: the executable name
 updateQEMUEntitlement() {
     echo "    $1:" >> ./installer-builder/output/executables/unsigned/package/manifest.yaml
     echo "      signing_args:" >> ./installer-builder/output/executables/unsigned/package/manifest.yaml
     echo "        entitlements_path: SIGNING_METADATA/qemu.plist" >> ./installer-builder/output/executables/unsigned/package/manifest.yaml
 }
 
-#$1 is the file object
+#$1: the file object
 extractExecutables() {
     for file in `ls -a $1`
     do
