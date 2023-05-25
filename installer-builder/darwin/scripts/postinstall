@@ -2,13 +2,14 @@
 
 echo "Post installation process started..."
 
-#Change permissions in home directory
+#change permissions in home directory
 echo "Change permissions for product home directory."
 cd /Applications/Finch
 chmod -R 777 .
 chmod -R 755 /Applications/Finch/dependencies/lima-socket_vmnet/opt/finch
 [ -d /usr/local/bin ] || mkdir /usr/local/bin
 
+#clean old artifacts
 sudo ln -sf /Applications/Finch/bin/finch /usr/local/bin/finch
 sudo pkill '^socket_vmnet'
 sudo pkill '^qemu-system-'

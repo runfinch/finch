@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Wait signed artifacts available
+#wait signed artifacts available
 MAX_RETRY=60
 DELAY=60
 

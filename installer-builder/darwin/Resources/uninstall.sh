@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Check running user
+#check running user
 if (( $EUID != 0 )); then
     echo "Please run as root."
     exit
