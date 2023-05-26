@@ -56,6 +56,17 @@ jobs:
     runs-on: ${{ matrix.os }} 
     steps:
       - run: echo "Skipping CI for docs & contrib files"
+  e2e-tests-for-docker-compat:
+    strategy:
+      matrix:
+        os:
+          [
+            [self-hosted, macos, amd64, 13, test],
+            [self-hosted, macos, arm64, 13, test],
+          ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: echo "Skipping CI for docs & contrib files"
   mdlint:
     runs-on: ubuntu-latest
     steps:
