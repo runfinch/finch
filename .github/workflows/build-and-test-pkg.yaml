@@ -3,7 +3,7 @@ name: Build, test and upload .pkg to S3
 # The scheduler runs at 9 am UTC every day.
 on:
   workflow_dispatch:
-  shcedule:
+  schedule:
     - cron: '0 9 * * *'
 env:
   GO111MODULE: on
