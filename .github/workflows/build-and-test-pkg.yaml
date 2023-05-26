@@ -1,4 +1,4 @@
-name: Upload build to s3
+name: Build, test and upload .pkg to S3
 
 on:
   workflow_dispatch:
