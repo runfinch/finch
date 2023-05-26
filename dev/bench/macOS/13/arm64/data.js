@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684778011657,
+  "lastUpdate": 1685123081036,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -575,6 +575,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1363868542,
             "unit": "ns/op\t         0.8620 %cpu_avg/op\t        33.33 %cpu_peak/op\t         1.364 cpu_seconds/op\t   3612672 disk_bytes/op\t   69248 B/op\t    1338 allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b83cc21e6082eeff076e035dfb4cad152fb5508c",
+          "message": "ci: Finch .pkg installer builder (#416)\n\n**Description of changes:**\r\n\r\n- This PR contains the Finch .pkg builder tool.\r\n- The .pkg builder tool can be used by GitHub action to generate and\r\nnotarize macOS .pkg installer.\r\n- The old update to S3 workflow is extended with the functionality to\r\nbuild Finch, build .pkg and test .pkg. It can be used as a scheduled job\r\nfor nightly main branch build as well to detect release issue earlier\r\nbesides cut a new release.\r\n- The old release installer workflow(test installer) is removed because\r\nits scope is moved to the integrated workflow.\r\n\r\nThis is an initial tool check in, Readme and integrated workflow to\r\nchain existing workflows to upload installer to release and publish to\r\nHomebrew will come later.\r\n\r\n**Testing done:**\r\nHave tested the updated workflow and tool on this branch, and can\r\nsuccessfully generate final installer and test it.\r\nAction test ref:\r\nhttps://github.com/runfinch/finch/actions/runs/5077161329\r\n<img width=\"1043\" alt=\"Screenshot 2023-05-24 at 11 17 16 PM\"\r\nsrc=\"https://github.com/runfinch/finch/assets/113378398/a75ab5cf-d4f0-46ac-b02a-319101aae21d\">\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Kevin Li <cnkevin@amazon.com>",
+          "timestamp": "2023-05-26T10:40:35-07:00",
+          "tree_id": "f4ee320ee326400884c15fa51a6485739e2ed39b",
+          "url": "https://github.com/runfinch/finch/commit/b83cc21e6082eeff076e035dfb4cad152fb5508c"
+        },
+        "date": 1685123080313,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 62002138916,
+            "unit": "ns/op\t         0.4386 %cpu_avg/op\t        66.67 %cpu_peak/op\t        62.00 cpu_seconds/op\t2434990080 disk_bytes/op\t 2783248 B/op\t   58785 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 23875910708,
+            "unit": "ns/op\t         0.4210 %cpu_avg/op\t        37.50 %cpu_peak/op\t        23.88 cpu_seconds/op\t  11087872 disk_bytes/op\t 1063976 B/op\t   22618 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 356385737,
+            "unit": "ns/op\t         0.7036 %cpu_avg/op\t        15.81 %cpu_peak/op\t         0.3563 cpu_seconds/op\t         0 disk_bytes/op\t   25797 B/op\t     382 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1482135708,
+            "unit": "ns/op\t         1.198 %cpu_avg/op\t        30.00 %cpu_peak/op\t         1.482 cpu_seconds/op\t   3629056 disk_bytes/op\t   75728 B/op\t    1449 allocs/op",
             "extra": "1 times\n8 procs"
           }
         ]
