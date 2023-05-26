@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685123081036,
+  "lastUpdate": 1685135679585,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -623,6 +623,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1482135708,
             "unit": "ns/op\t         1.198 %cpu_avg/op\t        30.00 %cpu_peak/op\t         1.482 cpu_seconds/op\t   3629056 disk_bytes/op\t   75728 B/op\t    1449 allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ningziwe@amazon.com",
+            "name": "Ziwen Ning",
+            "username": "ningziwen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6a8ca1a559dada6ed320c9454fbc3229446a0a40",
+          "message": "fix: sort volume args in DOCKER_COMPAT mode (#417)\n\nIssue #, if available:\r\nhttps://github.com/runfinch/finch/issues/418\r\n\r\n*Description of changes:*\r\nSort volume args in DOCKER_COMPAT mode\r\n\r\n*Testing done:*\r\nUnit tests and new e2e tests.\r\nhttps://github.com/runfinch/common-tests/pull/66\r\n\r\n\r\n- [ X ] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Ziwen Ning <ningziwe@amazon.com>",
+          "timestamp": "2023-05-26T21:10:30Z",
+          "tree_id": "7d92a6ddbd268a0ecf2c8acb172cadc75b283dc2",
+          "url": "https://github.com/runfinch/finch/commit/6a8ca1a559dada6ed320c9454fbc3229446a0a40"
+        },
+        "date": 1685135678685,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 61109075166,
+            "unit": "ns/op\t         0.5363 %cpu_avg/op\t        50.00 %cpu_peak/op\t        61.11 cpu_seconds/op\t2531868672 disk_bytes/op\t 2739688 B/op\t   57794 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 23822496458,
+            "unit": "ns/op\t         0.4148 %cpu_avg/op\t        29.99 %cpu_peak/op\t        23.82 cpu_seconds/op\t  25346048 disk_bytes/op\t 1062800 B/op\t   22585 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 350237528,
+            "unit": "ns/op\t         1.100 %cpu_avg/op\t        14.76 %cpu_peak/op\t         0.3502 cpu_seconds/op\t         0 disk_bytes/op\t   25189 B/op\t     375 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1324873542,
+            "unit": "ns/op\t         0.4685 %cpu_avg/op\t        20.44 %cpu_peak/op\t         1.325 cpu_seconds/op\t  20406272 disk_bytes/op\t   67056 B/op\t    1297 allocs/op",
             "extra": "1 times\n8 procs"
           }
         ]
