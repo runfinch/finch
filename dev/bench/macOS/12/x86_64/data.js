@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685135736453,
+  "lastUpdate": 1685142598000,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -671,6 +671,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1890756652,
             "unit": "ns/op\t         0.5868 %cpu_avg/op\t        28.57 %cpu_peak/op\t         1.891 cpu_seconds/op\t   3620864 disk_bytes/op\t   93832 B/op\t    1868 allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0bcdd18b12b889931d3b7928eedf76c1ec9fac5a",
+          "message": "ci: Rename action and set up nightly build (#421)\n\n*Description of changes:*\r\nRename the action.\r\nSet up the installer build and test every day at 9 am UTC (2 am PDT) to\r\nvalidate latest main branch.\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Kevin Li <cnkevin@amazon.com>",
+          "timestamp": "2023-05-26T16:03:45-07:00",
+          "tree_id": "ab82ce6b1d2aa83593bb648181463b6fe7840863",
+          "url": "https://github.com/runfinch/finch/commit/0bcdd18b12b889931d3b7928eedf76c1ec9fac5a"
+        },
+        "date": 1685142597112,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 80208039766,
+            "unit": "ns/op\t         0.3279 %cpu_avg/op\t        53.85 %cpu_peak/op\t        80.21 cpu_seconds/op\t2669309952 disk_bytes/op\t 3604168 B/op\t   75741 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 26553762850,
+            "unit": "ns/op\t         0.3295 %cpu_avg/op\t        36.36 %cpu_peak/op\t        26.55 cpu_seconds/op\t  16805888 disk_bytes/op\t 1180800 B/op\t   25268 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 517685120,
+            "unit": "ns/op\t         0.2687 %cpu_avg/op\t        13.25 %cpu_peak/op\t         0.5176 cpu_seconds/op\t         0 disk_bytes/op\t   32888 B/op\t     546 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1810866498,
+            "unit": "ns/op\t         0.3984 %cpu_avg/op\t        14.29 %cpu_peak/op\t         1.811 cpu_seconds/op\t   3620864 disk_bytes/op\t   90760 B/op\t    1789 allocs/op",
             "extra": "1 times\n12 procs"
           }
         ]
