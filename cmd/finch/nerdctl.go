@@ -6,7 +6,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	dockerops "github.com/docker/docker/opts"
@@ -85,7 +87,11 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	var (
 		nerdctlArgs, envs, fileEnvs []string
 		skip                        bool
+		volumes                     []string
 	)
+
+	dockerCompat := isDockerCompatEnvSet(nc.systemDeps)
+	firstVolumeIndex := -1
 
 	for i, arg := range args {
 		// parsing environment values from the command line may pre-fetch and
@@ -121,10 +127,34 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				arg = fmt.Sprintf("%s%s", arg[0:11], resolvedIP)
 			}
 			nerdctlArgs = append(nerdctlArgs, arg)
+		case strings.HasPrefix(arg, "-v") || strings.HasPrefix(arg, "--volume"):
+			// TODO: remove the case branch when the Nerdctl fix is released to Finch.
+			// Nerdctl tracking issue: https://github.com/containerd/nerdctl/issues/2254.
+			if dockerCompat {
+				if firstVolumeIndex == -1 {
+					firstVolumeIndex = i
+				}
+				volume, shouldSkip := getVolume(arg, args[i+1])
+				volumes = append(volumes, volume)
+				skip = shouldSkip
+			} else {
+				nerdctlArgs = append(nerdctlArgs, arg)
+			}
 		default:
 			nerdctlArgs = append(nerdctlArgs, arg)
 		}
 	}
+
+	if dockerCompat {
+		// Need to insert to the middle to prevent messing up the subcommands at the beginning and the image ref at the end.
+		// The first volume index is a good middle position.
+		volumes = sortVolumes(volumes)
+		for i, vol := range volumes {
+			position := firstVolumeIndex + i*2
+			nerdctlArgs = append(nerdctlArgs[:position], append([]string{"-v", vol}, nerdctlArgs[position:]...)...)
+		}
+	}
+
 	// to handle environment variables properly, we add all entries found via
 	// env-file includes to the map first and then all command line environment
 	// flags, making sure that command line overrides environment file options,
@@ -300,6 +330,20 @@ func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 s
 	return skip, envs, nil
 }
 
+// getVolume extracts the volume string from a command line argument.
+// It handles both "--volume=" and "-v=" prefixes.
+// The function returns the extracted volume string and a boolean value indicating whether the volume was found in the next argument.
+// If the volume string was found in the provided 'arg' string (with "--volume=" or "-v=" prefix), it returns the volume and 'false'.
+// If the volume string wasn't in the 'arg', it assumes it's in the 'nextArg' string and returns 'nextArg' and 'true'.
+func getVolume(arg, nextArg string) (string, bool) {
+	for _, prefix := range []string{"--volume=", "-v="} {
+		if strings.HasPrefix(arg, prefix) {
+			return arg[len(prefix):], false
+		}
+	}
+	return nextArg, true
+}
+
 func resolveIP(host string, logger flog.Logger) string {
 	parts := strings.SplitN(host, ":", 2)
 	// If the IP Address is a string called "host-gateway", replace this value with the IP address that can be used to
@@ -311,6 +355,50 @@ func resolveIP(host string, logger flog.Logger) string {
 		return fmt.Sprintf("%s:%s", parts[0], resolvedIP)
 	}
 	return host
+}
+
+func sortVolumes(volumes []string) []string {
+	type volume struct {
+		original    string
+		destination string
+	}
+
+	volumeSlices := make([]volume, 0)
+	for _, vol := range volumes {
+		splitVol := strings.Split(vol, ":")
+		if len(splitVol) >= 2 {
+			volumeSlices = append(volumeSlices, volume{
+				original:    vol,
+				destination: splitVol[1],
+			})
+		} else {
+			// Still need to put the volume string back if it is in other format.
+			volumeSlices = append(volumeSlices, volume{
+				original:    vol,
+				destination: "",
+			})
+		}
+	}
+	sort.Slice(volumeSlices, func(i, j int) bool {
+		// Consistent with the less function in Docker.
+		// https://github.com/moby/moby/blob/0db417451313474133c5ed62bbf95e2d3c92444d/daemon/volumes.go#L45
+		c1 := strings.Count(filepath.Clean(volumeSlices[i].destination), string(os.PathSeparator))
+		c2 := strings.Count(filepath.Clean(volumeSlices[j].destination), string(os.PathSeparator))
+		return c1 < c2
+	})
+	sortedVolumes := make([]string, 0)
+	for _, vol := range volumeSlices {
+		sortedVolumes = append(sortedVolumes, vol.original)
+	}
+	return sortedVolumes
+}
+
+// isDockerCompatEnvSet checks if the FINCH_DOCKER_COMPAT environment variable is set, so that callers can
+// modify behavior to match docker instead of nerdctl.
+// Intended to be used for temporary workarounds until changes are merged upstream.
+func isDockerCompatEnvSet(systemDeps NerdctlCommandSystemDeps) bool {
+	_, s := systemDeps.LookupEnv("FINCH_DOCKER_COMPAT")
+	return s
 }
 
 var nerdctlCmds = map[string]string{
