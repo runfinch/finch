@@ -24,10 +24,10 @@ jobs:
         with:
           GITHUB_REF_NAME: ${{ steps.latest-tag.outputs.tag }}
 
-      - name: Upload .pkg installer to the latest release
-        uses: ./.github/workflows/upload-installer-to-release.yaml
-        with:
-          GITHUB_REF_NAME: ${{ steps.latest-tag.outputs.tag }}
+      #- name: Upload .pkg installer to the latest release
+      #  uses: ./.github/workflows/upload-installer-to-release.yaml
+      #  with:
+      #    GITHUB_REF_NAME: ${{ steps.latest-tag.outputs.tag }}
 
-      - name: Homebrew release tests and cut PR
-        uses: ./.github/workflows/release-homebrew.yaml
+      #- name: Homebrew release tests and cut PR
+      #  uses: ./.github/workflows/release-homebrew.yaml
