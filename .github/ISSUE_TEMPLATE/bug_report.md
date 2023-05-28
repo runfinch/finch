@@ -28,4 +28,4 @@ If applicable, add screenshots or logs to help explain your problem.
 Add any other context about the problem here.
 
 
-_To help debug the issue as quickly as possible, we recommend generating a support bundle with `finch support-bundle-generate` and attaching it to this issue. This packages all Finch-related configs and logs into one file._
+_To help debug the issue as quickly as possible, we recommend generating a support bundle with `finch support-bundle generate` and attaching it to this issue. This packages all Finch-related configs and logs into one file._
