@@ -11,7 +11,7 @@ NOTARIZATION_ACCOUNT=${6}
 NOTARIZATION_CREDENTIAL=${7}
 
 releaseInstaller() {
-    echo "Finch Installer Generation Started..."
+    echo "Finch-$FINCH_VERSION-$ARCH.pkg Installer Generation Started..."
     echo "[1/12] Clean Old Signing Artifact in S3 Buckets"
     cleanUpSigningArtifactInS3Buckets $ARCH $EXECUTABLE_BUCKET $PKG_BUCKET
     rm -rf "./installer-builder/output"
@@ -51,7 +51,7 @@ releaseInstaller() {
     echo "[12/12] Upload installer to S3 buckets"
     uploadNotarizedPkg $ARCH $FINCH_VERSION $INSTALLER_PRIVATE_BUCKET_NAME
 
-    echo "Finch .pkg Installer Generation Completed!"
+    echo "Finch-$FINCH_VERSION-$ARCH.pkg Installer Generation Completed!"
 }
 
 releaseInstaller

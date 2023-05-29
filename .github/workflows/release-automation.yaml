@@ -1,0 +1,31 @@
+name: Release Finch latest version
+on:
+  workflow_dispatch:
+  create:
+    tags:
+      - 'v*'
+
+jobs:
+  release-finch-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+            fetch-depth: 0
+
+      - name: Get Finch latest tag
+        id: latest-tag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+
+      - name: Build and test .pkg
+        uses: ./.github/workflows/build-and-test-pkg.yaml
+        with:
+          GITHUB_REF_NAME: ${{ steps.latest-tag.outputs.tag }}
+
+      #- name: Upload .pkg installer to the latest release
+      #  uses: ./.github/workflows/upload-installer-to-release.yaml
+      #  with:
+      #    GITHUB_REF_NAME: ${{ steps.latest-tag.outputs.tag }}
+
+      #- name: Homebrew release tests and cut PR
+      #  uses: ./.github/workflows/release-homebrew.yaml
