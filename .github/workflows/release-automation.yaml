@@ -1,11 +1,9 @@
 name: Release Finch latest version
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  create:
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
   release-finch-latest:
