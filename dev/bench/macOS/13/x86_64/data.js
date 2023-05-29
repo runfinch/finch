@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685144113396,
+  "lastUpdate": 1685386103829,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -719,6 +719,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1681717540,
             "unit": "ns/op\t         0.6273 %cpu_avg/op\t        23.08 %cpu_peak/op\t         1.682 cpu_seconds/op\t  20414464 disk_bytes/op\t   85032 B/op\t    1668 allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f67ff9668457057514a351819cdc75fb8c6b2d46",
+          "message": "ci: Add release automation action (#424)\n\n*Description of changes:*\r\nThis PR added a new passive action subscribe to main branch new tag\r\ncreation.\r\nNew tag creation means Finch has a new release, the new workflow will\r\ntrigger build pkg, upload pkg and homebrew release on the latest tag.\r\n\r\n*Testing done:*\r\nThis is a new action and has cross branch/tag involved, needs some\r\nexperiment on main branch after check in.\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Kevin Li <cnkevin@amazon.com>",
+          "timestamp": "2023-05-29T11:41:28-07:00",
+          "tree_id": "4e53e8ed0bd63d943da86e7680d75e44738efbcb",
+          "url": "https://github.com/runfinch/finch/commit/f67ff9668457057514a351819cdc75fb8c6b2d46"
+        },
+        "date": 1685386102986,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 78250137148,
+            "unit": "ns/op\t         0.2865 %cpu_avg/op\t        36.36 %cpu_peak/op\t        78.25 cpu_seconds/op\t2684968960 disk_bytes/op\t 3528248 B/op\t   73975 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 26619154297,
+            "unit": "ns/op\t         0.4386 %cpu_avg/op\t        42.86 %cpu_peak/op\t        26.62 cpu_seconds/op\t   1138688 disk_bytes/op\t 1182560 B/op\t   25314 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 520641097,
+            "unit": "ns/op\t         0.5463 %cpu_avg/op\t        18.11 %cpu_peak/op\t         0.5206 cpu_seconds/op\t         0 disk_bytes/op\t   33096 B/op\t     547 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1875628007,
+            "unit": "ns/op\t         0.2033 %cpu_avg/op\t        15.38 %cpu_peak/op\t         1.876 cpu_seconds/op\t   3629056 disk_bytes/op\t   93728 B/op\t    1861 allocs/op",
             "extra": "1 times\n12 procs"
           }
         ]
