@@ -36,7 +36,7 @@ buildPkgInstaller() {
 
     #copy uninstall script and replace version placeholder
     cp ./installer-builder/darwin/Resources/uninstall.sh $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch
-    sed -i '' -e 's/__VERSION__/${VERSION}/g' $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch/uninstall.sh
+    sed -i '' -e 's/__VERSION__/'${VERSION}'/g' $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch/uninstall.sh
     
     #construct pkg directory
     mkdir -p $INSTALLER_FULL_PATH/package
