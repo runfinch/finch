@@ -16,17 +16,19 @@ jobs:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: download-installer-session
           aws-region: ${{ secrets.REGION }}
-      - name: Download installers
+      - name: Download installers and dependency source code
         run: |
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ github.ref_name }}-aarch64.pkg Finch-${{ github.ref_name }}-aarch64.pkg
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ github.ref_name }}-x86_64.pkg Finch-${{ github.ref_name }}-x86_64.pkg
+          aws s3 cp s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/dependency-sources.tar.gz DependenciesSourceCode.tar.gz
         shell: zsh {0}
-      - name: Upload installers to release
+      - name: Upload installers and dependency source code to release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
           files: |
             Finch-${{ github.ref_name }}-aarch64.pkg
             Finch-${{ github.ref_name }}-x86_64.pkg
-      - name: Delete installers
-        run: rm -rf Finch-${{ github.ref_name }}-aarch64.pkg Finch-${{ github.ref_name }}-x86_64.pkg
+            DependenciesSourceCode.tar.gz
+      - name: Delete installers and dependency source code
+        run: rm -rf Finch-${{ github.ref_name }}-aarch64.pkg Finch-${{ github.ref_name }}-x86_64.pkg DependenciesSourceCode.tar.gz
