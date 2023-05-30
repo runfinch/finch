@@ -3,6 +3,7 @@
 name: Release Homebrew
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   get-latest-tag:
