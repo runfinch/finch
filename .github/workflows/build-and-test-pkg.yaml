@@ -3,6 +3,11 @@ name: Build, test and upload .pkg to S3
 # The scheduler runs at 9 am UTC every day.
 on:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
   schedule:
     - cron: '0 9 * * *'
 env:
@@ -15,13 +20,30 @@ permissions:
   contents: read    # This is required for actions/checkout
 
 jobs:
+  get-tag-name:
+    name: Get tag name
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n ${{ inputs.ref_name }} ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+  
   macos-aarch64-pkg-build:
+    needs: get-tag-name
     runs-on: [self-hosted, macos, arm64, 11, release]
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
@@ -47,16 +69,17 @@ jobs:
 
       - name: generate pkg
         run: |
-          ./installer-builder/tools/release-installer.sh aarch64 ${{ github.ref_name }} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
+          ./installer-builder/tools/release-installer.sh aarch64 ${{ needs.get-tag-name.outputs.tag }} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
         shell: zsh {0}
 
   macos-x86-64-pkg-build:
+    needs: get-tag-name
     runs-on: [self-hosted, macos, amd64, 11, release]
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
@@ -82,7 +105,7 @@ jobs:
 
       - name: generate pkg
         run: |
-          ./installer-builder/tools/release-installer.sh x86_64 ${{ github.ref_name }} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
+          ./installer-builder/tools/release-installer.sh x86_64 ${{ needs.get-tag-name.outputs.tag }} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
         shell: zsh {0}
 
   macos-aarch64-pkg-test:
@@ -96,6 +119,7 @@ jobs:
             ]
     runs-on: ${{ matrix.os }}
     needs:
+      - get-tag-name
       - macos-aarch64-pkg-build
     timeout-minutes: 60
     env:
@@ -104,7 +128,7 @@ jobs:
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
@@ -131,10 +155,10 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Download from S3
         run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ github.ref_name }}-aarch64.pkg Finch-${{ github.ref_name }}-aarch64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg
         shell: zsh {0}
       - name: Silently install
-        run: sudo installer -pkg Finch-${{ github.ref_name }}-aarch64.pkg -target /
+        run: sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg -target /
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
@@ -180,13 +204,13 @@ jobs:
           # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
           # that caused the VM initialization failure in the e2e test. 
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
-          sudo installer -pkg Finch-${{ github.ref_name }}-aarch64.pkg -target /
+          sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
-        run: rm -rf Finch-${{ github.ref_name }}-aarch64.pkg
+        run: rm -rf Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg
 
   macos-x86-64-pkg-test:
     strategy:
@@ -199,6 +223,7 @@ jobs:
             ]
     runs-on: ${{ matrix.os }}
     needs:
+      - get-tag-name
       - macos-x86-64-pkg-build
     timeout-minutes: 60
     env:
@@ -207,7 +232,7 @@ jobs:
       - name: Checkout the tag
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
@@ -234,11 +259,11 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Download from S3
         run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ github.ref_name }}-x86_64.pkg Finch-${{ github.ref_name }}-x86_64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg
         shell: zsh {0}
       - name: Silently install
         run: |
-          sudo installer -pkg Finch-${{ github.ref_name }}-x86_64.pkg -target /
+          sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg -target /
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
@@ -281,10 +306,10 @@ jobs:
         run: |
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
-          sudo installer -pkg Finch-${{ github.ref_name }}-x86_64.pkg -target /
+          sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg -target /
       - name: Run e2e tests
         run: INSTALLED=true make test-e2e
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
-        run: rm -rf Finch-${{ github.ref_name }}-x86_64.pkg
+        run: rm -rf Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg
