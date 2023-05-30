@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685386133650,
+  "lastUpdate": 1685410069012,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -815,6 +815,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1693710261,
             "unit": "ns/op\t         0.4779 %cpu_avg/op\t        16.67 %cpu_peak/op\t         1.694 cpu_seconds/op\t  20402176 disk_bytes/op\t   85488 B/op\t    1678 allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c4c23a95a139a21cc7208071e3c3b688389f6071",
+          "message": "ci: Upload dependency source code along with the installers (#426)\n\n*Description of changes:*\r\nCurrently we need to upload the dependency source code manually.\r\nMake this along with the installer upload.\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Kevin Li <cnkevin@amazon.com>",
+          "timestamp": "2023-05-29T18:22:38-07:00",
+          "tree_id": "e65c4af30a6b25e4a09ab3d7849c3b667d9212b8",
+          "url": "https://github.com/runfinch/finch/commit/c4c23a95a139a21cc7208071e3c3b688389f6071"
+        },
+        "date": 1685410068154,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 79903916918,
+            "unit": "ns/op\t         0.2994 %cpu_avg/op\t        37.50 %cpu_peak/op\t        79.90 cpu_seconds/op\t2681700352 disk_bytes/op\t 3592384 B/op\t   75445 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 26335826070,
+            "unit": "ns/op\t         0.3629 %cpu_avg/op\t        28.57 %cpu_peak/op\t        26.34 cpu_seconds/op\t     98304 disk_bytes/op\t 1169640 B/op\t   25031 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 508135250,
+            "unit": "ns/op\t         0.3741 %cpu_avg/op\t        18.45 %cpu_peak/op\t         0.5081 cpu_seconds/op\t         0 disk_bytes/op\t   32680 B/op\t     537 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1733008321,
+            "unit": "ns/op\t         0.2354 %cpu_avg/op\t        16.67 %cpu_peak/op\t         1.733 cpu_seconds/op\t   3612672 disk_bytes/op\t   87680 B/op\t    1719 allocs/op",
             "extra": "1 times\n12 procs"
           }
         ]
