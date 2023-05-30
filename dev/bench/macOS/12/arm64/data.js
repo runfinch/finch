@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685410007312,
+  "lastUpdate": 1685490528578,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -863,6 +863,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1372505667,
             "unit": "ns/op\t         1.432 %cpu_avg/op\t        85.71 %cpu_peak/op\t         1.372 cpu_seconds/op\t  20385792 disk_bytes/op\t   69248 B/op\t    1338 allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d933d11373c4c9a94137dfad78a8542d2c7be327",
+          "message": "ci: Integrate existing workflows into release-automation (#430)\n\n*Description of changes:*\r\nReuse existing workflows to release-automation.\r\nAdded input param to reuse workflow.\r\nRollout only build & test installer as initial.\r\n\r\n*Testing done:*\r\nHave tested the action in this branch\r\n\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Kevin Li <cnkevin@amazon.com>",
+          "timestamp": "2023-05-30T16:44:42-07:00",
+          "tree_id": "87f62fce80fd69e8450d0621c833ac32529c621e",
+          "url": "https://github.com/runfinch/finch/commit/d933d11373c4c9a94137dfad78a8542d2c7be327"
+        },
+        "date": 1685490527543,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 60424135250,
+            "unit": "ns/op\t         0.4092 %cpu_avg/op\t        60.00 %cpu_peak/op\t        60.42 cpu_seconds/op\t2541797376 disk_bytes/op\t 2712984 B/op\t   57189 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 23942760000,
+            "unit": "ns/op\t         0.4236 %cpu_avg/op\t        83.33 %cpu_peak/op\t        23.94 cpu_seconds/op\t    475136 disk_bytes/op\t 1066040 B/op\t   22663 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 343516819,
+            "unit": "ns/op\t         0.7783 %cpu_avg/op\t        13.10 %cpu_peak/op\t         0.3435 cpu_seconds/op\t         0 disk_bytes/op\t   25317 B/op\t     369 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1323526500,
+            "unit": "ns/op\t         0.5398 %cpu_avg/op\t        16.05 %cpu_peak/op\t         1.323 cpu_seconds/op\t   3608576 disk_bytes/op\t   67056 B/op\t    1297 allocs/op",
             "extra": "1 times\n8 procs"
           }
         ]
