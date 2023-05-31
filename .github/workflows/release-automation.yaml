@@ -26,14 +26,16 @@ jobs:
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
 
-  #upload-pkg-and-dependency-source-code-to-release:
-  #  needs: build-and-test-finch-pkg
-  #  uses: ./.github/workflows/upload-installer-to-release.yaml
-  #  secrets: inherit
-  #  with:
-  #    ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+  upload-pkg-and-dependency-source-code-to-release:
+    needs:
+      - get-latest-tag
+      - build-and-test-finch-pkg
+    uses: ./.github/workflows/upload-installer-to-release.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
   
-  #release-homebrew:
-  #  needs: upload-pkg-and-dependency-source-code-to-release
-  #  secrets: inherit
-  #  uses: ./.github/workflows/release-homebrew.yaml
+  release-homebrew:
+    needs: upload-pkg-and-dependency-source-code-to-release
+    secrets: inherit
+    uses: ./.github/workflows/release-homebrew.yaml
