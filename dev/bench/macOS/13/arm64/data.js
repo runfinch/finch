@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685567200092,
+  "lastUpdate": 1685573495769,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -1055,6 +1055,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1393565083,
             "unit": "ns/op\t         0.5869 %cpu_avg/op\t        33.33 %cpu_peak/op\t         1.394 cpu_seconds/op\t   3612672 disk_bytes/op\t   73016 B/op\t    1370 allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1c09471be3b9d214e4a4ef805980588f6e322b68",
+          "message": "ci: Add git clean before build and test (#435)\n\n*Description of changes:*\r\nIt append .modified postfix when build or test.\r\nAdd git clean to remove the dirty state.\r\nAdd git status to log when it happens\r\n\r\n*Testing done:*\r\nTODO with this current run.\r\n\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Kevin Li <cnkevin@amazon.com>",
+          "timestamp": "2023-05-31T15:47:26-07:00",
+          "tree_id": "d93daef2907cf471ae341cb360413598172833f1",
+          "url": "https://github.com/runfinch/finch/commit/1c09471be3b9d214e4a4ef805980588f6e322b68"
+        },
+        "date": 1685573494810,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 61959578833,
+            "unit": "ns/op\t         0.4169 %cpu_avg/op\t        40.00 %cpu_peak/op\t        61.96 cpu_seconds/op\t2540748800 disk_bytes/op\t 2775776 B/op\t   58628 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24942337917,
+            "unit": "ns/op\t         0.3478 %cpu_avg/op\t        33.33 %cpu_peak/op\t        24.94 cpu_seconds/op\t   3649536 disk_bytes/op\t 1107400 B/op\t   23611 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 360831653,
+            "unit": "ns/op\t         0.6250 %cpu_avg/op\t        10.00 %cpu_peak/op\t         0.3608 cpu_seconds/op\t         0 disk_bytes/op\t   25992 B/op\t     386 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1388015916,
+            "unit": "ns/op\t         0.5876 %cpu_avg/op\t        22.22 %cpu_peak/op\t         1.388 cpu_seconds/op\t  20385792 disk_bytes/op\t   72176 B/op\t    1359 allocs/op",
             "extra": "1 times\n8 procs"
           }
         ]
