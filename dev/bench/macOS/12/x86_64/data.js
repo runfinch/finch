@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685554071342,
+  "lastUpdate": 1685567265043,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -1007,6 +1007,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1781458076,
             "unit": "ns/op\t         0.2986 %cpu_avg/op\t        18.18 %cpu_peak/op\t         1.781 cpu_seconds/op\t  20402176 disk_bytes/op\t   89464 B/op\t    1768 allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "vsiravara@gmail.com",
+            "name": "Vishwas Siravara",
+            "username": "vsiravar"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ba69ce25b7100c8cbc36066abcb6b6a7f0632e9",
+          "message": "ci: Manually update submodule and add cleanup (#434)\n\nIssue #, if available:\r\n\r\n*Description of changes:*\r\n\r\n- Add clean up in ci for finch version command\r\n- Add submodule updates to finch core\r\n\r\n*Testing done:*\r\n\r\nYes\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Vishwas Siravara <siravara@amazon.com>",
+          "timestamp": "2023-05-31T14:02:33-07:00",
+          "tree_id": "c0224254ae7d46efe2947ff93511a51659565aaa",
+          "url": "https://github.com/runfinch/finch/commit/7ba69ce25b7100c8cbc36066abcb6b6a7f0632e9"
+        },
+        "date": 1685567264070,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 77876782681,
+            "unit": "ns/op\t         0.2753 %cpu_avg/op\t        35.71 %cpu_peak/op\t        77.88 cpu_seconds/op\t2671923200 disk_bytes/op\t 3509408 B/op\t   73551 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 25963721460,
+            "unit": "ns/op\t         0.3416 %cpu_avg/op\t        26.67 %cpu_peak/op\t        25.96 cpu_seconds/op\t -10551296 disk_bytes/op\t 1155192 B/op\t   24697 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 455281564,
+            "unit": "ns/op\t         0.3829 %cpu_avg/op\t        11.61 %cpu_peak/op\t         0.4552 cpu_seconds/op\t         0 disk_bytes/op\t   30056 B/op\t     486 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1791768219,
+            "unit": "ns/op\t         0.1455 %cpu_avg/op\t        15.38 %cpu_peak/op\t         1.792 cpu_seconds/op\t   3612672 disk_bytes/op\t   89880 B/op\t    1769 allocs/op",
             "extra": "1 times\n12 procs"
           }
         ]
