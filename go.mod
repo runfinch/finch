@@ -6,7 +6,7 @@ require (
 	github.com/docker/docker v24.0.1+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.0
-	github.com/lima-vm/lima v0.15.1
+	github.com/lima-vm/lima v0.16.0
 	github.com/onsi/ginkgo/v2 v2.9.5
 	github.com/onsi/gomega v1.27.7
 	github.com/pelletier/go-toml v1.9.5
@@ -25,21 +25,14 @@ require (
 )
 
 require (
-	github.com/Microsoft/go-winio v0.6.0 // indirect
-	github.com/apparentlymart/go-cidr v1.1.0 // indirect
-	github.com/containerd/containerd v1.7.0 // indirect
-	github.com/containers/gvisor-tap-vsock v0.6.1 // indirect
+	github.com/containerd/containerd v1.7.1 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/btree v1.0.1 // indirect
-	github.com/google/gopacket v1.1.19 // indirect
 	github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1 // indirect
-	github.com/insomniacslk/dhcp v0.0.0-20220504074936-1ca156eafb9f // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
-	github.com/miekg/dns v1.1.53 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc2.0.20221005185240-3a7f492d3f1b // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
@@ -47,15 +40,10 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.5 // indirect
 	github.com/tklauser/go-sysconf v0.3.11 // indirect
 	github.com/tklauser/numcpus v0.6.0 // indirect
-	github.com/u-root/uio v0.0.0-20210528114334-82958018845c // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	golang.org/x/sync v0.2.0 // indirect
-	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
 	google.golang.org/grpc v1.53.0 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
-	gvisor.dev/gvisor v0.0.0-20221216231429-a78e892a26d2 // indirect
-	inet.af/tcpproxy v0.0.0-20220326234310-be3ee21c9fa0 // indirect
+	google.golang.org/protobuf v1.30.0 // indirect
 )
 
 require (
@@ -73,7 +61,7 @@ require (
 	github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.18 // indirect
+	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/otiai10/copy v1.6.0 // indirect
