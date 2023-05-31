@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685490616117,
+  "lastUpdate": 1685552496300,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -863,6 +863,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1782602319,
             "unit": "ns/op\t         0.5921 %cpu_avg/op\t        31.25 %cpu_peak/op\t         1.783 cpu_seconds/op\t   3600384 disk_bytes/op\t   89680 B/op\t    1771 allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d08952e8b257a74d6d6a6f9da8949d3fd748ab23",
+          "message": "ci: Integrate the other workflows into release-automation (#431)\n\n*Description of changes:*\r\nEnabled the rest workflow for release automation.\r\nCheck in before next release after it is validated.\r\nAfter this PR is checked in, release-please PR merge will automatically\r\ntrigger installer build, test, upload installers and dependency source\r\ncode to release and cut Homebrew PR.\r\n\r\n*Testing done:*\r\nWait next release\r\n\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Kevin Li <cnkevin@amazon.com>",
+          "timestamp": "2023-05-31T09:55:51-07:00",
+          "tree_id": "0d7b69664ef0d583147c2b84c591c63f802cdf43",
+          "url": "https://github.com/runfinch/finch/commit/d08952e8b257a74d6d6a6f9da8949d3fd748ab23"
+        },
+        "date": 1685552495407,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 78324785526,
+            "unit": "ns/op\t         0.3137 %cpu_avg/op\t        41.67 %cpu_peak/op\t        78.32 cpu_seconds/op\t2658701312 disk_bytes/op\t 3532272 B/op\t   74053 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 26657102915,
+            "unit": "ns/op\t         0.3101 %cpu_avg/op\t        33.33 %cpu_peak/op\t        26.66 cpu_seconds/op\t    139264 disk_bytes/op\t 1186720 B/op\t   25427 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 477613540,
+            "unit": "ns/op\t         0.9761 %cpu_avg/op\t        18.42 %cpu_peak/op\t         0.4775 cpu_seconds/op\t         0 disk_bytes/op\t   31058 B/op\t     506 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1889095678,
+            "unit": "ns/op\t         0.7712 %cpu_avg/op\t        35.29 %cpu_peak/op\t         1.889 cpu_seconds/op\t  20406272 disk_bytes/op\t   93616 B/op\t    1860 allocs/op",
             "extra": "1 times\n12 procs"
           }
         ]
