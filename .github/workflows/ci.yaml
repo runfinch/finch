@@ -118,6 +118,7 @@ jobs:
           make
         shell: zsh {0}
       - run: |
+          git status
           git clean -f -d
           make test-e2e
         shell: zsh {0}
@@ -159,6 +160,7 @@ jobs:
           make
         shell: zsh {0}
       - run: |
+          git status
           git clean -f -d
           FINCH_DOCKER_COMPAT=1 make test-e2e
         shell: zsh {0}

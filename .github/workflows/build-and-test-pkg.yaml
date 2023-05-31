@@ -55,6 +55,8 @@ jobs:
       - name: Make macos aarch64 build
         run: |
           brew install go lz4 automake autoconf libtool
+          git status
+          git clean -f -d
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
@@ -91,6 +93,8 @@ jobs:
       - name: Make macos x86_64 build
         run: |
           brew install go lz4 automake autoconf libtool
+          git status
+          git clean -f -d
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
@@ -206,7 +210,10 @@ jobs:
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
           sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg -target /
       - name: Run e2e tests
-        run: INSTALLED=true make test-e2e
+        run: |
+          git status
+          git clean -f -d
+          INSTALLED=true make test-e2e
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
@@ -308,7 +315,10 @@ jobs:
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
           sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg -target /
       - name: Run e2e tests
-        run: INSTALLED=true make test-e2e
+        run: |
+          git status
+          git clean -f -d
+          INSTALLED=true make test-e2e
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
