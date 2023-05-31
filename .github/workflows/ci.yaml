@@ -117,7 +117,9 @@ jobs:
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
-      - run: make test-e2e
+      - run: |
+          git clean -f -d 
+          make test-e2e
         shell: zsh {0}
   e2e-tests-for-docker-compat:
     strategy:
@@ -156,7 +158,9 @@ jobs:
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
-      - run: FINCH_DOCKER_COMPAT=1 make test-e2e
+      - run: |
+          git clean -f -d 
+          FINCH_DOCKER_COMPAT=1 make test-e2e
         shell: zsh {0}
   mdlint:
     runs-on: ubuntu-latest
