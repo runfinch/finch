@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685573511989,
+  "lastUpdate": 1685656574318,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -1055,6 +1055,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1727172541,
             "unit": "ns/op\t         0.4462 %cpu_avg/op\t        16.67 %cpu_peak/op\t         1.727 cpu_seconds/op\t   3624960 disk_bytes/op\t   87264 B/op\t    1718 allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "975c4ee42c1529673a51382c62c4096dc663f80a",
+          "message": "fix: Stop lima process in postinstall and uninstall (#438)\n\n*Description of changes:*\r\nUnstopped lima process can prevent new installation and finch vm init\r\nsuccessfully.\r\nAdd kill limactl to post-installation and uninstall script to fix the\r\nissue.\r\n\r\n*Testing done:*\r\nTested locally.\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Kevin Li <cnkevin@amazon.com>",
+          "timestamp": "2023-06-01T14:49:30-07:00",
+          "tree_id": "3aac93a3e14d71a61ea11cc9f58d98df0cd2d549",
+          "url": "https://github.com/runfinch/finch/commit/975c4ee42c1529673a51382c62c4096dc663f80a"
+        },
+        "date": 1685656573379,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 76864045711,
+            "unit": "ns/op\t         0.3269 %cpu_avg/op\t        41.18 %cpu_peak/op\t        76.86 cpu_seconds/op\t2673594368 disk_bytes/op\t 3467664 B/op\t   72611 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 26739927994,
+            "unit": "ns/op\t         0.3784 %cpu_avg/op\t        28.57 %cpu_peak/op\t        26.74 cpu_seconds/op\t  16871424 disk_bytes/op\t 1186744 B/op\t   25409 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 512560363,
+            "unit": "ns/op\t         0.8765 %cpu_avg/op\t        17.40 %cpu_peak/op\t         0.5125 cpu_seconds/op\t      4096 disk_bytes/op\t   32848 B/op\t     543 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1731290173,
+            "unit": "ns/op\t         0.6568 %cpu_avg/op\t        28.57 %cpu_peak/op\t         1.731 cpu_seconds/op\t   3612672 disk_bytes/op\t   87280 B/op\t    1719 allocs/op",
             "extra": "1 times\n12 procs"
           }
         ]
