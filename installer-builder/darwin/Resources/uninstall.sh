@@ -15,6 +15,10 @@ while true; do
 done
 
 echo "Application uninstalling process started"
+sudo pkill '^socket_vmnet'
+sudo pkill '^qemu-system-'
+sudo pkill '^limactl'
+
 if [ "$$(readlink "/usr/local/bin/finch")" = "/Applications/Finch/bin/finch" ]; then sudo rm /usr/local/bin/finch; fi
 
 echo "[1/3] [DONE] Successfully deleted shortcut links"
@@ -36,9 +40,6 @@ then
 else
   echo "[3/3] [ERROR] Could not delete application" >&2
 fi
-
-sudo pkill '^socket_vmnet'
-sudo pkill '^qemu-system-'
 
 echo "Application uninstall process finished"
 exit 0
