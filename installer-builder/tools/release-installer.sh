@@ -19,7 +19,7 @@ releaseInstaller() {
 
     echo "[2/12] Get Original Finch Build"
     mkdir -pv "./installer-builder/output/origin"
-    cp -rp ./_output "./installer-builder/output/origin"
+    cp -RP ./_output "./installer-builder/output/origin"
 
     echo "[3/12] Extract Executables from Finch Build"
     bash ./installer-builder/tools/extract-executables.sh $ARCH
