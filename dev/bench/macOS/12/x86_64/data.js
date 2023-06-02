@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685667664447,
+  "lastUpdate": 1685669391969,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -1295,6 +1295,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1832305129,
             "unit": "ns/op\t         0.8468 %cpu_avg/op\t        30.77 %cpu_peak/op\t         1.832 cpu_seconds/op\t   3768320 disk_bytes/op\t   91664 B/op\t    1818 allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f626bd8b7a021c95595aade5b34d7076968b88b",
+          "message": "ci: Change -rp to capital (#442)\n\n*Description of changes:*\r\nChange p to capital case\r\n\r\n*Testing done:*\r\nTested with the runner\r\n\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.",
+          "timestamp": "2023-06-01T18:10:52-07:00",
+          "tree_id": "3738d19bf5c514ac962bb1ff576dcedec89e59b8",
+          "url": "https://github.com/runfinch/finch/commit/5f626bd8b7a021c95595aade5b34d7076968b88b"
+        },
+        "date": 1685669391212,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 83211224242,
+            "unit": "ns/op\t         0.2873 %cpu_avg/op\t        40.00 %cpu_peak/op\t        83.21 cpu_seconds/op\t2365468672 disk_bytes/op\t 3735000 B/op\t   78718 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 36376382890,
+            "unit": "ns/op\t         0.3257 %cpu_avg/op\t        30.00 %cpu_peak/op\t        36.38 cpu_seconds/op\t     20480 disk_bytes/op\t 1652056 B/op\t   34416 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 459450908,
+            "unit": "ns/op\t         0.6651 %cpu_avg/op\t        16.67 %cpu_peak/op\t         0.4594 cpu_seconds/op\t         0 disk_bytes/op\t   30704 B/op\t     491 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1773797747,
+            "unit": "ns/op\t         0.4832 %cpu_avg/op\t        29.41 %cpu_peak/op\t         1.774 cpu_seconds/op\t   3624960 disk_bytes/op\t   89424 B/op\t    1759 allocs/op",
             "extra": "1 times\n12 procs"
           }
         ]
