@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685656574318,
+  "lastUpdate": 1685670268447,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -1103,6 +1103,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1731290173,
             "unit": "ns/op\t         0.6568 %cpu_avg/op\t        28.57 %cpu_peak/op\t         1.731 cpu_seconds/op\t   3612672 disk_bytes/op\t   87280 B/op\t    1719 allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "vsiravara@gmail.com",
+            "name": "Vishwas Siravara",
+            "username": "vsiravar"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0aa4c5cc36c4d44e431a8c13004607990bdb2bf4",
+          "message": "ci: Update lima download url (#440)\n\nIssue #, if available:\r\n\r\n*Description of changes:*\r\nLIMA_URL in `finch` is stale\r\nhttps://github.com/runfinch/finch/blob/main/Makefile#L38. Keeping it\r\nconsistent with finch-core.\r\n*Testing done:*\r\n\r\nLocally. \r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Vishwas Siravara <siravara@amazon.com>",
+          "timestamp": "2023-06-01T17:50:59-07:00",
+          "tree_id": "92182604e47f2ec0133a0b2a79ec61950bc73185",
+          "url": "https://github.com/runfinch/finch/commit/0aa4c5cc36c4d44e431a8c13004607990bdb2bf4"
+        },
+        "date": 1685670267683,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 78267552314,
+            "unit": "ns/op\t         0.3261 %cpu_avg/op\t        37.50 %cpu_peak/op\t        78.27 cpu_seconds/op\t2101211136 disk_bytes/op\t 3532168 B/op\t   74047 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 30483133652,
+            "unit": "ns/op\t         0.3536 %cpu_avg/op\t        35.71 %cpu_peak/op\t        30.48 cpu_seconds/op\t     32768 disk_bytes/op\t 1370944 B/op\t   28960 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 470445160,
+            "unit": "ns/op\t         0.8998 %cpu_avg/op\t        20.14 %cpu_peak/op\t         0.4704 cpu_seconds/op\t         0 disk_bytes/op\t   30909 B/op\t     500 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1799879464,
+            "unit": "ns/op\t         0.2226 %cpu_avg/op\t        16.67 %cpu_peak/op\t         1.800 cpu_seconds/op\t   3633152 disk_bytes/op\t   90720 B/op\t    1780 allocs/op",
             "extra": "1 times\n12 procs"
           }
         ]
