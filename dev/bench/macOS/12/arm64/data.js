@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685667299578,
+  "lastUpdate": 1685667522851,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -1247,6 +1247,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1418246792,
             "unit": "ns/op\t         0.3990 %cpu_avg/op\t        25.00 %cpu_peak/op\t         1.418 cpu_seconds/op\t  20385792 disk_bytes/op\t   73048 B/op\t    1388 allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7660d08f4e9e93468d0495aeafa2cf2de302227e",
+          "message": "ci: Preserve link when copy from build (#441)\n\n*Description of changes:*\r\nAdd 'p' flag to preserve original symbolic link when copying the build\r\nartifact\r\n\r\n*Testing done:*\r\nTested locally\r\n\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.",
+          "timestamp": "2023-06-01T17:53:28-07:00",
+          "tree_id": "4fdbf68f34050cd3f3b5126a3b4960af6cf63267",
+          "url": "https://github.com/runfinch/finch/commit/7660d08f4e9e93468d0495aeafa2cf2de302227e"
+        },
+        "date": 1685667521916,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 56693100125,
+            "unit": "ns/op\t         0.4240 %cpu_avg/op\t        64.71 %cpu_peak/op\t        56.69 cpu_seconds/op\t1974378496 disk_bytes/op\t 2556992 B/op\t   53657 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24047270625,
+            "unit": "ns/op\t         0.3590 %cpu_avg/op\t        37.50 %cpu_peak/op\t        24.05 cpu_seconds/op\t    200704 disk_bytes/op\t 1069528 B/op\t   22744 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 360024959,
+            "unit": "ns/op\t         0.3540 %cpu_avg/op\t        11.57 %cpu_peak/op\t         0.3599 cpu_seconds/op\t      5461 disk_bytes/op\t   25562 B/op\t     383 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1457617750,
+            "unit": "ns/op\t         0.6192 %cpu_avg/op\t        20.00 %cpu_peak/op\t         1.458 cpu_seconds/op\t  20389888 disk_bytes/op\t   75672 B/op\t    1430 allocs/op",
             "extra": "1 times\n8 procs"
           }
         ]
