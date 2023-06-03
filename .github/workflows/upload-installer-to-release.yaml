@@ -29,7 +29,7 @@ jobs:
 
   upload-installers:
     needs: get-tag-name
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macos, release]
     steps:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
