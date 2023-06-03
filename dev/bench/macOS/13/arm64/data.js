@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685740307566,
+  "lastUpdate": 1685761933359,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -1583,6 +1583,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1553577959,
             "unit": "ns/op\t         1.208 %cpu_avg/op\t        37.50 %cpu_peak/op\t         1.554 cpu_seconds/op\t   3612672 disk_bytes/op\t   79768 B/op\t    1525 allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cnkevin@amazon.com",
+            "name": "Kevin Li",
+            "username": "KevinLiAWS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da91f87369e5fde221b8edbac374954e71dae947",
+          "message": "fix: Add cleanup script to Makefile (#444)\n\n*Description of changes:*\r\nRemove files under other directories besides _output, and kill running\r\nprocesses for network, lima and qemu.\r\n\r\n*Testing done:*\r\nTested locally\r\n\r\n\r\n- [X] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Kevin Li <cnkevin@amazon.com>",
+          "timestamp": "2023-06-02T20:08:20-07:00",
+          "tree_id": "030696b83e1faf45fa5355cc74459ba8273e20e2",
+          "url": "https://github.com/runfinch/finch/commit/da91f87369e5fde221b8edbac374954e71dae947"
+        },
+        "date": 1685761932614,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 58092269625,
+            "unit": "ns/op\t         0.4816 %cpu_avg/op\t        57.14 %cpu_peak/op\t        58.09 cpu_seconds/op\t1961717760 disk_bytes/op\t 2619952 B/op\t   55091 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 23998801583,
+            "unit": "ns/op\t         0.5525 %cpu_avg/op\t        45.45 %cpu_peak/op\t        24.00 cpu_seconds/op\t    122880 disk_bytes/op\t 1067208 B/op\t   22684 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 347376875,
+            "unit": "ns/op\t         1.347 %cpu_avg/op\t        20.63 %cpu_peak/op\t         0.3473 cpu_seconds/op\t         0 disk_bytes/op\t   25154 B/op\t     372 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1372047959,
+            "unit": "ns/op\t         1.780 %cpu_avg/op\t        45.45 %cpu_peak/op\t         1.372 cpu_seconds/op\t   3629056 disk_bytes/op\t   68784 B/op\t    1337 allocs/op",
             "extra": "1 times\n8 procs"
           }
         ]
