@@ -317,6 +317,12 @@ mdlint-ctr:
 
 .PHONY: clean
 clean:
+	-sudo pkill '^socket_vmnet'
+	-sudo pkill '^qemu-system-'
+	-sudo pkill '^limactl'
+	-sudo rm -rf "/opt/finch/"
+	-sudo rm -rf "/private/var/run/finch-lima"
+	-sudo rm -rf "/private/etc/sudoers.d/finch-lima"
 	-@rm -rf $(OUTDIR) 2>/dev/null || true
 	-@rm -rf ./deps/finch-core/_output || true
 	-@rm ./*.tar.gz 2>/dev/null || true
