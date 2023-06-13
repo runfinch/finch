@@ -15,12 +15,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lima-vm/lima/pkg/osutil"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
+	"github.com/runfinch/finch/pkg/lima/wrapper"
 	fpath "github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/version"
 )
@@ -51,6 +51,7 @@ type bundleBuilder struct {
 	config BundleConfig
 	finch  fpath.Finch
 	ecc    command.Creator
+	lima   wrapper.LimaWrapper
 }
 
 // NewBundleBuilder produces a new BundleBuilder.
@@ -60,6 +61,7 @@ func NewBundleBuilder(
 	config BundleConfig,
 	finch fpath.Finch,
 	ecc command.Creator,
+	lima wrapper.LimaWrapper,
 ) BundleBuilder {
 	return &bundleBuilder{
 		logger: logger,
@@ -67,6 +69,7 @@ func NewBundleBuilder(
 		config: config,
 		finch:  finch,
 		ecc:    ecc,
+		lima:   lima,
 	}
 }
 
@@ -171,7 +174,7 @@ func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix 
 			return err
 		}
 
-		user, err := osutil.LimaUser(false)
+		user, err := bb.lima.LimaUser(false)
 		if err != nil {
 			return err
 		}

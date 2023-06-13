@@ -9,6 +9,9 @@ import (
 	"io"
 	"os"
 
+	"github.com/spf13/afero"
+	"github.com/spf13/cobra"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
@@ -17,13 +20,11 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/fssh"
+	"github.com/runfinch/finch/pkg/lima/wrapper"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/support"
 	"github.com/runfinch/finch/pkg/system"
 	"github.com/runfinch/finch/pkg/version"
-
-	"github.com/spf13/afero"
-	"github.com/spf13/cobra"
 )
 
 const finchRootCmd = "finch"
@@ -94,6 +95,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		support.NewBundleConfig(fp, system.NewStdLib().Env("HOME")),
 		fp,
 		ecc,
+		wrapper.NewLimaWrapper(),
 	)
 
 	// append nerdctl commands
