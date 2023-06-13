@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686591265522,
+  "lastUpdate": 1686678880977,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -1775,6 +1775,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1474228750,
             "unit": "ns/op\t         0.9267 %cpu_avg/op\t        30.00 %cpu_peak/op\t         1.474 cpu_seconds/op\t  20389888 disk_bytes/op\t   75648 B/op\t    1439 allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "113054166+sam-berning@users.noreply.github.com",
+            "name": "Sam Berning",
+            "username": "sam-berning"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9f4b87c616a0329cb6c8ff27db003766ef0bba2c",
+          "message": "test: mocks LimaUser to fix race condition in support bundle unit tests (#450)\n\nIssue #, if available: https://github.com/runfinch/finch/issues/447\r\n\r\n*Description of changes:*\r\n\r\nThere was a race condition in the unit tests for `support-bundle\r\ngenerate` caused by Lima's `osutil.LimaUser` not being thread-safe. I\r\ndon't think there's really a need to make it thread-safe, so I think\r\nit's easier to just wrap and mock it for the unit tests, which I've done\r\nhere.\r\n\r\n*Testing done:*\r\n\r\n```\r\nmake test-unit\r\n```\r\n\r\n\r\n- [x] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Sam Berning <bernings@amazon.com>",
+          "timestamp": "2023-06-13T10:50:41-07:00",
+          "tree_id": "ae8b6aa66838b1b01fd822604932582730de8710",
+          "url": "https://github.com/runfinch/finch/commit/9f4b87c616a0329cb6c8ff27db003766ef0bba2c"
+        },
+        "date": 1686678880155,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 58733504834,
+            "unit": "ns/op\t         0.5438 %cpu_avg/op\t        55.56 %cpu_peak/op\t        58.73 cpu_seconds/op\t1974431744 disk_bytes/op\t 2648312 B/op\t   55716 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 23995766833,
+            "unit": "ns/op\t         0.3896 %cpu_avg/op\t        44.44 %cpu_peak/op\t        24.00 cpu_seconds/op\t  32043008 disk_bytes/op\t 1069056 B/op\t   22741 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 372189819,
+            "unit": "ns/op\t         0.2451 %cpu_avg/op\t         8.333 %cpu_peak/op\t         0.3721 cpu_seconds/op\t         0 disk_bytes/op\t   26725 B/op\t     397 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1444301458,
+            "unit": "ns/op\t         0.5877 %cpu_avg/op\t        36.36 %cpu_peak/op\t         1.444 cpu_seconds/op\t   3629056 disk_bytes/op\t   74952 B/op\t    1412 allocs/op",
             "extra": "1 times\n8 procs"
           }
         ]
