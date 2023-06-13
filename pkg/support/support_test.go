@@ -5,6 +5,7 @@ package support
 
 import (
 	"archive/zip"
+	"os/user"
 	"testing"
 	"time"
 
@@ -25,23 +26,34 @@ func TestSupport_NewBundleBuilder(t *testing.T) {
 	logger := mocks.NewLogger(ctrl)
 	fs := afero.NewMemMapFs()
 	finch := fpath.Finch("mockfinch")
+	lima := mocks.NewMockLimaWrapper(ctrl)
 
 	config := NewBundleConfig(finch, "mockhome")
-	NewBundleBuilder(logger, fs, config, finch, ecc)
+	NewBundleBuilder(logger, fs, config, finch, ecc, lima)
 }
 
 func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 	t.Parallel()
 
+	mockUser := &user.User{
+		Username: "mockuser",
+	}
+
 	testCases := []struct {
 		name    string
-		mockSvc func(*mocks.Logger, *mocks.BundleConfig, *mocks.CommandCreator, *mocks.Command)
+		mockSvc func(*mocks.Logger, *mocks.BundleConfig, *mocks.CommandCreator, *mocks.Command, *mocks.MockLimaWrapper)
 		include []string
 		exclude []string
 	}{
 		{
 			name: "Generate support bundle",
-			mockSvc: func(logger *mocks.Logger, config *mocks.BundleConfig, ecc *mocks.CommandCreator, cmd *mocks.Command) {
+			mockSvc: func(
+				logger *mocks.Logger,
+				config *mocks.BundleConfig,
+				ecc *mocks.CommandCreator,
+				cmd *mocks.Command,
+				lima *mocks.MockLimaWrapper,
+			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
@@ -67,13 +79,21 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugf("Copying %s...", "config2")
 				logger.EXPECT().Debugln("Copying in additional files...")
+
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
 			},
 			include: []string{},
 			exclude: []string{},
 		},
 		{
 			name: "Generate support bundle with an extra file included",
-			mockSvc: func(logger *mocks.Logger, config *mocks.BundleConfig, ecc *mocks.CommandCreator, cmd *mocks.Command) {
+			mockSvc: func(
+				logger *mocks.Logger,
+				config *mocks.BundleConfig,
+				ecc *mocks.CommandCreator,
+				cmd *mocks.Command,
+				lima *mocks.MockLimaWrapper,
+			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
@@ -96,13 +116,21 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
 				logger.EXPECT().Debugf("Copying %s...", "extra1")
+
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
 			},
 			include: []string{"extra1"},
 			exclude: []string{},
 		},
 		{
 			name: "Generate support bundle with a log file excluded",
-			mockSvc: func(logger *mocks.Logger, config *mocks.BundleConfig, ecc *mocks.CommandCreator, cmd *mocks.Command) {
+			mockSvc: func(
+				logger *mocks.Logger,
+				config *mocks.BundleConfig,
+				ecc *mocks.CommandCreator,
+				cmd *mocks.Command,
+				lima *mocks.MockLimaWrapper,
+			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
@@ -124,13 +152,21 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
+
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
 			},
 			include: []string{},
 			exclude: []string{"log1"},
 		},
 		{
 			name: "Generate support bundle with a config file excluded",
-			mockSvc: func(logger *mocks.Logger, config *mocks.BundleConfig, ecc *mocks.CommandCreator, cmd *mocks.Command) {
+			mockSvc: func(
+				logger *mocks.Logger,
+				config *mocks.BundleConfig,
+				ecc *mocks.CommandCreator,
+				cmd *mocks.Command,
+				lima *mocks.MockLimaWrapper,
+			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
@@ -152,13 +188,21 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Infof("Excluding %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
+
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
 			},
 			include: []string{},
 			exclude: []string{"config1"},
 		},
 		{
 			name: "Generate support bundle with an included file excluded",
-			mockSvc: func(logger *mocks.Logger, config *mocks.BundleConfig, ecc *mocks.CommandCreator, cmd *mocks.Command) {
+			mockSvc: func(
+				logger *mocks.Logger,
+				config *mocks.BundleConfig,
+				ecc *mocks.CommandCreator,
+				cmd *mocks.Command,
+				lima *mocks.MockLimaWrapper,
+			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
@@ -181,6 +225,8 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
 				logger.EXPECT().Infof("Excluding %s...", "extra1")
+
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
 			},
 			include: []string{"extra1"},
 			exclude: []string{"extra1"},
@@ -198,6 +244,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			config := mocks.NewBundleConfig(ctrl)
 			finch := fpath.Finch("mockfinch")
 			ecc := mocks.NewCommandCreator(ctrl)
+			lima := mocks.NewMockLimaWrapper(ctrl)
 			cmd := mocks.NewCommand(ctrl)
 
 			builder := &bundleBuilder{
@@ -206,6 +253,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				config: config,
 				finch:  finch,
 				ecc:    ecc,
+				lima:   lima,
 			}
 
 			testFiles := []string{
@@ -225,7 +273,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			tc.mockSvc(logger, config, ecc, cmd)
+			tc.mockSvc(logger, config, ecc, cmd, lima)
 
 			zipFile, err := builder.GenerateSupportBundle(tc.include, tc.exclude)
 			assert.NoError(t, err)
