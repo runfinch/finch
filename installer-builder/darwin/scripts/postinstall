@@ -8,7 +8,7 @@ sudo pkill '^limactl'
 
 #change permissions in home directory
 echo "Change permissions for product home directory."
-cd /Applications/Finch
+cd /Applications/Finch || exit
 chmod -R 777 .
 chmod -R 755 /Applications/Finch/dependencies/lima-socket_vmnet/opt/finch
 [ -d /usr/local/bin ] || mkdir /usr/local/bin
