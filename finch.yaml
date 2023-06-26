@@ -176,7 +176,9 @@ provision:
     mkdir -p  ~/.local/share/cni
     sudo mount --bind /mnt/lima-finch/cni  ~/.local/share/cni
 
-    sudo systemctl restart containerd.service  
+    sudo systemctl restart containerd.service
+    # Restart buildkit to ensure it's using the correct containerd UUID
+    sudo systemctl restart buildkit.service
 
 # Probe scripts to check readiness.
 # 🟢 Builtin default: null
