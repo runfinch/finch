@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1688076586760,
+  "lastUpdate": 1688081411120,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -1967,6 +1967,54 @@ window.BENCHMARK_DATA = {
             "name": "BenchmarkAll/BenchmarkImageBuild",
             "value": 1389256833,
             "unit": "ns/op\t         2.003 %cpu_avg/op\t        40.00 %cpu_peak/op\t         1.389 cpu_seconds/op\t   3637248 disk_bytes/op\t   71304 B/op\t    1348 allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "55906459+austinvazquez@users.noreply.github.com",
+            "name": "Austin Vazquez",
+            "username": "austinvazquez"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4347ba7b6df08f4a7e6cb0ab5914753e81ea87f7",
+          "message": "chore: Update Go linter to v1.53.3 and resolve errors (#459)\n\nIssue #, if available:\r\nN/A\r\n\r\n*Description of changes:*\r\nUpdates golangci-lint in CI to v1.53.3 release and resolves linting\r\nerrors for unused arguments.\r\n\r\n*Testing done:*\r\n```make lint```\r\n\r\n- [x] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made under the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Austin Vazquez <macedonv@amazon.com>",
+          "timestamp": "2023-06-29T19:13:36-04:00",
+          "tree_id": "b8b267781610164eb5bd66888fce1a330bab334e",
+          "url": "https://github.com/runfinch/finch/commit/4347ba7b6df08f4a7e6cb0ab5914753e81ea87f7"
+        },
+        "date": 1688081410260,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 62366678584,
+            "unit": "ns/op\t         0.3892 %cpu_avg/op\t        57.14 %cpu_peak/op\t        62.37 cpu_seconds/op\t1974886400 disk_bytes/op\t 2798416 B/op\t   59134 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24172688666,
+            "unit": "ns/op\t         0.3762 %cpu_avg/op\t        40.00 %cpu_peak/op\t        24.17 cpu_seconds/op\t    512000 disk_bytes/op\t 1076640 B/op\t   22907 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 369407708,
+            "unit": "ns/op\t         0.6668 %cpu_avg/op\t        22.22 %cpu_peak/op\t         0.3694 cpu_seconds/op\t         0 disk_bytes/op\t   26402 B/op\t     393 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1376652916,
+            "unit": "ns/op\t         1.316 %cpu_avg/op\t        44.44 %cpu_peak/op\t         1.377 cpu_seconds/op\t   3596288 disk_bytes/op\t   69264 B/op\t    1338 allocs/op",
             "extra": "1 times\n8 procs"
           }
         ]
