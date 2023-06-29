@@ -35,7 +35,7 @@ func newRemoveVMAction(creator command.LimaCmdCreator, logger flog.Logger) *remo
 	return &removeVMAction{creator: creator, logger: logger}
 }
 
-func (rva *removeVMAction) runAdapter(cmd *cobra.Command, args []string) error {
+func (rva *removeVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
 	force, err := cmd.Flags().GetBool("force")
 	if err != nil {
 		return err
