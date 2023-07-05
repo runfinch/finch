@@ -133,9 +133,10 @@
               const {commit, date, tool, benches} = entry;
               for (const bench of benches) {
                 const result = { commit, date, tool, bench };
-                const arr = map.get(bench.name);
+                const key = bench.name + ":" + bench.unit
+                const arr = map.get(key);
                 if (arr === undefined) {
-                  map.set(bench.name, [result]);
+                  map.set(key, [result]);
                 } else {
                   arr.push(result);
                 }
