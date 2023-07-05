@@ -67,7 +67,8 @@ jobs:
         with:
           name: Finch Benchmark
           tool: 'go'
+          gh-pages-branch: test-gh-pages
           benchmark-data-dir-path: "dev/bench/macOS/${{ env.OS_VERSION }}/${{ env.ARCH }}"
           output-file-path: benchmark.txt
       - name: Push benchmark result
-        run: git push 'https://github.com/runfinch/finch.git' gh-pages:test-gh-pages
+        run: git push 'https://github.com/runfinch/finch.git' test-gh-pages:test-gh-pages
