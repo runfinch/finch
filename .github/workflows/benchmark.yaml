@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - test-multiple
     paths-ignore:
       - '**.md'
       - 'contrib/**'
@@ -62,11 +63,11 @@ jobs:
           echo "OS_VERSION=$(sw_vers -productVersion | cut -d '.' -f 1)" >> $GITHUB_ENV
           echo "ARCH=$(uname -m)" >> $GITHUB_ENV
       - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
+        uses: ningziwen/github-action-benchmark@v1
         with:
           name: Finch Benchmark
           tool: 'go'
           benchmark-data-dir-path: "dev/bench/macOS/${{ env.OS_VERSION }}/${{ env.ARCH }}"
           output-file-path: benchmark.txt
       - name: Push benchmark result
-        run: git push 'https://github.com/runfinch/finch.git' gh-pages:gh-pages
+        run: git push 'https://github.com/runfinch/finch.git' gh-pages:test-gh-pages
