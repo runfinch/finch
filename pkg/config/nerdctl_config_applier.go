@@ -73,7 +73,6 @@ func updateEnvironment(fs afero.Fs, user string) error {
 		fmt.Sprintf("export DOCKER_CONFIG=\"/Users/%s/.finch\"", user),
 		fmt.Sprintf("[ -L /usr/local/bin/docker-credential-ecr-login ] "+
 			"|| sudo ln -s /Users/%s/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/", user),
-		fmt.Sprintf("[ -L $HOME/.aws ] || ln -s  /Users/%s/.aws $HOME/.aws", user),
 		fmt.Sprintf("[ -L /root/.aws ] || sudo ln -fs  /Users/%s/.aws /root/.aws", user),
 	}
 

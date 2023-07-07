@@ -51,8 +51,7 @@ func Test_updateEnvironment(t *testing.T) {
 					[]byte("\nexport DOCKER_CONFIG=\"/Users/mock_user/.finch\""+
 						"\n[ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "+
 						"/Users/mock_user/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/"+
-						"\n[ -L $HOME/.aws ] || ln -s  /Users/mock_user/.aws $HOME/.aws\n"+
-						"[ -L /root/.aws ] || sudo ln -fs  /Users/mock_user/.aws /root/.aws"), fileBytes)
+						"\n"+"[ -L /root/.aws ] || sudo ln -fs  /Users/mock_user/.aws /root/.aws"), fileBytes)
 			},
 			want: nil,
 		},
@@ -67,8 +66,7 @@ func Test_updateEnvironment(t *testing.T) {
 						"/home/mock_user.linux/.bashrc",
 						[]byte("export DOCKER_CONFIG=\"/Users/mock_user/.finch\""+"\n"+"[ -L /usr/local/bin/docker-credential-ecr-login ] "+
 							"|| sudo ln -s /Users/mock_user/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/"+
-							"\n"+"[ -L $HOME/.aws ] || ln -s  /Users/mock_user/.aws $HOME/.aws"+"\n"+
-							"[ -L /root/.aws ] || sudo ln -fs  /Users/mock_user/.aws /root/.aws"),
+							"\n"+"[ -L /root/.aws ] || sudo ln -fs  /Users/mock_user/.aws /root/.aws"),
 						0o644,
 					),
 				)
@@ -79,8 +77,7 @@ func Test_updateEnvironment(t *testing.T) {
 				assert.Equal(t, []byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`+"\n"+
 					"[ -L /usr/local/bin/docker-credential-ecr-login ] "+
 					"|| sudo ln -s /Users/mock_user/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/"+
-					"\n"+"[ -L $HOME/.aws ] || ln -s  /Users/mock_user/.aws $HOME/.aws"+"\n"+
-					"[ -L /root/.aws ] || sudo ln -fs  /Users/mock_user/.aws /root/.aws"), fileBytes)
+					"\n"+"[ -L /root/.aws ] || sudo ln -fs  /Users/mock_user/.aws /root/.aws"), fileBytes)
 			},
 			want: nil,
 		},

@@ -158,7 +158,8 @@ func (bin *binaries) Install() error {
 	if strings.Compare(*credsHelper, bin.credHelperConfigName()) != 0 {
 		return nil
 	}
-	bin.l.Info("Installing credential helper")
+	credHelperName := strings.ReplaceAll(bin.credHelperConfigName(), "-login", "")
+	bin.l.Infof("Installing %s credential helper", credHelperName)
 	mkdirCmd := bin.cmdCreator.Create("mkdir", "-p", bin.hcfg.installFolder)
 	_, err := mkdirCmd.Output()
 	if err != nil {
@@ -170,7 +171,7 @@ func (bin *binaries) Install() error {
 
 	_, err = curlCmd.Output()
 	if err != nil {
-		return fmt.Errorf("error installation binary %s, err: %w", bin.hcfg.binaryName, err)
+		return fmt.Errorf("error installing binary %s, err: %w", bin.hcfg.binaryName, err)
 	}
 	err = bin.fs.Chmod(bin.fullInstallPath(), 0o755)
 	if err != nil {

@@ -39,7 +39,11 @@ import (
 const InstalledTestSubject = "finch"
 
 // Installed indicates whether the tests are run against installed application.
-var Installed = flag.Bool("installed", false, "the flag to show whether the tests are run against installed application")
+// Registry indicates which container registry to pull from
+var (
+	Installed = flag.Bool("installed", false, "the flag to show whether the tests are run against installed application")
+	Registry  = flag.String("registry", "", "used when pulling from registry to test credential helper")
+)
 
 // CreateOption creates an option for running e2e tests.
 func CreateOption() (*option.Option, error) {
