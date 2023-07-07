@@ -16,7 +16,7 @@ import (
 var testCredHelper = func(o *option.Option, installed bool, registry string) {
 	ginkgo.Describe("Credential Helper", func() {
 		ginkgo.Describe("Credential Helper", func() {
-			ginkgo.FIt("should pull from container registry", ginkgo.Focus, func() {
+			ginkgo.It("should pull from container registry", func() {
 				resetVM(o, installed)
 				resetDisks(o, installed)
 				if registry == "" {
