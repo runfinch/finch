@@ -61,7 +61,7 @@ function init() {
     }));
 }
 
-function renderAllChars(dataSets) {
+function renderAllChars(dataSets, platform) {
     function convertNsToS(value) {
         return (value / 1e9).toFixed(4);
     }
@@ -148,14 +148,14 @@ function renderAllChars(dataSets) {
         });
     }
 
-    function renderBenchSet(name, benchSet, main) {
+    function renderBenchSet(name, platform, benchSet, main) {
         const setElem = document.createElement('div');
         setElem.className = 'benchmark-set';
         main.appendChild(setElem);
 
         const nameElem = document.createElement('h1');
         nameElem.className = 'benchmark-title';
-        nameElem.textContent = name;
+        nameElem.textContent = name + '-' + platform;
         setElem.appendChild(nameElem);
 
         const graphsElem = document.createElement('div');
@@ -169,6 +169,6 @@ function renderAllChars(dataSets) {
 
     const main = document.getElementById('main');
     for (const {name, dataSet} of dataSets) {
-        renderBenchSet(name, dataSet, main);
+        renderBenchSet(name, platform, dataSet, main);
     }
 }
