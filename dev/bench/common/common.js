@@ -116,14 +116,9 @@ function renderAllChars(dataSets) {
                         return '\n' + data.commit.message + '\n\n' + data.commit.timestamp + ' committed by @' + data.commit.committer.username + '\n';
                     },
                     label: item => {
-                        let value = item.value;
+                        let label = item.value;
                         const { range, unit } = dataset[item.index].bench;
-                        let displayUnit = unit;
-                        if (unit === 'ns/op') {
-                            value = convertNsToS(value)
-                            displayUnit = 's/op'
-                        }
-                        let label = value + ' ' + unit;
+                        label += ' ' + unit;
                         if (range) {
                             label += ' (' + range + ')';
                         }
