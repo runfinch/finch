@@ -99,6 +99,8 @@ An example `finch.yaml` looks like this:
 cpus: 4
 # Memory: the amount of memory to dedicate to the virtual machine. (required)
 memory: 4GiB
+# CredsHelper: the credential helper that will be installed and configured automatically on vm init or on vm start 
+credsHelper: ecr-login
 # AdditionalDirectories: the work directories that are not supported by default. In macOS, only home directory is supported by default. 
 # For example, if you want to mount a directory into a container, and that directory is not under your home directory, 
 # then you'll need to specify this field to add that directory or any ascendant of it as a work directory. (optional)

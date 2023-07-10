@@ -21,7 +21,7 @@ import (
 	"github.com/docker/cli/cli/config/configfile"
 )
 
-type binaries struct {
+type credhelperbin struct {
 	fp         path.Finch
 	fs         afero.Fs
 	cmdCreator command.Creator
@@ -31,12 +31,12 @@ type binaries struct {
 	hcfg       helperConfig
 }
 
-var _ dependency.Dependency = (*binaries)(nil)
+var _ dependency.Dependency = (*credhelperbin)(nil)
 
 func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator, l flog.Logger, fc *config.Finch,
 	user string, hcfg helperConfig,
-) *binaries {
-	return &binaries{
+) *credhelperbin {
+	return &credhelperbin{
 		// TODO: consider replacing fp with only the strings that are used instead of the entire type
 		fp:         fp,
 		fs:         fs,
@@ -48,7 +48,7 @@ func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator,
 	}
 }
 
-func updateConfigFile(bin *binaries) error {
+func updateConfigFile(bin *credhelperbin) error {
 	cfgPath := fmt.Sprintf("%s%s", bin.hcfg.finchPath, "config.json")
 	binCfgName := bin.credHelperConfigName()
 	fileExists, err := afero.Exists(bin.fs, cfgPath)
@@ -103,18 +103,18 @@ func updateConfigFile(bin *binaries) error {
 	return nil
 }
 
-func (bin *binaries) credHelperConfigName() string {
+func (bin *credhelperbin) credHelperConfigName() string {
 	return strings.ReplaceAll(bin.hcfg.binaryName, "docker-credential-", "")
 }
 
-func (bin *binaries) fullInstallPath() string {
+func (bin *credhelperbin) fullInstallPath() string {
 	return fmt.Sprintf("%s%s", bin.hcfg.installFolder, bin.hcfg.binaryName)
 }
 
-func (bin *binaries) Installed() bool {
+func (bin *credhelperbin) Installed() bool {
 	dirExists, err := afero.DirExists(bin.fs, bin.hcfg.installFolder)
 	if err != nil {
-		bin.l.Errorf("failed to get status of binaries directory: %v", err)
+		bin.l.Errorf("failed to get status of credhelperbin directory: %v", err)
 		return false
 	}
 	if !dirExists {
@@ -150,7 +150,7 @@ func (bin *binaries) Installed() bool {
 	return true
 }
 
-func (bin *binaries) Install() error {
+func (bin *credhelperbin) Install() error {
 	credsHelper := bin.fc.CredsHelper
 	if credsHelper == nil {
 		return nil
@@ -184,6 +184,6 @@ func (bin *binaries) Install() error {
 	return nil
 }
 
-func (bin *binaries) RequiresRoot() bool {
+func (bin *credhelperbin) RequiresRoot() bool {
 	return false
 }

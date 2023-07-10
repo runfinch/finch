@@ -29,7 +29,7 @@ LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/versi
 .DEFAULT_GOAL := all
 
 INSTALLED ?= false
-
+REGISTRY ?= ""
 ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = aarch64
@@ -273,7 +273,7 @@ test-e2e-container:
 
 .PHONY: test-e2e-vm
 test-e2e-vm:
-	go test -ldflags $(LDFLAGS) -timeout 45m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 45m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
 .PHONY: test-benchmark
 test-benchmark:
