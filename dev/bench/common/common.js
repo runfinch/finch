@@ -76,7 +76,7 @@ function renderAllChars(dataSets, platform) {
             name = name.replace('ns/op', 's/op')
         }
         const data = {
-            labels: dataset.map(d => d.commit.id.slice(0, 7)),
+            labels: dataset.map(d => d.commit.timestamp.slice(0, 10) + " | " + d.commit.id.slice(0, 7)),
             datasets: [
                 {
                     label: name,
