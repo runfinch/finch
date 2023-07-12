@@ -82,54 +82,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: 
-          [
-            [self-hosted, macos, amd64, 13, test], 
-            [self-hosted, macos, amd64, 12, test], 
-            [self-hosted, macos, arm64, 13, test], 
-            [self-hosted, macos, arm64, 12, test]
-          ]
-    runs-on: ${{ matrix.os }} 
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - name: Clean up previous files
-        run: |
-          sudo rm -rf /opt/finch
-          sudo rm -rf ~/.finch
-          sudo rm -rf ./_output
-          if pgrep '^qemu-system'; then
-            sudo pkill '^qemu-system'
-          fi
-          if pgrep '^socket_vmnet'; then
-            sudo pkill '^socket_vmnet'
-          fi
-      - name: Install Rosetta 2
-        run: echo "A" | softwareupdate --install-rosetta || true 
-      - run: brew install go lz4 automake autoconf libtool 
-        shell: zsh {0}
-      - name: Build project
-        run: |
-          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          make
-        shell: zsh {0}
-      - run: |
-          git status
-          git clean -f -d
-          make test-e2e
-        shell: zsh {0}
-  e2e-tests-for-docker-compat:
-    strategy:
-      fail-fast: false
-      matrix:
         os:
           [
             [self-hosted, macos, amd64, 13, test],
+            [self-hosted, macos, amd64, 12, test],
             [self-hosted, macos, arm64, 13, test],
+            [self-hosted, macos, arm64, 12, test]
           ]
     runs-on: ${{ matrix.os }}
     steps:
@@ -139,6 +97,12 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: credhelper-test
+          aws-region: ${{ secrets.REGION }}
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -162,7 +126,55 @@ jobs:
       - run: |
           git status
           git clean -f -d
-          FINCH_DOCKER_COMPAT=1 make test-e2e
+          REGISTRY=${{ secrets.REGISTRY }} make test-e2e
+        shell: zsh {0}
+  e2e-tests-for-docker-compat:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          [
+            [self-hosted, macos, amd64, 13, test],
+            [self-hosted, macos, arm64, 13, test],
+          ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: credhelper-test-docker-compat
+          aws-region: ${{ secrets.REGION }}
+      - name: Clean up previous files
+        run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true
+      - run: brew install go lz4 automake autoconf libtool
+        shell: zsh {0}
+      - name: Build project
+        run: |
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+        shell: zsh {0}
+      - run: |
+          git status
+          git clean -f -d
+          FINCH_DOCKER_COMPAT=1 REGISTRY=${{ secrets.ROLE }} make test-e2e
         shell: zsh {0}
   mdlint:
     runs-on: ubuntu-latest
