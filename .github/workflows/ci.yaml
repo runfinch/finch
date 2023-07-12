@@ -174,7 +174,7 @@ jobs:
       - run: |
           git status
           git clean -f -d
-          FINCH_DOCKER_COMPAT=1 REGISTRY=${{ secrets.ROLE }} make test-e2e
+          FINCH_DOCKER_COMPAT=1 REGISTRY=${{ secrets.REGISTRY }} make test-e2e
         shell: zsh {0}
   mdlint:
     runs-on: ubuntu-latest
