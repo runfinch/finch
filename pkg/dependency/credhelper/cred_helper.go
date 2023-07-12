@@ -53,14 +53,15 @@ func newDeps(
 	arch string,
 ) []dependency.Dependency {
 	var deps []dependency.Dependency
-
+	const version = "0.7.0"
+	const hash = "sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714"
 	credHelperURL := fmt.Sprintf("https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
-		"/0.7.0/linux-%s/docker-credential-ecr-login", arch)
+		"/%s/linux-%s/docker-credential-ecr-login", version, arch)
 	installFolder := fmt.Sprintf("/Users/%s/.finch/cred-helpers/", user)
 	finchPath := fmt.Sprintf("/Users/%s/.finch/", user)
 	hc := helperConfig{
 		binaryName: "docker-credential-ecr-login", credHelperURL: credHelperURL,
-		hash: "sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714", installFolder: installFolder,
+		hash: hash, installFolder: installFolder,
 		finchPath: finchPath,
 	}
 	binaries := newCredHelperBinary(fp, fs, execCmdCreator, logger, fc, user, hc)

@@ -48,6 +48,7 @@ func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator,
 	}
 }
 
+// updateConfigFile updates the config.json file to configure the credential helper.
 func updateConfigFile(bin *credhelperbin) error {
 	cfgPath := fmt.Sprintf("%s%s", bin.hcfg.finchPath, "config.json")
 	binCfgName := bin.credHelperConfigName()
@@ -103,18 +104,23 @@ func updateConfigFile(bin *credhelperbin) error {
 	return nil
 }
 
+// credHelperConfigName returns the name of the credential helper binary that will be used
+// inside the config.json.
 func (bin *credhelperbin) credHelperConfigName() string {
 	return strings.ReplaceAll(bin.hcfg.binaryName, "docker-credential-", "")
 }
 
+// fullInstallPath returns the full installation path of the credential helper binary.
 func (bin *credhelperbin) fullInstallPath() string {
 	return fmt.Sprintf("%s%s", bin.hcfg.installFolder, bin.hcfg.binaryName)
 }
 
+// Installed checks if the credential helper already exists in the specified
+// folder and checks if the hash of the installed binary is correct.
 func (bin *credhelperbin) Installed() bool {
 	dirExists, err := afero.DirExists(bin.fs, bin.hcfg.installFolder)
 	if err != nil {
-		bin.l.Errorf("failed to get status of credhelperbin directory: %v", err)
+		bin.l.Errorf("failed to get status of credential helper directory: %v", err)
 		return false
 	}
 	if !dirExists {
@@ -133,12 +139,12 @@ func (bin *credhelperbin) Installed() bool {
 		bin.l.Error(err)
 		return false
 	}
+	defer file.Close() //nolint:errcheck // closing the file
 	hash, err := digest.FromReader(file)
 	if err != nil {
 		bin.l.Error(err)
 		return false
 	}
-	defer file.Close() //nolint:errcheck // closing the file
 	if strings.Compare(hash.String(), bin.hcfg.hash) != 0 {
 		bin.l.Info("Hash of the installed credential helper binary does not match")
 		err := bin.fs.Remove(bin.fullInstallPath())
@@ -150,6 +156,7 @@ func (bin *credhelperbin) Installed() bool {
 	return true
 }
 
+// Install installs and configures the specified credential helper.
 func (bin *credhelperbin) Install() error {
 	credsHelper := bin.fc.CredsHelper
 	if credsHelper == nil {
@@ -184,6 +191,7 @@ func (bin *credhelperbin) Install() error {
 	return nil
 }
 
+// RequiresRoot returns whether the installation of the binary needs root permissions.
 func (bin *credhelperbin) RequiresRoot() bool {
 	return false
 }

@@ -170,7 +170,9 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		envVars[evar] = eval
 	}
 
-	passedEnvs := []string{"COSIGN_PASSWORD"}
+	passedEnvs := []string{"COSIGN_PASSWORD", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY",
+		"AWS_SESSION_TOKEN"}
+
 	var passedEnvArgs []string
 	for _, e := range passedEnvs {
 		v, b := nc.systemDeps.LookupEnv(e)

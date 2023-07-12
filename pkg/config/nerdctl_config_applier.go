@@ -42,7 +42,7 @@ func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser
 	}
 }
 
-func addLinetoFilePath(fs afero.Fs, profileFilePath string, profStr string, cmd string) (string, error) {
+func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd string) (string, error) {
 	if !strings.Contains(profStr, cmd) {
 		profBufWithCmd := fmt.Sprintf("%s\n%s", profStr, cmd)
 		if err := afero.WriteFile(fs, profileFilePath, []byte(profBufWithCmd), 0o644); err != nil {
@@ -83,7 +83,7 @@ func updateEnvironment(fs afero.Fs, user string) error {
 	}
 	profStr := string(profBuf)
 	for _, element := range cmdArr {
-		profStr, err = addLinetoFilePath(fs, profileFilePath, profStr, element)
+		profStr, err = addLineToBashrc(fs, profileFilePath, profStr, element)
 		if err != nil {
 			return err
 		}
