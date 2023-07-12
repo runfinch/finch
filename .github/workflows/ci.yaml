@@ -101,7 +101,8 @@ jobs:
           persist-credentials: false
           submodules: true
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v2.2.0
+        if: github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
@@ -149,10 +150,11 @@ jobs:
           persist-credentials: false
           submodules: true
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v2.2.0
+        if: github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name
         with:
           role-to-assume: ${{ secrets.ROLE }}
-          role-session-name: credhelper-test-docker-compat
+          role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: Clean up previous files
         run: |
