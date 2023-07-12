@@ -154,7 +154,7 @@ jobs:
         if: github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name
         with:
           role-to-assume: ${{ secrets.ROLE }}
-          role-session-name: credhelper-test
+          role-session-name: credhelper-test-docker-compat
           aws-region: ${{ secrets.REGION }}
       - name: Clean up previous files
         run: |
