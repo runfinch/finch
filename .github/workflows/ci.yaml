@@ -100,9 +100,14 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - name: Set output variables
+        id: vars
+        run: |
+          has_creds=${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}
+          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2.2.0
-        if: github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name
+        if: steps.vars.outputs.has_creds == true
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
@@ -130,7 +135,7 @@ jobs:
       - run: |
           git status
           git clean -f -d
-          REGISTRY=${{ env.REGISTRY }} make test-e2e
+          REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e
         shell: zsh {0}
   e2e-tests-for-docker-compat:
     strategy:
@@ -149,9 +154,14 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - name: Set output variables
+        id: vars
+        run: |
+          has_creds=${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}
+          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2.2.0
-        if: github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name
+        if: steps.vars.outputs.has_creds == true
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test-docker-compat
@@ -179,7 +189,7 @@ jobs:
       - run: |
           git status
           git clean -f -d
-          FINCH_DOCKER_COMPAT=1 REGISTRY=${{ env.REGISTRY }} make test-e2e
+          FINCH_DOCKER_COMPAT=1 REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e
         shell: zsh {0}
   mdlint:
     runs-on: ubuntu-latest
