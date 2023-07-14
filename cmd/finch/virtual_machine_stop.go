@@ -34,7 +34,7 @@ func newStopVMAction(creator command.LimaCmdCreator, logger flog.Logger) *stopVM
 	return &stopVMAction{creator: creator, logger: logger}
 }
 
-func (sva *stopVMAction) runAdapter(cmd *cobra.Command, args []string) error {
+func (sva *stopVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
 	force, err := cmd.Flags().GetBool("force")
 	if err != nil {
 		return err

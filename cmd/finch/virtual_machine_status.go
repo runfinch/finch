@@ -34,7 +34,7 @@ func newStatusVMAction(creator command.LimaCmdCreator, logger flog.Logger, stdou
 	return &statusVMAction{creator: creator, logger: logger, stdout: stdout}
 }
 
-func (sva *statusVMAction) runAdapter(cmd *cobra.Command, args []string) error {
+func (sva *statusVMAction) runAdapter(_ *cobra.Command, _ []string) error {
 	return sva.run()
 }
 

@@ -60,7 +60,7 @@ func newGenerateSupportBundleAction(
 	}
 }
 
-func (gsa *generateSupportBundleAction) runAdapter(cmd *cobra.Command, args []string) error {
+func (gsa *generateSupportBundleAction) runAdapter(cmd *cobra.Command, _ []string) error {
 	additionalFiles, err := cmd.Flags().GetStringArray("include")
 	if err != nil {
 		return err
