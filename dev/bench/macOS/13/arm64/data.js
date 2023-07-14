@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1689300034481,
+  "lastUpdate": 1689375285396,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -8830,6 +8830,198 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
             "value": 1317,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a8b32f9674f93cfe54686a2e29b4cf6ca4534939",
+          "message": "build(deps): Bump golang.org/x/tools from 0.10.0 to 0.11.0 (#466)\n\nBumps [golang.org/x/tools](https://github.com/golang/tools) from 0.10.0\r\nto 0.11.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/golang/tools/releases\">golang.org/x/tools's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>gopls/v0.11.0</h2>\r\n<p>This is a small release containing new integrations of vulnerability\r\nanalysis.</p>\r\n<p>Vulnerability analysis for go.mod files can be enabled by configuring\r\nthe <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/settings.md#vulncheck-enum\"><code>&quot;vulncheck&quot;</code></a>\r\nsetting to <code>&quot;Imports&quot;</code>. For more information on\r\nvulnerability management, see the <a\r\nhref=\"https://go.dev/blog/vuln\">Vulnerability Management for Go</a> blog\r\npost.</p>\r\n<h2>Support changes</h2>\r\n<p>This release removes support for the\r\n<code>&quot;experimentalUseInvalidMetadata&quot;</code> setting, as\r\ndescribed in the <a\r\nhref=\"https://github.com/golang/tools/releases/tag/gopls%2Fv0.10.0\">v0.10.0</a>\r\nrelease. Other settings slated for deprecation in that release remain\r\ntemporarily supported, but will be removed in v0.12.0.</p>\r\n<h2>New Features</h2>\r\n<h3>Analyzing dependencies for vulnerabilities</h3>\r\n<p>This release offers two different options for detecting\r\nvulnerabilities in dependencies. Both are backed by the Go vulnerability\r\ndatabase (<a href=\"https://vuln.go.dev\">https://vuln.go.dev</a>) and\r\ncomplement each other.</p>\r\n<ul>\r\n<li>Imports-based scanning, enabled by the <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/settings.md#vulncheck-enum\"><code>&quot;vulncheck&quot;:\r\n&quot;Imports&quot;</code></a> setting, reports vulnerabilities by\r\nscanning the set of packages imported in the workspace. This is fast,\r\nbut may report more false positives.</li>\r\n<li>Integration of the <a\r\nhref=\"https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck\">golang.org/x/vuln/cmd/govulncheck</a>\r\ncommand-line tool performs a more precise analysis based on-call graph\r\nreachability, with fewer false positives. Because it is slower to\r\ncompute, it must be manually triggered by using &quot;Run govulncheck to\r\nverify&quot; code actions or the <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/settings.md#run-govulncheck\"><code>&quot;codelenses.run_govulncheck&quot;</code></a>\r\ncode lens on <code>go.mod</code> files.</li>\r\n</ul>\r\n<p><a\r\nhref=\"https://user-images.githubusercontent.com/4999471/206977512-a821107d-9ffb-4456-9b27-6a6a4f900ba6.mp4\">https://user-images.githubusercontent.com/4999471/206977512-a821107d-9ffb-4456-9b27-6a6a4f900ba6.mp4</a></p>\r\n<!-- raw HTML omitted -->\r\n<h3>Additional checks for the <code>loopclosure</code> analyzer</h3>\r\n<p>The <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/analyzers.md#loopclosure\"><code>loopclosure</code></a>\r\nanalyzer, which reports problematic references from a nested function to\r\na variable of an enclosing loop, has been improved to catch more cases.\r\nIn particular, it now reports when subtests <a\r\nhref=\"https://pkg.go.dev/testing#T.Parallel\">run in parallel</a> with\r\nthe loop, a mistake that often results in all but the final test case\r\nbeing skipped.</p>\r\n<p><img\r\nsrc=\"https://user-images.githubusercontent.com/57144380/206764370-7fc3c464-af04-4e4e-bb10-a6a0a89a99e3.png\"\r\nalt=\"image\" /></p>\r\n<h2>Configuration changes</h2>\r\n<ul>\r\n<li>The <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/settings.md#vulncheck-enum\"><code>&quot;vulncheck&quot;</code></a>\r\nsetting controls vulnerability analysis based on the Go vulnerability\r\ndatabase. If set to <code>&quot;Imports&quot;</code>, gopls will compute\r\ndiagnostics related to vulnerabilities in dependencies, and will present\r\nthem in go.mod files.</li>\r\n<li>The <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/settings.md#run-govulncheck\"><code>&quot;codelenses.run_govulncheck&quot;</code></a>\r\nsetting controls the presence of code lenses that run the <a\r\nhref=\"https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck\">govulncheck</a>\r\ncommand, which takes longer but produces more accurate vulnerability\r\nreporting based on call-graph reachability.</li>\r\n</ul>\r\n<h2>Bug fixes</h2>\r\n<p>This version of gopls includes fixes to several bugs, notably:</p>\r\n<ul>\r\n<li><code>golang/go#57053</code></li>\r\n<li><code>golang/go#55837</code><a\r\nhref=\"https://redirect.github.com/golang/go/issues/56450\">golang/go#56450</a>).</li>\r\n<li><code>golang/go#54816</code></li>\r\n</ul>\r\n<p>A full list of all issues fixed can be found in the <a\r\nhref=\"https://github.com/golang/go/milestone/293?closed=1\">gopls/v0.11.0</a>\r\nmilestone.\r\nTo report a new problem, please file a new issue at <a\r\nhref=\"https://go.dev/issues/new\">https://go.dev/issues/new</a>.</p>\r\n<h2>Thank you to our contributors</h2>\r\n<p><a href=\"https://github.com/Arsen6331\"><code>@​Arsen6331</code></a>,\r\n<a href=\"https://github.com/SN9NV\"><code>@​SN9NV</code></a>, <a\r\nhref=\"https://github.com/adonovan\"><code>@​adonovan</code></a>, <a\r\nhref=\"https://github.com/bcmills\"><code>@​bcmills</code></a>, <a\r\nhref=\"https://github.com/dle8\"><code>@​dle8</code></a>, <a\r\nhref=\"https://github.com/findleyr\"><code>@​findleyr</code></a>, <a\r\nhref=\"https://github.com/hyangah\"><code>@​hyangah</code></a>, <a\r\nhref=\"https://github.com/pjweinbgo\"><code>@​pjweinbgo</code></a>, <a\r\nhref=\"https://github.com/suzmue\"><code>@​suzmue</code></a></p>\r\n<h2>gopls/v0.10.1</h2>\r\n<p>This release contains a fix for <a\r\nhref=\"https://redirect.github.com/golang/go/issues/56505\">golang/go#56505</a>:\r\na new crash during method completion on variables of type\r\n<code>*error</code>.</p>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/675bf3c243d60cbba429fad9924e520e8a86074f\"><code>675bf3c</code></a>\r\ngo.mod: update golang.org/x dependencies</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/ad52c1ca35fb661c53eedbdee5f3b0e3c33e54e1\"><code>ad52c1c</code></a>\r\ngo/ssa/interp: support conversions to slices of named bytes</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/14ec3c023fa0003b489ce1abe0484924ea5276f8\"><code>14ec3c0</code></a>\r\ngopls/doc/contributing.md: document error handling strategies</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/c4953641676aa4639fcbd2ca825c43cedeaa9e8c\"><code>c495364</code></a>\r\ngo/packages/gopackages: document -mode flag</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/87ad891fe35467be3d692a3f37fef9fb5cb08dcd\"><code>87ad891</code></a>\r\ngopls/internal/lsp/source/typerefs: move test into _test.go</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/27fd94e099b2bbd4c660f0b140af121af9a943c8\"><code>27fd94e</code></a>\r\ninternal/fastwalk: doc formatting fixes (including godoc links)</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/d362be0cdb73ca5215ecaaf1514120c6b8b955e9\"><code>d362be0</code></a>\r\ngopls/internal/lsp/filecache: reduce GC frequency</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/969078be460fb5efe195a1d4c69e3701298e9a21\"><code>969078b</code></a>\r\nRevert &quot;go/analysis: add Sizes that matches gc size\r\ncomputations&quot;</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/5aa6acb96f843a0257c5c1c0e52753bcd18b77b3\"><code>5aa6acb</code></a>\r\ngo/analysis: add Sizes that matches gc size computations</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/5a89a3bf267ef12790327b8692c88654845bc78d\"><code>5a89a3b</code></a>\r\ngo/vcs: delete</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/golang/tools/compare/v0.10.0...v0.11.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org/x/tools&package-manager=go_modules&previous-version=0.10.0&new-version=0.11.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-07-14T15:50:37-07:00",
+          "tree_id": "976964a963201430f1f9e281d27408733c636e12",
+          "url": "https://github.com/runfinch/finch/commit/a8b32f9674f93cfe54686a2e29b4cf6ca4534939"
+        },
+        "date": 1689375284628,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 64190449791,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3936,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 44.44,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 64.19,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1957466112,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2874280,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 60852,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24020423708,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.5168,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 44.44,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.02,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 24096768,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1068296,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22719,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 351809125,
+            "unit": "ns/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.065,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 16.88,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.3518,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 25184,
+            "unit": "B/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 375,
+            "unit": "allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - ns/op",
+            "value": 1392200125,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_avg/op",
+            "value": 0.7199,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - cpu_seconds/op",
+            "value": 1.392,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - disk_bytes/op",
+            "value": 3612672,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - B/op",
+            "value": 72248,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
+            "value": 1364,
             "unit": "allocs/op",
             "extra": "1 times\n8 procs"
           }
