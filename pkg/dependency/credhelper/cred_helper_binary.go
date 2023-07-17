@@ -13,7 +13,6 @@ import (
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
-	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/path"
@@ -26,14 +25,14 @@ type credhelperbin struct {
 	fs         afero.Fs
 	cmdCreator command.Creator
 	l          flog.Logger
-	fc         *config.Finch
+	helper     string
 	user       string
 	hcfg       helperConfig
 }
 
 var _ dependency.Dependency = (*credhelperbin)(nil)
 
-func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator, l flog.Logger, fc *config.Finch,
+func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator, l flog.Logger, helper string,
 	user string, hcfg helperConfig,
 ) *credhelperbin {
 	return &credhelperbin{
@@ -42,7 +41,7 @@ func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator,
 		fs:         fs,
 		cmdCreator: cmdCreator,
 		l:          l,
-		fc:         fc,
+		helper:     helper,
 		user:       user,
 		hcfg:       hcfg,
 	}
@@ -158,11 +157,10 @@ func (bin *credhelperbin) Installed() bool {
 
 // Install installs and configures the specified credential helper.
 func (bin *credhelperbin) Install() error {
-	credsHelper := bin.fc.CredsHelper
-	if credsHelper == nil {
+	if bin.helper == "" {
 		return nil
 	}
-	if strings.Compare(*credsHelper, bin.credHelperConfigName()) != 0 {
+	if strings.Compare(bin.helper, bin.credHelperConfigName()) != 0 {
 		return nil
 	}
 	credHelperName := strings.ReplaceAll(bin.credHelperConfigName(), "-login", "")

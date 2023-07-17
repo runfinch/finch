@@ -33,9 +33,10 @@ type AdditionalDirectory struct {
 
 // Finch represents the configuration file for Finch CLI.
 type Finch struct {
-	CPUs        *int    `yaml:"cpus"`
-	Memory      *string `yaml:"memory"`
-	CredsHelper *string `yaml:"credsHelper,omitempty"`
+	CPUs   *int    `yaml:"cpus"`
+	Memory *string `yaml:"memory"`
+	// CredsHelper: the list of credential helpers that will be installed and configured automatically on vm init or on vm start
+	CredsHelpers []string `yaml:"creds_helpers,omitempty"`
 	// AdditionalDirectories are the work directories that are not supported by default. In macOS, only home directory is supported by default.
 	// For example, if you want to mount a directory into a container, and that directory is not under your home directory,
 	// then you'll need to specify this field to add that directory or any ascendant of it as a work directory.

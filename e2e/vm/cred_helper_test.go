@@ -19,7 +19,8 @@ var testCredHelper = func(o *option.Option, installed bool, registry string) {
 			if registry == "" {
 				ginkgo.Skip("No Provided Container Registry Url")
 			}
-			writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncredsHelper: ecr-login\ncpus: 6\nvmType: vz\nrosetta: false"))
+			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\ncreds_helpers:\n    "+
+				"- ecr-login\nvmType: vz\nrosetta: true"))
 			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 			command.New(o, "pull", registry).WithTimeoutInSeconds(600).Run()

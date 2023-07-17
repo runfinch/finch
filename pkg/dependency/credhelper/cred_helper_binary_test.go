@@ -8,8 +8,6 @@ import (
 	"io/fs"
 	"testing"
 
-	"github.com/runfinch/finch/pkg/config"
-
 	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/runfinch/finch/pkg/path"
 
@@ -27,7 +25,7 @@ const (
 func Test_credHelperConfigName(t *testing.T) {
 	t.Parallel()
 
-	got := newCredHelperBinary("", nil, nil, nil, nil, "user",
+	got := newCredHelperBinary("", nil, nil, nil, "", "user",
 		helperConfig{
 			"docker-credential-cred-helper", "", "",
 			"", "",
@@ -38,7 +36,7 @@ func Test_credHelperConfigName(t *testing.T) {
 func Test_fullInstallPath(t *testing.T) {
 	t.Parallel()
 
-	got := newCredHelperBinary("", nil, nil, nil, nil, "user",
+	got := newCredHelperBinary("", nil, nil, nil, "", "user",
 		helperConfig{
 			"docker-credential-cred-helper", "", "", "/folder/",
 			"",
@@ -59,7 +57,7 @@ func Test_updateConfigFile(t *testing.T) {
 			name: "happy path",
 			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
 				require.NoError(t, mFs.MkdirAll("/mock_prefix/.finch/", fs.ModeDir))
-				JSONstr := fmt.Sprintf("{\"credsStore\":\"%s\"}", "binary")
+				JSONstr := fmt.Sprintf("{\"credsStore\":\"%s\"}", "ecr-login")
 				fileData := []byte(JSONstr)
 				_, err := mFs.Create("mock_prefix/.finch/config.json")
 				require.NoError(t, err)
@@ -79,7 +77,7 @@ func Test_updateConfigFile(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "mock_prefix/.finch/config.json")
 				require.NoError(t, err)
-				JSONstr := fmt.Sprintf("{\"credsStore\":\"%s\"}", "binary")
+				JSONstr := fmt.Sprintf("{\"credsStore\":\"%s\"}", "ecr-login")
 				fileData := []byte(JSONstr)
 				assert.Equal(t, fileData, fileBytes)
 
@@ -103,7 +101,7 @@ func Test_updateConfigFile(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "mock_prefix/.finch/config.json")
 				require.NoError(t, err)
-				JSONstr := fmt.Sprintf("{\"auths\":null,\"credsStore\":\"%s\"}", "binary")
+				JSONstr := fmt.Sprintf("{\"auths\":null,\"credsStore\":\"%s\"}", "ecr-login")
 				fileData := []byte(JSONstr)
 				assert.Equal(t, fileData, fileBytes)
 
@@ -123,12 +121,12 @@ func Test_updateConfigFile(t *testing.T) {
 			l := mocks.NewLogger(ctrl)
 			tc.mockSvc(t, mFs, l)
 			hc := helperConfig{
-				"docker-credential-binary", "",
+				"docker-credential-ecr-login", "",
 				"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "mock_prefix/cred-helpers/",
 				"mock_prefix/.finch/",
 			}
 			// hash of an empty file
-			got := updateConfigFile(newCredHelperBinary(mockFinchPath, mFs, nil, l, nil, "", hc))
+			got := updateConfigFile(newCredHelperBinary(mockFinchPath, mFs, nil, l, "ecr-login", "", hc))
 
 			assert.Equal(t, tc.want, got)
 			tc.postRunCheck(t, mFs)
@@ -203,7 +201,7 @@ func TestBinaries_Installed(t *testing.T) {
 				"mock_prefix/.finch/",
 			}
 			// hash of an empty file
-			got := newCredHelperBinary(mockFinchPath, mFs, nil, l, nil, "", hc).Installed()
+			got := newCredHelperBinary(mockFinchPath, mFs, nil, l, "", "", hc).Installed()
 
 			assert.Equal(t, tc.want, got)
 		})
@@ -261,7 +259,7 @@ func TestBinaries_Install(t *testing.T) {
 				"mock_prefix/.finch/",
 			}
 			fc := "ecr-login"
-			got := newCredHelperBinary(mockFinchPath, mFs, creator, l, &config.Finch{CredsHelper: &fc}, "", hc).Install()
+			got := newCredHelperBinary(mockFinchPath, mFs, creator, l, fc, "", hc).Install()
 			assert.Equal(t, tc.want, got)
 		})
 	}
@@ -270,7 +268,7 @@ func TestBinaries_Install(t *testing.T) {
 func TestBinaries_RequiresRoot(t *testing.T) {
 	t.Parallel()
 
-	got := newCredHelperBinary(mockFinchPath, nil, nil, nil, nil, "",
+	got := newCredHelperBinary(mockFinchPath, nil, nil, nil, "", "",
 		helperConfig{}).RequiresRoot()
 	assert.Equal(t, false, got)
 }

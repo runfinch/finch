@@ -99,8 +99,17 @@ An example `finch.yaml` looks like this:
 cpus: 4
 # Memory: the amount of memory to dedicate to the virtual machine. (required)
 memory: 4GiB
-# CredsHelper: the credential helper that will be installed and configured automatically on vm init or on vm start 
-credsHelper: ecr-login
+# CredsHelper: a list of credential helpers that will be installed and configured automatically. 
+# Currently,  ecr-login is the only supported option.
+# Once the option has been set the credential helper will be installed on either finch vm init or finch vm start. 
+# The binary will be downloaded on the host machine and a config.json will be created and populated inside the ~/.finch/ folder 
+# if it doesn't already exist. If it already exists, the value of credsStore will be overwritten. 
+# To opt out of using the credential helper, remove the value from the credsStore parameter of config.json 
+# and remove the creds_helper value from finch.yaml. 
+# To completely remove the credential helper, either remove the binary from ~/.finch/creds-helpers or remove the creds-helpers
+# folder entirely. (optional)
+creds_helpers: 
+  - ecr-login
 # AdditionalDirectories: the work directories that are not supported by default. In macOS, only home directory is supported by default. 
 # For example, if you want to mount a directory into a container, and that directory is not under your home directory, 
 # then you'll need to specify this field to add that directory or any ascendant of it as a work directory. (optional)
@@ -129,7 +138,8 @@ This section contains frequently-asked questions regarding working with Finch.
 ```sh
 LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl shell finch
 ```
-
+#### How to configure a credential helper?
+Edit `finch.yaml` to include the optional parameter 
 ## What's next?
 
 We are excited to start this project in the open, and we'd love to hear from you. If you have ideas or find bugs please open an issue. Please feel free to start a discussion if you have something you'd like to propose or brainstorm. Pull requests are welcome, as well! See the [CONTRIBUTING](CONTRIBUTING.md) doc for more info on contributing, and the path to reviewer and maintainer roles for those interested.

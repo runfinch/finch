@@ -25,5 +25,5 @@ func Test_newDeps(t *testing.T) {
 
 	got := newDeps(nil, nil, "", nil, nil, "", "")
 	require.Equal(t, 1, len(got))
-	assert.IsType(t, (*credhelperbin)(nil), got[0])
+	assert.IsType(t, nil, got[0])
 }

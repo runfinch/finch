@@ -52,20 +52,41 @@ func newDeps(
 	user string,
 	arch string,
 ) []dependency.Dependency {
+
 	var deps []dependency.Dependency
-	const version = "0.7.0"
-	const hash = "sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714"
-	credHelperURL := fmt.Sprintf("https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
-		"/%s/linux-%s/docker-credential-ecr-login", version, arch)
+	var empty = dependency.Dependency(nil)
+	if fc == nil {
+		deps = append(deps, empty)
+		return deps
+	}
+	if fc.CredsHelpers == nil {
+		deps = append(deps, empty)
+		return deps
+	}
+	var configs = map[string]helperConfig{}
 	installFolder := fmt.Sprintf("/Users/%s/.finch/cred-helpers/", user)
 	finchPath := fmt.Sprintf("/Users/%s/.finch/", user)
-	hc := helperConfig{
-		binaryName: "docker-credential-ecr-login", credHelperURL: credHelperURL,
-		hash: hash, installFolder: installFolder,
+
+	const versionEcr = "0.7.0"
+	const hashEcr = "sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714"
+	credHelperURLEcr := fmt.Sprintf("https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
+		"/%s/linux-%s/docker-credential-ecr-login", versionEcr, arch)
+
+	hcEcr := helperConfig{
+		binaryName: "docker-credential-ecr-login", credHelperURL: credHelperURLEcr,
+		hash: hashEcr, installFolder: installFolder,
 		finchPath: finchPath,
 	}
-	binaries := newCredHelperBinary(fp, fs, execCmdCreator, logger, fc, user, hc)
-	deps = append(deps, dependency.Dependency(binaries))
+	configs["ecr-login"] = hcEcr
+
+	if fc.CredsHelpers != nil {
+		for _, helper := range fc.CredsHelpers {
+			if configs[helper] != (helperConfig{}) {
+				binaries := newCredHelperBinary(fp, fs, execCmdCreator, logger, helper, user, configs[helper])
+				deps = append(deps, dependency.Dependency(binaries))
+			}
+		}
+	}
 
 	return deps
 }
