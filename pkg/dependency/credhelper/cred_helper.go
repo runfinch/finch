@@ -52,9 +52,8 @@ func newDeps(
 	user string,
 	arch string,
 ) []dependency.Dependency {
-
 	var deps []dependency.Dependency
-	var empty = dependency.Dependency(nil)
+	empty := dependency.Dependency(nil)
 	if fc == nil {
 		deps = append(deps, empty)
 		return deps
@@ -63,7 +62,7 @@ func newDeps(
 		deps = append(deps, empty)
 		return deps
 	}
-	var configs = map[string]helperConfig{}
+	configs := map[string]helperConfig{}
 	installFolder := fmt.Sprintf("/Users/%s/.finch/cred-helpers/", user)
 	finchPath := fmt.Sprintf("/Users/%s/.finch/", user)
 
