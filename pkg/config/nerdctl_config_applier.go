@@ -42,6 +42,17 @@ func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser
 	}
 }
 
+func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd string) (string, error) {
+	if !strings.Contains(profStr, cmd) {
+		profBufWithCmd := fmt.Sprintf("%s\n%s", profStr, cmd)
+		if err := afero.WriteFile(fs, profileFilePath, []byte(profBufWithCmd), 0o644); err != nil {
+			return "", fmt.Errorf("failed to write to profile file: %w", err)
+		}
+		return profBufWithCmd, nil
+	}
+	return profStr, nil
+}
+
 // updateEnvironment adds variables to the user's shell's environment. Currently it uses ~/.bashrc because
 // Bash is the default shell and Bash will not load ~/.profile if ~/.bash_profile exists (which it does).
 // ~/.bash_profile sources ~/.bashrc, so ~/.bashrc is currently the best place to define additional variables.
@@ -56,18 +67,25 @@ func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser
 // [GNU docs for Bash]: https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html
 //
 // [registry nerdctl docs]: https://github.com/containerd/nerdctl/blob/master/docs/registry.md
+
 func updateEnvironment(fs afero.Fs, user string) error {
+	cmdArr := [4]string{
+		fmt.Sprintf("export DOCKER_CONFIG=\"/Users/%s/.finch\"", user),
+		fmt.Sprintf("[ -L /usr/local/bin/docker-credential-ecr-login ] "+
+			"|| sudo ln -s /Users/%s/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/", user),
+		fmt.Sprintf("[ -L /root/.aws ] || sudo ln -fs  /Users/%s/.aws /root/.aws", user),
+	}
+
 	profileFilePath := fmt.Sprintf("/home/%s.linux/.bashrc", user)
 	profBuf, err := afero.ReadFile(fs, profileFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to read config file: %w", err)
 	}
-
 	profStr := string(profBuf)
-	if !strings.Contains(profStr, "export DOCKER_CONFIG") {
-		profBufWithDockerCfg := fmt.Sprintf("%s\nexport DOCKER_CONFIG=\"/Users/%s/.finch\"\n", profStr, user)
-		if err := afero.WriteFile(fs, profileFilePath, []byte(profBufWithDockerCfg), 0o644); err != nil {
-			return fmt.Errorf("failed to write to profile file: %w", err)
+	for _, element := range cmdArr {
+		profStr, err = addLineToBashrc(fs, profileFilePath, profStr, element)
+		if err != nil {
+			return err
 		}
 	}
 

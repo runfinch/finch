@@ -44,6 +44,9 @@ func (g *Group) installOptional(logger flog.Logger) error {
 	var errs []error
 	loggedMessage := false
 	for _, dep := range g.deps {
+		if dep == nil {
+			continue
+		}
 		if dep.Installed() {
 			continue
 		}

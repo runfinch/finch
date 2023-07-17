@@ -3,7 +3,8 @@ module github.com/runfinch/finch
 go 1.20
 
 require (
-	github.com/docker/docker v24.0.4+incompatible
+	github.com/docker/cli v24.0.4+incompatible
+	github.com/docker/docker v24.0.2+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.0
 	github.com/lima-vm/lima v0.16.0
@@ -26,6 +27,7 @@ require (
 
 require (
 	github.com/containerd/containerd v1.7.1 // indirect
+	github.com/docker/docker-credential-helpers v0.7.0 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
@@ -63,7 +65,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/opencontainers/go-digest v1.0.0
 	github.com/otiai10/copy v1.6.0 // indirect
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/pmezard/go-difflib v1.0.0 // indirect

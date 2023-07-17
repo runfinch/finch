@@ -47,7 +47,11 @@ func Test_updateEnvironment(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
 				require.NoError(t, err)
-				assert.Equal(t, []byte("\n"+`export DOCKER_CONFIG="/Users/mock_user/.finch"`+"\n"), fileBytes)
+				assert.Equal(t,
+					[]byte("\nexport DOCKER_CONFIG=\"/Users/mock_user/.finch\""+
+						"\n[ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "+
+						"/Users/mock_user/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/"+
+						"\n"+"[ -L /root/.aws ] || sudo ln -fs  /Users/mock_user/.aws /root/.aws"), fileBytes)
 			},
 			want: nil,
 		},
@@ -60,7 +64,9 @@ func Test_updateEnvironment(t *testing.T) {
 					afero.WriteFile(
 						fs,
 						"/home/mock_user.linux/.bashrc",
-						[]byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`),
+						[]byte("export DOCKER_CONFIG=\"/Users/mock_user/.finch\""+"\n"+"[ -L /usr/local/bin/docker-credential-ecr-login ] "+
+							"|| sudo ln -s /Users/mock_user/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/"+
+							"\n"+"[ -L /root/.aws ] || sudo ln -fs  /Users/mock_user/.aws /root/.aws"),
 						0o644,
 					),
 				)
@@ -68,7 +74,10 @@ func Test_updateEnvironment(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
 				require.NoError(t, err)
-				assert.Equal(t, []byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`), fileBytes)
+				assert.Equal(t, []byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`+"\n"+
+					"[ -L /usr/local/bin/docker-credential-ecr-login ] "+
+					"|| sudo ln -s /Users/mock_user/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/"+
+					"\n"+"[ -L /root/.aws ] || sudo ln -fs  /Users/mock_user/.aws /root/.aws"), fileBytes)
 			},
 			want: nil,
 		},
