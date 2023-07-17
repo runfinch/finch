@@ -68,7 +68,7 @@ func newVersionAction(creator command.LimaCmdCreator, logger flog.Logger, stdOut
 	return &versionAction{creator: creator, logger: logger, stdOut: stdOut}
 }
 
-func (va *versionAction) runAdapter(cmd *cobra.Command, args []string) error {
+func (va *versionAction) runAdapter(_ *cobra.Command, _ []string) error {
 	return va.run()
 }
 

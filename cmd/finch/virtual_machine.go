@@ -71,7 +71,7 @@ func newPostVMStartInitAction(
 	return &postVMStartInitAction{creator: creator, logger: logger, fs: fs, privateKeyPath: privateKeyPath, nca: nca}
 }
 
-func (p *postVMStartInitAction) runAdapter(cmd *cobra.Command, args []string) error {
+func (p *postVMStartInitAction) runAdapter(_ *cobra.Command, _ []string) error {
 	return p.run()
 }
 

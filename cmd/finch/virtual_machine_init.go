@@ -66,7 +66,7 @@ func newInitVMAction(
 	}
 }
 
-func (iva *initVMAction) runAdapter(cmd *cobra.Command, args []string) error {
+func (iva *initVMAction) runAdapter(_ *cobra.Command, _ []string) error {
 	return iva.run()
 }
 
