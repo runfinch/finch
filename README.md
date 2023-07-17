@@ -99,8 +99,9 @@ An example `finch.yaml` looks like this:
 cpus: 4
 # Memory: the amount of memory to dedicate to the virtual machine. (required)
 memory: 4GiB
-# CredsHelper: a list of credential helpers that will be installed and configured automatically. 
-# Currently,  ecr-login is the only supported option.
+# CredsHelpers: a list of credential helpers that will be installed and configured automatically. 
+# Supported Credential Helpers List: 
+# - ecr-login https://github.com/awslabs/amazon-ecr-credential-helper
 # Once the option has been set the credential helper will be installed on either finch vm init or finch vm start. 
 # The binary will be downloaded on the host machine and a config.json will be created and populated inside the ~/.finch/ folder 
 # if it doesn't already exist. If it already exists, the value of credsStore will be overwritten. 
