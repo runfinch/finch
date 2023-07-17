@@ -138,8 +138,7 @@ This section contains frequently-asked questions regarding working with Finch.
 ```sh
 LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl shell finch
 ```
-#### How to configure a credential helper?
-Edit `finch.yaml` to include the optional parameter 
+
 ## What's next?
 
 We are excited to start this project in the open, and we'd love to hear from you. If you have ideas or find bugs please open an issue. Please feel free to start a discussion if you have something you'd like to propose or brainstorm. Pull requests are welcome, as well! See the [CONTRIBUTING](CONTRIBUTING.md) doc for more info on contributing, and the path to reviewer and maintainer roles for those interested.

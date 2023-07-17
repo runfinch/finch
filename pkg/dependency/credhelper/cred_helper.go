@@ -79,12 +79,10 @@ func newDeps(
 	}
 	configs["ecr-login"] = hcEcr
 
-	if fc.CredsHelpers != nil {
-		for _, helper := range fc.CredsHelpers {
-			if configs[helper] != (helperConfig{}) {
-				binaries := newCredHelperBinary(fp, fs, execCmdCreator, logger, helper, user, configs[helper])
-				deps = append(deps, dependency.Dependency(binaries))
-			}
+	for _, helper := range fc.CredsHelpers {
+		if configs[helper] != (helperConfig{}) {
+			binaries := newCredHelperBinary(fp, fs, execCmdCreator, logger, helper, user, configs[helper])
+			deps = append(deps, dependency.Dependency(binaries))
 		}
 	}
 
