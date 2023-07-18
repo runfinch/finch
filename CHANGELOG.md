@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.7.0](https://github.com/runfinch/finch/compare/v0.6.2...v0.7.0) (2023-07-18)
+
+
+### Features
+
+* ECR credential integration into Finch  ([#462](https://github.com/runfinch/finch/issues/462)) ([d3514b3](https://github.com/runfinch/finch/commit/d3514b3dbe69e1bed3d40838af01ebec184f7413))
+
+
+### Bug Fixes
+
+* Add cleanup script to Makefile ([#444](https://github.com/runfinch/finch/issues/444)) ([da91f87](https://github.com/runfinch/finch/commit/da91f87369e5fde221b8edbac374954e71dae947))
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/docker from 24.0.2+incompatible to 24.0.4+incompatible ([#469](https://github.com/runfinch/finch/issues/469)) ([ad37f4f](https://github.com/runfinch/finch/commit/ad37f4fbce72a6f479620461127e8fe494d47cad))
+* **deps:** Bump github.com/docker/docker from 24.0.2+incompatible to 24.0.4+incompatible ([#481](https://github.com/runfinch/finch/issues/481)) ([15d2a4b](https://github.com/runfinch/finch/commit/15d2a4bf8cfd3956a2f8bb4878bfb86827b4e77d))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.10.0 to 2.11.0 ([#456](https://github.com/runfinch/finch/issues/456)) ([f7e0916](https://github.com/runfinch/finch/commit/f7e091670fb2ac5377423e72f98aa8be33aa41c8))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.9.7 to 2.10.0 ([#449](https://github.com/runfinch/finch/issues/449)) ([a415e3e](https://github.com/runfinch/finch/commit/a415e3ef7b2741853bf352b915c4100c77600619))
+* **deps:** Bump github.com/onsi/gomega from 1.27.7 to 1.27.8 ([#448](https://github.com/runfinch/finch/issues/448)) ([96fc8d0](https://github.com/runfinch/finch/commit/96fc8d09a051b2ead932e6eef064624b1a842b66))
+* **deps:** Bump github.com/runfinch/common-tests from 0.7.0 to 0.7.1 ([#477](https://github.com/runfinch/finch/issues/477)) ([54c03bb](https://github.com/runfinch/finch/commit/54c03bbfba132d797b0efa1171ce3fdc6eb8af9e))
+* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.23.5 to 3.23.6 ([#464](https://github.com/runfinch/finch/issues/464)) ([43a6720](https://github.com/runfinch/finch/commit/43a672011fd47830073b8cc7427f82c6f1c3e5bd))
+* **deps:** Bump github.com/sirupsen/logrus from 1.9.2 to 1.9.3 ([#446](https://github.com/runfinch/finch/issues/446)) ([1823677](https://github.com/runfinch/finch/commit/18236774d971065dec28d1db204e1f697d418a9b))
+* **deps:** Bump golang.org/x/crypto from 0.10.0 to 0.11.0 ([#465](https://github.com/runfinch/finch/issues/465)) ([dc5a3e7](https://github.com/runfinch/finch/commit/dc5a3e7240d4af6b63874e239bc77bed04d2a0a6))
+* **deps:** Bump golang.org/x/crypto from 0.9.0 to 0.10.0 ([#451](https://github.com/runfinch/finch/issues/451)) ([fef6e77](https://github.com/runfinch/finch/commit/fef6e772c28429ef14068702c1dfd8e9fec2dea1))
+* **deps:** Bump golang.org/x/tools from 0.10.0 to 0.11.0 ([#466](https://github.com/runfinch/finch/issues/466)) ([a8b32f9](https://github.com/runfinch/finch/commit/a8b32f9674f93cfe54686a2e29b4cf6ca4534939))
+* **deps:** Bump golang.org/x/tools from 0.9.3 to 0.10.0 ([#455](https://github.com/runfinch/finch/issues/455)) ([e321f1d](https://github.com/runfinch/finch/commit/e321f1dc607626a7f65b33e0a0f503d8c856b1f2))
+* **deps:** Bump k8s.io/apimachinery from 0.27.2 to 0.27.3 ([#454](https://github.com/runfinch/finch/issues/454)) ([d6746a4](https://github.com/runfinch/finch/commit/d6746a447e10bed6c13d197c8d693b27e02ac3aa))
+* **deps:** Bump lima version ([#476](https://github.com/runfinch/finch/issues/476)) ([7b330d3](https://github.com/runfinch/finch/commit/7b330d3e2bd4cc623f46762c8e3b120ddc18f3b0))
+* **deps:** Bump submodules ([#482](https://github.com/runfinch/finch/issues/482)) ([92f2494](https://github.com/runfinch/finch/commit/92f2494f17bde67b785ccf444ac6525b7a856a6c))
+
 ## [0.6.2](https://github.com/runfinch/finch/compare/v0.6.1...v0.6.2) (2023-06-02)
 
 
