@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1689634954283,
+  "lastUpdate": 1689700739274,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -8446,6 +8446,198 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
             "value": 1758,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "15d2a4bf8cfd3956a2f8bb4878bfb86827b4e77d",
+          "message": "build(deps): Bump github.com/docker/docker from 24.0.2+incompatible to 24.0.4+incompatible (#481)\n\nBumps [github.com/docker/docker](https://github.com/docker/docker) from\r\n24.0.2+incompatible to 24.0.4+incompatible.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/docker/docker/releases\">github.com/docker/docker's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v24.0.4</h2>\r\n<h2>24.0.4</h2>\r\n<p>For a full list of pull requests and changes in this release, refer\r\nto the relevant GitHub milestones:</p>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/issues?q=is%3Aclosed+milestone%3A24.0.4\">docker/cli,\r\n24.0.4 milestone</a></li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/issues?q=is%3Aclosed+milestone%3A24.0.4\">moby/moby,\r\n24.0.4 milestone</a></li>\r\n</ul>\r\n<h3>Bug fixes and enhancements</h3>\r\n<ul>\r\n<li>Fix a regression introduced during 24.0.3 that causes a panic during\r\nlive-restore of containers with bind mounts. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45903\">moby/moby#45903</a></li>\r\n</ul>\r\n<h2>v24.0.3</h2>\r\n<h2>24.0.3</h2>\r\n<p>For a full list of pull requests and changes in this release, refer\r\nto the relevant GitHub milestones:</p>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/issues?q=is%3Aclosed+milestone%3A24.0.3\">docker/cli,\r\n24.0.3 milestone</a></li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/issues?q=is%3Aclosed+milestone%3A24.0.3\">moby/moby,\r\n24.0.3 milestone</a></li>\r\n</ul>\r\n<h3>Bug fixes and enhancements</h3>\r\n<ul>\r\n<li>containerd image store: Fix an issue where multi-platform images\r\nthat did not include a manifest for the default platform could not be\r\ninteracted with. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45849\">moby/moby#45849</a></li>\r\n<li>containerd image store: Fix specious attempts to cache <code>FROM\r\nscratch</code> in container builds. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45822\">moby/moby#45822</a></li>\r\n<li>containerd image store: Fix <code>docker cp</code> with snapshotters\r\nthat cannot mount the same content multiple times. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45780\">moby/moby#45780</a>,\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45786\">moby/moby#45786</a></li>\r\n<li>containerd image store: Fix builds with <code>type=image</code> not\r\nbeing correctly unpacked/stored. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45692\">moby/moby#45692</a></li>\r\n<li>containerd image store: Fix incorrectly attempting to unpack\r\npseudo-images (including attestations) in <code>docker load</code>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45688\">moby/moby#45688</a></li>\r\n<li>containerd image store: Correctly set the user agent, and include\r\nadditional information like the snapshotter when interacting with\r\nregistries. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45671\">moby/moby#45671</a>,\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45684\">moby/moby#45684</a></li>\r\n<li>containerd image store: Fix a failure to unpack already-pulled\r\ncontent after switching between snapshotters. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45678\">moby/moby#45678</a></li>\r\n<li>containerd image store: Fix images that have been re-tagged or with\r\nall tags removed being pruned while still in use. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45857\">moby/moby#45857</a></li>\r\n<li>Fix a Swarm CSI issue where the Topology field was not propagated\r\ninto NodeCSIInfo. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45810\">moby/moby#45810</a></li>\r\n<li>Fix failures to add new Swarm managers caused by a very large raft\r\nlog. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45703\">moby/moby#45703</a>,\r\n<a\r\nhref=\"https://redirect.github.com/moby/swarmkit/pull/3122\">moby/swarmkit#3122</a>,\r\n<a\r\nhref=\"https://redirect.github.com/moby/swarmkit/pull/3128\">moby/swarmkit#3128</a></li>\r\n<li><code>name_to_handle_at(2)</code> is now always allowed in the\r\ndefault seccomp profile. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45833\">moby/moby#45833</a></li>\r\n<li>Fix an issue that prevented encrypted Swarm overlay networks from\r\nworking on ports other than the default (4789). <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45637\">moby/moby#45637</a></li>\r\n<li>Fix a failure to restore mount reference-counts during live-restore.\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45824\">moby/moby#45824</a></li>\r\n<li>Fix various networking-related failures during live-restore. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45658\">moby/moby#45658</a>,\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45659\">moby/moby#45659</a></li>\r\n<li>Fix running containers restoring with a zero (successful) exit\r\nstatus when the daemon is unexpectedly terminated. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45801\">moby/moby#45801</a></li>\r\n<li>Fix a potential panic while executing healthcheck probes. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45798\">moby/moby#45798</a></li>\r\n<li>Fix a panic caused by a race condition in container exec start. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45794\">moby/moby#45794</a></li>\r\n<li>Fix an exception caused by attaching a terminal to an exec with a\r\nnon-existant command. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45643\">moby/moby#45643</a></li>\r\n<li>Fix <code>host-gateway</code> with BuildKit by passing the IP as a\r\nlabel (also requires <a\r\nhref=\"https://redirect.github.com/docker/buildx/pull/1894\">docker/buildx#1894</a>).\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45790\">moby/moby#45790</a></li>\r\n<li>Fix an issue where <code>POST /containers/{id}/stop</code> would\r\nforcefully terminate the container when the request was canceled,\r\ninstead of waiting until the specified timeout for a 'graceful' stop. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45774\">moby/moby#45774</a></li>\r\n<li>Fix an issue where <code>docker cp -a</code> from the root\r\n(<code>/</code>) directory would fail. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45748\">moby/moby#45748</a></li>\r\n<li>Improve compatibility with non-runc container runtimes by more\r\ncorrectly setting resource constraint parameters in the OCI config. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45746\">moby/moby#45746</a></li>\r\n<li>Fix an issue caused by overlapping subuid/subgid ranges in certain\r\nconfigurations (e.g. LDAP) in rootless mode. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45747\">moby/moby#45747</a>,\r\n<a\r\nhref=\"https://redirect.github.com/rootless-containers/rootlesskit/pull/369\">rootless-containers/rootlesskit#369</a></li>\r\n<li>Greatly reduce CPU and memory usage while populating the Debug\r\nsection of <code>GET /info</code>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45856\">moby/moby#45856</a></li>\r\n<li>Fix an issue where debug information was not correctly printed\r\nduring <code>docker info</code> when only the client is in debug mode.\r\n<a\r\nhref=\"https://redirect.github.com/docker/cli/pull/4393\">docker/cli#4393</a></li>\r\n<li>Fix issues related to hung connections when connecting to hosts over\r\na SSH connection. <a\r\nhref=\"https://redirect.github.com/docker/cli/pull/4395\">docker/cli#4395</a></li>\r\n</ul>\r\n<h3>Packaging updates</h3>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/4ffc61430bbe6d3d405bdf357b766bf303ff3cc5\"><code>4ffc614</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/45903\">#45903</a>\r\nfrom thaJeztah/24.0_backport_fix_volume_npe</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/d3893b58ff9dc2fd1f25e41e6e6766694632787e\"><code>d3893b5</code></a>\r\ndaemon: daemon.prepareMountPoints(): fix panic if mount is not a\r\nvolume</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/1d9c8619cded4657af1529779c5771127e8ad0e7\"><code>1d9c861</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/45860\">#45860</a>\r\nfrom thaJeztah/24.0_backport_update_cgroups</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/64f79562fb6f00cee512fc613921389b01f32f6f\"><code>64f7956</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/45869\">#45869</a>\r\nfrom thaJeztah/24.0_backport_docs_plugin_disable_fo...</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/05cf8e8130d50a7d538d0439d6331df9f0154166\"><code>05cf8e8</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/45867\">#45867</a>\r\nfrom thaJeztah/24.0_backport_api_remove_deprecated_...</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/5892aae60fe4ef681720606afed51e67fc2a7f86\"><code>5892aae</code></a>\r\ndocs: api v1.28 - v1.40: add missing &quot;force&quot; query arg on\r\nplugin disable</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/7adb590e162da0974b32741e499d0973d3c9255d\"><code>7adb590</code></a>\r\ndocs: api v1.41: add missing &quot;force&quot; query arg on plugin\r\ndisable</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/b5aacf8161c99dcd6e04304b14846db7c5094951\"><code>b5aacf8</code></a>\r\ndocs: api v1.42: add missing &quot;force&quot; query arg on plugin\r\ndisable</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/b732cfd3928e5efb4bdd36154503a9d1a1f42c69\"><code>b732cfd</code></a>\r\ndocs: api v1.43: add missing &quot;force&quot; query arg on plugin\r\ndisable</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/50fb65f0f534d85c9e8aed1ee3fefadfbc1d5eda\"><code>50fb65f</code></a>\r\ndocs: api: amend changelog for API 1.28 for &quot;force&quot;\r\noption</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/docker/docker/compare/v24.0.2...v24.0.4\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/docker/docker&package-manager=go_modules&previous-version=24.0.2+incompatible&new-version=24.0.4+incompatible)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-07-18T10:10:21-07:00",
+          "tree_id": "92cd3602b4ca5ebffdb46d913608652056035198",
+          "url": "https://github.com/runfinch/finch/commit/15d2a4bf8cfd3956a2f8bb4878bfb86827b4e77d"
+        },
+        "date": 1689700737301,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 85183995177,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3174,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 45.45,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 85.18,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 2132594688,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3811936,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 80420,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30251061010,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3306,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 38.46,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.25,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 16764928,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1362144,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 28770,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 503252322,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.585,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 17.69,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5032,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 8388608,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 33044,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 533,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - ns/op",
+            "value": 1793493014,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_avg/op",
+            "value": 0.5703,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_peak/op",
+            "value": 22.22,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - cpu_seconds/op",
+            "value": 1.793,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - disk_bytes/op",
+            "value": 3624960,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - B/op",
+            "value": 90384,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
+            "value": 1772,
             "unit": "allocs/op",
             "extra": "1 times\n12 procs"
           }
