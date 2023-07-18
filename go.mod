@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/docker/cli v24.0.4+incompatible
-	github.com/docker/docker v24.0.2+incompatible
+	github.com/docker/docker v24.0.4+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.0
 	github.com/lima-vm/lima v0.16.0
