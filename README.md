@@ -95,11 +95,11 @@ For a full list of configuration options, check [the struct here](pkg/config/con
 An example `finch.yaml` looks like this:
 
 ```yaml
-# CPUs: the amount of vCPU to dedicate to the virtual machine. (required)
+# cpus: the amount of vCPU to dedicate to the virtual machine. (required)
 cpus: 4
-# Memory: the amount of memory to dedicate to the virtual machine. (required)
+# memory: the amount of memory to dedicate to the virtual machine. (required)
 memory: 4GiB
-# CredsHelpers: a list of credential helpers that will be installed and configured automatically. 
+# creds_helpers: a list of credential helpers that will be installed and configured automatically. 
 # Supported Credential Helpers List: 
 # - ecr-login https://github.com/awslabs/amazon-ecr-credential-helper
 # Once the option has been set the credential helper will be installed on either finch vm init or finch vm start. 
@@ -111,7 +111,7 @@ memory: 4GiB
 # folder entirely. (optional)
 creds_helpers: 
   - ecr-login
-# AdditionalDirectories: the work directories that are not supported by default. In macOS, only home directory is supported by default. 
+# additional_directories: the work directories that are not supported by default. In macOS, only home directory is supported by default. 
 # For example, if you want to mount a directory into a container, and that directory is not under your home directory, 
 # then you'll need to specify this field to add that directory or any ascendant of it as a work directory. (optional)
 additional_directories:
