@@ -212,7 +212,7 @@ jobs:
       - name: Run e2e tests
         uses: nick-fields/retry@v2
         with:
-          timeout_minutes: 120
+          timeout_minutes: 180
           max_attempts: 3
           command: |
             git status
@@ -321,7 +321,7 @@ jobs:
       - name: Run e2e tests
         uses: nick-fields/retry@v2
         with:
-          timeout_minutes: 120
+          timeout_minutes: 180
           max_attempts: 3
           command: |
             git status

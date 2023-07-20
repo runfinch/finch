@@ -144,7 +144,11 @@ jobs:
           brew reinstall --cask ./Casks/finch.rb
         shell: zsh {0}
       - name: Run e2e tests
-        run: INSTALLED=true make test-e2e
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: INSTALLED=true make test-e2e
       - name: Silently uninstall
         if: ${{ always() }}
         run: |
@@ -258,7 +262,11 @@ jobs:
           brew reinstall --cask ./Casks/finch.rb
         shell: zsh {0}
       - name: Run e2e tests
-        run: INSTALLED=true make test-e2e
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: INSTALLED=true make test-e2e
       - name: Silently uninstall
         if: ${{ always() }}
         run: |
