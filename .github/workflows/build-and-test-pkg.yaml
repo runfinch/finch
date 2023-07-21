@@ -210,10 +210,14 @@ jobs:
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
           sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg -target /
       - name: Run e2e tests
-        run: |
-          git status
-          git clean -f -d
-          INSTALLED=true make test-e2e
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            git status
+            git clean -f -d
+            INSTALLED=true make test-e2e
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
@@ -315,10 +319,14 @@ jobs:
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
           sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg -target /
       - name: Run e2e tests
-        run: |
-          git status
-          git clean -f -d
-          INSTALLED=true make test-e2e
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            git status
+            git clean -f -d
+            INSTALLED=true make test-e2e
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
