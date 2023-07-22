@@ -118,7 +118,7 @@ function renderAllChars(dataSets, platform) {
                     label: item => {
                         let label = item.value;
                         const { range, unit } = dataset[item.index].bench;
-                        label += ' ' + unit;
+                        label += ' ' + (unit === 'ns/op' ? 's/op' : unit);
                         if (range) {
                             label += ' (' + range + ')';
                         }
