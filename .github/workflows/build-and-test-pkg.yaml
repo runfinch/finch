@@ -125,7 +125,7 @@ jobs:
     needs:
       - get-tag-name
       - macos-aarch64-pkg-build
-    timeout-minutes: 60
+    timeout-minutes: 180
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
@@ -236,7 +236,7 @@ jobs:
     needs:
       - get-tag-name
       - macos-x86-64-pkg-build
-    timeout-minutes: 60
+    timeout-minutes: 180
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
