@@ -48,7 +48,7 @@ jobs:
             [self-hosted, macos, arm64, 13, release],
           ]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 180
     env:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
@@ -171,7 +171,7 @@ jobs:
             [self-hosted, macos, amd64, 13, release],
           ]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 180
     env:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
