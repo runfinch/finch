@@ -22,7 +22,7 @@ on:
     paths:
       - '**.md'
       - 'contrib/**'
-      - 'github/CODEOWNERS'
+      - '.github/CODEOWNERS'
 
 jobs:
   gen-code-no-diff:
