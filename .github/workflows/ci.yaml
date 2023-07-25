@@ -8,12 +8,14 @@ on:
     paths-ignore:
       - '**.md'
       - 'contrib/**'
+      - '.github/CODEOWNERS'
   pull_request:
     branches:
       - main
     paths-ignore:
       - '**.md'
       - 'contrib/**'
+      - '.github/CODEOWNERS'
 permissions:
   id-token: write
   contents: write
