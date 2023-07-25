@@ -15,12 +15,14 @@ on:
     paths:
       - '**.md'
       - 'contrib/**'
+      - '.github/CODEOWNERS'
   pull_request:
     branches:
       - main
     paths:
       - '**.md'
       - 'contrib/**'
+      - 'github/CODEOWNERS'
 
 jobs:
   gen-code-no-diff:
