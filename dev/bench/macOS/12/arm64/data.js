@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1690241229653,
+  "lastUpdate": 1690245049871,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -11134,6 +11134,198 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
             "value": 1317,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6f1afbb69554148efd8eea938278bcc5104ab050",
+          "message": "build(deps): Bump github.com/docker/docker from 24.0.4+incompatible to 24.0.5+incompatible (#497)\n\nBumps [github.com/docker/docker](https://github.com/docker/docker) from\r\n24.0.4+incompatible to 24.0.5+incompatible.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/docker/docker/releases\">github.com/docker/docker's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v24.0.5</h2>\r\n<h2>24.0.5</h2>\r\n<p>For a full list of pull requests and changes in this release, refer\r\nto the relevant GitHub milestones:</p>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/issues?q=is%3Aclosed+milestone%3A24.0.5\">docker/cli,\r\n24.0.5 milestone</a></li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/issues?q=is%3Aclosed+milestone%3A24.0.5\">moby/moby,\r\n24.0.5 milestone</a></li>\r\n</ul>\r\n<h3>Bug fixes and enhancements</h3>\r\n<ul>\r\n<li>The Go client now avoids using UNIX socket paths in the HTTP\r\n<code>Host:</code> header, in order to be compatible with changes\r\nintroduced in <code>go1.20.6</code>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45962\">moby/moby#45962</a>,\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45990\">moby/moby#45990</a></li>\r\n<li>containerd storage backend: Fix <code>Variant</code> not being\r\nincluded in <code>docker image inspect</code> and <code>GET\r\n/images/{name}/json</code>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/46025\">moby/moby#46025</a></li>\r\n<li>containerd storage backend: Prevent potential garbage collection of\r\ncontent during image export. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/46021\">moby/moby#46021</a></li>\r\n<li>containerd storage backend: Prevent duplicate digest entries in\r\n<code>RepoDigests</code>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/46014\">moby/moby#46014</a></li>\r\n<li>containerd storage backend: Fix operations taking place against the\r\nincorrect tag when working with an image referenced by tag and digest.\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/46013\">moby/moby#46013</a></li>\r\n<li>containerd storage backend: Fix a panic caused by\r\n<code>EXPOSE</code> when building containers with the legacy builder. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45921\">moby/moby#45921</a></li>\r\n<li>Fix a regression causing unintuitive errors to be returned when\r\nattempting to create an <code>overlay</code> network on a non-Swarm\r\nnode. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45974\">moby/moby#45974</a></li>\r\n<li>Properly report errors parsing volume specifications from the\r\ncommand line. <a\r\nhref=\"https://redirect.github.com/docker/cli/pull/4423\">docker/cli#4423</a></li>\r\n<li>Fix a panic caused when <code>auths: null</code> is found in the CLI\r\nconfig file. <a\r\nhref=\"https://redirect.github.com/docker/cli/pull/4450\">docker/cli#4450</a></li>\r\n</ul>\r\n<h3>Packaging updates</h3>\r\n<ul>\r\n<li>Use init scripts as provided by in moby/moby\r\n<code>contrib/init</code>. <a\r\nhref=\"https://redirect.github.com/docker/docker-ce-packaging/pull/914\">docker/docker-ce-packaging#914</a>,\r\n<a\r\nhref=\"https://redirect.github.com/docker/docker-ce-packaging/pull/926\">docker/docker-ce-packaging#926</a></li>\r\n<li>Drop Upstart from <code>contrib/init</code>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/46044\">moby/moby#46044</a></li>\r\n<li>Upgrade Go to <code>go1.20.6</code>. <a\r\nhref=\"https://redirect.github.com/docker/cli/pull/4428\">docker/cli#4428</a>,\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45970\">moby/moby#45970</a>,\r\n<a\r\nhref=\"https://redirect.github.com/docker/docker-ce-packaging/pull/921\">docker/docker-ce-packaging#921</a></li>\r\n<li>Upgrade Compose to <code>v2.20.2</code>. <a\r\nhref=\"https://redirect.github.com/docker/docker-ce-packaging/pull/924\">docker/docker-ce-packaging#924</a></li>\r\n<li>Upgrade buildx to <code>v0.11.2</code>. <a\r\nhref=\"https://redirect.github.com/docker/docker-ce-packaging/pull/922\">docker/docker-ce-packaging#922</a></li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/a61e2b4c9c5f7c241aeb37f389b4444aee26bea4\"><code>a61e2b4</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/46044\">#46044</a>\r\nfrom neersighted/init_cleanup_24.0</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/eede7f09c7d03cdcfdf89853e7483b5c4d51d5c8\"><code>eede7f0</code></a>\r\nRemove Upstart scripts</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/907f83860382cf2edb2d39fc9766e714cdabaf35\"><code>907f838</code></a>\r\nRemove Upstart and cgroups bits from Debian sysvinit script</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/52c92be4c5f94cdb93f775099d42c0ee6b66ccc7\"><code>52c92be</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/46029\">#46029</a>\r\nfrom thaJeztah/24.0_backport_bump_runc_binary_1.1.8</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/f022632503d1e58e8008ba38397f0bdea36376f5\"><code>f022632</code></a>\r\nDockerfile: update runc binary to v1.1.8</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/bd41493132904ccc60df5cf655f06c14144f47c0\"><code>bd41493</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/46023\">#46023</a>\r\nfrom thaJeztah/24.0_backport_bump_buildx</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/5164e5f6d68f8d895399594b27accbaabbeec8d9\"><code>5164e5f</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/46025\">#46025</a>\r\nfrom vvoland/c8d-inspect-variant-24</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/2b2a72cc65722b1b3f446420f1a7cfa37d7c746e\"><code>2b2a72c</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/46021\">#46021</a>\r\nfrom thaJeztah/24.0_backport_c8d-image-save-lease</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/98a6422cbcb0ba92e4bc62ff01825008fdc9979e\"><code>98a6422</code></a>\r\nc8d/inspect: Include platform Variant</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/aab94fb3404923ebc5c421e2b869e1d26c53fb91\"><code>aab94fb</code></a>\r\nDockerfile: update buildx to v0.11.2</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/docker/docker/compare/v24.0.4...v24.0.5\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/docker/docker&package-manager=go_modules&previous-version=24.0.4+incompatible&new-version=24.0.5+incompatible)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-07-24T17:27:59-07:00",
+          "tree_id": "b703a38d51e81b07d0290ba10340002fe9c4ae27",
+          "url": "https://github.com/runfinch/finch/commit/6f1afbb69554148efd8eea938278bcc5104ab050"
+        },
+        "date": 1690245049049,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 32712192167,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3809,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 86.36,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 32.71,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1142341632,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1458384,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 30934,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24015083208,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3757,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 83.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.01,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 56356864,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1070224,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22754,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 347085583,
+            "unit": "ns/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.038,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 20.83,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.347,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 25320,
+            "unit": "B/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 370,
+            "unit": "allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - ns/op",
+            "value": 1342574625,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_avg/op",
+            "value": 0.2985,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_peak/op",
+            "value": 22.22,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - cpu_seconds/op",
+            "value": 1.343,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - disk_bytes/op",
+            "value": 3624960,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - B/op",
+            "value": 68344,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
+            "value": 1309,
             "unit": "allocs/op",
             "extra": "1 times\n8 procs"
           }
