@@ -88,16 +88,15 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		limaCfg.Rosetta.Enabled = pointer.Bool(false)
 		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
 	}
-	//limaCfg.Env =  map[string]string{"soci-wanted": "true"}
 
-	var sociWanted bool
+	var sociEnabled bool
 	if lca.cfg.Soci == nil {
-		sociWanted = false
+		sociEnabled = false
 	} else {
-		sociWanted = true
+		sociEnabled = *lca.cfg.Soci
 	}
 
-	toggleSoci(&limaCfg, sociWanted)
+	toggleSoci(&limaCfg, sociEnabled)
 
 	if isInit {
 		cfgAfterInit, err := lca.applyInit(&limaCfg)
@@ -186,9 +185,22 @@ fi
 	}
 }
 
+func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
+	hasCrossArchToolInstallationScript := false
+	var scriptIdx int
+	for idx, prov := range limaCfg.Provision {
+		trimmed := strings.Trim(prov.Script, " ")
+		if !hasCrossArchToolInstallationScript && strings.HasPrefix(trimmed, userModeEmulationProvisioningScriptHeader) {
+			hasCrossArchToolInstallationScript = true
+			scriptIdx = idx
+		}
+	}
+
+	return scriptIdx, hasCrossArchToolInstallationScript
+}
+
 func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool) {
 	idx, hasScript := hasSociInstallationScript(limaCfg)
-	hasScript = false
 	if !hasScript && enabled {
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
 			Mode: "system",
@@ -204,9 +216,9 @@ if [ ! -f /usr/local/bin/soci ]; then
     echo "    [proxy_plugins.soci]
         type = \"snapshot\"
         address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
-	sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
-fi
 sudo systemctl restart containerd.service
+sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
+fi
 `, sociInstallationProvisioningScriptHeader),
 		})
 	} else if hasScript && !enabled {
@@ -228,18 +240,4 @@ func hasSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
 	}
 
 	return scriptIdx, hasSociInstallationScript
-}
-
-func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
-	hasCrossArchToolInstallationScript := false
-	var scriptIdx int
-	for idx, prov := range limaCfg.Provision {
-		trimmed := strings.Trim(prov.Script, " ")
-		if !hasCrossArchToolInstallationScript && strings.HasPrefix(trimmed, userModeEmulationProvisioningScriptHeader) {
-			hasCrossArchToolInstallationScript = true
-			scriptIdx = idx
-		}
-	}
-
-	return scriptIdx, hasCrossArchToolInstallationScript
 }

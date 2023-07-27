@@ -89,8 +89,3 @@ func InstallOptionalDeps(groups []*Group, logger flog.Logger) error {
 
 	return nil
 }
-
-/*function to run dependency commands after VM is started (implement 8/26)
-func AfterStart(){
-
-}*/

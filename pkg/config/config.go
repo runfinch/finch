@@ -35,7 +35,7 @@ type AdditionalDirectory struct {
 type Finch struct {
 	CPUs   *int    `yaml:"cpus"`
 	Memory *string `yaml:"memory"`
-	/** add soci here? **/
+	//Soci: boolean value of whether user wants SOCI installed
 	Soci *bool `yaml:"soci_snapshotter,omitempty"`
 	// CredsHelper: the list of credential helpers that will be installed and configured automatically on vm init or on vm start
 	CredsHelpers []string `yaml:"creds_helpers,omitempty"`

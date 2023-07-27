@@ -61,6 +61,10 @@ func newDeps(
 		deps = append(deps, empty)
 		return deps
 	}
+	if *fc.Soci == false {
+		deps = append(deps, empty)
+		return deps
+	}
 	configs := map[string]helperConfig{}
 	installFolder := fmt.Sprintf("/Users/%s/.finch/soci/", user)
 	finchPath := fmt.Sprintf("/Users/%s/.finch/", user)
