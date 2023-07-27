@@ -17,6 +17,7 @@ import (
 )
 
 const userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
+const sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
 
 // LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.
 //
@@ -87,6 +88,16 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		limaCfg.Rosetta.Enabled = pointer.Bool(false)
 		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
 	}
+	//limaCfg.Env =  map[string]string{"soci-wanted": "true"}
+
+	var sociWanted bool
+	if lca.cfg.Soci == nil {
+		sociWanted = false
+	} else {
+		sociWanted = true
+	}
+
+	toggleSoci(&limaCfg, sociWanted)
 
 	if isInit {
 		cfgAfterInit, err := lca.applyInit(&limaCfg)
@@ -173,6 +184,50 @@ fi
 			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
 		}
 	}
+}
+
+func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool) {
+	idx, hasScript := hasSociInstallationScript(limaCfg)
+	hasScript = false
+	if !hasScript && enabled {
+		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
+			Mode: "system",
+			Script: fmt.Sprintf(`%s
+if [ ! -f /usr/local/bin/soci ]; then
+    #download soci
+    curl -OL "https://github.com/awslabs/soci-snapshotter/releases/download/v0.1.0/soci-snapshotter-0.1.0-linux-arm64.tar.gz"
+    #move to usr/local/bin
+    tar -C /usr/local/bin -xvf soci-snapshotter-0.1.0-linux-arm64.tar.gz ./soci ./soci-snapshotter-grpc
+    #changing containerd config
+    export config=etc/containerd/config.toml
+    //copy config to soci-config
+    echo "    [proxy_plugins.soci]
+        type = \"snapshot\"
+        address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
+	sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
+fi
+sudo systemctl restart containerd.service
+`, sociInstallationProvisioningScriptHeader),
+		})
+	} else if hasScript && !enabled {
+		if len(limaCfg.Provision) > 0 {
+			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
+		}
+	}
+}
+
+func hasSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
+	hasSociInstallationScript := false
+	var scriptIdx int
+	for idx, prov := range limaCfg.Provision {
+		trimmed := strings.Trim(prov.Script, " ")
+		if !hasSociInstallationScript && strings.HasPrefix(trimmed, sociInstallationProvisioningScriptHeader) {
+			hasSociInstallationScript = true
+			scriptIdx = idx
+		}
+	}
+
+	return scriptIdx, hasSociInstallationScript
 }
 
 func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {

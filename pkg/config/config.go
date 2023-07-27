@@ -36,6 +36,7 @@ type Finch struct {
 	CPUs   *int    `yaml:"cpus"`
 	Memory *string `yaml:"memory"`
 	/** add soci here? **/
+	Soci *bool `yaml:"soci_snapshotter,omitempty"`
 	// CredsHelper: the list of credential helpers that will be installed and configured automatically on vm init or on vm start
 	CredsHelpers []string `yaml:"creds_helpers,omitempty"`
 	// AdditionalDirectories are the work directories that are not supported by default. In macOS, only home directory is supported by default.

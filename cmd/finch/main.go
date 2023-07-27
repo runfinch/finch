@@ -16,6 +16,7 @@ import (
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
 	"github.com/runfinch/finch/pkg/dependency/credhelper"
+	"github.com/runfinch/finch/pkg/dependency/soci"
 	"github.com/runfinch/finch/pkg/dependency/vmnet"
 	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/flog"
@@ -124,6 +125,8 @@ func virtualMachineCommands(
 	optionalDepGroups := []*dependency.Group{
 		vmnet.NewDependencyGroup(ecc, lcc, fs, fp, logger),
 		credhelper.NewDependencyGroup(ecc, fs, fp, logger, fc, system.NewStdLib().Env("USER"),
+			system.NewStdLib().Arch()),
+		soci.NewDependencyGroup(ecc, fs, fp, logger, fc, system.NewStdLib().Env("USER"),
 			system.NewStdLib().Arch()),
 	}
 	return newVirtualMachineCommand(
