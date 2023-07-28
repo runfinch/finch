@@ -29,6 +29,7 @@ jobs:
       - name: update dependencies url
         run: |
           ./.github/bin/update-lima-dep.sh -d ${{ secrets.DEPENDENCY_BUCKET_NAME }} -a {{ secrets.ARTIFACT_BUCKET_NAME }}
+          ./.github/bin/update-rootfs.sh -d ${{ secrets.DEPENDENCY_BUCKET_NAME }}
 
       - name: create PR
         uses: peter-evans/create-pull-request@v5

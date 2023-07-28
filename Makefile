@@ -36,12 +36,18 @@ ifneq (,$(findstring arm64,$(ARCH)))
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/aarch64/images/
 	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.aarch64-20230713205101.qcow2
 	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1689037160.tar.gz
+
+	# TODO: Use Finch rootfs in Finch on Windows testing
+	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/finch-rootfs-production-arm64-1690563031.tar.zst
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/
 	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230713205042.qcow2
 	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1689037160.tar.gz
+
+	# TODO: Use Finch rootfs in Finch on Windows testing
+	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/finch-rootfs-production-amd64-1690563027.tar.zst
 endif
 
 FINCH_OS_HASH := `shasum -a 256 $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
