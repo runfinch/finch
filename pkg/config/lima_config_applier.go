@@ -18,7 +18,7 @@ import (
 
 const userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
 const sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
-const sociVersion = "0.1.0"
+const sociVersion = "0.3.0"
 
 // LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.
 //
@@ -97,8 +97,6 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		sociEnabled = *lca.cfg.Soci
 	}
 
-	toggleSoci(&limaCfg, sociEnabled, sociVersion, system.NewStdLib().Arch())
-
 	if isInit {
 		cfgAfterInit, err := lca.applyInit(&limaCfg)
 		if err != nil {
@@ -106,6 +104,8 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		}
 		limaCfg = *cfgAfterInit
 	}
+
+	toggleSoci(&limaCfg, sociEnabled, sociVersion, system.NewStdLib().Arch())
 
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
@@ -205,27 +205,28 @@ func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, sociVersion string, ar
 	fname := fmt.Sprintf("soci-snapshotter-%s-linux-%s.tar.gz", sociVersion, arch)
 	sociDownloadUrl := fmt.Sprintf("https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s", sociVersion, fname)
 	if !hasScript && enabled {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": "soci"}
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
 			Mode: "system",
 			Script: fmt.Sprintf(`%s
 if [ ! -f /usr/local/bin/soci ]; then
-    #download soci
-	export config=etc/containerd/config.toml
-    curl -OL "%s" >> $config
-    #move to usr/local/bin
-    tar -C /usr/local/bin -xvf %s ./soci ./soci-snapshotter-grpc
-    #changing containerd config
-    export config=etc/containerd/config.toml
-    #copy config to soci-config
-    echo "    [proxy_plugins.soci]
-        type = \"snapshot\"
-        address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
-	sudo systemctl restart containerd.service
-	sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
+  #download soci
+  curl -OL "%s"
+  #move to usr/local/bin
+  tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
+  #changing containerd config
+  export config=etc/containerd/config.toml
+  echo "    [proxy_plugins.soci]
+  type = \"snapshot\"
+  address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
+
+  sudo systemctl restart containerd.service
+  sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
 fi
 `, sociInstallationProvisioningScriptHeader, sociDownloadUrl, fname),
 		})
 	} else if hasScript && !enabled {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
 		if len(limaCfg.Provision) > 0 {
 			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
 		}

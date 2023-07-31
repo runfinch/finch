@@ -15,6 +15,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/mocks"
+	"github.com/runfinch/finch/pkg/system"
 )
 
 func TestDiskLimaConfigApplier_Apply(t *testing.T) {
@@ -85,8 +86,133 @@ fi
 `, limaCfg.Provision[0].Script)
 			},
 			want: nil,
-		},
-		{
+		}, {
+			name: "adds soci script when soci is set to true in config",
+			config: &Finch{
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(4),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+				Soci:    pointer.Bool(true),
+			},
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				const sociVersion = "0.3.0"
+				fname := fmt.Sprintf("soci-snapshotter-%s-linux-%s.tar.gz", sociVersion, system.NewStdLib().Arch())
+				sociDownloadUrl := fmt.Sprintf("https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s", sociVersion, fname)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[1].Mode)
+				require.Equal(t, "soci", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, fmt.Sprintf(`%s
+if [ ! -f /usr/local/bin/soci ]; then
+  #download soci
+  curl -OL "%s"
+  #move to usr/local/bin
+  tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
+  #changing containerd config
+  export config=etc/containerd/config.toml
+  echo "    [proxy_plugins.soci]
+  type = \"snapshot\"
+  address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
+
+  sudo systemctl restart containerd.service
+  sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
+fi
+`, sociInstallationProvisioningScriptHeader, sociDownloadUrl, fname), limaCfg.Provision[1].Script)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
+`, limaCfg.Provision[0].Script)
+			},
+			want: nil,
+		}, {
+			name: "doesn't add soci script when soci is set to false in config",
+			config: &Finch{
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(4),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+				Soci:    pointer.Bool(false),
+			},
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
+`, limaCfg.Provision[0].Script)
+			},
+			want: nil,
+		}, {
 			name: "updates vmType and removes cross-arch provisioning script and network config",
 			config: &Finch{
 				Memory:  pointer.String("2GiB"),
