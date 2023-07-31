@@ -1,4 +1,4 @@
-name: Sync Submodules
+name: Sync Submodules and Dependencies
 
 # Pulls changes from the main branch of submodules daily at 9:00 UTC and opens a PR.
 on:
@@ -15,14 +15,26 @@ jobs:
         with:
           submodules: recursive
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Update sub modules
+
+      - name: Update submodules
         run: |
           git submodule update --remote
+
+      - name: Update OS image
+        run: |
           ./.github/bin/update-os-image.sh
+
+      - name: Update lima dependencies url
+        run: |
+          ./deps/finch-core/bin/update-deps.sh -d ${{ secrets.DEPENDENCY_BUCKET_NAME }}
+
+      - name: Update rootfs
+        run: |
+          ./deps/finch-core/bin/update-rootfs.sh -d ${{ secrets.DEPENDENCY_BUCKET_NAME }}
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           signoff: true
-          title: 'build(deps): Bump submodules'
+          title: 'build(deps): Bump submodules and dependencies'
