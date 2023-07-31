@@ -5,6 +5,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -13,11 +14,14 @@ import (
 
 	dockerops "github.com/docker/docker/opts"
 	"github.com/lima-vm/lima/pkg/networks"
+	"golang.org/x/exp/slices"
 
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
 	"github.com/runfinch/finch/pkg/system"
@@ -35,19 +39,23 @@ type NerdctlCommandSystemDeps interface {
 }
 
 type nerdctlCommandCreator struct {
-	creator    command.LimaCmdCreator
+	lcc        command.LimaCmdCreator
+	ecc        command.Creator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
 	fs         afero.Fs
+	fc         *config.Finch
 }
 
 func newNerdctlCommandCreator(
-	creator command.LimaCmdCreator,
+	lcc command.LimaCmdCreator,
+	ecc command.Creator,
 	systemDeps NerdctlCommandSystemDeps,
 	logger flog.Logger,
 	fs afero.Fs,
+	fc *config.Finch,
 ) *nerdctlCommandCreator {
-	return &nerdctlCommandCreator{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
+	return &nerdctlCommandCreator{lcc: lcc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
 }
 
 func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.Command {
@@ -58,21 +66,30 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 		// the args passed to nerdctlCommand.run will be empty because
 		// cobra will try to parse `-d alpine` as if alpine is the value of the `-d` flag.
 		DisableFlagParsing: true,
-		RunE:               newNerdctlCommand(ncc.creator, ncc.systemDeps, ncc.logger, ncc.fs).runAdapter,
+		RunE:               newNerdctlCommand(ncc.lcc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter,
 	}
 
 	return command
 }
 
 type nerdctlCommand struct {
-	creator    command.LimaCmdCreator
+	lcc        command.LimaCmdCreator
+	ecc        command.Creator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
 	fs         afero.Fs
+	fc         *config.Finch
 }
 
-func newNerdctlCommand(creator command.LimaCmdCreator, systemDeps NerdctlCommandSystemDeps, logger flog.Logger, fs afero.Fs) *nerdctlCommand {
-	return &nerdctlCommand{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
+func newNerdctlCommand(
+	lcc command.LimaCmdCreator,
+	ecc command.Creator,
+	systemDeps NerdctlCommandSystemDeps,
+	logger flog.Logger,
+	fs afero.Fs,
+	fc *config.Finch,
+) *nerdctlCommand {
+	return &nerdctlCommand{lcc: lcc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
 }
 
 func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
@@ -80,7 +97,7 @@ func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
 }
 
 func (nc *nerdctlCommand) run(cmdName string, args []string) error {
-	err := nc.assertVMIsRunning(nc.creator, nc.logger)
+	err := nc.assertVMIsRunning(nc.lcc, nc.logger)
 	if err != nil {
 		return err
 	}
@@ -183,9 +200,15 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		}
 	}
 
+	var additionalEnv []string
+	switch cmdName {
+	case "build", "pull", "push":
+		ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+	}
+
 	// Add -E to sudo command in order to preserve existing environment variables, more info:
 	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
-	limaArgs := append([]string{"shell", limaInstanceName, "sudo", "-E"}, passedEnvArgs...)
+	limaArgs := append([]string{"shell", limaInstanceName, "sudo", "-E"}, append(additionalEnv, passedEnvArgs...)...)
 
 	limaArgs = append(limaArgs, []string{nerdctlCmdName, cmdName}...)
 
@@ -199,10 +222,10 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	limaArgs = append(limaArgs, finalArgs...)
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
-		return nc.creator.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
+		return nc.lcc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
 	}
 
-	return nc.creator.Create(limaArgs...).Run()
+	return nc.lcc.Create(limaArgs...).Run()
 }
 
 func (nc *nerdctlCommand) assertVMIsRunning(creator command.LimaCmdCreator, logger flog.Logger) error {
@@ -403,6 +426,38 @@ func sortVolumes(volumes []string) []string {
 func isDockerCompatEnvSet(systemDeps NerdctlCommandSystemDeps) bool {
 	_, s := systemDeps.LookupEnv("FINCH_DOCKER_COMPAT")
 	return s
+}
+
+// ensureRemoteCredentials is called before any actions that may require remote resources, in order
+// to ensure that fresh credentials are available inside the VM.
+func ensureRemoteCredentials(
+	fc *config.Finch,
+	ecc command.Creator,
+	outEnv *[]string,
+	logger flog.Logger,
+) {
+	if slices.Contains(fc.CredsHelpers, "ecr-login") {
+		out, err := ecc.Create(
+			"aws",
+			"configure",
+			"export-credentials",
+			"--format",
+			"process",
+		).CombinedOutput()
+		if err != nil {
+			logger.Debugln("failed to run `aws configure` command")
+		}
+
+		var exportCredsOut credentials.Value
+		err = json.Unmarshal(out, &exportCredsOut)
+		if err != nil {
+			logger.Debugln("`aws configure export-credentials` output is unexpected, is command available?")
+		}
+
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", exportCredsOut.AccessKeyID))
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", exportCredsOut.SecretAccessKey))
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SESSION_TOKEN=%s", exportCredsOut.SessionToken))
+	}
 }
 
 var nerdctlCmds = map[string]string{

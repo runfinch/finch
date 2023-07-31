@@ -49,6 +49,7 @@ require (
 )
 
 require (
+	github.com/aws/aws-sdk-go v1.44.312
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/go-units v0.5.0
 	github.com/emirpasic/gods v1.12.0 // indirect
@@ -74,6 +75,7 @@ require (
 	github.com/src-d/gcfg v1.4.0 // indirect
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
+	golang.org/x/exp v0.0.0-20230728194245-b0cb94b80691
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.12.0 // indirect
 	golang.org/x/sys v0.10.0 // indirect

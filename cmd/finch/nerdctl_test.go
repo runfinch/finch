@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -28,7 +29,7 @@ var testStdoutRs = []command.Replacement{
 func TestNerdctlCommandCreator_create(t *testing.T) {
 	t.Parallel()
 
-	cmd := newNerdctlCommandCreator(nil, nil, nil, nil).create("build", "build description")
+	cmd := newNerdctlCommandCreator(nil, nil, nil, nil, nil, nil).create("build", "build description")
 	assert.Equal(t, cmd.Name(), "build")
 	assert.Equal(t, cmd.DisableFlagParsing, true)
 }
@@ -72,11 +73,12 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(lcc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(lcc, ncsd, logger, nil).runAdapter(tc.cmd, tc.args))
+			assert.NoError(t, newNerdctlCommand(lcc, ecc, ncsd, logger, nil, &config.Finch{}).runAdapter(tc.cmd, tc.args))
 		})
 	}
 }
@@ -758,11 +760,13 @@ func TestNerdctlCommand_run(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, lcc, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
+
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ecc, ncsd, logger, fs, &config.Finch{}).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -823,9 +827,10 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			assert.True(t, newNerdctlCommand(lcc, ncsd, logger, nil).shouldReplaceForHelp(tc.cmdName, tc.args))
+			assert.True(t, newNerdctlCommand(lcc, ecc, ncsd, logger, nil, &config.Finch{}).shouldReplaceForHelp(tc.cmdName, tc.args))
 		})
 	}
 }
