@@ -85,5 +85,3 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	k8s.io/klog/v2 v2.90.1 // indirect
 )
-
-replace github.com/runfinch/common-tests => ../common-tests

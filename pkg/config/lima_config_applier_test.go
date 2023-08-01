@@ -113,9 +113,9 @@ fi
 				buf, err := afero.ReadFile(fs, "/lima.yaml")
 				require.NoError(t, err)
 
-				const sociVersion = "0.3.0"
-				fname := fmt.Sprintf("soci-snapshotter-%s-linux-%s.tar.gz", sociVersion, system.NewStdLib().Arch())
-				sociDownloadUrl := fmt.Sprintf("https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s", sociVersion, fname)
+				fname := fmt.Sprintf(fnameFormat, sociVersion, system.NewStdLib().Arch())
+				sociDownloadUrl := fmt.Sprintf(sociDownloadUrlFormat, sociVersion, fname)
+				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadUrl, fname)
 
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
@@ -125,22 +125,7 @@ fi
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[1].Mode)
 				require.Equal(t, "soci", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
-				require.Equal(t, fmt.Sprintf(`%s
-if [ ! -f /usr/local/bin/soci ]; then
-  #download soci
-  curl -OL "%s"
-  #move to usr/local/bin
-  tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
-  #changing containerd config
-  export config=etc/containerd/config.toml
-  echo "    [proxy_plugins.soci]
-  type = \"snapshot\"
-  address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
-
-  sudo systemctl restart containerd.service
-  sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
-fi
-`, sociInstallationProvisioningScriptHeader, sociDownloadUrl, fname), limaCfg.Provision[1].Script)
+				require.Equal(t, sociInstallationScript, limaCfg.Provision[1].Script)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash

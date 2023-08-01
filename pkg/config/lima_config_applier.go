@@ -16,9 +16,30 @@ import (
 	"github.com/runfinch/finch/pkg/system"
 )
 
-const userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
-const sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
-const sociVersion = "0.3.0"
+const (
+	sociVersion                              = "0.3.0"
+	sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
+	fnameFormat                              = "soci-snapshotter-%s-linux-%s.tar.gz"
+	sociDownloadUrlFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
+	sociInstallationScriptFormat             = `%s
+if [ ! -f /usr/local/bin/soci ]; then
+	#download soci
+	curl -OL "%s"
+	#move to usr/local/bin
+	tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
+	#changing containerd config
+	export config=etc/containerd/config.toml
+	echo "    [proxy_plugins.soci]
+	type = \"snapshot\"
+	address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
+	
+	sudo systemctl restart containerd.service
+	sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
+fi
+	`
+
+	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
+)
 
 // LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.
 //
@@ -202,28 +223,14 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 
 func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, sociVersion string, arch string) {
 	idx, hasScript := hasSociInstallationScript(limaCfg)
-	fname := fmt.Sprintf("soci-snapshotter-%s-linux-%s.tar.gz", sociVersion, arch)
-	sociDownloadUrl := fmt.Sprintf("https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s", sociVersion, fname)
+	fname := fmt.Sprintf(fnameFormat, sociVersion, system.NewStdLib().Arch())
+	sociDownloadUrl := fmt.Sprintf(sociDownloadUrlFormat, sociVersion, fname)
+	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadUrl, fname)
 	if !hasScript && enabled {
 		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": "soci"}
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
-			Mode: "system",
-			Script: fmt.Sprintf(`%s
-if [ ! -f /usr/local/bin/soci ]; then
-  #download soci
-  curl -OL "%s"
-  #move to usr/local/bin
-  tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
-  #changing containerd config
-  export config=etc/containerd/config.toml
-  echo "    [proxy_plugins.soci]
-  type = \"snapshot\"
-  address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
-
-  sudo systemctl restart containerd.service
-  sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
-fi
-`, sociInstallationProvisioningScriptHeader, sociDownloadUrl, fname),
+			Mode:   "system",
+			Script: sociInstallationScript,
 		})
 	} else if hasScript && !enabled {
 		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
