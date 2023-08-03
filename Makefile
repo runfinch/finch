@@ -65,7 +65,7 @@ finch-core:
 		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		$(MAKE)
+		"$(MAKE)"
 
 	mkdir -p _output
 	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
@@ -77,7 +77,7 @@ local-core:
 		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		$(MAKE) lima lima-socket-vmnet
+		"$(MAKE)" lima lima-socket-vmnet
 
 	mkdir -p _output
 	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
