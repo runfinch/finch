@@ -6,6 +6,12 @@ on:
     - cron: '0 9 * * *'
   workflow_dispatch:
 
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  contents: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
