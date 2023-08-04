@@ -27,15 +27,17 @@ if [ ! -f /usr/local/bin/soci ]; then
 	curl -OL "%s"
 	#move to usr/local/bin
 	tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
-	#changing containerd config
-	export config=etc/containerd/config.toml
-	echo "    [proxy_plugins.soci]
-	type = \"snapshot\"
-	address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
-	
-	sudo systemctl restart containerd.service
-	sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
 fi
+
+#changing containerd config
+export config=etc/containerd/config.toml
+echo "    [proxy_plugins.soci]
+type = \"snapshot\"
+address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
+	
+sudo systemctl restart containerd.service
+sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
+
 	`
 
 	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
