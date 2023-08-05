@@ -5,7 +5,6 @@ package vm
 
 import (
 	"strings"
-	"testing"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -14,7 +13,7 @@ import (
 	"github.com/runfinch/common-tests/option"
 )
 
-var testSoci = func(o *option.Option, limactlO *option.Option, limaHomePath string, installed bool, t *testing.T) {
+var testSoci = func(o *option.Option, limactlO *option.Option, limaHomePath string, installed bool) {
 
 	ginkgo.Describe("Soci", func() {
 		ginkgo.It("finch pull should have same mounts as nerdctl pull with SOCI", func() {
