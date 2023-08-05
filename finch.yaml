@@ -121,10 +121,11 @@ containerd:
   user: false
 #  # Override containerd archive
 #  # 🟢 Builtin default: hard-coded URL with hard-coded digest (see the output of `limactl info | jq .defaultTemplate.containerd.archives`)
-#  archives:
-#  - location: "~/Downloads/nerdctl-full-X.Y.Z-linux-amd64.tar.gz"
-#    arch: "x86_64"
-#    digest: "sha256:..."
+  # adding archive for nerdctl 1.5.0 just for e2e testing
+  archives:
+  - location: "https://github.com/containerd/nerdctl/releases/download/v1.5.0/nerdctl-full-1.5.0-linux-arm64.tar.gz"
+    arch: "aarch64"
+    digest: "sha256:32a2537e0a80e1493b5934ca56c3e237466606a1b720aef23b9c0a7fc3303bdb"
 
 # Provisioning scripts need to be idempotent because they might be called
 # multiple times, e.g. when the host VM is being restarted.

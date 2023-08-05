@@ -23,6 +23,8 @@ import (
 
 const (
 	virtualMachineRootCmd = "vm"
+	FfmpegSociImage       = "public.ecr.aws/soci-workshop-examples/ffmpeg:latest"
+	sociMountString       = "fuse.rawBridge"
 )
 
 //nolint:paralleltest // TestVM is like TestMain for the VM-related tests.
@@ -30,6 +32,11 @@ func TestVM(t *testing.T) {
 	const description = "Finch Virtual Machine E2E Tests"
 
 	o, err := e2e.CreateOption()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	limactlO, limaHomePath, err := e2e.CreateLimaOption()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -53,6 +60,7 @@ func TestVM(t *testing.T) {
 		testVirtualizationFrameworkAndRosetta(o, *e2e.Installed)
 		testSupportBundle(o)
 		testCredHelper(o, *e2e.Installed, *e2e.Registry)
+		testSoci(o, limactlO, limaHomePath, *e2e.Installed, t)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)
