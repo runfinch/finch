@@ -4,6 +4,8 @@
 package vm
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/onsi/ginkgo/v2"
@@ -13,38 +15,52 @@ import (
 	"github.com/runfinch/common-tests/option"
 )
 
-var testSoci = func(o *option.Option, limactlO *option.Option, limaHomePath string, installed bool) {
+const (
+	FfmpegSociImage = "public.ecr.aws/soci-workshop-examples/ffmpeg:latest"
+	sociMountString = "fuse.rawBridge"
+)
 
-	ginkgo.Describe("Soci", func() {
+var testSoci = func(o *option.Option, installed bool) {
+
+	ginkgo.Describe("SOCI", func() {
+		var limactlO *option.Option
+		var limaHomePathEnv string
+		var wd string
+
+		ginkgo.BeforeEach(func() {
+			wd, _ = os.Getwd()
+			limaHomePathEnv = "LIMA_HOME=" + filepath.Join(wd, "../../_output/lima/data")
+			limactlO, _ = option.New([]string{filepath.Join(wd, "../../_output/lima/bin/limactl")},
+				option.Env([]string{limaHomePathEnv}))
+		})
+
 		ginkgo.It("finch pull should have same mounts as nerdctl pull with SOCI", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
-			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsoci_snapshotter: true\n"+
+			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotter: soci\n"+
 				"vmType: qemu\nrosetta: false"))
 			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 			command.New(o, "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
 			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
-			command.New(limactlO, "shell", "finch", "sudo", "nerdctl", "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
+			command.New(limactlO, "shell", "finch", "sudo", "nerdctl", "--snapshotter=soci", "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
 			nerdctlPullMounts := countMounts(limactlO)
 			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
 		})
-	})
 
-	ginkgo.Describe("Soci", func() {
 		ginkgo.It("finch run should have same mounts as nerdctl run with SOCI", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
-			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsoci_snapshotter: true\n"+
+			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotter: soci\n"+
 				"vmType: qemu\nrosetta: false"))
 			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 			command.New(o, "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
 			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
-			command.New(limactlO, "shell", "finch", "sudo", "nerdctl", "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
+			command.New(limactlO, "shell", "finch", "sudo", "nerdctl", "--snapshotter=soci", "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
 			nerdctlPullMounts := countMounts(limactlO)
 			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))

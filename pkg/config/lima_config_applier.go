@@ -19,7 +19,7 @@ import (
 const (
 	sociVersion                              = "0.3.0"
 	sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
-	fnameFormat                              = "soci-snapshotter-%s-linux-%s.tar.gz"
+	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
 	sociDownloadUrlFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
 	sociInstallationScriptFormat             = `%s
 if [ ! -f /usr/local/bin/soci ]; then
@@ -32,8 +32,8 @@ fi
 #changing containerd config
 export config=etc/containerd/config.toml
 echo "    [proxy_plugins.soci]
-type = \"snapshot\"
-address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
+  type = \"snapshot\"
+  address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
 	
 sudo systemctl restart containerd.service
 sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
@@ -113,13 +113,6 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
 	}
 
-	var sociEnabled bool
-	if lca.cfg.Soci == nil {
-		sociEnabled = false
-	} else {
-		sociEnabled = *lca.cfg.Soci
-	}
-
 	if isInit {
 		cfgAfterInit, err := lca.applyInit(&limaCfg)
 		if err != nil {
@@ -128,7 +121,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		limaCfg = *cfgAfterInit
 	}
 
-	toggleSoci(&limaCfg, sociEnabled, sociVersion, system.NewStdLib().Arch())
+	toggleSoci(&limaCfg, *lca.cfg.Snapshotter == "soci", sociVersion, system.NewStdLib().Arch())
 
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
@@ -225,9 +218,9 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 
 func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, sociVersion string, arch string) {
 	idx, hasScript := hasSociInstallationScript(limaCfg)
-	fname := fmt.Sprintf(fnameFormat, sociVersion, system.NewStdLib().Arch())
-	sociDownloadUrl := fmt.Sprintf(sociDownloadUrlFormat, sociVersion, fname)
-	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadUrl, fname)
+	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
+	sociDownloadUrl := fmt.Sprintf(sociDownloadUrlFormat, sociVersion, sociFileNameFormat)
+	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadUrl, sociFileName)
 	if !hasScript && enabled {
 		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": "soci"}
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{

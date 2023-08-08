@@ -63,20 +63,3 @@ func CreateOption() (*option.Option, error) {
 	}
 	return o, nil
 }
-
-// CreateLimaOption creates an option for shelling into VM in e2e tests.
-func CreateLimaOption() (*option.Option, string, error) {
-	wd, err := os.Getwd()
-	if err != nil {
-		return nil, "", fmt.Errorf("failed to get the current working directory: %w", err)
-	}
-
-	subject := "LIMA_HOME=" + filepath.Join(wd, "../../_output/lima/data")
-	subject2 := filepath.Join(wd, "../../_output/lima/bin/limactl")
-
-	o, err := option.New([]string{subject2}, option.Env([]string{subject}))
-	if err != nil {
-		return nil, "", fmt.Errorf("failed to initialize a testing option: %w", err)
-	}
-	return o, subject, nil
-}
