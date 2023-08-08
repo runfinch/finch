@@ -26,12 +26,15 @@ var testSoci = func(o *option.Option, installed bool) {
 		var limactlO *option.Option
 		var limaHomePathEnv string
 		var wd string
+		var err error
 
 		ginkgo.BeforeEach(func() {
-			wd, _ = os.Getwd()
+			wd, err = os.Getwd()
+			gomega.Expect(err).Should(gomega.BeNil())
 			limaHomePathEnv = "LIMA_HOME=" + filepath.Join(wd, "../../_output/lima/data")
-			limactlO, _ = option.New([]string{filepath.Join(wd, "../../_output/lima/bin/limactl")},
+			limactlO, err = option.New([]string{filepath.Join(wd, "../../_output/lima/bin/limactl")},
 				option.Env([]string{limaHomePathEnv}))
+			gomega.Expect(err).Should(gomega.BeNil())
 		})
 
 		ginkgo.It("finch pull should have same mounts as nerdctl pull with SOCI", func() {

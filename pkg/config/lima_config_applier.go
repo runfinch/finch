@@ -121,7 +121,14 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		limaCfg = *cfgAfterInit
 	}
 
-	toggleSoci(&limaCfg, *lca.cfg.Snapshotter == "soci", sociVersion, system.NewStdLib().Arch())
+	var sociEnabled bool
+	if lca.cfg.Snapshotter == nil {
+		sociEnabled = false
+	} else {
+		sociEnabled = (*lca.cfg.Snapshotter == "soci")
+	}
+
+	toggleSoci(&limaCfg, sociEnabled, sociVersion, system.NewStdLib().Arch())
 
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {

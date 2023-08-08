@@ -89,11 +89,11 @@ fi
 		}, {
 			name: "adds soci script when soci is set to true in config",
 			config: &Finch{
-				Memory:  pointer.String("2GiB"),
-				CPUs:    pointer.Int(4),
-				VMType:  pointer.String("qemu"),
-				Rosetta: pointer.Bool(false),
-				Soci:    pointer.Bool(true),
+				Memory:      pointer.String("2GiB"),
+				CPUs:        pointer.Int(4),
+				VMType:      pointer.String("qemu"),
+				Rosetta:     pointer.Bool(false),
+				Snapshotter: pointer.String("soci"),
 			},
 			path:   "/lima.yaml",
 			isInit: true,
@@ -113,9 +113,9 @@ fi
 				buf, err := afero.ReadFile(fs, "/lima.yaml")
 				require.NoError(t, err)
 
-				fname := fmt.Sprintf(fnameFormat, sociVersion, system.NewStdLib().Arch())
-				sociDownloadUrl := fmt.Sprintf(sociDownloadUrlFormat, sociVersion, fname)
-				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadUrl, fname)
+				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
+				sociDownloadUrl := fmt.Sprintf(sociDownloadUrlFormat, sociVersion, sociFileName)
+				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadUrl, sociFileName)
 
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
@@ -147,11 +147,11 @@ fi
 		}, {
 			name: "doesn't add soci script when soci is set to false in config",
 			config: &Finch{
-				Memory:  pointer.String("2GiB"),
-				CPUs:    pointer.Int(4),
-				VMType:  pointer.String("qemu"),
-				Rosetta: pointer.Bool(false),
-				Soci:    pointer.Bool(false),
+				Memory:      pointer.String("2GiB"),
+				CPUs:        pointer.Int(4),
+				VMType:      pointer.String("qemu"),
+				Rosetta:     pointer.Bool(false),
+				Snapshotter: pointer.String("string"),
 			},
 			path:   "/lima.yaml",
 			isInit: true,
