@@ -86,7 +86,8 @@ fi
 `, limaCfg.Provision[0].Script)
 			},
 			want: nil,
-		}, {
+		},
+		{
 			name: "adds soci script when soci is set to true in config",
 			config: &Finch{
 				Memory:      pointer.String("2GiB"),
@@ -114,8 +115,11 @@ fi
 				require.NoError(t, err)
 
 				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
-				sociDownloadUrl := fmt.Sprintf(sociDownloadUrlFormat, sociVersion, sociFileName)
-				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadUrl, sociFileName)
+				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
+					sociInstallationProvisioningScriptHeader,
+					sociDownloadURL,
+					sociFileName)
 
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
@@ -144,7 +148,8 @@ fi
 `, limaCfg.Provision[0].Script)
 			},
 			want: nil,
-		}, {
+		},
+		{
 			name: "doesn't add soci script when soci is set to false in config",
 			config: &Finch{
 				Memory:      pointer.String("2GiB"),
@@ -197,7 +202,8 @@ fi
 `, limaCfg.Provision[0].Script)
 			},
 			want: nil,
-		}, {
+		},
+		{
 			name: "updates vmType and removes cross-arch provisioning script and network config",
 			config: &Finch{
 				Memory:  pointer.String("2GiB"),

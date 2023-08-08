@@ -20,7 +20,7 @@ const (
 	sociVersion                              = "0.3.0"
 	sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
-	sociDownloadUrlFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
+	sociDownloadURLFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
 	sociInstallationScriptFormat             = `%s
 if [ ! -f /usr/local/bin/soci ]; then
 	#download soci
@@ -128,7 +128,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		sociEnabled = (*lca.cfg.Snapshotter == "soci")
 	}
 
-	toggleSoci(&limaCfg, sociEnabled, sociVersion, system.NewStdLib().Arch())
+	toggleSoci(&limaCfg, sociEnabled, sociVersion)
 
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
@@ -223,11 +223,11 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 	return scriptIdx, hasCrossArchToolInstallationScript
 }
 
-func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, sociVersion string, arch string) {
+func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, sociVersion string) {
 	idx, hasScript := hasSociInstallationScript(limaCfg)
 	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
-	sociDownloadUrl := fmt.Sprintf(sociDownloadUrlFormat, sociVersion, sociFileNameFormat)
-	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadUrl, sociFileName)
+	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadURL, sociFileName)
 	if !hasScript && enabled {
 		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": "soci"}
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{

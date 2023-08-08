@@ -21,7 +21,6 @@ const (
 )
 
 var testSoci = func(o *option.Option, installed bool) {
-
 	ginkgo.Describe("SOCI", func() {
 		var limactlO *option.Option
 		var limaHomePathEnv string
@@ -47,7 +46,8 @@ var testSoci = func(o *option.Option, installed bool) {
 			command.New(o, "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
 			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
-			command.New(limactlO, "shell", "finch", "sudo", "nerdctl", "--snapshotter=soci", "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
+			command.New(limactlO, "shell", "finch",
+				"sudo", "nerdctl", "--snapshotter=soci", "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
 			nerdctlPullMounts := countMounts(limactlO)
 			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
@@ -63,16 +63,16 @@ var testSoci = func(o *option.Option, installed bool) {
 			command.New(o, "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
 			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
-			command.New(limactlO, "shell", "finch", "sudo", "nerdctl", "--snapshotter=soci", "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
+			command.New(limactlO, "shell", "finch",
+				"sudo", "nerdctl", "--snapshotter=soci", "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
 			nerdctlPullMounts := countMounts(limactlO)
 			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
 		})
 	})
-
 }
 
-// counts the mounts present in the VM after pulling an image
+// counts the mounts present in the VM after pulling an image.
 func countMounts(limactlO *option.Option) int {
 	mountOutput := string(command.New(limactlO, "shell", "finch", "mount").WithTimeoutInSeconds(30).Run().Out.Contents())
 	return strings.Count(mountOutput, sociMountString)
