@@ -88,7 +88,7 @@ fi
 			want: nil,
 		},
 		{
-			name: "adds soci script when soci is set to true in config",
+			name: "adds soci script when snapshotter is set to soci in config",
 			config: &Finch{
 				Memory:      pointer.String("2GiB"),
 				CPUs:        pointer.Int(4),
@@ -150,13 +150,13 @@ fi
 			want: nil,
 		},
 		{
-			name: "doesn't add soci script when soci is set to false in config",
+			name: "doesn't add soci script when snapshotter is not set in config",
 			config: &Finch{
 				Memory:      pointer.String("2GiB"),
 				CPUs:        pointer.Int(4),
 				VMType:      pointer.String("qemu"),
 				Rosetta:     pointer.Bool(false),
-				Snapshotter: pointer.String("string"),
+				Snapshotter: pointer.String(""),
 			},
 			path:   "/lima.yaml",
 			isInit: true,

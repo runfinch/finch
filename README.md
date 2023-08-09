@@ -99,6 +99,15 @@ An example `finch.yaml` looks like this:
 cpus: 4
 # memory: the amount of memory to dedicate to the virtual machine. (required)
 memory: 4GiB
+# snapshotter: the snapshotter a user want to use as there default snapshotter
+# Supported Snapshotters List:
+# - soci https://github.com/awslabs/soci-snapshotter/tree/main
+# Once the option has been set the snapshotter will be installed on either finch vm init or finch vm start.
+# The snapshotter binary will be downloaded on the virtual machine and will be configured and ready for use.
+# To change your default snpahotter back to overlayfs, simply remove the snapshotter value from finch.yaml
+# To completely remove the snapshotter binary, shell into your VM and remove /usr/local/bin/{snapshotter binary}
+# and remove the snapshotter configuration in the containerd config file found at /etc/containerd/config.toml
+snapshotter: soci
 # creds_helpers: a list of credential helpers that will be installed and configured automatically. 
 # Supported Credential Helpers List: 
 # - ecr-login https://github.com/awslabs/amazon-ecr-credential-helper
