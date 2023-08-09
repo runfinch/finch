@@ -312,8 +312,8 @@ github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6L
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
-github.com/runfinch/common-tests v0.7.1 h1:MQP1W9n6T6OlZu32uw3efZzdztxj1F4Qa/weKf5Was0=
-github.com/runfinch/common-tests v0.7.1/go.mod h1:gweXGeZvwD+YZujYhe12bIXrY8bWQy/43N+GRmZM5I4=
+github.com/runfinch/common-tests v0.7.2 h1:LYZkxcFpcsoS4ZiXZ5l4aInncmKere+s5SB89QoJx28=
+github.com/runfinch/common-tests v0.7.2/go.mod h1:gweXGeZvwD+YZujYhe12bIXrY8bWQy/43N+GRmZM5I4=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/sergi/go-diff v1.2.0 h1:XU+rvMAioB0UC3q1MFrIQy4Vo5/4VsRDQQXHsEya6xQ=
