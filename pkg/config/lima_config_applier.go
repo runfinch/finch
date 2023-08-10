@@ -23,14 +23,14 @@ const (
 	sociDownloadURLFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
 	sociInstallationScriptFormat             = `%s
 if [ ! -f /usr/local/bin/soci ]; then
-	#download soci
+	# download soci
 	set -e
 	curl --retry 2 --retry-max-time 120 -OL "%s"
-	#move to usr/local/bin
+	# move to usr/local/bin
 	tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
 fi
 
-#changing containerd config
+# changing containerd config
 export config=etc/containerd/config.toml
 echo "    [proxy_plugins.soci]
   type = \"snapshot\"
@@ -225,7 +225,7 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 }
 
 func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, sociVersion string) {
-	idx, hasScript := hasSociInstallationScript(limaCfg)
+	idx, hasScript := findSociInstallationScript(limaCfg)
 	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
 	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
 	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadURL, sociFileName)
@@ -243,7 +243,7 @@ func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, sociVersion string) {
 	}
 }
 
-func hasSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
+func findSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
 	hasSociInstallationScript := false
 	var scriptIdx int
 	for idx, prov := range limaCfg.Provision {

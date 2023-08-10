@@ -99,7 +99,7 @@ An example `finch.yaml` looks like this:
 cpus: 4
 # memory: the amount of memory to dedicate to the virtual machine. (required)
 memory: 4GiB
-# snapshotter: the snapshotter a user want to use as there default snapshotter
+# snapshotter: the snapshotter a user want to use as their default snapshotter
 # Supported Snapshotters List:
 # - soci https://github.com/awslabs/soci-snapshotter/tree/main
 # Once the option has been set the snapshotter will be installed on either finch vm init or finch vm start.
