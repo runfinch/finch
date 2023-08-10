@@ -24,7 +24,8 @@ const (
 	sociInstallationScriptFormat             = `%s
 if [ ! -f /usr/local/bin/soci ]; then
 	#download soci
-	curl -OL "%s"
+	set -e
+	curl --retry 2 --retry-max-time 120 -OL "%s"
 	#move to usr/local/bin
 	tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
 fi
