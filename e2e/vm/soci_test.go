@@ -10,13 +10,12 @@ import (
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
-	"github.com/onsi/gomega/gexec"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
 )
 
 const (
-	FfmpegSociImage = "public.ecr.aws/soci-workshop-examples/ffmpeg:latest"
+	ffmpegSociImage = "public.ecr.aws/soci-workshop-examples/ffmpeg:latest"
 	sociMountString = "fuse.rawBridge"
 )
 
@@ -41,15 +40,14 @@ var testSoci = func(o *option.Option, installed bool) {
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotter: soci\n"+
 				"vmType: qemu\nrosetta: false"))
-			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
-			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
-			command.New(o, "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
+			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+			command.New(o, "pull", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
-			command.Run(o, "rmi", "-f", FfmpegSociImage)
+			command.Run(o, "rmi", "-f", ffmpegSociImage)
 			command.New(limactlO, "shell", "finch",
-				"sudo", "nerdctl", "--snapshotter=soci", "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
+				"sudo", "nerdctl", "--snapshotter=soci", "pull", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			nerdctlPullMounts := countMounts(limactlO)
-			command.Run(o, "rmi", "-f", FfmpegSociImage)
+			command.Run(o, "rmi", "-f", ffmpegSociImage)
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
 		})
 
@@ -58,15 +56,14 @@ var testSoci = func(o *option.Option, installed bool) {
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotter: soci\n"+
 				"vmType: qemu\nrosetta: false"))
-			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
-			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
-			command.New(o, "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
+			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+			command.New(o, "run", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
-			command.Run(o, "rmi", "-f", FfmpegSociImage)
+			command.Run(o, "rmi", "-f", ffmpegSociImage)
 			command.New(limactlO, "shell", "finch",
-				"sudo", "nerdctl", "--snapshotter=soci", "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
+				"sudo", "nerdctl", "--snapshotter=soci", "run", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			nerdctlPullMounts := countMounts(limactlO)
-			command.Run(o, "rmi", "-f", FfmpegSociImage)
+			command.Run(o, "rmi", "-f", ffmpegSociImage)
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
 		})
 	})
