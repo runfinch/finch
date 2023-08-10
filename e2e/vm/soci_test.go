@@ -45,11 +45,11 @@ var testSoci = func(o *option.Option, installed bool) {
 			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 			command.New(o, "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
-			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
+			command.Run(o, "rmi", "-f", FfmpegSociImage)
 			command.New(limactlO, "shell", "finch",
-				"sudo", "nerdctl", "--snapshotter=soci", "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
+				"sudo", "nerdctl", "--snapshotter=soci", "pull", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			nerdctlPullMounts := countMounts(limactlO)
-			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
+			command.Run(o, "rmi", "-f", FfmpegSociImage)
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
 		})
 
@@ -62,11 +62,11 @@ var testSoci = func(o *option.Option, installed bool) {
 			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 			command.New(o, "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
-			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
+			command.Run(o, "rmi", "-f", FfmpegSociImage)
 			command.New(limactlO, "shell", "finch",
-				"sudo", "nerdctl", "--snapshotter=soci", "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run().Out.Contents()
+				"sudo", "nerdctl", "--snapshotter=soci", "run", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
 			nerdctlPullMounts := countMounts(limactlO)
-			command.New(o, "rmi", "-f", FfmpegSociImage).WithTimeoutInSeconds(30).Run()
+			command.Run(o, "rmi", "-f", FfmpegSociImage)
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
 		})
 	})
@@ -74,6 +74,6 @@ var testSoci = func(o *option.Option, installed bool) {
 
 // counts the mounts present in the VM after pulling an image.
 func countMounts(limactlO *option.Option) int {
-	mountOutput := string(command.New(limactlO, "shell", "finch", "mount").WithTimeoutInSeconds(30).Run().Out.Contents())
+	mountOutput := command.StdoutStr(limactlO, "shell", "finch", "mount")
 	return strings.Count(mountOutput, sociMountString)
 }
