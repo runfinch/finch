@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1691707252326,
+  "lastUpdate": 1691793029534,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -11286,6 +11286,156 @@ window.BENCHMARK_DATA = {
             "value": 547,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "channinggaddy@gmail.com",
+            "name": "Channing Gaddy",
+            "username": "CodeChanning"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a2e077b8f72dc8d8d833aedce31b3ad3f9f45eb4",
+          "message": "feat: adding config option for SOCI installation on VM (#506)\n\n*Description of changes:*\r\nAdding snapshotter option in config file and integrating SOCI with Finch\r\n\r\n**Setting Snapshotters**\r\n- Users can set the snapshotters they'd like to use by listing them in\r\nthe config file as the ```snapshotters``` value.\r\n- All listed snapshotters will be installed if they are currently\r\nsupported with Finch. As of this PR the two that are supported are\r\nOverlayFS (the default snapshotter) and SOCI.\r\n- The first snapshotter listed will be made the default snapshotter\r\nused. Other snapshotters can be used by specifying when running commands\r\n(i.e. ```finch --snapshotter={exampleSnapshotter} pull ...```)\r\n\r\n*Example ```snapshotters``` setting in ```finch.yaml```:*\r\n```yaml\r\nsnapshotters:\r\n    -overlayfs\r\n    -soci\r\n```\r\n\r\nThis would install SOCI on the user's VM and allow for it to be used\r\nwhen specified in commands, but would keep OverlayFS as the default for\r\ncommands\r\n\r\n**To Install SOCI**\r\n\r\n- SOCI can be setup with minimal configuration by adding ```\"- soci\"```\r\nto the ```snapshotters``` list in ```finch.yaml``` .\r\n\r\n- Once the option has been set SOCI will be installed on either ```finch\r\nvm init``` or ```finch vm start```. The binary will be downloaded onto\r\nthe user's VM and the needed settings for SOCI containerd configuration\r\nwill be appended to ```etc/containerd/config.toml``` in the VM. If SOCI\r\nis the first snapshotter listed it will also be set as the default\r\nnerdctl snapshotter in the user's VM which would allow the user to pull\r\nimages with SOCI simply by doing ```finch pull ...``` .\r\n\r\n**To Stop Using SOCI by default**\r\n\r\n- ```\"- soci\"``` should be removed or not be the first snapshotter of\r\nthe ```snapshotters``` list in ```finch.yaml``` . The user can also make\r\nthe first snapshotter listed ```\"- overlayfs\"``` to revert back to the\r\noriginal default used by nerdctl/containerd.\r\n\r\n**Note:** removing a snapshotter from ```snapshotters``` list will not\r\nuninstall the snapshotter from the user's VM. In order to fully\r\nuninstall the snapshotter the user must shell into the VM and remove the\r\nbinaries from ```/usr/local/bin```.\r\n\r\nTesting done:\r\n\r\n[ x] I've reviewed the guidance in CONTRIBUTING.md\r\nLicense Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Channing Gaddy <chxgaddy@amazon.com>",
+          "timestamp": "2023-08-11T15:27:07-07:00",
+          "tree_id": "deda022a0c02b7511e1953726e720d117e4b524e",
+          "url": "https://github.com/runfinch/finch/commit/a2e077b8f72dc8d8d833aedce31b3ad3f9f45eb4"
+        },
+        "date": 1691793028407,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 44487201298,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.321,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 31.25,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 44.49,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1307455488,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2001448,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 42309,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30443172898,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3781,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 41.67,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.44,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 228888576,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1372760,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 28981,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 507600702,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.3963,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 10.18,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5075,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 33200,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 537,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
           }
         ]
       }
