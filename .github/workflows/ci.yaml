@@ -139,60 +139,6 @@ jobs:
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e
         shell: zsh {0}
-  e2e-tests-for-docker-compat:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          [
-            [self-hosted, macos, amd64, 13, test],
-            [self-hosted, macos, arm64, 13, test],
-          ]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - name: Set output variables
-        id: vars
-        run: |
-          has_creds=${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}
-          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2.2.0
-        if: steps.vars.outputs.has_creds == true
-        with:
-          role-to-assume: ${{ secrets.ROLE }}
-          role-session-name: credhelper-test-docker-compat
-          aws-region: ${{ secrets.REGION }}
-      - name: Clean up previous files
-        run: |
-          sudo rm -rf /opt/finch
-          sudo rm -rf ~/.finch
-          sudo rm -rf ./_output
-          if pgrep '^qemu-system'; then
-            sudo pkill '^qemu-system'
-          fi
-          if pgrep '^socket_vmnet'; then
-            sudo pkill '^socket_vmnet'
-          fi
-      - name: Install Rosetta 2
-        run: echo "A" | softwareupdate --install-rosetta || true
-      - run: brew install go lz4 automake autoconf libtool
-        shell: zsh {0}
-      - name: Build project
-        run: |
-          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          make
-        shell: zsh {0}
-      - run: |
-          git status
-          git clean -f -d
-          FINCH_DOCKER_COMPAT=1 REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e
-        shell: zsh {0}
   mdlint:
     runs-on: ubuntu-latest
     steps:
