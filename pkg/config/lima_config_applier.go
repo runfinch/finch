@@ -124,11 +124,9 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 	}
 
 	supportedSnapshotters := []string{"overlayfs", "soci"}
-	enabledSnapshotters := initializeEnabledSnapshotterSlice(len(supportedSnapshotters))
-
+	snapshotters := make(map[string][2]bool)
 	for i, snapshotter := range lca.cfg.Snapshotters {
-		supportedIdx := slices.Index(supportedSnapshotters, snapshotter)
-		if supportedIdx < 0 {
+		if !slices.Contains(supportedSnapshotters, snapshotter) {
 			return fmt.Errorf("invalid snapshotter config value: %s", snapshotter)
 		}
 
@@ -138,10 +136,10 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		}
 
 		isEnabled := true
-		enabledSnapshotters[supportedIdx] = [2]bool{isEnabled, isDefaultSnapshotter}
+		snapshotters[snapshotter] = [2]bool{isEnabled, isDefaultSnapshotter}
 	}
 
-	toggleSnaphotters(&limaCfg, supportedSnapshotters, enabledSnapshotters)
+	toggleSnaphotters(&limaCfg, snapshotters)
 
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
@@ -236,30 +234,10 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 	return scriptIdx, hasCrossArchToolInstallationScript
 }
 
-// initializes the bool slice for what snapshotter the user has enabled to all false
-// this will be changed later depending on the user's snapshotters config values.
-func initializeEnabledSnapshotterSlice(numSupportedSnapshotters int) [2][2]bool {
-	var enabledSnapshotters [2][2]bool
-
-	for i := 0; i < numSupportedSnapshotters; i++ {
-		enabledSnapshotters[i] = [2]bool{false, false}
-	}
-
-	return enabledSnapshotters
-}
-
-// toggles enabled snapshotters and sets default snapshotter.
-func toggleSnaphotters(limaCfg *limayaml.LimaYAML, supportedSnapshotters []string, enabledSnapshotters [2][2]bool) {
-	for i := len(enabledSnapshotters) - 1; i > 0; i-- {
-		enabledSlice := enabledSnapshotters[i]
-		if enabledSlice[0] {
-			if supportedSnapshotters[i] == "overlayfs" {
-				toggleOverlayFs(limaCfg, enabledSlice[1])
-			} else if supportedSnapshotters[i] == "soci" {
-				toggleSoci(limaCfg, enabledSlice[0], enabledSlice[1], sociVersion)
-			}
-		}
-	}
+// toggles snapshotters and sets default snapshotter.
+func toggleSnaphotters(limaCfg *limayaml.LimaYAML, snapshotters map[string][2]bool) {
+	toggleOverlayFs(limaCfg, snapshotters["overlayfs"][1])
+	toggleSoci(limaCfg, snapshotters["soci"][0], snapshotters["soci"][1], sociVersion)
 }
 
 // sets overlayfs as the default snapshotter.

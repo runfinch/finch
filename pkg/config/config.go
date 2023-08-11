@@ -35,7 +35,7 @@ type AdditionalDirectory struct {
 type Finch struct {
 	CPUs   *int    `yaml:"cpus"`
 	Memory *string `yaml:"memory"`
-	// Snapshotter: the snapshotter that will be installed and configured automatically on vm init or on vm start
+	// Snapshotters: the snapshotters that will be installed and configured automatically on vm init or on vm start.
 	// Values: `soci` for SOCI snapshotter; `overlayfs` for default overlay snapshotter.
 	Snapshotters []string `yaml:"snapshotters,omitempty"`
 	// CredsHelper: the list of credential helpers that will be installed and configured automatically on vm init or on vm start
