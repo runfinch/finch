@@ -10,13 +10,40 @@ import (
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/xorcare/pointer"
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/system"
 )
 
-const userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
+const (
+	sociVersion                              = "0.3.0"
+	sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
+	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
+	sociDownloadURLFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
+	sociInstallationScriptFormat             = `%s
+if [ ! -f /usr/local/bin/soci ]; then
+	# download soci
+	set -e
+	curl --retry 2 --retry-max-time 120 -OL "%s"
+	# move to usr/local/bin
+	tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
+fi
+
+# changing containerd config
+export config=etc/containerd/config.toml
+echo "    [proxy_plugins.soci]
+  type = \"snapshot\"
+  address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
+	
+sudo systemctl restart containerd.service
+sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
+
+	`
+
+	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
+)
 
 // LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.
 //
@@ -95,6 +122,24 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		}
 		limaCfg = *cfgAfterInit
 	}
+
+	supportedSnapshotters := []string{"overlayfs", "soci"}
+	snapshotters := make(map[string][2]bool)
+	for i, snapshotter := range lca.cfg.Snapshotters {
+		if !slices.Contains(supportedSnapshotters, snapshotter) {
+			return fmt.Errorf("invalid snapshotter config value: %s", snapshotter)
+		}
+
+		isDefaultSnapshotter := false
+		if i == 0 {
+			isDefaultSnapshotter = true
+		}
+
+		isEnabled := true
+		snapshotters[snapshotter] = [2]bool{isEnabled, isDefaultSnapshotter}
+	}
+
+	toggleSnaphotters(&limaCfg, snapshotters)
 
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
@@ -187,4 +232,55 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 	}
 
 	return scriptIdx, hasCrossArchToolInstallationScript
+}
+
+// toggles snapshotters and sets default snapshotter.
+func toggleSnaphotters(limaCfg *limayaml.LimaYAML, snapshotters map[string][2]bool) {
+	toggleOverlayFs(limaCfg, snapshotters["overlayfs"][1])
+	toggleSoci(limaCfg, snapshotters["soci"][0], snapshotters["soci"][1], sociVersion)
+}
+
+// sets overlayfs as the default snapshotter.
+func toggleOverlayFs(limaCfg *limayaml.LimaYAML, isDefault bool) {
+	if isDefault {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
+	}
+}
+
+func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, isDefault bool, sociVersion string) {
+	idx, hasScript := findSociInstallationScript(limaCfg)
+	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
+	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadURL, sociFileName)
+	if !hasScript && enabled {
+		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
+			Mode:   "system",
+			Script: sociInstallationScript,
+		})
+	} else if hasScript && !enabled {
+		if len(limaCfg.Provision) > 0 {
+			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
+		}
+	}
+
+	if isDefault {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": "soci"}
+	} else {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
+	}
+}
+
+func findSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
+	hasSociInstallationScript := false
+	var scriptIdx int
+	for idx, prov := range limaCfg.Provision {
+		trimmed := strings.Trim(prov.Script, " ")
+		if !hasSociInstallationScript && strings.HasPrefix(trimmed, sociInstallationProvisioningScriptHeader) {
+			hasSociInstallationScript = true
+			scriptIdx = idx
+			break
+		}
+	}
+
+	return scriptIdx, hasSociInstallationScript
 }
