@@ -36,8 +36,8 @@ type Finch struct {
 	CPUs   *int    `yaml:"cpus"`
 	Memory *string `yaml:"memory"`
 	// Snapshotter: the snapshotter that will be installed and configured automatically on vm init or on vm start
-	// Values: `soci` for SOCI snapshotter or empty for default overlay snapshotter.
-	Snapshotter *string `yaml:"snapshotter,omitempty"`
+	// Values: `soci` for SOCI snapshotter; `overlayfs` for default overlay snapshotter.
+	Snapshotters []string `yaml:"snapshotters,omitempty"`
 	// CredsHelper: the list of credential helpers that will be installed and configured automatically on vm init or on vm start
 	CredsHelpers []string `yaml:"creds_helpers,omitempty"`
 	// AdditionalDirectories are the work directories that are not supported by default. In macOS, only home directory is supported by default.

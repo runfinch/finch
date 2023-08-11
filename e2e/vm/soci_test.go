@@ -38,8 +38,8 @@ var testSoci = func(o *option.Option, installed bool) {
 		ginkgo.It("finch pull should have same mounts as nerdctl pull with SOCI", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
-			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotter: soci\n"+
-				"vmType: qemu\nrosetta: false"))
+			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
+				"- soci\nvmType: qemu\nrosetta: false"))
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			command.New(o, "pull", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
@@ -54,8 +54,8 @@ var testSoci = func(o *option.Option, installed bool) {
 		ginkgo.It("finch run should have same mounts as nerdctl run with SOCI", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
-			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotter: soci\n"+
-				"vmType: qemu\nrosetta: false"))
+			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
+				"- soci\nvmType: qemu\nrosetta: false"))
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			command.New(o, "run", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)

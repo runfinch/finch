@@ -10,6 +10,7 @@ import (
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/xorcare/pointer"
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -122,14 +123,25 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		limaCfg = *cfgAfterInit
 	}
 
-	var sociEnabled bool
-	if lca.cfg.Snapshotter == nil {
-		sociEnabled = false
-	} else {
-		sociEnabled = (*lca.cfg.Snapshotter == "soci")
+	supportedSnapshotters := []string{"overlayfs", "soci"}
+	enabledSnapshotters := initializeEnabledSnapshotterSlice(len(supportedSnapshotters))
+
+	for i, snapshotter := range lca.cfg.Snapshotters {
+		supportedIdx := slices.Index(supportedSnapshotters, snapshotter)
+		if supportedIdx < 0 {
+			return fmt.Errorf("invalid snapshotter config value: %s", snapshotter)
+		}
+
+		isDefaultSnapshotter := false
+		if i == 0 {
+			isDefaultSnapshotter = true
+		}
+
+		isEnabled := true
+		enabledSnapshotters[supportedIdx] = [2]bool{isEnabled, isDefaultSnapshotter}
 	}
 
-	toggleSoci(&limaCfg, sociEnabled, sociVersion)
+	toggleSnaphotters(&limaCfg, supportedSnapshotters, enabledSnapshotters)
 
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
@@ -224,22 +236,59 @@ func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bo
 	return scriptIdx, hasCrossArchToolInstallationScript
 }
 
-func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, sociVersion string) {
+// initializes the bool slice for what snapshotter the user has enabled to all false
+// this will be changed later depending on the user's snapshotters config values.
+func initializeEnabledSnapshotterSlice(numSupportedSnapshotters int) [2][2]bool {
+	var enabledSnapshotters [2][2]bool
+
+	for i := 0; i < numSupportedSnapshotters; i++ {
+		enabledSnapshotters[i] = [2]bool{false, false}
+	}
+
+	return enabledSnapshotters
+}
+
+// toggles enabled snapshotters and sets default snapshotter.
+func toggleSnaphotters(limaCfg *limayaml.LimaYAML, supportedSnapshotters []string, enabledSnapshotters [2][2]bool) {
+	for i := len(enabledSnapshotters) - 1; i > 0; i-- {
+		enabledSlice := enabledSnapshotters[i]
+		if enabledSlice[0] {
+			if supportedSnapshotters[i] == "overlayfs" {
+				toggleOverlayFs(limaCfg, enabledSlice[1])
+			} else if supportedSnapshotters[i] == "soci" {
+				toggleSoci(limaCfg, enabledSlice[0], enabledSlice[1], sociVersion)
+			}
+		}
+	}
+}
+
+// sets overlayfs as the default snapshotter.
+func toggleOverlayFs(limaCfg *limayaml.LimaYAML, isDefault bool) {
+	if isDefault {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
+	}
+}
+
+func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, isDefault bool, sociVersion string) {
 	idx, hasScript := findSociInstallationScript(limaCfg)
 	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
 	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
 	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadURL, sociFileName)
 	if !hasScript && enabled {
-		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": "soci"}
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
 			Mode:   "system",
 			Script: sociInstallationScript,
 		})
 	} else if hasScript && !enabled {
-		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
 		if len(limaCfg.Provision) > 0 {
 			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
 		}
+	}
+
+	if isDefault {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": "soci"}
+	} else {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
 	}
 }
 

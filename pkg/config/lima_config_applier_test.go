@@ -88,13 +88,13 @@ fi
 			want: nil,
 		},
 		{
-			name: "adds soci script when snapshotter is set to soci in config",
+			name: "adds soci script and sets soci as default snapshotter when soci is first in snapshotters array",
 			config: &Finch{
-				Memory:      pointer.String("2GiB"),
-				CPUs:        pointer.Int(4),
-				VMType:      pointer.String("qemu"),
-				Rosetta:     pointer.Bool(false),
-				Snapshotter: pointer.String("soci"),
+				Memory:       pointer.String("2GiB"),
+				CPUs:         pointer.Int(4),
+				VMType:       pointer.String("qemu"),
+				Rosetta:      pointer.Bool(false),
+				Snapshotters: []string{"soci"},
 			},
 			path:   "/lima.yaml",
 			isInit: true,
@@ -150,13 +150,13 @@ fi
 			want: nil,
 		},
 		{
-			name: "doesn't add soci script when snapshotter is not set in config",
+			name: "doesn't add soci script and doesn't change default snapshotter when snapshotters is not set in config",
 			config: &Finch{
-				Memory:      pointer.String("2GiB"),
-				CPUs:        pointer.Int(4),
-				VMType:      pointer.String("qemu"),
-				Rosetta:     pointer.Bool(false),
-				Snapshotter: pointer.String(""),
+				Memory:       pointer.String("2GiB"),
+				CPUs:         pointer.Int(4),
+				VMType:       pointer.String("qemu"),
+				Rosetta:      pointer.Bool(false),
+				Snapshotters: []string{},
 			},
 			path:   "/lima.yaml",
 			isInit: true,
@@ -184,6 +184,184 @@ fi
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
+`, limaCfg.Provision[0].Script)
+			},
+			want: nil,
+		},
+		{
+			name: "doesn't add soci script when soci is not in snapshotters array",
+			config: &Finch{
+				Memory:       pointer.String("2GiB"),
+				CPUs:         pointer.Int(4),
+				VMType:       pointer.String("qemu"),
+				Rosetta:      pointer.Bool(false),
+				Snapshotters: []string{"overlayfs"},
+			},
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
+`, limaCfg.Provision[0].Script)
+			},
+			want: nil,
+		},
+		{
+			name: "adds soci script but keeps overlayfs as default when soci is present in snapshotters array but not first element",
+			config: &Finch{
+				Memory:       pointer.String("2GiB"),
+				CPUs:         pointer.Int(4),
+				VMType:       pointer.String("qemu"),
+				Rosetta:      pointer.Bool(false),
+				Snapshotters: []string{"overlayfs", "soci"},
+			},
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
+				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
+					sociInstallationProvisioningScriptHeader,
+					sociDownloadURL,
+					sociFileName)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, sociInstallationScript, limaCfg.Provision[1].Script)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, `# cross-arch tools
+#!/bin/bash
+qemu_pkgs=""
+if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+fi
+
+if [[ $qemu_pkgs ]]; then
+  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+fi
+`, limaCfg.Provision[0].Script)
+			},
+			want: nil,
+		},
+		{
+			name: "doesn't add soci script when snapshotter is not set in config",
+			config: &Finch{
+				Memory:       pointer.String("2GiB"),
+				CPUs:         pointer.Int(4),
+				VMType:       pointer.String("qemu"),
+				Rosetta:      pointer.Bool(false),
+				Snapshotters: []string{"soci", "overlayfs"},
+			},
+			path:   "/lima.yaml",
+			isInit: true,
+			mockSvc: func(
+				fs afero.Fs,
+				l *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				deps *mocks.LimaConfigApplierSystemDeps,
+			) {
+				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
+				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				require.NoError(t, err)
+
+				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
+				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
+					sociInstallationProvisioningScriptHeader,
+					sociDownloadURL,
+					sociFileName)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "soci", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, sociInstallationScript, limaCfg.Provision[1].Script)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
