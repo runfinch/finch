@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1691797204990,
+  "lastUpdate": 1691996970537,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -13504,6 +13504,156 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 509,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "09d6514bfba31a898e3b3407964113f21fb6b244",
+          "message": "build(deps): Bump golang.org/x/tools from 0.11.1 to 0.12.0 (#523)\n\nBumps [golang.org/x/tools](https://github.com/golang/tools) from 0.11.1\r\nto 0.12.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/golang/tools/releases\">golang.org/x/tools's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>gopls/v0.12.0</h2>\r\n<p>This release contains a major rewrite of the way gopls computes and\r\nstores package information, with the goal of reducing memory usage and\r\nallowing gopls to scale to larger repositories. This change can also\r\nsignificantly reduce startup time when workspaces are reopened, as gopls\r\nnow uses a file-based cache to persist data across sessions. With these\r\noptimizations, gopls is finally able to <a\r\nhref=\"https://go.dev/issues/48738\">fully analyze dependencies</a> using\r\nthe <a\r\nhref=\"https://pkg.go.dev/golang.org/x/tools/go/analysis\">golang.org/x/tools/go/analysis</a>\r\nframework, resulting in improved accuracy for analysis diagnostics.</p>\r\n<p>You can install this release with <code>go install</code>:</p>\r\n<pre><code>go install golang.org/x/tools/gopls@v0.12.0\r\n</code></pre>\r\n<h1>Support changes</h1>\r\n<p>As gopls matures, we're trying to simplify its configuration so that\r\ngopls Just Works in more scenarios, and so that we have fewer\r\nconfiguration combinations to test. This means that we will be gradually\r\ndeprecating settings that affect the core behavior of gopls.</p>\r\n<h2>Removed experimental configuration options</h2>\r\n<p>As announced in the <a\r\nhref=\"https://github.com/golang/tools/releases/tag/gopls%2Fv0.10.0\">v0.10.0\r\nrelease notes</a>, this release removes support for the\r\n<code>experimentalWorkspaceModule</code> and\r\n<code>experimentalWatchedFileDelay</code> settings. The\r\n<code>experimentalPackageCacheKey</code> setting is also removed, as it\r\nis irrelevant in the new design.</p>\r\n<p>The <code>experimentalWorkspaceModule</code> setting in particular\r\nmay still be in use by some users. This setting has been superseded by\r\nbuilt-in support for multi-module workspaces in the <code>go</code>\r\ncommand, via <a href=\"https://go.dev/doc/tutorial/workspaces\">Go\r\nworkspaces</a>. To get the equivalent behavior in gopls@v0.12.0, please\r\ncreate a <code>go.work</code> file in your workspace using all desired\r\nmodules. To use all modules in your workspace, run:</p>\r\n<pre><code>go work use -r .\r\n</code></pre>\r\n<h2>Dropped support for Go 1.13-1.15, deprecated support for Go\r\n1.16-1.17</h2>\r\n<p>As announced in the <a\r\nhref=\"https://github.com/golang/tools/releases/tag/gopls%2Fv0.10.0\">v0.10.0\r\nrelease notes</a>, this release drops support for Go 1.13-1.15, and in\r\nfact does not build with these Go versions.</p>\r\n<p>Additionally, <code>gopls@v0.12.x</code> will be the final sequence\r\nof versions supporting Go 1.16-1.17, and therefore displays a\r\ndeprecation notice when used with these Go versions.</p>\r\n<h2>Supported operating systems</h2>\r\n<p>Given that our users are almost entirely on Linux, Windows, or\r\nDarwin, we are discussing narrowing our support to focus on those\r\noperating systems, in <a\r\nhref=\"https://redirect.github.com/golang/go/issues/59981\">golang/go#59981</a>.</p>\r\n<h1>Performance improvements</h1>\r\n<p>The banner feature of this release is an internal redesign that\r\nsignificantly improves the way gopls scales in larger codebases.\r\nPerformance, particularly memory usage, has <a\r\nhref=\"https://redirect.github.com/golang/go/issues/36943\">long</a> <a\r\nhref=\"https://redirect.github.com/golang/go/issues/37790\">been</a> <a\r\nhref=\"https://redirect.github.com/golang/go/issues/43968\">a</a> <a\r\nhref=\"https://redirect.github.com/golang/go/issues/44981\">pain</a> <a\r\nhref=\"https://redirect.github.com/golang/go/issues/45363\">point</a> <a\r\nhref=\"https://redirect.github.com/golang/go/issues/45457\">for</a> <a\r\nhref=\"https://redirect.github.com/golang/go/issues/46897\">our</a> <a\r\nhref=\"https://redirect.github.com/golang/go/issues/47855\">users</a>.</p>\r\n<h2>Reduced memory usage</h2>\r\n<p>Previous releases of gopls held typed syntax trees for all packages,\r\nin memory, all the time. With this release, these large data structures\r\nare ephemeral: as soon as they are constructed, an index of information\r\nderived from them is saved persistently to a file-based cache, and the\r\ndata structures are recycled. The index for each package includes the\r\nlocations of declaring and referring identifiers; the set of exported\r\ndeclarations and their types; the method sets of each interface; and any\r\ndiagnostics and facts (see below) produced during analysis. The index\r\nholds all the information needed to serve global-scope LSP queries such\r\nas “references”, “implementations”, and so on.</p>\r\n<p>Moving package information to a file-based cache greatly reduces the\r\namount of RAM gopls uses, by almost an order of magnitude in larger\r\nprojects. The table below shows the reductions in steady-state memory\r\nusage for three open-source Go repositories.</p>\r\n<table>\r\n<thead>\r\n<tr>\r\n<th>Project</th>\r\n<th>Packages</th>\r\n<th>In-use bytes v0.11.0</th>\r\n<th>v0.12.0</th>\r\n<th>Change</th>\r\n</tr>\r\n</thead>\r\n<tbody>\r\n<tr>\r\n<td>gopls</td>\r\n<td>405</td>\r\n<td>497MB</td>\r\n<td>232MB</td>\r\n<td>-53%</td>\r\n</tr>\r\n<tr>\r\n<td>kubernetes</td>\r\n<td>3137</td>\r\n<td>3090MB</td>\r\n<td>832MB</td>\r\n<td>-73%</td>\r\n</tr>\r\n<tr>\r\n<td>google-cloud-go + submods</td>\r\n<td>7657</td>\r\n<td>5039MB</td>\r\n<td>863MB</td>\r\n<td>-83%</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/229f8486be036a365bbcaf1172d01d089ea59965\"><code>229f848</code></a>\r\ngopls/internal/lsp/source: enable new defers analyzer</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/2dc7ebab284bdfe6bb7ae8b77c3cccb0049e13ce\"><code>2dc7eba</code></a>\r\ngo/analysis: use parser.SkipObjectResolution</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/f91c023a9b093f57e379f719591d5e3725e07600\"><code>f91c023</code></a>\r\ngo.mod: update golang.org/x dependencies</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/e0783a89e9a456f9b64aa66717db398a20e7921d\"><code>e0783a8</code></a>\r\ninternal/gcimporter: remove bug report on objectpath failure</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/75f6f9c0b004228b5a2a6f4c6a7a9719321e29bd\"><code>75f6f9c</code></a>\r\ngopls/internal/bug: add gopls/bug telemetry counter</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/4b271f9c7195c9e700572e4ea43cf1121b12e6ee\"><code>4b271f9</code></a>\r\ngopls: add gopls/client telemetry counters</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/d0b18e25a0aba0090de3d8b744fb001bf16763cf\"><code>d0b18e2</code></a>\r\ngo/analysis/passes/copylock: fix infinite recursion</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/5b4d4266651c799fcd0de7475fcaf3afd7512a58\"><code>5b4d426</code></a>\r\ngopls/internal/hooks: clean language version before passing to\r\ngofumpt</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/2160c5f15ff7f02edd7dce655540bb17619ca99b\"><code>2160c5f</code></a>\r\ngopls/internal/lsp/analysis: fix stubmethods with variadic\r\nparameters</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/3d20bbe0fb2f6c3c3b340ce4d0bbcd1ad880071c\"><code>3d20bbe</code></a>\r\ninternal/gcimporter: add a missing return if objectpath fails</li>\r\n<li>See full diff in <a\r\nhref=\"https://github.com/golang/tools/compare/v0.11.1...v0.12.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org/x/tools&package-manager=go_modules&previous-version=0.11.1&new-version=0.12.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-08-14T00:05:40-07:00",
+          "tree_id": "222892789e552d49b242f7b33a401133628757af",
+          "url": "https://github.com/runfinch/finch/commit/09d6514bfba31a898e3b3407964113f21fb6b244"
+        },
+        "date": 1691996969640,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 44343926743,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3213,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 28.57,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 44.34,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1412390912,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1992264,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 42119,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30182765313,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3237,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 25,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.18,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 16654336,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1360320,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 28708,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 508396557,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.7704,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 20.22,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5083,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 32602,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 536,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
           }
