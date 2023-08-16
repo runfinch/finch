@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.8.0](https://github.com/runfinch/finch/compare/v0.7.0...v0.8.0) (2023-08-16)
+
+
+### Features
+
+* adding config option for SOCI installation on VM ([#506](https://github.com/runfinch/finch/issues/506)) ([a2e077b](https://github.com/runfinch/finch/commit/a2e077b8f72dc8d8d833aedce31b3ad3f9f45eb4))
+
+
+### Bug Fixes
+
+* configure aws creds in sync submodules/deps action ([#518](https://github.com/runfinch/finch/issues/518)) ([b67452e](https://github.com/runfinch/finch/commit/b67452e012d5d00f2ff66e023b4672f7957fe625))
+* give pull request write permissions to sync job ([#520](https://github.com/runfinch/finch/issues/520)) ([55b5235](https://github.com/runfinch/finch/commit/55b5235d50feb6557108c00cd8543d21f1fdf315))
+* give token write perms to sync-submodules ([#519](https://github.com/runfinch/finch/issues/519)) ([8b639ea](https://github.com/runfinch/finch/commit/8b639eac14691caa99a6bfddd61be0b811a796d9))
+* Mount /var/folders to finch vm ([#525](https://github.com/runfinch/finch/issues/525)) ([c97d2e9](https://github.com/runfinch/finch/commit/c97d2e93edaf139c3960620ec00454f856a8daee))
+* option to use installed lima for SOCI e2e tests ([#533](https://github.com/runfinch/finch/issues/533)) ([8b66659](https://github.com/runfinch/finch/commit/8b666590631235f6430d652d5c50f0047a120893))
+* quote recursive calls to make ([#515](https://github.com/runfinch/finch/issues/515)) ([d603096](https://github.com/runfinch/finch/commit/d6030965414e80e1f3c550e67097ce5f34aeff41))
+* Restart buildkit after containerd when provisioning ([#461](https://github.com/runfinch/finch/issues/461)) ([fca1828](https://github.com/runfinch/finch/commit/fca182877ca616257527f6186dd1e88b2919feeb))
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/cli from 24.0.4+incompatible to 24.0.5+incompatible ([#495](https://github.com/runfinch/finch/issues/495)) ([e9e8617](https://github.com/runfinch/finch/commit/e9e8617b07301848dc1f6c3afa18643d212d024e))
+* **deps:** Bump github.com/docker/docker from 24.0.4+incompatible to 24.0.5+incompatible ([#497](https://github.com/runfinch/finch/issues/497)) ([6f1afbb](https://github.com/runfinch/finch/commit/6f1afbb69554148efd8eea938278bcc5104ab050))
+* **deps:** Bump github.com/lima-vm/lima from 0.16.0 to 0.17.2 ([#531](https://github.com/runfinch/finch/issues/531)) ([6e33d15](https://github.com/runfinch/finch/commit/6e33d159e2f522784860bc60ceea897a98d1fe5f))
+* **deps:** Bump github.com/onsi/gomega from 1.27.8 to 1.27.10 ([#496](https://github.com/runfinch/finch/issues/496)) ([d08d102](https://github.com/runfinch/finch/commit/d08d102d05a350a8b8e586c42ef83d51495cf4f9))
+* **deps:** Bump github.com/pkg/sftp from 1.13.5 to 1.13.6 ([#530](https://github.com/runfinch/finch/issues/530)) ([09b3846](https://github.com/runfinch/finch/commit/09b38467333e5e59eadb76cd5f4612768cde5289))
+* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.23.6 to 3.23.7 ([#513](https://github.com/runfinch/finch/issues/513)) ([83bd718](https://github.com/runfinch/finch/commit/83bd718be67ddba624e8218034c91bf399e2cccd))
+* **deps:** Bump golang.org/x/tools from 0.11.0 to 0.11.1 ([#509](https://github.com/runfinch/finch/issues/509)) ([e826bcf](https://github.com/runfinch/finch/commit/e826bcff385946bb6629db8935d3aa912befb5bb))
+* **deps:** Bump golang.org/x/tools from 0.11.1 to 0.12.0 ([#523](https://github.com/runfinch/finch/issues/523)) ([09d6514](https://github.com/runfinch/finch/commit/09d6514bfba31a898e3b3407964113f21fb6b244))
+* **deps:** Bump k8s.io/apimachinery from 0.27.3 to 0.27.4 ([#487](https://github.com/runfinch/finch/issues/487)) ([444bbc0](https://github.com/runfinch/finch/commit/444bbc0779dbe22207fec471389810e398c1cf50))
+* **deps:** Bump k8s.io/apimachinery from 0.27.4 to 0.28.0 ([#535](https://github.com/runfinch/finch/issues/535)) ([8df84cf](https://github.com/runfinch/finch/commit/8df84cf8c54bd772c28a83df918c251a540c881a))
+* **deps:** Bump submodules and dependencies ([#521](https://github.com/runfinch/finch/issues/521)) ([1b3ad94](https://github.com/runfinch/finch/commit/1b3ad94f9477eb3f8d33cbea90880f78ca403ff7))
+
 ## [0.7.0](https://github.com/runfinch/finch/compare/v0.6.2...v0.7.0) (2023-07-18)
 
 
