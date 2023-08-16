@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1692210967877,
+  "lastUpdate": 1692211081108,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -14256,6 +14256,156 @@ window.BENCHMARK_DATA = {
             "value": 540,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "09b38467333e5e59eadb76cd5f4612768cde5289",
+          "message": "build(deps): Bump github.com/pkg/sftp from 1.13.5 to 1.13.6 (#530)\n\nBumps [github.com/pkg/sftp](https://github.com/pkg/sftp) from 1.13.5 to\r\n1.13.6.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/pkg/sftp/releases\">github.com/pkg/sftp's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v1.13.6</h2>\r\n<p><a href=\"https://redirect.github.com/pkg/sftp/issues/499\">GH-499</a>\r\nwriteToSequential: improve tests for write errors\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/513\">GH-513</a>\r\nMore context for EOF during client setup\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/516\">GH-516</a>\r\nRealPathFileLister: allow to return an error\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/525\">GH-525</a>\r\nDocument the weirdness of the reversal of arguments to SSH_FXP_SYMLINK\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/526\">GH-526</a>\r\nrequest server: handle relative symlinks\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/528\">GH-528</a> Add\r\nsupport for working directory in Server\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/533\">GH-533</a> CI:\r\nadd CIFuzz integration\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/537\">GH-537</a>\r\nStop ReadFromWithConcurrency sending more data than it needs to\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/545\">GH-545</a>\r\nrefactor sshfx encoding, fix link rot, go fmt\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/553\">GH-553</a>\r\nMarshal extended attribute data if FileInfo supports it\r\n<a href=\"https://redirect.github.com/pkg/sftp/issues/554\">GH-554</a>\r\nProperly handle io.EOF error conditions when reading</p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/669003cef43b4ef0da0894493b012ba9c3d7e313\"><code>669003c</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/pkg/sftp/issues/554\">#554</a> from\r\ndsnet/master</li>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/e9377c8373b34dca1f9655b2444adf52bcd32cb6\"><code>e9377c8</code></a>\r\nProperly handle io.EOF error conditions when reading</li>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/ec1c8caca60e03e3816cadfaad20a0fd384a2a5e\"><code>ec1c8ca</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/pkg/sftp/issues/553\">#553</a> from\r\npeterverraedt/marshal-extended</li>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/c632ce6285b74e776d5dcfaec897a2a97f93d5bd\"><code>c632ce6</code></a>\r\nMarshal extended data if file info supports it</li>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/72a484f090c5495d4df60aea1ad4cccf714e409c\"><code>72a484f</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/pkg/sftp/issues/550\">#550</a> from\r\ntanishqsinghal7/ts-deleteallresources</li>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/78e49babba678130c2decdd8acbe97f74e0e8c89\"><code>78e49ba</code></a>\r\nCheck</li>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/d17dfb25ab87b8561c67800921d0f29d0af5db4f\"><code>d17dfb2</code></a>\r\nResolve Comments</li>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/f96a7bef9516f481f86400e4799772eec83adf37\"><code>f96a7be</code></a>\r\nHandling error &amp; Test func with working tree</li>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/628da3e1184de6ca545657fc87e5f247ef2ac1c8\"><code>628da3e</code></a>\r\nAdding Tests to test the func &amp; resolving comment</li>\r\n<li><a\r\nhref=\"https://github.com/pkg/sftp/commit/0ac5f90dbb2b2fe79d663b0a3a7f04dca13c196b\"><code>0ac5f90</code></a>\r\nImplemented Delete All Resources Function</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/pkg/sftp/compare/v1.13.5...v1.13.6\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/pkg/sftp&package-manager=go_modules&previous-version=1.13.5&new-version=1.13.6)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-08-16T11:32:48-07:00",
+          "tree_id": "b984af9c4e1c26e7640d3db742a0167249989417",
+          "url": "https://github.com/runfinch/finch/commit/09b38467333e5e59eadb76cd5f4612768cde5289"
+        },
+        "date": 1692211080141,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 44282198800,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3626,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 36.36,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 44.28,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1371955200,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1991080,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 42091,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30325729559,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3246,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.33,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 16748544,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1365864,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 28839,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 506909636,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.7947,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 13.47,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5068,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 32532,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 533,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
           }
         ]
       }
