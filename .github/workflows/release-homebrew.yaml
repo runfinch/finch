@@ -74,7 +74,7 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
           cd $(brew --repo homebrew/cask) 
-          brew uninstall --cask ./Casks/finch.rb || true
+          brew uninstall --cask ./Casks/f/finch.rb || true
         shell: zsh {0}
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -93,7 +93,7 @@ jobs:
         run: |
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          brew install --cask ./Casks/finch.rb
+          brew install --cask ./Casks/f/finch.rb
         shell: zsh {0}
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true
@@ -141,7 +141,7 @@ jobs:
           # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
           # that caused the VM initialization failure in the e2e test. 
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
-          brew reinstall --cask ./Casks/finch.rb
+          brew reinstall --cask ./Casks/f/finch.rb
         shell: zsh {0}
       - name: Run e2e tests
         uses: nick-fields/retry@v2
@@ -153,7 +153,7 @@ jobs:
         if: ${{ always() }}
         run: |
           cd $(brew --repo homebrew/cask)
-          brew uninstall --zap --cask ./Casks/finch.rb
+          brew uninstall --zap --cask ./Casks/f/finch.rb
           if [ -d "/Applications/Finch" ]; then
             echo ERROR: Finch is not uninstalled
             exit 1
@@ -197,7 +197,7 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
           cd $(brew --repo homebrew/cask) 
-          brew uninstall --cask ./Casks/finch.rb || true
+          brew uninstall --cask ./Casks/f/finch.rb || true
         shell: zsh {0}
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -214,7 +214,7 @@ jobs:
         run: |
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          brew install --cask ./Casks/finch.rb
+          brew install --cask ./Casks/f/finch.rb
         shell: zsh {0}
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true 
@@ -259,7 +259,7 @@ jobs:
           sudo rm -rf ./_output
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          brew reinstall --cask ./Casks/finch.rb
+          brew reinstall --cask ./Casks/f/finch.rb
         shell: zsh {0}
       - name: Run e2e tests
         uses: nick-fields/retry@v2
@@ -271,7 +271,7 @@ jobs:
         if: ${{ always() }}
         run: |
           cd $(brew --repo homebrew/cask)
-          brew uninstall --zap --cask ./Casks/finch.rb
+          brew uninstall --zap --cask ./Casks/f/finch.rb
           if [ -d "/Applications/Finch" ]; then
             echo ERROR: Finch is not uninstalled
             exit 1
