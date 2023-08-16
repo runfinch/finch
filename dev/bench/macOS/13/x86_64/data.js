@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1692210895699,
+  "lastUpdate": 1692210968726,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -12034,6 +12034,156 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 539,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6e33d159e2f522784860bc60ceea897a98d1fe5f",
+          "message": "build(deps): Bump github.com/lima-vm/lima from 0.16.0 to 0.17.2 (#531)\n\nBumps [github.com/lima-vm/lima](https://github.com/lima-vm/lima) from\r\n0.16.0 to 0.17.2.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/lima-vm/lima/releases\">github.com/lima-vm/lima's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v0.17.2</h2>\r\n<p>On macOS hosts, Lima now asks the user to sign the QEMU binary with\r\nthe <code>com.apple.security.hypervisor</code> entitlement if the binary\r\nis not properly signed:</p>\r\n<pre lang=\"console\"><code>$ limactl start\r\nINFO[0000] Using the existing instance &quot;default&quot;        \r\nWARN[0000] QEMU binary &quot;/usr/local/bin/qemu-system-x86_64&quot; is\r\nnot properly signed with the &quot;com.apple.security.hypervisor&quot;\r\nentitlement error=&quot;failed to run [codesign --verify\r\n/usr/local/bin/qemu-system-x86_64]: exit status 1\r\n(out=\\&quot;/usr/local/bin/qemu-system-x86_64: invalid signature (code\r\nor signature have been modified)\\\\nIn architecture:\r\nx86_64\\\\n\\&quot;)&quot;\r\n? Try to sign &quot;/usr/local/bin/qemu-system-x86_64&quot; with the\r\n&quot;com.apple.security.hypervisor&quot; entitlement? (Y/n)\r\n...\r\n</code></pre>\r\n<p>Choose <code>Y</code> to sign the binary.</p>\r\n<p>This signing is usually not needed on users' side.\r\nHowever, the Homebrew bottle of QEMU <strong>v8.0.4</strong> needs this\r\nsigning due to a temporary issue of Homebrew's build infrastructure:</p>\r\n<ul>\r\n<li><a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1742\">lima-vm/lima#1742</a></li>\r\n</ul>\r\n<p>The Homebrew bottle of QEMU v8.0.3 is not affected by this issue.</p>\r\n<h2>Changes</h2>\r\n<p>QEMU:</p>\r\n<ul>\r\n<li>Ask to sign QEMU binary when the binary is not properly signed (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1743\">#1743</a>)</li>\r\n</ul>\r\n<p>Full changes: <a\r\nhref=\"https://github.com/lima-vm/lima/milestone/37?closed=1\">https://github.com/lima-vm/lima/milestone/37?closed=1</a>\r\nThanks to <a\r\nhref=\"https://github.com/afbjorklund\"><code>@​afbjorklund</code></a></p>\r\n<h2>Usage</h2>\r\n<pre lang=\"console\"><code>[macOS]$ limactl create\r\n[macOS]$ limactl start\r\n...\r\nINFO[0029] READY. Run `lima` to open the shell.\r\n<p>[macOS]$ lima uname\r\nLinux\r\n</code></pre></p>\r\n<hr />\r\n<p>The binaries were built automatically on GitHub Actions.\r\nThe build log is available for 90 days: <a\r\nhref=\"https://github.com/lima-vm/lima/actions/runs/5851291166\">https://github.com/lima-vm/lima/actions/runs/5851291166</a></p>\r\n<p>The sha256sum of the SHA256SUMS file itself is\r\n<code>006f022e19d2b03869c33ee30be694217937d8c774af7b9714e2d7659da31aa5</code>\r\n.</p>\r\n<h2>v0.17.1</h2>\r\n<p>This release fixes incompatibility with Go 1.21 (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1729\">#1729</a>).</p>\r\n<h2>Changes</h2>\r\n<p>Misc:</p>\r\n<ul>\r\n<li>Support Go 1.21 (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1729\">#1729</a>)</li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/bee0502854e2d2eb6e42389fcc5775cdcee78f44\"><code>bee0502</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1743\">#1743</a>\r\nfrom AkihiroSuda/sign-qemu-binary</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/c0b48a933726a41ab3e0002bbcba48c30224f64c\"><code>c0b48a9</code></a>\r\nqemu: ask to sign QEMU binary when the binary is not properly\r\nsigned</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/18c029b0d38a354fc9c163ef47b31d05fc997a90\"><code>18c029b</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1745\">#1745</a>\r\nfrom afbjorklund/kernel-arch</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/46d0e828650d58b31125e6459122eea034ccd22e\"><code>46d0e82</code></a>\r\nValidate arch against image not default</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/495271c275ed55b0ee1981cb18bfeef2df06d6ab\"><code>495271c</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1740\">#1740</a>\r\nfrom AkihiroSuda/dns-descriptive-debug-log</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/fa053a3d7c439b5f363eb49df0ea123d628bd33e\"><code>fa053a3</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1735\">#1735</a>\r\nfrom afbjorklund/limayaml-os-linux</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/9cc6044c4fd3cfcb164c320d66587afdd093d2ce\"><code>9cc6044</code></a>\r\ndns: make a debug message more descriptive</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/d41c316cf06cf1c5d92b668be3d57464e68e302c\"><code>d41c316</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1733\">#1733</a>\r\nfrom AkihiroSuda/go-mod-20230812</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/31e8bbce1af2244b4f97a04b1adc31a22e34467e\"><code>31e8bbc</code></a>\r\ngo.mod: k8s.io/* v0.27.4</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/27b4e787189428ff9724a9244ba0ed0c441d2454\"><code>27b4e78</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1725\">#1725</a>\r\nfrom afbjorklund/reverse-remove</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/lima-vm/lima/compare/v0.16.0...v0.17.2\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/lima-vm/lima&package-manager=go_modules&previous-version=0.16.0&new-version=0.17.2)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-08-16T11:32:29-07:00",
+          "tree_id": "fb21b66a61d53d28b618176266def5c5fe3201e1",
+          "url": "https://github.com/runfinch/finch/commit/6e33d159e2f522784860bc60ceea897a98d1fe5f"
+        },
+        "date": 1692210967704,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 44442253443,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.322,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 44.44,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1332105216,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1993456,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 42154,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30531188555,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3587,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 46.15,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.53,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 140136448,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1373872,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 29018,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 501134930,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.643,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 13.52,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5011,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 32128,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 526,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
