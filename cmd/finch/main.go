@@ -53,7 +53,12 @@ func xmain(logger flog.Logger,
 		return fmt.Errorf("failed to find the installation path of Finch: %w", err)
 	}
 
-	fc, err := config.Load(fs, fp.ConfigFilePath(ffd.Env("HOME")), logger, loadCfgDeps, mem)
+	// TODO: keep this refactor? ffd.Env("HOME") -> os.UserHomeDir() ? This is platform agnostic vs os.getEnv("HOME")
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get user home directory: %w", err)
+	}
+	fc, err := config.Load(fs, fp.ConfigFilePath(home), logger, loadCfgDeps, mem)
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
@@ -90,6 +95,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		fp.QEMUBinDir(),
 		system.NewStdLib(),
 	)
+
 	supportBundleBuilder := support.NewBundleBuilder(
 		logger,
 		fs,
@@ -122,9 +128,13 @@ func virtualMachineCommands(
 	fc *config.Finch,
 ) *cobra.Command {
 	optionalDepGroups := []*dependency.Group{
-		vmnet.NewDependencyGroup(ecc, lcc, fs, fp, logger),
 		credhelper.NewDependencyGroup(ecc, fs, fp, logger, fc, system.NewStdLib().Env("USER"),
 			system.NewStdLib().Arch()),
+	}
+
+	// WSL handles networking for us, so no need to include the vmnet group.
+	if *fc.VMType != "wsl" {
+		optionalDepGroups = append(optionalDepGroups, vmnet.NewDependencyGroup(ecc, lcc, fs, fp, logger))
 	}
 	return newVirtualMachineCommand(
 		lcc,
