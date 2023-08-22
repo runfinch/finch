@@ -112,6 +112,8 @@ local-core:
 
 	mkdir -p _output
 	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
+	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C  $(OUTDIR)/lima
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
 	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)/lima
 	rm -rf $(OUTDIR)/lima-template
 
