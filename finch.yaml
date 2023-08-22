@@ -5,6 +5,8 @@
 # Default values in this YAML file are specified by `null` instead of Lima's "builtin default" values,
 # so they can be overridden by the $LIMA_HOME/_config/default.yaml mechanism documented at the end of this file.
 
+#vmType: null
+
 # Arch: "default", "x86_64", "aarch64".
 # 🟢 Builtin default: "default" (corresponds to the host architecture)
 arch: null

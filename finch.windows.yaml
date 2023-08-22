@@ -1,0 +1,27 @@
+# ===================================================================== #
+# BASIC CONFIGURATION
+# ===================================================================== #
+
+# Default values in this YAML file are specified by `null` instead of Lima's "builtin default" values,
+# so they can be overridden by the $LIMA_HOME/_config/default.yaml mechanism documented at the end of this file.
+
+# VM type: "qemu" or "vz" (on macOS 13 and later).
+# The vmType can be specified only on creating the instance.
+# The vmType of existing instances cannot be changed.
+# 🟢 Builtin default: "qemu"
+vmType: wsl
+
+# OpenStack-compatible disk image.
+# 🟢 Builtin default: null (must be specified)
+# 🔵 This file: Ubuntu 23.04 Lunar Lobster images
+images:
+# Try to use release-yyyyMMdd image if available. Note that release-yyyyMMdd will be removed after several months.
+- location: "<finch_image_location>"
+  arch: "<finch_image_arch>"
+  digest: "<finch_image_digest>"
+
+mountType: wsl
+
+containerd:
+  system: true
+  user: false
