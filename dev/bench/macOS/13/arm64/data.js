@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1692813233820,
+  "lastUpdate": 1692989037470,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -14896,6 +14896,156 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 361,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2759049d61b1830cf1fcc9a5590154ded933f87e",
+          "message": "ci(deps): Bump aws-actions/configure-aws-credentials from 2 to 3 (#541)\n\nBumps\r\n[aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials)\r\nfrom 2 to 3.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/releases\">aws-actions/configure-aws-credentials's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v3</h2>\r\n<p>This tag tracks the latest v3.x.x release</p>\r\n<h2>v3.0.0</h2>\r\n<p>See the <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/blob/v3.0.0/CHANGELOG.md\">changelog</a>\r\nfor details about the changes included in this release.</p>\r\n<h2>v2.2.0</h2>\r\n<p>See the <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/blob/v2.2.0/CHANGELOG.md\">changelog</a>\r\nfor details about the changes included in this release.</p>\r\n<h2>v2.1.0</h2>\r\n<p>See the <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/blob/v2.1.0/CHANGELOG.md\">changelog</a>\r\nfor details about the changes included in this release.</p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/blob/main/CHANGELOG.md\">aws-actions/configure-aws-credentials's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v2.1.0...v2.2.0\">2.2.0</a>\r\n(2023-05-31)</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li><code>inline-session-policy</code> prop enables assuming a role with\r\ninline session policies (<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/d00f6c6f41fde02a9fd0d469040be6ed0df69e73\">d00f6c6</a>)</li>\r\n<li><code>managed-session-policies</code> prop enables assuming a role\r\nwith managed policy arns (<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/d00f6c6f41fde02a9fd0d469040be6ed0df69e73\">d00f6c6</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v2.0.0...v2.1.0\">2.1.0</a>\r\n(2023-05-31)</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li><code>role-chaining</code> prop enables role chaining use case (<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/6fbd316fd15f52c3d9f68e7aa06eae4f5699a518\">6fbd316</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v1.7.0...v2.0.0\">2.0.0</a>\r\n(2023-03-06)</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>Version bump to use Node 16 by default.</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v1.6.1...v1.7.0\">1.7.0</a>\r\n(2022-08-03)</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>Allow audience to be explicitly specified (<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/2f8dfd0ed43d880f85b57f0c8727b497af2037de\">2f8dfd0</a>)</li>\r\n</ul>\r\n<h3><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v1.6.0...v1.6.1\">1.6.1</a>\r\n(2022-01-18)</h3>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>OIDC Parallel Requests error (<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/133757e9b829f4ef44c8e99e3f272879b45fc9c5\">133757e</a>)</li>\r\n<li>Strict Mode Deprecation (<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/4c5e1c60ccfc95d0e48bf1bc95fc707a94aa2c60\">4c5e1c6</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v1.5.11...v1.6.0\">1.6.0</a>\r\n(2021-11-23)</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>Add the ability to use a web identity token file (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/240\">#240</a>)\r\n(<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/8053174404968575ac1dd102dcb1109d2fe6d9ea\">8053174</a>)</li>\r\n<li>added OIDC (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/262\">#262</a>)\r\n(<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/b8c74de753fbcb4868bf2011fb2e15826ce973af\">b8c74de</a>),\r\ncloses <a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/267\">#267</a></li>\r\n<li>upgraded to new GH OIDC API (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/284\">#284</a>)\r\n(<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/036a4a1ddf2c0e7a782dca6e083c6c53e5d90321\">036a4a1</a>)</li>\r\n</ul>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>reverting update to use new API (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/274\">#274</a>)\r\n(<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/a78fcb01f76c8c5c3b05ab82718a6f7919fc0269\">a78fcb0</a>),\r\ncloses <a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/270\">#270</a></li>\r\n<li>typo &quot;charcters&quot; in README.md (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/241\">#241</a>)\r\n(<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/c48e1b578416f3457ccf757c47385df5c054d23f\">c48e1b5</a>)</li>\r\n<li>Updated token retrieval to use new API (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/270\">#270</a>)\r\n(<a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/20ce4e5ba1de2e753d034b5415075a8767d64d4d\">20ce4e5</a>)</li>\r\n</ul>\r\n<h3><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v1.5.10...v1.5.11\">1.5.11</a>\r\n(2021-07-19)</h3>\r\n<h3><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v1.5.9...v1.5.10\">1.5.10</a>\r\n(2021-06-01)</h3>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/ef93a73b1313f148011965ef7361f667f371f58b\"><code>ef93a73</code></a>\r\nV3 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/791\">#791</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/131c7b6fd10c0d7f36e1e49650b241d91ee327b9\"><code>131c7b6</code></a>\r\nchore: Bump jest from 29.6.2 to 29.6.3 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/786\">#786</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/6334b403ebf4af8bddda86d46ba899570ddd1043\"><code>6334b40</code></a>\r\nchore: Bump aws-sdk from 2.1436.0 to 2.1441.0 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/787\">#787</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/360ea313a73f8d3b7839fb5db64aecf801ad5fda\"><code>360ea31</code></a>\r\nchore: Bump aws-sdk from 2.1431.0 to 2.1436.0 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/783\">#783</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/de93b00c9f538bf2000deda62b2da850b2c737e9\"><code>de93b00</code></a>\r\nchore: Bump eslint from 8.46.0 to 8.47.0 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/784\">#784</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/746d33e7c1cc7b6e40a836b0f2ef033136aa6b2a\"><code>746d33e</code></a>\r\nchore: Bump aws-sdk from 2.1426.0 to 2.1431.0 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/782\">#782</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/706fc9ae3ddc432f1b3de583922ba05d3b484cae\"><code>706fc9a</code></a>\r\nchore: Bump eslint from 8.45.0 to 8.46.0 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/780\">#780</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/9918371ad58bc793ab867692ad2935b2ee847bde\"><code>9918371</code></a>\r\nchore: Bump aws-sdk from 2.1421.0 to 2.1426.0 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/781\">#781</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/345462ab9e5090ddc595fc179952ed2fb03c74b7\"><code>345462a</code></a>\r\nchore: Bump jest from 29.6.1 to 29.6.2 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/779\">#779</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/80a7a6c2a2309f1aaa0ea3c8689a33b1647a4421\"><code>80a7a6c</code></a>\r\nchore: Bump aws-sdk from 2.1416.0 to 2.1421.0 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/778\">#778</a>)</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v2...v3\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=aws-actions/configure-aws-credentials&package-manager=github_actions&previous-version=2&new-version=3)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-08-25T11:41:05-07:00",
+          "tree_id": "4a07c7cf277737811dd55c4f26e5dc5f39379d54",
+          "url": "https://github.com/runfinch/finch/commit/2759049d61b1830cf1fcc9a5590154ded933f87e"
+        },
+        "date": 1692989036661,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 33657837292,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4174,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 33.66,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1155645440,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1500744,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 31879,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24015765667,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4013,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 40,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.02,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 133369856,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1066024,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22660,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 321711771,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.8294,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 10.31,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.3217,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 23908,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 345,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
