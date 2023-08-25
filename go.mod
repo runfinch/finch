@@ -23,7 +23,7 @@ require (
 	golang.org/x/exp v0.0.0-20230810033253-352e893a4cad
 	golang.org/x/tools v0.12.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.28.0
+	k8s.io/apimachinery v0.28.1
 )
 
 require (
