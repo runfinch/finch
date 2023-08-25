@@ -8,6 +8,13 @@
 ## Hello, Finch
 <!-- markdownlint-restore -->
 
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/runfinch/finch)](https://pkg.go.dev/github.com/runfinch/finch)
+[![Go Report Card](https://goreportcard.com/badge/github.com/runfinch/finch)](https://goreportcard.com/report/github.com/runfinch/finch)
+[![CI](https://github.com/runfinch/finch/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/runfinch/finch/actions/workflows/ci.yaml)
+[![Static Badge](https://img.shields.io/badge/Website-Benchmarks-blue)](https://runfinch.github.io/finch/dev/bench/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/runfinch/finch?logo=GitHub)](https://github.com/runfinch/finch/releases)
+[![GitHub all releases](https://img.shields.io/github/downloads/runfinch/finch/total?label=all%20time%20downloads)](https://github.com/runfinch/finch/releases/)
+
 Finch is an open source client for container development. Its simple installer provides a minimal native client along with an opinionated distribution of other open source components. Rather than creating even more options to reason about and choose from, Finch aims to help promote other projects by making it easy to install and use them, while offering a simple native client to tie it all together.
 
 Finch provides a simple client which is integrated with [nerdctl](https://github.com/containerd/nerdctl). For the core build/run/push/pull commands, Finch depends upon nerdctl to handle the heavy lifting. It works with [containerd](https://containerd.io) for container management, and with [BuildKit](https://github.com/moby/buildkit) to handle Open Container Initiative (OCI) image builds. These components are all pulled together and run within a virtual machine managed by [Lima](https://github.com/lima-vm/lima).
