@@ -10,18 +10,18 @@ buildPkgInstaller() {
 
     #copy pkg resources and replace version placeholder
     cp -r ./installer-builder/darwin $INSTALLER_FULL_PATH/
-    sed -i '' -e 's/__VERSION__/'${VERSION}'/g' $INSTALLER_FULL_PATH/darwin/scripts/postinstall
-    sed -i '' -e 's/__VERSION__/'${VERSION}'/g' $INSTALLER_FULL_PATH/darwin/distribution.xml
+    sed -i '' -e 's/__VERSION__/'"${VERSION}"'/g' $INSTALLER_FULL_PATH/darwin/scripts/postinstall
+    sed -i '' -e 's/__VERSION__/'"${VERSION}"'/g' $INSTALLER_FULL_PATH/darwin/distribution.xml
 
     #distribution file requires different value for aarch64
-    if [ $ARCH == "x86_64" ]
+    if [ "$ARCH" == "x86_64" ]
     then
         supportedArch="x86_64"
     else
         supportedArch="arm64"
     fi
     sed -i '' -e 's/__ARCH__/'${supportedArch}'/g' $INSTALLER_FULL_PATH/darwin/distribution.xml
-    sed -i '' -e 's/__VERSION__/'${VERSION}'/g' $INSTALLER_FULL_PATH/darwin/Resources/*.html
+    sed -i '' -e 's/__VERSION__/'"${VERSION}"'/g' $INSTALLER_FULL_PATH/darwin/Resources/*.html
 
     #copy signed finch build to pkg resource
     mkdir -p $INSTALLER_FULL_PATH/darwinpkg
@@ -36,7 +36,7 @@ buildPkgInstaller() {
 
     #copy uninstall script and replace version placeholder
     cp ./installer-builder/darwin/Resources/uninstall.sh $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch
-    sed -i '' -e 's/__VERSION__/'${VERSION}'/g' $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch/uninstall.sh
+    sed -i '' -e 's/__VERSION__/'"${VERSION}"'/g' $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch/uninstall.sh
     
     #construct pkg directory
     mkdir -p $INSTALLER_FULL_PATH/package
@@ -44,8 +44,8 @@ buildPkgInstaller() {
     mkdir -p $INSTALLER_FULL_PATH/unsigned/package/artifact
 
     #build pkg
-    pkgbuild --identifier org.Finch.${VERSION} \
-    --version $VERSION \
+    pkgbuild --identifier org.Finch."${VERSION}" \
+    --version "$VERSION" \
     --scripts $INSTALLER_FULL_PATH/darwin/scripts \
     --root $INSTALLER_FULL_PATH/darwinpkg \
     $INSTALLER_FULL_PATH/package/Finch.pkg > /dev/null 2>&1
