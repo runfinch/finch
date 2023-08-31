@@ -63,6 +63,16 @@ jobs:
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
           version: v1.53.3
           args: --fix=false --timeout=5m
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          version: v0.9.0 
+        continue-on-error: true
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     steps:
