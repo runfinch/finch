@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package main
 
 import (
@@ -42,6 +45,12 @@ func handleVolume(systemDeps NerdctlCommandSystemDeps, v string) (string, error)
 		return "", fmt.Errorf("invalid volume mount: %s does not contain : separator", v)
 	}
 	hostPath := cleanArg[:colonIndex]
+	hostPath, err := systemDeps.FilePathAbs(hostPath)
+	// If it's an anonymous volume, then the path won't exist
+	if err != nil {
+		return v, nil
+	}
+
 	containerPath := cleanArg[colonIndex+1:]
 	wslHostPath, err := convertToWSLPath(systemDeps, hostPath)
 	if err != nil {
