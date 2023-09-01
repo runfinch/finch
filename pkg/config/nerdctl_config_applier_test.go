@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"path/filepath"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -30,7 +31,6 @@ TZ6coT6ILioXcs0kX17JAAAAI2FsdmFqdXNAODg2NjVhMGJmN2NhLmFudC5hbWF6b24uY2
 
 func Test_updateEnvironment(t *testing.T) {
 	t.Parallel()
-
 	testCases := []struct {
 		name         string
 		user         string
@@ -88,7 +88,7 @@ func Test_updateEnvironment(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {},
 			want: fmt.Errorf(
 				"failed to read config file: %w",
-				&fs.PathError{Op: "open", Path: "/home/mock_user.linux/.bashrc", Err: errors.New("file does not exist")},
+				&fs.PathError{Op: "open", Path: filepath.Join(string(filepath.Separator), "home", "mock_user.linux", ".bashrc"), Err: errors.New("file does not exist")},
 			),
 		},
 	}
@@ -194,6 +194,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 }
 
 func TestNerdctlConfigApplier_Apply(t *testing.T) {
+	privateKeyPath := filepath.Join(string(filepath.Separator), "private-key")
 	t.Parallel()
 
 	testCases := []struct {
@@ -206,7 +207,7 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 	}{
 		{
 			name:       "private key path doesn't exist",
-			path:       "/private-key",
+			path:       privateKeyPath,
 			remoteAddr: "",
 			hostUser:   "mock-host-user",
 			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer) {
@@ -215,16 +216,16 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 				"failed to create ssh client config: %w",
 				fmt.Errorf(
 					"failed to open private key file: %w",
-					&fs.PathError{Op: "open", Path: "/private-key", Err: errors.New("file does not exist")},
+					&fs.PathError{Op: "open", Path: privateKeyPath, Err: errors.New("file does not exist")},
 				),
 			),
 		},
 		{
 			name:       "dialer fails to create the ssh connection",
-			path:       "/private-key",
+			path:       privateKeyPath,
 			remoteAddr: "deadbeef",
 			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer) {
-				err := afero.WriteFile(fs, "/private-key", []byte(fakeSSHKey), 0o600)
+				err := afero.WriteFile(fs, privateKeyPath, []byte(fakeSSHKey), 0o600)
 				require.NoError(t, err)
 
 				d.EXPECT().Dial("tcp", "deadbeef", gomock.Any()).Return(nil, fmt.Errorf("some error"))

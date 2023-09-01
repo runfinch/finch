@@ -36,6 +36,68 @@ func (m *NerdctlCommandSystemDeps) EXPECT() *NerdctlCommandSystemDepsMockRecorde
 	return m.recorder
 }
 
+// FilePathAbs mocks base method.
+func (m *NerdctlCommandSystemDeps) FilePathAbs(elem string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FilePathAbs", elem)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FilePathAbs indicates an expected call of FilePathAbs.
+func (mr *NerdctlCommandSystemDepsMockRecorder) FilePathAbs(elem interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilePathAbs", reflect.TypeOf((*NerdctlCommandSystemDeps)(nil).FilePathAbs), elem)
+}
+
+// FilePathJoin mocks base method.
+func (m *NerdctlCommandSystemDeps) FilePathJoin(elem ...string) string {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{}
+	for _, a := range elem {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FilePathJoin", varargs...)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// FilePathJoin indicates an expected call of FilePathJoin.
+func (mr *NerdctlCommandSystemDepsMockRecorder) FilePathJoin(elem ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilePathJoin", reflect.TypeOf((*NerdctlCommandSystemDeps)(nil).FilePathJoin), elem...)
+}
+
+// FilePathToSlash mocks base method.
+func (m *NerdctlCommandSystemDeps) FilePathToSlash(elem string) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FilePathToSlash", elem)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// FilePathToSlash indicates an expected call of FilePathToSlash.
+func (mr *NerdctlCommandSystemDepsMockRecorder) FilePathToSlash(elem interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilePathToSlash", reflect.TypeOf((*NerdctlCommandSystemDeps)(nil).FilePathToSlash), elem)
+}
+
+// GetWd mocks base method.
+func (m *NerdctlCommandSystemDeps) GetWd() (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetWd")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetWd indicates an expected call of GetWd.
+func (mr *NerdctlCommandSystemDepsMockRecorder) GetWd() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWd", reflect.TypeOf((*NerdctlCommandSystemDeps)(nil).GetWd))
+}
+
 // LookupEnv mocks base method.
 func (m *NerdctlCommandSystemDeps) LookupEnv(key string) (string, bool) {
 	m.ctrl.T.Helper()

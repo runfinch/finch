@@ -79,6 +79,7 @@ type FinchFinderDeps interface {
 	system.ExecutableFinder
 	system.FilePathJoiner
 	system.EnvGetter
+	system.UserHomeDir
 }
 
 // FindFinch finds the installation path of Finch.

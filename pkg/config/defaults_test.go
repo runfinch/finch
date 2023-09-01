@@ -4,6 +4,7 @@
 package config
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -16,7 +17,13 @@ import (
 func Test_applyDefaults(t *testing.T) {
 	t.Parallel()
 
-	testCases := []struct {
+	var testCases []struct {
+		name    string
+		cfg     *Finch
+		mockSvc func(deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+		want    *Finch
+	}
+	darwinTestCases := []struct {
 		name    string
 		cfg     *Finch
 		mockSvc func(deps *mocks.LoadSystemDeps, mem *mocks.Memory)
@@ -85,6 +92,51 @@ func Test_applyDefaults(t *testing.T) {
 		},
 	}
 
+	windowsTestCases := []struct {
+		name    string
+		cfg     *Finch
+		mockSvc func(deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+		want    *Finch
+	}{
+		{
+			name: "happy path",
+			cfg:  &Finch{},
+			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+				deps.EXPECT().NumCPU().Return(8)
+				// 12,884,901,888 == 12GiB
+				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
+			},
+			want: &Finch{
+				CPUs:   pointer.Int(2),
+				Memory: pointer.String("3GiB"),
+				VMType: pointer.String("wsl2"),
+			},
+		},
+		{
+			name: "does not fill wsl2 default when it's set to something else",
+			cfg: &Finch{
+				VMType: pointer.String("wsl"),
+			},
+			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+				deps.EXPECT().NumCPU().Return(8)
+				// 12,884,901,888 == 12GiB
+				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
+
+			},
+			want: &Finch{
+				CPUs:   pointer.Int(2),
+				Memory: pointer.String("3GiB"),
+				VMType: pointer.String("wsl"),
+			},
+		},
+	}
+	if runtime.GOOS == "darwin" {
+		testCases = darwinTestCases
+	} else if runtime.GOOS == "windows" {
+		testCases = windowsTestCases
+	} else {
+		t.Skip("Skipping tests for runtime " + runtime.GOOS)
+	}
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {

@@ -6,6 +6,7 @@ package credhelper
 import (
 	"fmt"
 	"io/fs"
+	"path/filepath"
 	"testing"
 
 	"github.com/runfinch/finch/pkg/mocks"
@@ -41,7 +42,7 @@ func Test_fullInstallPath(t *testing.T) {
 			"docker-credential-cred-helper", "", "", "/folder/",
 			"",
 		}).fullInstallPath()
-	assert.Equal(t, "/folder/docker-credential-cred-helper", got)
+	assert.Equal(t, filepath.Join(string(filepath.Separator), "folder", "docker-credential-cred-helper"), got)
 }
 
 func Test_updateConfigFile(t *testing.T) {
@@ -223,15 +224,15 @@ func TestBinaries_Install(t *testing.T) {
 		{
 			name: "happy path",
 			mockSvc: func(l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, mFs afero.Fs) {
-				_, err := mFs.Create("mock_prefix/cred-helpers/docker-credential-ecr-login")
+				_, err := mFs.Create(filepath.Join("", "mock_prefix", "cred-helpers", "docker-credential-ecr-login"))
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Times(2)
 				l.EXPECT().Infof("Installing %s credential helper", "ecr")
-				creator.EXPECT().Create("mkdir", "-p", "mock_prefix/cred-helpers/").Return(cmd)
+				creator.EXPECT().Create("mkdir", "-p", filepath.Join("mock_prefix", "cred-helpers")).Return(cmd)
 				creator.EXPECT().Create("curl", "--retry", "5", "--retry-max-time", "30", "--url",
 					"https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
 						"/0.7.0/linux-arm64/docker-credential-ecr-login", "--output",
-					"mock_prefix/cred-helpers/docker-credential-ecr-login").Return(cmd)
+					filepath.Join("mock_prefix", "cred-helpers", "docker-credential-ecr-login")).Return(cmd)
 			},
 			want: nil,
 		},
@@ -255,11 +256,12 @@ func TestBinaries_Install(t *testing.T) {
 			hc := helperConfig{
 				"docker-credential-ecr-login", credHelperURL,
 				"sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714",
-				"mock_prefix/cred-helpers/",
+				filepath.Join("mock_prefix", "cred-helpers"),
 				"mock_prefix/.finch/",
 			}
 			fc := "ecr-login"
 			got := newCredHelperBinary(mockFinchPath, mFs, creator, l, fc, "", hc).Install()
+			// fmt.Printf("Error is %s", got.Error())
 			assert.Equal(t, tc.want, got)
 		})
 	}

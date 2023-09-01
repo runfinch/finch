@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/fs"
 	"net"
+	"path/filepath"
 	"testing"
 
 	"github.com/spf13/afero"
@@ -18,7 +19,6 @@ import (
 
 func Test_hostKeyCallback(t *testing.T) {
 	t.Parallel()
-
 	testCases := []struct {
 		name   string
 		remote net.Addr
@@ -54,7 +54,8 @@ func Test_hostKeyCallback(t *testing.T) {
 
 func TestNewClientConfig(t *testing.T) {
 	t.Parallel()
-
+	// Handles OS specific path delimiter
+	pkPath := filepath.Join(string(filepath.Separator), "private_key")
 	testCases := []struct {
 		name           string
 		user           string
@@ -66,9 +67,9 @@ func TestNewClientConfig(t *testing.T) {
 		{
 			name:           "happy path",
 			user:           "test",
-			privateKeyPath: "/private_key",
+			privateKeyPath: pkPath,
 			mockSvc: func(t *testing.T, fs afero.Fs) {
-				err := afero.WriteFile(fs, "/private_key", []byte(`
+				err := afero.WriteFile(fs, pkPath, []byte(`
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
 QyNTUxOQAAACAfR367TtAGV+abvj4pRDcFdU2enKE+iC4qF3LNJF9eyQAAAKjEIxhXxCMY
@@ -87,24 +88,24 @@ TZ6coT6ILioXcs0kX17JAAAAI2FsdmFqdXNAODg2NjVhMGJmN2NhLmFudC5hbWF6b24uY2
 		{
 			name:           "private key file doesn't exist",
 			user:           "test",
-			privateKeyPath: "/private_key",
+			privateKeyPath: pkPath,
 			mockSvc:        func(t *testing.T, fs afero.Fs) {},
 			want:           nil,
 			wantErr: fmt.Errorf(
 				"failed to open private key file: %w",
-				&fs.PathError{Op: "open", Path: "/private_key", Err: errors.New("file does not exist")},
+				&fs.PathError{Op: "open", Path: pkPath, Err: errors.New("file does not exist")},
 			),
 		},
 		{
 			name:           "invalid private key file contents",
 			user:           "test",
-			privateKeyPath: "/private_key",
+			privateKeyPath: pkPath,
 			mockSvc: func(t *testing.T, fs afero.Fs) {
-				err := afero.WriteFile(fs, "/private_key", []byte(`not a private key`), 0o644)
+				err := afero.WriteFile(fs, pkPath, []byte(`not a private key`), 0o644)
 				require.NoError(t, err)
 			},
 			want:    nil,
-			wantErr: fmt.Errorf("failed to parse private key from %s: %w", "/private_key", fmt.Errorf("ssh: no key found")),
+			wantErr: fmt.Errorf("failed to parse private key from %s: %w", pkPath, fmt.Errorf("ssh: no key found")),
 		},
 	}
 
