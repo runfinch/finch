@@ -81,3 +81,22 @@ type RuntimeArchGetter interface {
 type RuntimeOSGetter interface {
 	OS() string
 }
+
+// UserHomeDir mocks out os.UserHomeDir.
+type UserHomeDir interface {
+	GetUserHome() (string, error)
+}
+
+type WorkingDirectory interface {
+	GetWd() (string, error)
+}
+
+// AbsFilePath mocks out filepath.Abs.
+type AbsFilePath interface {
+	FilePathAbs(elem string) (string, error)
+}
+
+// FilePathToSlash mocks out filepath.ToSlash
+type FilePathToSlash interface {
+	FilePathToSlash(elem string) string
+}

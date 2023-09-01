@@ -9,7 +9,7 @@
 # The vmType can be specified only on creating the instance.
 # The vmType of existing instances cannot be changed.
 # 🟢 Builtin default: "qemu"
-vmType: wsl
+vmType: wsl2
 
 # OpenStack-compatible disk image.
 # 🟢 Builtin default: null (must be specified)
@@ -20,7 +20,7 @@ images:
   arch: "<finch_image_arch>"
   digest: "<finch_image_digest>"
 
-mountType: wsl
+mountType: wsl2
 
 containerd:
   system: true
