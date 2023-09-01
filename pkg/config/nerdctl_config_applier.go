@@ -23,6 +23,7 @@ const (
 )
 
 type nerdctlConfigApplier struct {
+	fc             *Finch
 	dialer         fssh.Dialer
 	fs             afero.Fs
 	privateKeyPath string
@@ -33,8 +34,9 @@ var _ NerdctlConfigApplier = (*nerdctlConfigApplier)(nil)
 
 // NewNerdctlApplier creates a new NerdctlConfigApplier that
 // applies nerdctl configuration changes by SSHing to the lima VM to update the nerdctl configuration file in it.
-func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser string) NerdctlConfigApplier {
+func NewNerdctlApplier(fc *Finch, dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser string) NerdctlConfigApplier {
 	return &nerdctlConfigApplier{
+		fc:             fc,
 		dialer:         dialer,
 		fs:             fs,
 		privateKeyPath: privateKeyPath,
@@ -93,7 +95,7 @@ func updateEnvironment(fs afero.Fs, user string) error {
 }
 
 // updateNerdctlConfig reads from the nerdctl config and updates values.
-func updateNerdctlConfig(fs afero.Fs, user string, rootless bool) error {
+func updateNerdctlConfig(fc *Finch, fs afero.Fs, user string, rootless bool) error {
 	nerdctlRootlessCfgPath := fmt.Sprintf("/home/%s.linux/.config/nerdctl/nerdctl.toml", user)
 
 	var cfgPath string
@@ -124,6 +126,10 @@ func updateNerdctlConfig(fs afero.Fs, user string, rootless bool) error {
 	}
 
 	cfg.Namespace = nerdctlNamespace
+	cfg.HostGatewayIP = "192.168.5.2"
+	if fc.HostGateway != nil {
+		cfg.HostGatewayIP = *fc.HostGateway
+	}
 
 	updatedCfg, err := toml.Marshal(cfg)
 	if err != nil {
@@ -158,7 +164,7 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 	sftpFs := sftpfs.New(sftpClient)
 
 	// rootless hardcoded to false for now to match our finch.yaml file
-	if err := updateNerdctlConfig(sftpFs, user, false); err != nil {
+	if err := updateNerdctlConfig(nca.fc, sftpFs, user, false); err != nil {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}
 

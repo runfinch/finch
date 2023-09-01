@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	dockerops "github.com/docker/docker/opts"
-	"github.com/lima-vm/lima/pkg/networks"
+	// dockerops "github.com/docker/docker/opts"
+	// "github.com/lima-vm/lima/pkg/networks".
 
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -112,15 +112,6 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 			}
 			skip = shouldSkip
 			fileEnvs = append(fileEnvs, addEnvs...)
-		case strings.HasPrefix(arg, "--add-host"):
-			switch arg {
-			case "--add-host":
-				args[i+1] = resolveIP(args[i+1], nc.logger)
-			default:
-				resolvedIP := resolveIP(arg[11:], nc.logger)
-				arg = fmt.Sprintf("%s%s", arg[0:11], resolvedIP)
-			}
-			nerdctlArgs = append(nerdctlArgs, arg)
 		default:
 			nerdctlArgs = append(nerdctlArgs, arg)
 		}
@@ -303,19 +294,6 @@ func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 s
 		return skip, []string{}, err
 	}
 	return skip, envs, nil
-}
-
-func resolveIP(host string, logger flog.Logger) string {
-	parts := strings.SplitN(host, ":", 2)
-	// If the IP Address is a string called "host-gateway", replace this value with the IP address that can be used to
-	// access host from the containers.
-	// TODO: make the host gateway ip configurable.
-	if parts[1] == dockerops.HostGatewayName {
-		resolvedIP := networks.SlirpGateway
-		logger.Debugf(`Resolving special IP "host-gateway" to %q for host %q`, resolvedIP, parts[0])
-		return fmt.Sprintf("%s:%s", parts[0], resolvedIP)
-	}
-	return host
 }
 
 var nerdctlCmds = map[string]string{

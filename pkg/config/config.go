@@ -54,7 +54,8 @@ type Finch struct {
 	// Requires macOS 13.0 or later and an Apple Silicon (ARM64) mac.
 	// Has no effect on systems where Rosetta 2 is not available (Intel/AMD64 macs, or macOS < 13.0).
 	// This setting will only be applied on vm init.
-	Rosetta *bool `yaml:"rosetta,omitempty"`
+	Rosetta     *bool   `yaml:"rosetta,omitempty"`
+	HostGateway *string `yaml:"host_gateway_ip,omitempty"`
 }
 
 // Nerdctl is a copy from github.com/containerd/nerdctl/cmd/nerdctl/main.go
@@ -72,6 +73,7 @@ type Nerdctl struct {
 	CgroupManager    string   `toml:"cgroup_manager,omitempty"`
 	InsecureRegistry bool     `toml:"insecure_registry,omitempty"`
 	HostsDir         []string `toml:"hosts_dir,omitempty"`
+	HostGatewayIP    string   `toml:"host_gateway_ip,omitempty"`
 }
 
 // LimaConfigApplier applies lima configuration changes.
