@@ -20,15 +20,18 @@ const (
 
 // applyDefaults sets default configuration options if they are not already set.
 func applyDefaults(cfg *Finch, deps LoadSystemDeps, mem fmemory.Memory) *Finch {
-	if cfg.CPUs == nil {
-		defaultCPUs := int(math.Round(float64(deps.NumCPU()) * 0.25))
-		if defaultCPUs >= fallbackCPUs {
-			cfg.CPUs = pointer.Int(defaultCPUs)
-		} else {
-			cfg.CPUs = pointer.Int(fallbackCPUs)
-		}
-	}
+	cpuDefault(cfg, deps)
 
+	memoryDefault(cfg, mem)
+
+	vmDefault(cfg)
+
+	rosettaDefault(cfg)
+
+	return cfg
+}
+
+func memoryDefault(cfg *Finch, mem fmemory.Memory) {
 	if cfg.Memory == nil {
 		defaultMemory := math.Round(float64(mem.TotalMemory()) * 0.25)
 		if defaultMemory >= fallbackMemory {
@@ -37,14 +40,15 @@ func applyDefaults(cfg *Finch, deps LoadSystemDeps, mem fmemory.Memory) *Finch {
 			cfg.Memory = pointer.String(units.BytesSize(fallbackMemory))
 		}
 	}
+}
 
-	if cfg.VMType == nil {
-		cfg.VMType = pointer.String("qemu")
+func cpuDefault(cfg *Finch, deps LoadSystemDeps) {
+	if cfg.CPUs == nil {
+		defaultCPUs := int(math.Round(float64(deps.NumCPU()) * 0.25))
+		if defaultCPUs >= fallbackCPUs {
+			cfg.CPUs = pointer.Int(defaultCPUs)
+		} else {
+			cfg.CPUs = pointer.Int(fallbackCPUs)
+		}
 	}
-
-	if cfg.Rosetta == nil {
-		cfg.Rosetta = pointer.Bool(false)
-	}
-
-	return cfg
 }

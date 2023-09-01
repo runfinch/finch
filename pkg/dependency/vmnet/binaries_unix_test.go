@@ -1,6 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build !windows
+// +build !windows
+
 // Ensures that the binaries required for networking are installed in a privileged location.
 // More information here: https://github.com/lima-vm/socket_vmnet
 package vmnet

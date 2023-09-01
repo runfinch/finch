@@ -1,6 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin
+// +build darwin
+
 package config
 
 import (
@@ -422,7 +425,6 @@ provision:
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
-				deps.EXPECT().OS().Return("darwin")
 				deps.EXPECT().Arch().Return("arm64")
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {

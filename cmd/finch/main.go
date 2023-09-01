@@ -14,13 +14,8 @@ import (
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
-	"github.com/runfinch/finch/pkg/dependency"
-	"github.com/runfinch/finch/pkg/dependency/credhelper"
-	"github.com/runfinch/finch/pkg/dependency/vmnet"
-	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
-	"github.com/runfinch/finch/pkg/fssh"
 	"github.com/runfinch/finch/pkg/lima/wrapper"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/support"
@@ -53,8 +48,7 @@ func xmain(logger flog.Logger,
 		return fmt.Errorf("failed to find the installation path of Finch: %w", err)
 	}
 
-	// TODO: keep this refactor? ffd.Env("HOME") -> os.UserHomeDir() ? This is platform agnostic vs os.getEnv("HOME")
-	home, err := os.UserHomeDir()
+	home, err := ffd.GetUserHome()
 	if err != nil {
 		return fmt.Errorf("failed to get user home directory: %w", err)
 	}
@@ -117,35 +111,6 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 	rootCmd.AddCommand(allCommands...)
 
 	return rootCmd
-}
-
-func virtualMachineCommands(
-	logger flog.Logger,
-	fp path.Finch,
-	lcc command.LimaCmdCreator,
-	ecc *command.ExecCmdCreator,
-	fs afero.Fs,
-	fc *config.Finch,
-) *cobra.Command {
-	optionalDepGroups := []*dependency.Group{
-		credhelper.NewDependencyGroup(ecc, fs, fp, logger, fc, system.NewStdLib().Env("USER"),
-			system.NewStdLib().Arch()),
-	}
-
-	// WSL handles networking for us, so no need to include the vmnet group.
-	if *fc.VMType != "wsl" {
-		optionalDepGroups = append(optionalDepGroups, vmnet.NewDependencyGroup(ecc, lcc, fs, fp, logger))
-	}
-	return newVirtualMachineCommand(
-		lcc,
-		logger,
-		optionalDepGroups,
-		config.NewLimaApplier(fc, ecc, fs, fp.LimaOverrideConfigPath(), system.NewStdLib()),
-		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), system.NewStdLib().Env("USER")),
-		fp,
-		fs,
-		disk.NewUserDataDiskManager(lcc, ecc, &afero.OsFs{}, fp, system.NewStdLib().Env("HOME"), fc),
-	)
 }
 
 func initializeNerdctlCommands(lcc command.LimaCmdCreator, logger flog.Logger, fs afero.Fs) []*cobra.Command {

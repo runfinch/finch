@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build !windows
+
 // Package vmnet handles installation and configuration of dependencies needed for Lima's managed networking
 // and port-forwarding to work, with minimal user interaction.
 //

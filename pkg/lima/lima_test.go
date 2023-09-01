@@ -130,8 +130,8 @@ func TestGetVMType(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
-				cmd.EXPECT().Output().Return([]byte("wsl"), nil)
-				logger.EXPECT().Debugf("VMType of virtual machine: %s", "wsl")
+				cmd.EXPECT().Output().Return([]byte("wsl2"), nil)
+				logger.EXPECT().Debugf("VMType of virtual machine: %s", "wsl2")
 			},
 		},
 		{
