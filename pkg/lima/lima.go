@@ -30,7 +30,7 @@ const (
 	Unknown
 	QEMU              VMType = "qemu"
 	VZ                VMType = "vz"
-	WSL               VMType = "wsl"
+	WSL               VMType = "wsl2"
 	NonexistentVMType VMType = "nonexistent"
 	UnknownVMType     VMType = "unknown"
 )
@@ -82,7 +82,7 @@ func toVMType(vmType string, logger flog.Logger) (VMType, error) {
 		return QEMU, nil
 	case "vz":
 		return VZ, nil
-	case "wsl":
+	case "wsl2":
 		return WSL, nil
 	default:
 		return UnknownVMType, errors.New("unrecognized VMType")

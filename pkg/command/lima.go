@@ -123,6 +123,7 @@ func (lcc *limaCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, arg
 	cmd := lcc.cmdCreator.Create(lcc.limactlPath, args...)
 	limaHomeEnv := fmt.Sprintf("%s=%s", envKeyLimaHome, lcc.limaHomePath)
 	path := lcc.systemDeps.Env(envKeyPath)
+	// TODO: Refactor this; don't need qemuBinPath for windows
 	path = fmt.Sprintf("%s:%s", lcc.qemuBinPath, path)
 	pathEnv := fmt.Sprintf("%s=%s", envKeyPath, path)
 	env := append(lcc.systemDeps.Environ(), limaHomeEnv, pathEnv)

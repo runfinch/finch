@@ -30,6 +30,10 @@ const nerdctlCmdName = "nerdctl"
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../../pkg/mocks/nerdctl_cmd_system_deps.go -package=mocks -mock_names NerdctlCommandSystemDeps=NerdctlCommandSystemDeps -source=nerdctl.go NerdctlCommandSystemDeps
 type NerdctlCommandSystemDeps interface {
 	system.EnvChecker
+	system.WorkingDirectory
+	system.FilePathJoiner
+	system.AbsFilePath
+	system.FilePathToSlash
 }
 
 type nerdctlCommandCreator struct {
@@ -87,6 +91,21 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		skip                        bool
 	)
 
+	// convert build context to wsl path for windows, handleFilePath no-op unix
+
+	if cmdName == "build" || cmdName == "builder" {
+		if args[len(args)-1] != "--debug" {
+			args[len(args)-1], err = handleFilePath(nc.systemDeps, args[len(args)-1])
+			if err != nil {
+				return err
+			}
+		} else {
+			args[len(args)-2], err = handleFilePath(nc.systemDeps, args[len(args)-2])
+			if err != nil {
+				return err
+			}
+		}
+	}
 	for i, arg := range args {
 		// parsing environment values from the command line may pre-fetch and
 		// consume the next argument; this loop variable will skip these pre-consumed
@@ -121,6 +140,22 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				arg = fmt.Sprintf("%s%s", arg[0:11], resolvedIP)
 			}
 			nerdctlArgs = append(nerdctlArgs, arg)
+		case strings.HasPrefix(arg, "-f") || strings.HasPrefix(arg, "--file") ||
+			strings.HasPrefix(arg, "--project-directory") || strings.HasPrefix(arg, "--env-file") ||
+			strings.HasPrefix(arg, "--cosign-key") || strings.HasPrefix(arg, "-label-file"):
+			args[i+1], err = handleFilePath(nc.systemDeps, args[i+1])
+			if err != nil {
+				return err
+			}
+			nerdctlArgs = append(nerdctlArgs, arg)
+
+		case strings.HasPrefix(arg, "-v") || strings.HasPrefix(arg, "--volume"):
+			args[i+1], err = handleVolume(nc.systemDeps, args[i+1])
+			if err != nil {
+				return err
+			}
+			nerdctlArgs = append(nerdctlArgs, arg)
+
 		default:
 			nerdctlArgs = append(nerdctlArgs, arg)
 		}
@@ -156,7 +191,8 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	// Add -E to sudo command in order to preserve existing environment variables, more info:
 	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
-	limaArgs := append([]string{"shell", limaInstanceName, "sudo", "-E"}, passedEnvArgs...)
+
+	limaArgs := append(nc.GetLimaArgs(), passedEnvArgs...)
 
 	limaArgs = append(limaArgs, []string{nerdctlCmdName, cmdName}...)
 

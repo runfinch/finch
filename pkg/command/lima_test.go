@@ -312,6 +312,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			stdout, err := os.ReadFile(stdoutFilepath)
 			require.NoError(t, err)
 			assert.Equal(t, tc.outOut, string(stdout))
+			assert.NoError(t, os.Remove(stdoutFilepath))
 		})
 	}
 }

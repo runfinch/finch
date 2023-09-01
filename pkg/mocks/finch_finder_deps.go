@@ -97,3 +97,18 @@ func (mr *FinchFinderDepsMockRecorder) FilePathJoin(arg0 ...interface{}) *gomock
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilePathJoin", reflect.TypeOf((*FinchFinderDeps)(nil).FilePathJoin), arg0...)
 }
+
+// GetUserHome mocks base method.
+func (m *FinchFinderDeps) GetUserHome() (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserHome")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserHome indicates an expected call of GetUserHome.
+func (mr *FinchFinderDepsMockRecorder) GetUserHome() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserHome", reflect.TypeOf((*FinchFinderDeps)(nil).GetUserHome))
+}

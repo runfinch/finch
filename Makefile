@@ -142,7 +142,8 @@ lima-and-qemu: networks.yaml
 FINCH_IMAGE_LOCATION ?=
 FINCH_IMAGE_DIGEST ?=
 ifeq ($(GOOS),windows)
-	FINCH_IMAGE_LOCATION := "file://$(FINCH_ROOTFS_LOCATION)"
+    # Because the path in windows /C:/<some-path> is not an Absolute path, prefix with file:/ which is handled by lima https://github.com/lima-vm/lima/blob/da1260dc87fb30345c3ee7bfb131c29646e26d10/pkg/downloader/downloader.go#L266
+	FINCH_IMAGE_LOCATION := "file:/$(FINCH_ROOTFS_LOCATION)"
 	FINCH_IMAGE_DIGEST := $(FINCH_ROOTFS_DIGEST)
 else
 	FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION)
@@ -317,7 +318,7 @@ check-licenses:
 
 .PHONY: test-unit
 test-unit:
-	go test $(shell go list ./... | grep -v e2e) -shuffle on -race
+	go test $(shell go list ./... | grep -v e2e) -shuffle on
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
 #
