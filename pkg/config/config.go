@@ -126,8 +126,6 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 	if err != nil {
 		if errors.Is(err, afero.ErrFileNotFound) {
 			log.Infof("Using default values due to missing config file at %q", cfgPath)
-			// TODO: remove
-			fmt.Println("applying defaults file not foudn")
 			defCfg := applyDefaults(&Finch{}, systemDeps, mem)
 			if err := ensureConfigDir(fs, path.Dir(cfgPath), log); err != nil {
 				return nil, fmt.Errorf("failed to ensure %q directory: %w", cfgPath, err)
