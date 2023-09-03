@@ -9,9 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	// dockerops "github.com/docker/docker/opts"
-	// "github.com/lima-vm/lima/pkg/networks".
-
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 

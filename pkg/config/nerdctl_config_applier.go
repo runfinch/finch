@@ -127,8 +127,8 @@ func updateNerdctlConfig(fc *Finch, fs afero.Fs, user string, rootless bool) err
 
 	cfg.Namespace = nerdctlNamespace
 	cfg.HostGatewayIP = "192.168.5.2"
-	if fc.HostGateway != nil {
-		cfg.HostGatewayIP = *fc.HostGateway
+	if fc.HostGatewayIp != nil {
+		cfg.HostGatewayIP = *fc.HostGatewayIp
 	}
 
 	updatedCfg, err := toml.Marshal(cfg)

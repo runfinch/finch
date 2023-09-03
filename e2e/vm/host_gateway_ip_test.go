@@ -14,6 +14,7 @@ import (
 )
 
 const defaultImage    = "public.ecr.aws/docker/library/alpine:latest"
+const nerdctlRootlessCfgPath = "/home/root.linux/.config/nerdctl/nerdctl.toml"
 
 var testHostGatewayIp = func(o *option.Option, installed bool) {
 	// it requires disk I/O so this will be serial test
