@@ -1,6 +1,7 @@
 package vm
 
 import (
+	"os"
 	"os/exec"
 	"path/filepath"
 
@@ -9,12 +10,13 @@ import (
 	"github.com/onsi/gomega/gexec"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
+	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/e2e"
+	"github.com/runfinch/finch/pkg/config"
 )
 
 const defaultImage    = "public.ecr.aws/docker/library/alpine:latest"
-const nerdctlRootlessCfgPath = "/home/root.linux/.config/nerdctl/nerdctl.toml"
 
 var testHostGatewayIp = func(o *option.Option, installed bool) {
 	// it requires disk I/O so this will be serial test
@@ -43,6 +45,16 @@ var testHostGatewayIp = func(o *option.Option, installed bool) {
 		ginkgo.It("should add a custom host-to-IP mapping with --add-host flag: default value", func() {
 			startCmdSession := updateAndApplyConfig(o, []byte("memory: 4GiB\ncpus: 6"))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
+
+			gomega.Expect(finchConfigFilePath).Should(gomega.BeARegularFile())
+			cfgBuf, err := os.ReadFile(filepath.Clean(finchConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			var finchCfg config.Finch
+			err = yaml.Unmarshal(cfgBuf, &finchCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(finchCfg.HostGatewayIp).Should(gomega.BeNil())
+
 			mapping := command.StdoutStr(o, "run", "--add-host", "test-host:host-gateway", defaultImage, "cat", "/etc/hosts")
 			gomega.Expect(mapping).Should(gomega.ContainSubstring("192.168.5.2"))
 			gomega.Expect(mapping).Should(gomega.ContainSubstring("test-host"))
@@ -50,6 +62,16 @@ var testHostGatewayIp = func(o *option.Option, installed bool) {
 		ginkgo.It("should add a custom host-to-IP mapping with --add-host flag: custom value", func() {
 			startCmdSession := updateAndApplyConfig(o, []byte("memory: 4GiB\ncpus: 6\nhost_gateway_ip: 192.168.31.1"))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
+
+			gomega.Expect(finchConfigFilePath).Should(gomega.BeARegularFile())
+			cfgBuf, err := os.ReadFile(filepath.Clean(finchConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			var finchCfg config.Finch
+			err = yaml.Unmarshal(cfgBuf, &finchCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(*finchCfg.HostGatewayIp).Should(gomega.Equal("192.168.31.1"))
+
 			mapping := command.StdoutStr(o, "run", "--add-host", "test-host:host-gateway", defaultImage, "cat", "/etc/hosts")
 			gomega.Expect(mapping).Should(gomega.ContainSubstring("192.168.31.1"))
 			gomega.Expect(mapping).Should(gomega.ContainSubstring("test-host"))
