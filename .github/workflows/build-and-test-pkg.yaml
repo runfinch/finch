@@ -41,7 +41,7 @@ jobs:
     runs-on: [self-hosted, macos, arm64, 11, release]
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
@@ -79,7 +79,7 @@ jobs:
     runs-on: [self-hosted, macos, amd64, 11, release]
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
@@ -130,7 +130,7 @@ jobs:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
       - name: Checkout the tag
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
@@ -241,7 +241,7 @@ jobs:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
       - name: Checkout the tag
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
