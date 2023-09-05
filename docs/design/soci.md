@@ -5,11 +5,12 @@
 
 ## Using SOCI
 
-[SOCI](https://github.com/awslabs/soci-snapshotter/tree/main) (short for “Seekable OCI” and pronounced “so-CHEE”) is a lazy-loading snapshotter that is able to skip the build-time conversion step when loading an image. 
+[SOCI](https://github.com/awslabs/soci-snapshotter/tree/main) (short for “Seekable OCI” and pronounced “so-CHEE”) is a lazy-loading snapshotter that is able to skip the build-time conversion step when loading an image.
 SOCI does this by using a special artifact called the SOCI index that is comprosied of zTOCs that can be used to access parts of an image layer without fully unpacking
 the layer. By creating a seperat index and not converting the image, SOCI is able to keep image signatures consistent.
 
 - To enable SOCI add ```"- soci"``` to the ```snapshotters``` list in the finch config file (```${HOME}/.finch/finch.yaml```):
+
 ```yaml
 snapshotters: 
   - soci
@@ -17,6 +18,7 @@ snapshotters:
 
 This will set SOCI as your default snapshotter and you can then run commands as usual and SOCI will be used (i.e. ```finch pull ...``` will SOCI by default).
 If you don't want SOCI be the default snapshotter, but would still like it to be installed on the VM for later use you can set ```snapshotters``` as:
+
 ```yaml
 snapshotters:
   - overlayfs
@@ -26,17 +28,18 @@ snapshotters:
 > **NOTE**
 > More info on using the ```snapshotters``` config option can be found in [```snapshotters.md```](https://github.com/CodeChanning/finch/blob/soci_docs/docs/design/snapshotters.md?plain=1).
 
-To get the full benefit of SOCI users need to pull and run images that have a SOCI index. Although creating a SOCI index for images is not yet supported on Finch, 
-images that already have SOCI indices can be found [here](https://gallery.ecr.aws/soci-workshop-examples?page=1). 
+To get the full benefit of SOCI users need to pull and run images that have a SOCI index. Although creating a SOCI index for images is not yet supported on Finch,
+images that already have SOCI indices can be found [here](https://gallery.ecr.aws/soci-workshop-examples?page=1).
 Indices can also be created using [ECR](https://aws-ia.github.io/cfn-ecr-aws-soci-index-builder/).
 
 ## Performance Benefit
-In many cases, SOCI provides container start-up improvements when compared to other snapshotters. 
-As image size increases, the benefits of using SOCI often become even more significant.
-This can be seen with some of the performance benefits that customers saw after SOCI was integrated with Fargate 
-([https://aws.amazon.com/blogs/aws/aws-fargate-enables-faster-container-startup-using-seekable-oci/](https://aws.amazon.com/blogs/aws/aws-fargate-enables-faster-container-startup-using-seekable-oci/)). 
 
-### Example:
+In many cases, SOCI provides container start-up improvements when compared to other snapshotters.
+As image size increases, the benefits of using SOCI often become even more significant.
+This can be seen with some of the performance benefits that customers saw after SOCI was integrated with Fargate
+([https://aws.amazon.com/blogs/aws/aws-fargate-enables-faster-container-startup-using-seekable-oci/](https://aws.amazon.com/blogs/aws/aws-fargate-enables-faster-container-startup-using-seekable-oci/)).
+
+### Example
 
 *Pulling an image with overlayfs:*
 
