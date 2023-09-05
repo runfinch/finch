@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1693502872333,
+  "lastUpdate": 1693936143039,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -16098,6 +16098,156 @@ window.BENCHMARK_DATA = {
             "value": 279,
             "unit": "allocs/op",
             "extra": "5 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf9399a5dd125b875d6212b029ed19530898cdee",
+          "message": "build(deps): Bump github.com/shirou/gopsutil/v3 from 3.23.7 to 3.23.8 (#552)\n\nBumps\r\n[github.com/shirou/gopsutil/v3](https://github.com/shirou/gopsutil) from\r\n3.23.7 to 3.23.8.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/shirou/gopsutil/releases\">github.com/shirou/gopsutil/v3's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v3.23.8</h2>\r\n<!-- raw HTML omitted -->\r\n<h2>What's Changed</h2>\r\n<p><a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1514\">#1514</a>\r\nimproves <code>Processes()</code> performance 6% or more. Thank you <a\r\nhref=\"https://github.com/atoulme\"><code>@​atoulme</code></a> !</p>\r\n<h3>cpu</h3>\r\n<ul>\r\n<li>Enable setting of vendor and related information for all Power\r\nversions by <a\r\nhref=\"https://github.com/kishen-v\"><code>@​kishen-v</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1495\">shirou/gopsutil#1495</a></li>\r\n<li>chore: change CIRCLECI environment variable to CI. by <a\r\nhref=\"https://github.com/shirou\"><code>@​shirou</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1518\">shirou/gopsutil#1518</a></li>\r\n</ul>\r\n<h3>disk</h3>\r\n<ul>\r\n<li>fix: fixed windows disk package leaks by <a\r\nhref=\"https://github.com/ozanh\"><code>@​ozanh</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1501\">shirou/gopsutil#1501</a></li>\r\n<li>fix IOCounters() SerialNumber enumeration by <a\r\nhref=\"https://github.com/gdvalle\"><code>@​gdvalle</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1508\">shirou/gopsutil#1508</a></li>\r\n</ul>\r\n<h3>host</h3>\r\n<ul>\r\n<li>[host][linux]: remove double quote from lsb release info by <a\r\nhref=\"https://github.com/shirou\"><code>@​shirou</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1504\">shirou/gopsutil#1504</a></li>\r\n</ul>\r\n<h3>mem</h3>\r\n<ul>\r\n<li>mem: linux: fix vmstat field names by <a\r\nhref=\"https://github.com/chouquette\"><code>@​chouquette</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1498\">shirou/gopsutil#1498</a></li>\r\n</ul>\r\n<h3>process</h3>\r\n<ul>\r\n<li>Fix Processes() calls with many cores by <a\r\nhref=\"https://github.com/atoulme\"><code>@​atoulme</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1514\">shirou/gopsutil#1514</a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a href=\"https://github.com/kishen-v\"><code>@​kishen-v</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1495\">shirou/gopsutil#1495</a></li>\r\n<li><a\r\nhref=\"https://github.com/chouquette\"><code>@​chouquette</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1498\">shirou/gopsutil#1498</a></li>\r\n<li><a href=\"https://github.com/ozanh\"><code>@​ozanh</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1501\">shirou/gopsutil#1501</a></li>\r\n<li><a href=\"https://github.com/gdvalle\"><code>@​gdvalle</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1508\">shirou/gopsutil#1508</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/shirou/gopsutil/compare/v3.23.7...v3.23.8\">https://github.com/shirou/gopsutil/compare/v3.23.7...v3.23.8</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/faad8060806256ffc4da37f9535160af4e8b0fee\"><code>faad806</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1518\">#1518</a>\r\nfrom shirou/feature/remove_circleci</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/febdeab87192b3b2ce92b85e18872b7aa820a23c\"><code>febdeab</code></a>\r\nchore: change CIRCLECI environment variable to CI.</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/a09263d9e8aada5c5f5aeec43200819bb5c9a682\"><code>a09263d</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1514\">#1514</a>\r\nfrom atoulme/faster_file_read</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/54c31d884d8caa2caa6e1fa4ab81526ebe25f82f\"><code>54c31d8</code></a>\r\nRevert &quot;test results&quot;</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/ae119d36b8280344151f33a5db5c4a5d58faff89\"><code>ae119d3</code></a>\r\ntest results</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/6fff1c0e99b0a8b6f9566cfea98353918830f0b0\"><code>6fff1c0</code></a>\r\nproper benchmark</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/89575bdf5ad71dbaa0970f426c8f90e3bd759aa4\"><code>89575bd</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1513\">#1513</a>\r\nfrom shirou/dependabot/github_actions/actions/checko...</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/4ed0f1436a55c8083fda990321046f12d73c92c0\"><code>4ed0f14</code></a>\r\nreturn err if not EOF</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/ca71a6db3c7495189bdc01e2235e79175cfd5bd2\"><code>ca71a6d</code></a>\r\nlint</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/a48fd711371c6f4bf1f4f8d92e5eb791bd6b9a61\"><code>a48fd71</code></a>\r\nRevert &quot;send results&quot;</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/shirou/gopsutil/compare/v3.23.7...v3.23.8\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/shirou/gopsutil/v3&package-manager=go_modules&previous-version=3.23.7&new-version=3.23.8)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-09-05T10:46:17-07:00",
+          "tree_id": "5216022304a073ed3d829babd4b5d7565faba0ee",
+          "url": "https://github.com/runfinch/finch/commit/cf9399a5dd125b875d6212b029ed19530898cdee"
+        },
+        "date": 1693936142320,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 33946207750,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4044,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 83.87,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 33.95,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1173839872,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1511672,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 32140,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 23713367375,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3823,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 23.71,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 161464320,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1057024,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22463,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 258133990,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.069,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 11.22,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2581,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21262,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 288,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
           }
         ]
       }
