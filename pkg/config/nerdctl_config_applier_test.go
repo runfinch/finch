@@ -185,7 +185,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 			Memory: pointer.String("4GiB"),
 			VMType: pointer.String("qemu"),
 			Rosetta: pointer.Bool(false),
-			HostGatewayIp: pointer.String("192.168.31.1"),
+			HostGatewayIP: pointer.String("192.168.31.1"),
 		}
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
