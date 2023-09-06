@@ -14,12 +14,12 @@
 Users can use the snapshotters option at `${HOME}/.finch/finch.yaml` to set the snapshotters they would like to use.
 All snapshotters listed will be installed on the VM, and the first snapshotter listed will be made the default snapshotter.
 The default snapshotter will be used whenever a snapshotter is needed and not specified for a command.
-Any other listed snapshotters can be used by specifying them with the `--snapshotter` flag: 
+Any other listed snapshotters can be used by specifying them with the `--snapshotter` flag:
 
 ```console
-$ finch pull ... # use the default snapshotter
-$ finch --snapshotter=mySnapshotter pull ... # use mySnapshotter
-``` 
+# finch pull ... # uses the default snapshotter
+# finch --snapshotter=mySnapshotter pull ... # uses mySnapshotter
+```
 
 ```yaml
 snapshotters: 

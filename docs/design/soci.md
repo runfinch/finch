@@ -7,7 +7,7 @@
 
 [SOCI](https://github.com/awslabs/soci-snapshotter/tree/main) (short for “Seekable OCI” and pronounced “so-CHEE”) is a lazy-loading snapshotter that is able to skip the build-time conversion step when loading an image.
 
-SOCI does this by using a special artifact called the SOCI index that is comprosied of zTOCs that can be used to access parts of an image layer without fully unpacking the layer. 
+SOCI does this by using a special artifact called the SOCI index that is comprosied of zTOCs that can be used to access parts of an image layer without fully unpacking the layer.
 
 By creating a seperate index and not converting the image, SOCI is able to keep image signatures consistent.
 
@@ -46,7 +46,7 @@ This can be seen with some of the performance benefits that customers saw after 
 *Pulling an image with overlayfs:*
 
 ```console
-$ finch --snapshotter=overlayfs pull public.ecr.aws/soci-workshop-examples/rabbitmq:latest
+# finch --snapshotter=overlayfs pull public.ecr.aws/soci-workshop-examples/rabbitmq:latest
 public.ecr.aws/soci-workshop-examples/rabbitmq:latest:                            resolved       |++++++++++++++++++++++++++++++++++++++|
 manifest-sha256:7d4d0320157c1493853df75ad68f2abefcc397c38023c499d6fd1d0736a93577: done           |++++++++++++++++++++++++++++++++++++++|
 config-sha256:74a35d13c21f7cada5874b4b66e1e930efe0ab8d2bea54bc90d93cebc1d44d6f:   done           |++++++++++++++++++++++++++++++++++++++|
@@ -66,7 +66,7 @@ elapsed: 12.5s                                                                  
 *Pulling the same image with SOCI:*
 
 ```console
-$ finch pull public.ecr.aws/soci-workshop-examples/rabbitmq:latest
+# finch pull public.ecr.aws/soci-workshop-examples/rabbitmq:latest
 public.ecr.aws/soci-workshop-examples/rabbitmq:latest:                            resolved       |++++++++++++++++++++++++++++++++++++++|
 manifest-sha256:7d4d0320157c1493853df75ad68f2abefcc397c38023c499d6fd1d0736a93577: done           |++++++++++++++++++++++++++++++++++++++|
 config-sha256:74a35d13c21f7cada5874b4b66e1e930efe0ab8d2bea54bc90d93cebc1d44d6f:   done           |++++++++++++++++++++++++++++++++++++++|
