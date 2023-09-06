@@ -6,18 +6,20 @@
 ## Using SOCI
 
 [SOCI](https://github.com/awslabs/soci-snapshotter/tree/main) (short for “Seekable OCI” and pronounced “so-CHEE”) is a lazy-loading snapshotter that is able to skip the build-time conversion step when loading an image.
+
 SOCI does this by using a special artifact called the SOCI index that is comprosied of zTOCs that can be used to access parts of an image layer without fully unpacking
+
 the layer. By creating a seperat index and not converting the image, SOCI is able to keep image signatures consistent.
 
-- To enable SOCI add ```"- soci"``` to the ```snapshotters``` list in the finch config file (```${HOME}/.finch/finch.yaml```):
+- To enable SOCI add `"- soci"` to the `snapshotters` list in the finch config file (`${HOME}/.finch/finch.yaml`):
 
 ```yaml
 snapshotters: 
   - soci
 ```
 
-This will set SOCI as your default snapshotter and you can then run commands as usual and SOCI will be used (i.e. ```finch pull ...``` will SOCI by default).
-If you don't want SOCI be the default snapshotter, but would still like it to be installed on the VM for later use you can set ```snapshotters``` as:
+This will set SOCI as your default snapshotter and you can then run commands as usual and SOCI will be used (i.e. `finch pull ...` will use SOCI by default).
+If you don't want SOCI be the default snapshotter, but would still like it to be installed on the VM for later use you can set `snapshotters` as:
 
 ```yaml
 snapshotters:
@@ -26,9 +28,9 @@ snapshotters:
 ```
 
 > **NOTE**
-> More info on using the ```snapshotters``` config option can be found in [```snapshotters.md```](https://github.com/CodeChanning/finch/blob/soci_docs/docs/design/snapshotters.md?plain=1).
+> More info on using the `snapshotters` config option can be found in [`snapshotters.md`](https://github.com/runfinch/finch/blob/main/docs/design/snapshotters.md).
 
-To get the full benefit of SOCI users need to pull and run images that have a SOCI index. Although creating a SOCI index for images is not yet supported on Finch,
+To get the full benefit of SOCI, users need to pull and run images that have a SOCI index. Although creating a SOCI index for images is not yet supported on Finch,
 images that already have SOCI indices can be found [here](https://gallery.ecr.aws/soci-workshop-examples?page=1).
 Indices can also be created using [ECR](https://aws-ia.github.io/cfn-ecr-aws-soci-index-builder/).
 
@@ -44,7 +46,7 @@ This can be seen with some of the performance benefits that customers saw after 
 *Pulling an image with overlayfs:*
 
 ```console
-# finch --snapshotter=overlayfs pull public.ecr.aws/soci-workshop-examples/rabbitmq:latest
+$ finch --snapshotter=overlayfs pull public.ecr.aws/soci-workshop-examples/rabbitmq:latest
 public.ecr.aws/soci-workshop-examples/rabbitmq:latest:                            resolved       |++++++++++++++++++++++++++++++++++++++|
 manifest-sha256:7d4d0320157c1493853df75ad68f2abefcc397c38023c499d6fd1d0736a93577: done           |++++++++++++++++++++++++++++++++++++++|
 config-sha256:74a35d13c21f7cada5874b4b66e1e930efe0ab8d2bea54bc90d93cebc1d44d6f:   done           |++++++++++++++++++++++++++++++++++++++|
@@ -64,7 +66,7 @@ elapsed: 12.5s                                                                  
 *Pulling the same image with SOCI:*
 
 ```console
-# finch pull public.ecr.aws/soci-workshop-examples/rabbitmq:latest
+$ finch pull public.ecr.aws/soci-workshop-examples/rabbitmq:latest
 public.ecr.aws/soci-workshop-examples/rabbitmq:latest:                            resolved       |++++++++++++++++++++++++++++++++++++++|
 manifest-sha256:7d4d0320157c1493853df75ad68f2abefcc397c38023c499d6fd1d0736a93577: done           |++++++++++++++++++++++++++++++++++++++|
 config-sha256:74a35d13c21f7cada5874b4b66e1e930efe0ab8d2bea54bc90d93cebc1d44d6f:   done           |++++++++++++++++++++++++++++++++++++++|
@@ -74,4 +76,4 @@ elapsed: 6.7 s
 From this small example, we can see how much more efficient SOCI was in lazy-loading the image.
 
 > **NOTE**
-> Currently only ```finch pull``` and ```finch run``` have SOCI support (as of [Nerdctl 1.5.0](https://github.com/containerd/nerdctl/releases/tag/v1.5.0))
+> Currently only `finch pull` and `finch run` have SOCI support (as of [Nerdctl 1.5.0](https://github.com/containerd/nerdctl/releases/tag/v1.5.0))
