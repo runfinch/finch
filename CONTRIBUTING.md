@@ -14,8 +14,9 @@
     - [Build](#build)
     - [Unit Testing](#unit-testing)
     - [E2E Testing](#e2e-testing)
-  - [Sign Your Commits](#sign-your-commits)
-    - [DCO](#dco)
+  - [Commits](#commits)
+    - [Conventional Commit Messages](#conventional-commit-messages)
+    - [Sign Your Commits with DCO](#sign-your-commits-with-dco)
   - [Pull Request Checklist](#pull-request-checklist)
     - [Testing](#testing)
       - [Unit Testing - Parallel by Default](#unit-testing---parallel-by-default)
@@ -175,9 +176,39 @@ VM instance is not expected to exist before running e2e tests, please make sure 
 
 To run e2e test locally, please run `make test-e2e`. Please make sure to run the e2e tests or add new e2e tests before pushing the changes.
 
-## Sign Your Commits
+## Commits
 
-### DCO
+### Conventional Commit Messages
+
+The Finch project enforces commits to be written with [conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0/) in order to be merged. Conventional commits
+provide a simple set of types to assign commits based on the intention of the commit. A full list of allowed types can be found
+in the [conventional-commit-types repository](https://github.com/commitizen/conventional-commit-types/blob/master/index.json).
+
+For example:
+
+```text
+fix: my fix message
+
+This is the body of my fix commit
+```
+
+Conventional commits can be given more granularity when written in the format of `<type>(<scope>):<message>`.
+When authoring commits that target a specific platform (e.g. macOS vs. Windows), we require that scope to be
+the name of the platform, e.g.:
+
+```text
+feat(Windows): my Windows feature
+```
+
+or
+
+```text
+fix(macOS): bug fix specific to macOS
+```
+
+Otherwise, the `<scope>` is optional.
+
+### Sign Your Commits with DCO
 
 Licensing is important to open source projects. It provides some assurances that
 the software will continue to be available based under the terms that the
