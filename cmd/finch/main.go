@@ -96,6 +96,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		support.NewBundleConfig(fp, system.NewStdLib().Env("HOME")),
 		fp,
 		ecc,
+		lcc,
 		wrapper.NewLimaWrapper(),
 	)
 

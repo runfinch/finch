@@ -6,6 +6,7 @@ package support
 
 import (
 	"archive/zip"
+	"bufio"
 	"bytes"
 	"errors"
 	"fmt"
@@ -51,6 +52,7 @@ type bundleBuilder struct {
 	config BundleConfig
 	finch  fpath.Finch
 	ecc    command.Creator
+	lcc    command.LimaCmdCreator
 	lima   wrapper.LimaWrapper
 }
 
@@ -61,6 +63,7 @@ func NewBundleBuilder(
 	config BundleConfig,
 	finch fpath.Finch,
 	ecc command.Creator,
+	lcc command.LimaCmdCreator,
 	lima wrapper.LimaWrapper,
 ) BundleBuilder {
 	return &bundleBuilder{
@@ -69,6 +72,7 @@ func NewBundleBuilder(
 		config: config,
 		finch:  finch,
 		ecc:    ecc,
+		lcc:    lcc,
 		lima:   lima,
 	}
 }
@@ -108,7 +112,8 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 			bb.logger.Infof("Excluding %s...", file)
 			continue
 		}
-		err := bb.copyInFile(writer, file, path.Join(zipPrefix, logPrefix))
+		bb.logger.Debugf("Copying %s...", file)
+		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, logPrefix))
 		if err != nil {
 			bb.logger.Warnf("Could not copy in %q. Error: %s", file, err)
 		}
@@ -120,7 +125,8 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 			bb.logger.Infof("Excluding %s...", file)
 			continue
 		}
-		err := bb.copyInFile(writer, file, path.Join(zipPrefix, configPrefix))
+		bb.logger.Debugf("Copying %s...", file)
+		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, configPrefix))
 		if err != nil {
 			bb.logger.Warnf("Could not copy in %q. Error: %s", file, err)
 		}
@@ -132,7 +138,8 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 			bb.logger.Infof("Excluding %s...", file)
 			continue
 		}
-		err := bb.copyInFile(writer, file, path.Join(zipPrefix, additionalPrefix))
+		bb.logger.Debugf("Copying %s...", file)
+		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, additionalPrefix))
 		if err != nil {
 			bb.logger.Warnf("Could not add additional file %s. Error: %s", file, err)
 		}
@@ -146,30 +153,28 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 	return zipFileName, nil
 }
 
-func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix string) error {
-	f, err := bb.fs.Open(fileName)
-	if err != nil {
-		return err
+type bufReader interface {
+	ReadBytes(delim byte) ([]byte, error)
+}
+
+func (bb *bundleBuilder) copyFileFromVMOrLocal(writer *zip.Writer, filename, zipPath string) error {
+	if isFileFromVM(filename) {
+		return bb.streamFileFromVM(writer, filename, zipPath)
 	}
+	return bb.copyInFile(writer, filename, zipPath)
+}
 
-	bb.logger.Debugf("Copying %s...", fileName)
-
-	var buf bytes.Buffer
-	_, err = buf.ReadFrom(f)
-	if err != nil {
-		return err
-	}
-
-	var redacted []byte
+func (bb *bundleBuilder) copyAndRedactFile(writer io.Writer, reader bufReader) error {
 	var bufErr error
 	for bufErr == nil {
 		var line []byte
-		line, bufErr = buf.ReadBytes('\n')
+		line, bufErr = reader.ReadBytes('\n')
 		if bufErr != nil && !errors.Is(bufErr, io.EOF) {
+			bb.logger.Error(bufErr.Error())
 			continue
 		}
 
-		line, err = redactFinchInstall(line, bb.finch)
+		line, err := redactFinchInstall(line, bb.finch)
 		if err != nil {
 			return err
 		}
@@ -187,7 +192,20 @@ func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix 
 		line = redactPorts(line)
 		line = redactSSHKeys(line)
 
-		redacted = append(redacted, line...)
+		_, err = writer.Write(line)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix string) error {
+	// check filename validity?
+	f, err := bb.fs.Open(fileName)
+	if err != nil {
+		return err
 	}
 
 	baseName := path.Base(fileName)
@@ -196,12 +214,56 @@ func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix 
 		return err
 	}
 
-	_, err = zipCopy.Write(redacted)
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(f)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return bb.copyAndRedactFile(zipCopy, buf)
+}
+
+func (bb *bundleBuilder) streamFileFromVM(writer *zip.Writer, filename, prefix string) error {
+	pipeReader, pipeWriter := io.Pipe()
+	errBuf := new(bytes.Buffer)
+
+	_, filePathInVM, _ := strings.Cut(filename, ":")
+	cmd := bb.lcc.CreateWithoutStdio("shell", "finch", "sudo", "cat", filePathInVM)
+	cmd.SetStdout(pipeWriter)
+	cmd.SetStderr(errBuf)
+
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+
+	waitStatus := make(chan error)
+	go func() {
+		err := cmd.Wait()
+		if err != nil {
+			errorMsg, readErr := io.ReadAll(errBuf)
+			if readErr == nil && len(errorMsg) > 0 {
+				err = errors.New(string(errorMsg))
+			}
+		}
+		_ = pipeWriter.Close()
+		waitStatus <- err
+	}()
+
+	baseName := path.Base(filename)
+	zipCopy, err := writer.Create(path.Join(prefix, baseName))
+	if err != nil {
+		return err
+	}
+
+	bufReader := bufio.NewReader(pipeReader)
+
+	err = bb.copyAndRedactFile(zipCopy, bufReader)
+	if err != nil {
+		return err
+	}
+
+	return <-waitStatus
 }
 
 func (bb *bundleBuilder) getPlatformData() (*PlatformData, error) {
@@ -280,7 +342,11 @@ func bundleFileName() string {
 }
 
 func fileShouldBeExcluded(filename string, exclude []string) bool {
-	fileAbs, err := filepath.Abs(filename)
+	realFilename := filename
+	if isFileFromVM(filename) {
+		_, realFilename, _ = strings.Cut(filename, ":")
+	}
+	fileAbs, err := filepath.Abs(realFilename)
 	if err != nil {
 		return true
 	}
@@ -292,9 +358,13 @@ func fileShouldBeExcluded(filename string, exclude []string) bool {
 		if fileAbs == excludeAbs {
 			return true
 		}
-		if path.Base(filename) == excludeFile {
+		if path.Base(realFilename) == excludeFile {
 			return true
 		}
 	}
 	return false
+}
+
+func isFileFromVM(filename string) bool {
+	return strings.HasPrefix(filename, "vm:")
 }
