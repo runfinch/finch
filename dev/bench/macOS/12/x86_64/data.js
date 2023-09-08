@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1694199123098,
+  "lastUpdate": 1694207128185,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -16654,6 +16654,156 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 513,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0f56d23b4e9210960c02822cd19a8a47326caa0e",
+          "message": "build(deps): Bump golang.org/x/tools from 0.12.0 to 0.13.0 (#559)\n\nBumps [golang.org/x/tools](https://github.com/golang/tools) from 0.12.0\r\nto 0.13.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/golang/tools/releases\">golang.org/x/tools's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>gopls/v0.13.0</h2>\r\n<p><strong>These are release notes are identical to that of\r\ngopls@v0.13.0-pre.3. Thanks to all who tested the\r\nprerelease!</strong></p>\r\n<pre><code>go install golang.org/x/tools/gopls@v0.13.0\r\n</code></pre>\r\n<p>This release fixes several bugs and mitigates a few performance\r\nregressions. It also somewhat reduces the latency and CPU cost of most\r\noperations, and includes a few small additional features.</p>\r\n<h1>Performance improvements</h1>\r\n<p>While <a href=\"mailto:gopls@v0.12.x\">gopls@v0.12.x</a> drastically\r\nreduced memory usage, several operations got around 50% slower due to\r\nadditional I/O reading from the filesystem and time spent decoding\r\nindexes. This release optimizes those additional operations to (in most\r\ncases) achieve parity or better with the equivalent operation in\r\ngopls@v0.11.0. Additionally, this release reduces total CPU while typing\r\nor performing common operations.</p>\r\n<h2>Faster code actions</h2>\r\n<p>This release includes a particularly large performance improvement in\r\nthe evaluation of code actions (including formatting/goimports on save).\r\nIn the past, there have been several reasons why this operation was\r\nexpensive -- VS Code users may recognize the <code>getting code actions\r\nfrom &quot;Go&quot;</code> pop-up. This release fundamentally changes\r\nthe way code actions are evaluated so that almost all of the work is\r\npre-computed. As a result, formatting and adding or removing imports on\r\nsave should be much faster.</p>\r\n<h2>Analysis performance</h2>\r\n<p>A notable exception to CPU performance parity with gopls@v0.11.0 is\r\nrunning static analysis. In this case, the additional cost incurred by\r\n<a href=\"mailto:gopls@v0.12.x\">gopls@v0.12.x</a> was not a regression,\r\nbut rather the cost of analyzing many more packages to enable\r\n&quot;deep&quot; static analysis (see &quot;Improved static\r\nanalysis&quot; in the <a\r\nhref=\"https://github.com/golang/tools/releases/tag/gopls%2Fv0.12.0\">gopls@v0.12.0\r\nrelease notes</a>.</p>\r\n<p>In smaller repositories, the cost of this additional analysis is\r\nnegligible -- analysis does not run until you stop typing, and typically\r\njust re-evaluates the changed package. However, it was discovered that\r\nin large workspaces that import low-level packages with a very large API\r\nsurface (such as a cloud provider SDK or proto library), certain\r\nquadratic factors involved with the encoding/decoding of analysis\r\nresults can dominate the cost of analysis, and result in enormous\r\nresource consumption: overloading the CPU and exhausting all memory.</p>\r\n<p>This release partially mitigates those quadratic factors,\r\nsignificantly reducing their cost and limiting concurrency so that they\r\ndo not exhaust all resources. However, fully eliminating these factors\r\nwill require additional work to fix their quadratic nature. Until that\r\nis done, analysis may continue to be costly on certain repos, especially\r\nif <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/settings.md#staticcheck-bool\"><code>&quot;staticcheck&quot;</code></a>\r\nis enabled (because staticcheck does more deep analysis than the default\r\nset of analyzers).</p>\r\n<p>In the meantime, a notification is added to make you aware when\r\nanalysis is slow, and provide an update on the progress of indexing\r\n&quot;deep&quot; analysis results. Canceling this notification will\r\ncancel the ongoing analysis, but it will resume after the next change.\r\nIf you don't want to see these notifications, you can set the new <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/settings.md#analysisprogressreporting-bool\"><code>&quot;analysisProgressReporting&quot;</code></a>\r\nsetting to <code>&quot;false&quot;</code>.\r\n<img\r\nsrc=\"https://github.com/golang/tools/assets/57144380/4335a3c9-245b-409d-ab5c-5bbb650b7234\"\r\nalt=\"image\" />.</p>\r\n<h1>New Features</h1>\r\n<h2>Highlight deprecated symbols</h2>\r\n<p>Deprecated symbols and packages are now marked as such. To turn off\r\nthis feature, disable the <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/analyzers.md#deprecated\"><code>&quot;deprecated&quot;</code></a>\r\nanalysis.</p>\r\n<p><img\r\nsrc=\"https://github.com/golang/tools/assets/57144380/f6714035-f37b-487a-a110-591388bb5677\"\r\nalt=\"image\" /></p>\r\n<h2>Stub methods to fix missing method errors</h2>\r\n<p>The <a\r\nhref=\"https://github.com/golang/tools/blob/master/gopls/doc/analyzers.md#stubmethods\"><code>&quot;stubmethods&quot;</code></a>\r\nrefactoring is now available as a quick-fix for errors related to\r\nmissing methods.\r\n<img\r\nsrc=\"https://github.com/golang/tools/assets/57144380/715c3025-8beb-4cd5-bb8c-970be197b897\"\r\nalt=\"image\" /></p>\r\n<h2>Improvements to function extraction</h2>\r\n<p>Function extraction now puts <code>context.Context</code> parameters\r\nfirst in the resulting extracted function. See <a\r\nhref=\"https://redirect.github.com/golang/go/issues/60738\">golang/go#60738</a>\r\nfor details.</p>\r\n<h2>Improvements to the embeddirective analyzer</h2>\r\n<p>The embed directive analyzer now verifies the location of\r\n<code>//go:embed</code> directives, and provides a quick-fix to add\r\nmissing <code>&quot;embed&quot;</code> imports.\r\n<img\r\nsrc=\"https://github.com/golang/tools/assets/57144380/acbe8599-3a2d-40cd-856e-3451ea03c939\"\r\nalt=\"image\" /></p>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/b5e55d198461206bca9558e65cdd518f8e4f2735\"><code>b5e55d1</code></a>\r\ngo/analysis/analysistest: give better hint in SuggestedFix\r\nassertion</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/a807ccf39a240aea24e1fd02ff1ada1a94e87fba\"><code>a807ccf</code></a>\r\ngo.mod: update golang.org/x dependencies</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/21090a2aa8d3719d5a5d4264e41696529522f0bd\"><code>21090a2</code></a>\r\ngopls/internal/lsp/cache: use persistent.Set in a couple places</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/38b898b246a939ee85545de1da16fd710a72a9c4\"><code>38b898b</code></a>\r\ninternal/persistent: add Set</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/44f7796438e567ee014586c24a7afbab9a1ebed1\"><code>44f7796</code></a>\r\ngopls: add and enable the slog analyzer</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/2c6ba93996da7073f913c9918ac8dd99411f58b3\"><code>2c6ba93</code></a>\r\ngopls: tidy for 1.17+</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/5a9656936d83c03440e5b437421cb0fb92e62e31\"><code>5a96569</code></a>\r\ngopls/internal/lsp/cmd: don't use x/exp/slices</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/77c6ac601f791bef45ef25c870e2d07fdaef6250\"><code>77c6ac6</code></a>\r\ngopls/internal/telemetry: don't schedule the next upload</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/010e045c4eb965ad42d8feccd193abb1b80ee42f\"><code>010e045</code></a>\r\ninternal/persistent: use generics</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/a1a928ddbedd8082c24d6223aa9ce1f00f922286\"><code>a1a928d</code></a>\r\ngopls: remove dead code</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/golang/tools/compare/v0.12.0...v0.13.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org/x/tools&package-manager=go_modules&previous-version=0.12.0&new-version=0.13.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-09-08T14:01:58-07:00",
+          "tree_id": "d0f89d788f6dfc0830dfa472a22eb054ce4c1001",
+          "url": "https://github.com/runfinch/finch/commit/0f56d23b4e9210960c02822cd19a8a47326caa0e"
+        },
+        "date": 1694207127160,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 44863805175,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3105,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 31.25,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 44.86,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1324937216,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2014720,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 42636,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30417205729,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3596,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 28.57,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.42,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 92860416,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1369264,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 28934,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 495422394,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.79,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 15.08,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.4954,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 32130,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 526,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
           }
