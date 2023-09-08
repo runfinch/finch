@@ -5,6 +5,7 @@ package support
 
 import (
 	"archive/zip"
+	"io"
 	"os/user"
 	"testing"
 	"time"
@@ -23,13 +24,14 @@ func TestSupport_NewBundleBuilder(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	ecc := mocks.NewCommandCreator(ctrl)
+	lcc := mocks.NewLimaCmdCreator(ctrl)
 	logger := mocks.NewLogger(ctrl)
 	fs := afero.NewMemMapFs()
 	finch := fpath.Finch("mockfinch")
 	lima := mocks.NewMockLimaWrapper(ctrl)
 
 	config := NewBundleConfig(finch, "mockhome")
-	NewBundleBuilder(logger, fs, config, finch, ecc, lima)
+	NewBundleBuilder(logger, fs, config, finch, ecc, lcc, lima)
 }
 
 func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
@@ -41,7 +43,15 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		mockSvc func(*mocks.Logger, *mocks.BundleConfig, *mocks.CommandCreator, *mocks.Command, *mocks.MockLimaWrapper)
+		mockSvc func(
+			*mocks.Logger,
+			*mocks.BundleConfig,
+			*mocks.CommandCreator,
+			*mocks.LimaCmdCreator,
+			*mocks.Command,
+			*mocks.MockLimaWrapper,
+			afero.Fs,
+		)
 		include []string
 		exclude []string
 	}{
@@ -51,8 +61,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
+				lcc *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				fs afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -91,8 +103,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
+				lcc *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				fs afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -128,8 +142,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
+				lcc *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				fs afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -164,8 +180,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
+				lcc *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				fs afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -200,8 +218,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
+				lcc *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				fs afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -231,6 +251,64 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			include: []string{"extra1"},
 			exclude: []string{"extra1"},
 		},
+		{
+			name: "Generate support bundle with a VM file included",
+			mockSvc: func(
+				logger *mocks.Logger,
+				config *mocks.BundleConfig,
+				ecc *mocks.CommandCreator,
+				lcc *mocks.LimaCmdCreator,
+				cmd *mocks.Command,
+				lima *mocks.MockLimaWrapper,
+				fs afero.Fs,
+			) {
+				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
+				logger.EXPECT().Debugln("Gathering platform data...")
+
+				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
+				ecc.EXPECT().Create("uname", "-m").Return(cmd)
+				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
+
+				config.EXPECT().LogFiles().Return([]string{
+					"log1",
+				})
+
+				config.EXPECT().ConfigFiles().Return([]string{
+					"config1",
+				})
+
+				logger.EXPECT().Debugln("Copying in log files...")
+				logger.EXPECT().Debugf("Copying %s...", "log1")
+				logger.EXPECT().Debugln("Copying in config files...")
+				logger.EXPECT().Debugf("Copying %s...", "config1")
+				logger.EXPECT().Debugln("Copying in additional files...")
+				logger.EXPECT().Debugf("Copying %s...", "vm:extra1")
+
+				var catWriter io.Writer
+				waitChan := make(chan int)
+				lcc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "cat", "extra1").Return(cmd)
+				cmd.EXPECT().SetStdout(gomock.Any()).Do(func(writer io.Writer) {
+					catWriter = writer
+				})
+				cmd.EXPECT().SetStderr(gomock.Any())
+				cmd.EXPECT().Start().DoAndReturn(func() error {
+					go func() {
+						_, err := catWriter.Write([]byte("file contents\n"))
+						require.NoError(t, err)
+						waitChan <- 1
+					}()
+					return nil
+				})
+				cmd.EXPECT().Wait().DoAndReturn(func() error {
+					<-waitChan
+					return nil
+				})
+
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+			},
+			include: []string{"vm:extra1"},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -244,6 +322,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			config := mocks.NewBundleConfig(ctrl)
 			finch := fpath.Finch("mockfinch")
 			ecc := mocks.NewCommandCreator(ctrl)
+			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lima := mocks.NewMockLimaWrapper(ctrl)
 			cmd := mocks.NewCommand(ctrl)
 
@@ -253,6 +332,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				config: config,
 				finch:  finch,
 				ecc:    ecc,
+				lcc:    lcc,
 				lima:   lima,
 			}
 
@@ -273,7 +353,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			tc.mockSvc(logger, config, ecc, cmd, lima)
+			tc.mockSvc(logger, config, ecc, lcc, cmd, lima, fs)
 
 			zipFile, err := builder.GenerateSupportBundle(tc.include, tc.exclude)
 			assert.NoError(t, err)
@@ -376,6 +456,18 @@ func TestSupport_fileShouldBeExcluded(t *testing.T) {
 			file:    "/finch/lima/data/serial.log",
 			exclude: []string{"other.file"},
 			result:  false,
+		},
+		{
+			name:    "vm file with its whole path excluded",
+			file:    "vm:/path/to/file",
+			exclude: []string{"/path/to/file"},
+			result:  true,
+		},
+		{
+			name:    "vm file with its base path excluded",
+			file:    "vm:/path/to/file",
+			exclude: []string{"file"},
+			result:  true,
 		},
 	}
 
