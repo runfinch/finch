@@ -42,32 +42,14 @@ ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = aarch64
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/aarch64/images/
-<<<<<<< HEAD
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.aarch64-20230713205101.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1689037160.tar.gz
-	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/aarch64/finch-rootfs-production-arm64-1690920104.tar
-	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
-	FINCH_ROOTFS_BASENAME := $(subst .zst,,$(FINCH_ROOTFS_BASENAME))
-# TODO ROOTFS URL
-=======
 	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.aarch64-20230830214718.qcow2
 	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1691201350.tar.gz
->>>>>>> baf645f (build(deps): Bump submodules and dependencies (#551))
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/
-<<<<<<< HEAD
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230713205042.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1689037160.tar.gz
-	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1693001442.tar
-	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
-	FINCH_ROOTFS_BASENAME := $(subst .zst,,$(FINCH_ROOTFS_BASENAME))
-# TODO ROOTFS URL
-=======
 	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230830214712.qcow2
 	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1691201350.tar.gz
->>>>>>> baf645f (build(deps): Bump submodules and dependencies (#551))
 endif
 
 FINCH_OS_HASH := `$(sha) $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
@@ -128,7 +110,7 @@ local-core:
 
 	mkdir -p _output
 	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
-	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C  $(OUTDIR)/lima
+	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)/lima
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: lima-and-qemu
@@ -188,7 +170,7 @@ config.yaml:
 .PHONY: copy
 copy:
 	mkdir -p $(DEST)
-	(cd _output && tar c * | tar Cvx  $(DEST) )
+	(cd _output && tar -cf - * | tar -xvf - -C $(DEST) )
 
 .PHONY: install
 install: copy
