@@ -37,7 +37,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
-			*mocks.MockUserDataDiskManager,
+			*mocks.UserDataDiskManager,
 			*gomock.Controller,
 		)
 	}{
@@ -62,7 +62,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -72,6 +72,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 
 				command := mocks.NewCommand(ctrl)
 				lca.EXPECT().Apply(true).Return(nil)
+				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 				lcc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
 					mockBaseYamlFilePath, "--tty=false").Return(command)
@@ -92,7 +93,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
-			dm := mocks.NewMockUserDataDiskManager(ctrl)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
 			tc.mockSvc(lcc, logger, lca, dm, ctrl)
@@ -113,7 +114,7 @@ func TestInitVMAction_run(t *testing.T) {
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
-			*mocks.MockUserDataDiskManager,
+			*mocks.UserDataDiskManager,
 			*gomock.Controller,
 		)
 	}{
@@ -127,7 +128,7 @@ func TestInitVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -136,6 +137,7 @@ func TestInitVMAction_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
 				lca.EXPECT().Apply(true).Return(nil)
+				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
 				command := mocks.NewCommand(ctrl)
@@ -157,7 +159,7 @@ func TestInitVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -178,7 +180,7 @@ func TestInitVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -197,7 +199,7 @@ func TestInitVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -216,7 +218,7 @@ func TestInitVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -245,7 +247,7 @@ func TestInitVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -271,7 +273,7 @@ func TestInitVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -280,6 +282,7 @@ func TestInitVMAction_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
 				lca.EXPECT().Apply(true).Return(nil)
+				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
 				logs := []byte("stdout + stderr")
@@ -290,6 +293,7 @@ func TestInitVMAction_run(t *testing.T) {
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
 				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
+				dm.EXPECT().DetachUserDataDisk().Return(nil)
 			},
 		},
 	}
@@ -303,7 +307,7 @@ func TestInitVMAction_run(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
-			dm := mocks.NewMockUserDataDiskManager(ctrl)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
 			tc.mockSvc(lcc, logger, lca, dm, ctrl)

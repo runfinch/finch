@@ -42,7 +42,7 @@ func newVirtualMachineCommand(
 
 	virtualMachineCommand.AddCommand(
 		newStartVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fs, fp.LimaSSHPrivateKeyPath(), diskManager),
-		newStopVMCommand(limaCmdCreator, logger),
+		newStopVMCommand(limaCmdCreator, diskManager, logger),
 		newRemoveVMCommand(limaCmdCreator, logger),
 		newStatusVMCommand(limaCmdCreator, logger, os.Stdout),
 		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs,

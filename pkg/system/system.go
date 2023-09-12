@@ -96,7 +96,7 @@ type AbsFilePath interface {
 	FilePathAbs(elem string) (string, error)
 }
 
-// FilePathToSlash mocks out filepath.ToSlash
+// FilePathToSlash mocks out filepath.ToSlash.
 type FilePathToSlash interface {
 	FilePathToSlash(elem string) string
 }

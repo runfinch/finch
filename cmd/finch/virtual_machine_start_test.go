@@ -36,7 +36,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
-			*mocks.MockUserDataDiskManager,
+			*mocks.UserDataDiskManager,
 			*gomock.Controller,
 		)
 	}{
@@ -62,7 +62,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -93,7 +93,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
-			dm := mocks.NewMockUserDataDiskManager(ctrl)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
 			tc.mockSvc(lcc, logger, lca, dm, ctrl)
@@ -115,7 +115,7 @@ func TestStartVMAction_run(t *testing.T) {
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
-			*mocks.MockUserDataDiskManager,
+			*mocks.UserDataDiskManager,
 			*gomock.Controller,
 		)
 	}{
@@ -137,7 +137,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -167,7 +167,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -187,7 +187,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -206,7 +206,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -225,7 +225,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -254,7 +254,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -287,7 +287,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -319,7 +319,7 @@ func TestStartVMAction_run(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
-			dm := mocks.NewMockUserDataDiskManager(ctrl)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
 			tc.mockSvc(lcc, logger, lca, dm, ctrl)

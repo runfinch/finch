@@ -39,10 +39,13 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 	finch := fpath.Finch("mock_finch")
 	homeDir := "mock_home"
 
+	size, err := sizeString()
+	assert.NoError(t, err)
+
 	limaPath := path.Join(finch.LimaHomePath(), "_disks", diskName, "datadisk")
 	lockPath := path.Join(finch.LimaHomePath(), "_disks", diskName, "in_use_by")
 	mockListArgs := []string{"disk", "ls", diskName, "--json"}
-	mockCreateArgs := []string{"disk", "create", diskName, "--size", diskSize, "--format", "raw"}
+	mockCreateArgs := []string{"disk", "create", diskName, "--size", size, "--format", "raw"}
 	mockUnlockArgs := []string{"disk", "unlock", diskName}
 	mockQemuImgExePath := "mock_finch/lima/bin/qemu-img"
 	mockDiskInfoArgs := []string{

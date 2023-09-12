@@ -21,7 +21,7 @@ import (
 
 func TestLoad(t *testing.T) {
 	t.Parallel()
-	var testCases = []struct {
+	testCases := []struct {
 		name    string
 		path    string
 		mockSvc func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory)
