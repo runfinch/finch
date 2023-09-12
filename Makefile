@@ -68,7 +68,7 @@ finch-core:
 		"$(MAKE)"
 
 	mkdir -p _output
-	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: local-core
@@ -80,8 +80,8 @@ local-core:
 		"$(MAKE)" lima lima-socket-vmnet
 
 	mkdir -p _output
-	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
-	cd deps/finch-core/src/lima/_output && tar c * | tar Cvx  $(OUTDIR)/lima
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
+	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)/lima
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: lima-and-qemu
@@ -121,7 +121,7 @@ config.yaml:
 .PHONY: copy
 copy:
 	mkdir -p $(DEST)
-	(cd _output && tar c * | tar Cvx  $(DEST) )
+	(cd _output && tar -cf - * | tar -xvf - -C $(DEST) )
 
 .PHONY: install
 install: copy
