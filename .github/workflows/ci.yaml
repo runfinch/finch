@@ -118,7 +118,7 @@ jobs:
           has_creds=${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}
           echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         if: steps.vars.outputs.has_creds == true
         with:
           role-to-assume: ${{ secrets.ROLE }}
