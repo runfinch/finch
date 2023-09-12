@@ -13,13 +13,13 @@ import (
 	"io/fs"
 	"path"
 
+	"github.com/docker/go-units"
 	limaStore "github.com/lima-vm/lima/pkg/store"
 )
 
 const (
 	// diskName must always be consistent with the value under additionalDisks in finch.yaml.
 	diskName = "finch"
-	diskSize = "50G"
 )
 
 type qemuDiskInfo struct {
@@ -88,6 +88,11 @@ func (m *userDataDiskManager) EnsureUserDataDisk() error {
 	return nil
 }
 
+// DetachUserDataDisk is a no-op on Unix because Lima does the detaching.
+func (m *userDataDiskManager) DetachUserDataDisk() error {
+	return nil
+}
+
 func (m *userDataDiskManager) persistentDiskExists() bool {
 	_, err := m.fs.Stat(m.finch.UserDataDiskPath(m.homeDir))
 	return err == nil
@@ -148,7 +153,11 @@ func (m *userDataDiskManager) convertToRaw(diskPath string) error {
 }
 
 func (m *userDataDiskManager) createLimaDisk() error {
-	cmd := m.lcc.CreateWithoutStdio("disk", "create", diskName, "--size", diskSize, "--format", "raw")
+	size, err := sizeString()
+	if err != nil {
+		return fmt.Errorf("failed to get disk size: %w", err)
+	}
+	cmd := m.lcc.CreateWithoutStdio("disk", "create", diskName, "--size", size, "--format", "raw")
 	if logs, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("failed to create disk, debug logs:\n%s", logs)
 	}
@@ -203,4 +212,13 @@ func (m *userDataDiskManager) unlockLimaDisk() error {
 		return fmt.Errorf("failed to unlock disk, debug logs:\n%s", logs)
 	}
 	return nil
+}
+
+func sizeString() (string, error) {
+	sizeB, err := diskSize()
+	if err != nil {
+		return "", err
+	}
+
+	return units.BytesSize(float64(sizeB)), nil
 }

@@ -2,9 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // Package disk manages the persistent disk used to save containerd user data
+//
+//go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_disk_disk.go -package=mocks -mock_names UserDataDiskManager=UserDataDiskManager,diskFS=MockdiskFS -source=disk.go .
 package disk
 
 import (
+	"github.com/docker/go-units"
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -12,9 +15,12 @@ import (
 	fpath "github.com/runfinch/finch/pkg/path"
 )
 
+const DISK_SIZE = "50GB"
+
 // UserDataDiskManager is used to check the user data disk configuration and create it if needed.
 type UserDataDiskManager interface {
 	EnsureUserDataDisk() error
+	DetachUserDataDisk() error
 }
 
 // fs functions required for setting up the user data disk.
@@ -50,4 +56,12 @@ func NewUserDataDiskManager(
 		homeDir: homeDir,
 		config:  config,
 	}
+}
+
+func diskSize() (int64, error) {
+	size, err := units.RAMInBytes(DISK_SIZE)
+	if err != nil {
+		return 0, err
+	}
+	return size, nil
 }
