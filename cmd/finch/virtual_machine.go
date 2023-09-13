@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/runfinch/finch/pkg/disk"
+	"github.com/runfinch/finch/pkg/fssh"
+	"github.com/runfinch/finch/pkg/system"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
@@ -43,7 +45,7 @@ func newVirtualMachineCommand(
 	virtualMachineCommand.AddCommand(
 		newStartVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fs, fp.LimaSSHPrivateKeyPath(), diskManager),
 		newStopVMCommand(limaCmdCreator, diskManager, logger),
-		newRemoveVMCommand(limaCmdCreator, logger),
+		newRemoveVMCommand(limaCmdCreator, diskManager, logger),
 		newStatusVMCommand(limaCmdCreator, logger, os.Stdout),
 		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs,
 			fp.LimaSSHPrivateKeyPath(), diskManager),
@@ -91,4 +93,34 @@ func (p *postVMStartInitAction) run() error {
 		return nil
 	}
 	return p.nca.Apply(fmt.Sprintf("127.0.0.1:%v", portString))
+}
+
+func virtualMachineCommands(
+	logger flog.Logger,
+	fp path.Finch,
+	lcc command.LimaCmdCreator,
+	ecc *command.ExecCmdCreator,
+	fs afero.Fs,
+	fc *config.Finch,
+	home string,
+	finchRootPath string,
+) *cobra.Command {
+	return newVirtualMachineCommand(
+		lcc,
+		logger,
+		dependencies(ecc, fc, fp, fs, lcc, logger),
+		config.NewLimaApplier(fc, ecc, fs, fp.LimaOverrideConfigPath(), system.NewStdLib()),
+		config.NewNerdctlApplier(
+			fssh.NewDialer(),
+			fs,
+			fp.LimaSSHPrivateKeyPath(),
+			fp.FinchDir(finchRootPath),
+			home,
+			fp.LimaInstancePath(),
+			fc,
+		),
+		fp,
+		fs,
+		disk.NewUserDataDiskManager(lcc, ecc, &afero.OsFs{}, fp, finchRootPath, fc, logger),
+	)
 }

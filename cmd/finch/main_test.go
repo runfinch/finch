@@ -170,7 +170,7 @@ func TestNewApp(t *testing.T) {
 
 	require.NoError(t, afero.WriteFile(fs, "/real/config.yaml", []byte(configStr), 0o600))
 
-	cmd := newApp(l, fp, fs, &config.Finch{}, stdOut)
+	cmd := newApp(l, fp, fs, &config.Finch{}, stdOut, "", "")
 
 	assert.Equal(t, cmd.Name(), finchRootCmd)
 	assert.Equal(t, cmd.Version, version.Version)

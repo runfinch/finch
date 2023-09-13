@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"path/filepath"
 	"strings"
 
 	toml "github.com/pelletier/go-toml"
@@ -23,22 +24,36 @@ const (
 )
 
 type nerdctlConfigApplier struct {
-	dialer         fssh.Dialer
-	fs             afero.Fs
-	privateKeyPath string
-	hostUser       string
+	dialer           fssh.Dialer
+	fs               afero.Fs
+	privateKeyPath   string
+	finchDir         string
+	homeDir          string
+	limaInstancePath string
+	fc               *Finch
 }
 
 var _ NerdctlConfigApplier = (*nerdctlConfigApplier)(nil)
 
 // NewNerdctlApplier creates a new NerdctlConfigApplier that
 // applies nerdctl configuration changes by SSHing to the lima VM to update the nerdctl configuration file in it.
-func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser string) NerdctlConfigApplier {
+func NewNerdctlApplier(
+	dialer fssh.Dialer,
+	fs afero.Fs,
+	privateKeyPath,
+	finchDir,
+	homeDir string,
+	limaInstancePath string,
+	fc *Finch,
+) NerdctlConfigApplier {
 	return &nerdctlConfigApplier{
-		dialer:         dialer,
-		fs:             fs,
-		privateKeyPath: privateKeyPath,
-		hostUser:       hostUser,
+		dialer:           dialer,
+		fs:               fs,
+		privateKeyPath:   privateKeyPath,
+		finchDir:         finchDir,
+		homeDir:          homeDir,
+		limaInstancePath: limaInstancePath,
+		fc:               fc,
 	}
 }
 
@@ -68,15 +83,29 @@ func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd st
 //
 // [registry nerdctl docs]: https://github.com/containerd/nerdctl/blob/master/docs/registry.md
 
-func updateEnvironment(fs afero.Fs, user string) error {
-	cmdArr := [4]string{
-		fmt.Sprintf("export DOCKER_CONFIG=\"/Users/%s/.finch\"", user),
-		fmt.Sprintf("[ -L /usr/local/bin/docker-credential-ecr-login ] "+
-			"|| sudo ln -s /Users/%s/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/", user),
-		fmt.Sprintf("[ -L /root/.aws ] || sudo ln -fs  /Users/%s/.aws /root/.aws", user),
+func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir string) error {
+	cmdArr := []string{
+		`export DOCKER_CONFIG="$FINCH_DIR"`,
+		"[ -L /usr/local/bin/docker-credential-ecr-login ] " +
+			`|| sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-ecr-login /usr/local/bin/`,
+		`[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws`,
 	}
 
-	profileFilePath := fmt.Sprintf("/home/%s.linux/.bashrc", user)
+	awsDir := fmt.Sprintf("%s/.aws", homeDir)
+
+	if *fc.VMType == "wsl2" {
+		cmdArr = append([]string{
+			fmt.Sprintf(`FINCH_DIR=$(/usr/bin/wslpath '%s')`, finchDir),
+			fmt.Sprintf(`AWS_DIR=$(/usr/bin/wslpath '%s')`, awsDir),
+		}, cmdArr...)
+	} else {
+		cmdArr = append([]string{
+			fmt.Sprintf(`FINCH_DIR=%s`, finchDir),
+			fmt.Sprintf(`AWS_DIR=%s`, awsDir),
+		}, cmdArr...)
+	}
+
+	profileFilePath := fmt.Sprintf("%s.bashrc", limaVMHomeDir)
 	profBuf, err := afero.ReadFile(fs, profileFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to read config file: %w", err)
@@ -93,8 +122,8 @@ func updateEnvironment(fs afero.Fs, user string) error {
 }
 
 // updateNerdctlConfig reads from the nerdctl config and updates values.
-func updateNerdctlConfig(fs afero.Fs, user string, rootless bool) error {
-	nerdctlRootlessCfgPath := fmt.Sprintf("/home/%s.linux/.config/nerdctl/nerdctl.toml", user)
+func updateNerdctlConfig(fs afero.Fs, homeDir string, rootless bool) error {
+	nerdctlRootlessCfgPath := fmt.Sprintf("%s/.config/nerdctl/nerdctl.toml", homeDir)
 
 	var cfgPath string
 	if rootless {
@@ -137,6 +166,37 @@ func updateNerdctlConfig(fs afero.Fs, user string, rootless bool) error {
 	return nil
 }
 
+func getLimaHomeDir(localFs afero.Fs, remoteFs afero.Fs, limaInstanceDir string, cfg *Finch) (string, error) {
+	var envB []byte
+	var envErr error
+
+	if *cfg.VMType == "wsl2" {
+		envB, envErr = afero.ReadFile(localFs, filepath.Join(limaInstanceDir, "cidata", "lima.env"))
+	} else {
+		envB, envErr = afero.ReadFile(remoteFs, "/mnt/lima-cidata/lima.env")
+	}
+
+	if envErr != nil {
+		return "", envErr
+	}
+
+	var user, home string
+	lines := strings.Split(string(envB), "\n")
+	for _, l := range lines {
+		if strings.Contains(l, "LIMA_CIDATA_USER") {
+			user = strings.Split(l, "=")[1]
+		} else if strings.Contains(l, "LIMA_CIDATA_HOME") {
+			home = strings.Split(l, "=")[1]
+		}
+	}
+
+	if home != "" {
+		return home, nil
+	}
+
+	return "/home/" + user + ".linux/", nil
+}
+
 // Apply gets SSH and SFTP clients and uses them to update the nerdctl config.
 func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 	user := "root"
@@ -157,12 +217,17 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 
 	sftpFs := sftpfs.New(sftpClient)
 
+	limaHomeDir, err := getLimaHomeDir(nca.fs, sftpFs, nca.limaInstancePath, nca.fc)
+	if err != nil {
+		return fmt.Errorf("failed to get lima home dir: %w", err)
+	}
+
 	// rootless hardcoded to false for now to match our finch.yaml file
-	if err := updateNerdctlConfig(sftpFs, user, false); err != nil {
+	if err := updateNerdctlConfig(sftpFs, limaHomeDir, false); err != nil {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}
 
-	if err := updateEnvironment(sftpFs, nca.hostUser); err != nil {
+	if err := updateEnvironment(sftpFs, nca.fc, nca.finchDir, nca.homeDir, limaHomeDir); err != nil {
 		return fmt.Errorf("failed to update the user's .profile file: %w", err)
 	}
 	return nil

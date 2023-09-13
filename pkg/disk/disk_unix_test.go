@@ -30,7 +30,7 @@ func TestDisk_NewUserDataDiskManager(t *testing.T) {
 	finch := fpath.Finch("mock_finch")
 	homeDir := "mock_home"
 
-	NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, &config.Finch{})
+	NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, &config.Finch{}, nil)
 }
 
 func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
@@ -227,7 +227,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			dfs := mocks.NewMockdiskFS(ctrl)
 			cmd := mocks.NewCommand(ctrl)
 			tc.mockSvc(lcc, dfs, cmd, ecc)
-			dm := NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, tc.cfg)
+			dm := NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, tc.cfg, nil)
 			err := dm.EnsureUserDataDisk()
 			assert.Equal(t, tc.wantErr, err)
 		})
