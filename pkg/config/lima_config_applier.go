@@ -43,7 +43,7 @@ sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
 	`
 
 	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
-	wslDiskFormatScriptHeader                 = "# soci installation and configuring"
+	wslDiskFormatScriptHeader                 = "# wsl disk format script"
 )
 
 // LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.
@@ -216,7 +216,7 @@ func findSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
 }
 
 func ensureWslDiskFormatScript(limaCfg *limayaml.LimaYAML) {
-	if _, hasScript := findWslDiskFormatScript(limaCfg); hasScript {
+	if _, hasScript := findWslDiskFormatScript(limaCfg); !hasScript {
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
 			Mode: "system",
 			Script: fmt.Sprintf(`%s
@@ -227,8 +227,8 @@ if [ -z "$(blkid -s TYPE -t LABEL=FinchDataDiskNTFS -o device)" ]; then
 fi
 
 mkdir -p /mnt/lima-finch
-mount  "$(blkid -s TYPE -t LABEL=FinchDataDisk -o device)" /mnt/lima-finch
-`, userModeEmulationProvisioningScriptHeader),
+# mount  "$(blkid -s TYPE -t LABEL=FinchDataDisk -o device)" /mnt/lima-finch
+`, wslDiskFormatScriptHeader),
 		})
 	}
 }

@@ -52,15 +52,19 @@ func xmain(logger flog.Logger,
 	if err != nil {
 		return fmt.Errorf("failed to get user home directory: %w", err)
 	}
-	fc, err := config.Load(fs, fp.ConfigFilePath(home), logger, loadCfgDeps, mem)
+	finchRootPath, err := fp.FinchRootDir(*system.NewStdLib())
+	if err != nil {
+		return fmt.Errorf("failed to get finch root path: %w", err)
+	}
+	fc, err := config.Load(fs, fp.ConfigFilePath(finchRootPath), logger, loadCfgDeps, mem)
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	return newApp(logger, fp, fs, fc, stdOut).Execute()
+	return newApp(logger, fp, fs, fc, stdOut, home, finchRootPath).Execute()
 }
 
-var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Finch, stdOut io.Writer) *cobra.Command {
+var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Finch, stdOut io.Writer, home, finchRootPath string) *cobra.Command {
 	usage := fmt.Sprintf("%v <command>", finchRootCmd)
 	rootCmd := &cobra.Command{
 		Use:           usage,
@@ -104,7 +108,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 	// append finch specific commands
 	allCommands = append(allCommands,
 		newVersionCommand(lcc, logger, stdOut),
-		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc),
+		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc, home, finchRootPath),
 		newSupportBundleCommand(logger, supportBundleBuilder, lcc),
 	)
 

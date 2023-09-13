@@ -17,7 +17,7 @@ import (
 func TestNewRemoveVMCommand(t *testing.T) {
 	t.Parallel()
 
-	cmd := newRemoveVMCommand(nil, nil)
+	cmd := newRemoveVMCommand(nil, nil, nil)
 	assert.Equal(t, cmd.Name(), "remove")
 }
 
@@ -26,13 +26,13 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *gomock.Controller)
+		mockSvc func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller)
 		args    []string
 	}{
 		{
 			name: "should remove the instance",
 			args: []string{},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -49,7 +49,7 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 			args: []string{
 				"--force",
 			},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("remove", "--force", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
@@ -64,11 +64,12 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
-			tc.mockSvc(logger, lcc, ctrl)
+			tc.mockSvc(logger, lcc, dm, ctrl)
 
-			cmd := newRemoveVMCommand(lcc, logger)
+			cmd := newRemoveVMCommand(lcc, dm, logger)
 			cmd.SetArgs(tc.args)
 			assert.NoError(t, cmd.Execute())
 		})
@@ -183,11 +184,12 @@ func TestRemoveVMAction_run(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 
 			tc.mockSvc(logger, lcc, ctrl)
-			err := newRemoveVMAction(lcc, logger).run(tc.force)
+			err := newRemoveVMAction(lcc, dm, logger).run(tc.force)
 			assert.Equal(t, tc.wantErr, err)
 		})
 	}

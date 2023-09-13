@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"path/filepath"
+	"runtime"
 
 	"github.com/runfinch/finch/pkg/system"
 )
@@ -15,15 +16,37 @@ import (
 // Finch provides a set of methods that calculate paths relative to the Finch path.
 type Finch string
 
+func (Finch) FinchRootDir(stdLib system.StdLib) (string, error) {
+	if runtime.GOOS == "windows" {
+		return stdLib.Env("LOCALAPPDATA"), nil
+	}
+
+	home, err := stdLib.GetUserHome()
+	if err != nil {
+		return "", err
+	}
+
+	return home, nil
+}
+
 // ConfigFilePath returns the path to Finch config file.
-func (Finch) ConfigFilePath(homeDir string) string {
-	return filepath.Join(homeDir, ".finch", "finch.yaml")
+func (Finch) FinchDir(rootDir string) string {
+	return filepath.Join(rootDir, ".finch")
+}
+
+// ConfigFilePath returns the path to Finch config file.
+func (Finch) ConfigFilePath(rootDir string) string {
+	return filepath.Join(rootDir, ".finch", "finch.yaml")
 }
 
 // UserDataDiskPath returns the path to the permanent storage location of the Finch
 // user data disk.
-func (w Finch) UserDataDiskPath(homeDir string) string {
-	return filepath.Join(homeDir, ".finch", ".disks", w.generatePathSum())
+func (w Finch) UserDataDiskPath(rootDir string) string {
+	disksPath := filepath.Join(rootDir, ".finch", ".disks")
+	if runtime.GOOS == "windows" {
+		return filepath.Join(disksPath, w.generatePathSum()+".vhdx")
+	}
+	return filepath.Join(disksPath, w.generatePathSum())
 }
 
 // LimaHomePath returns the path that should be set to LIMA_HOME for Finch.

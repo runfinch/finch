@@ -35,6 +35,10 @@ type execCmd struct {
 
 var _ Command = (*execCmd)(nil)
 
+func (c *execCmd) String() string {
+	return c.Cmd.String()
+}
+
 func (c *execCmd) Output() ([]byte, error) {
 	b, err := c.Cmd.Output()
 	return b, wrapIfExitError(err)

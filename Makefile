@@ -46,7 +46,6 @@ ifneq (,$(findstring arm64,$(ARCH)))
 	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1689037160.tar.gz
 	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/aarch64/finch-rootfs-production-arm64-1690920104.tar.zst
 	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
-	FINCH_ROOTFS_BASENAME := $(subst .zst,,$(FINCH_ROOTFS_BASENAME))
 # TODO ROOTFS URL
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
@@ -56,7 +55,6 @@ else ifneq (,$(findstring x86_64,$(ARCH)))
 	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1689037160.tar.gz
 	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1690920103.tar.zst
 	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
-	FINCH_ROOTFS_BASENAME := $(subst .zst,,$(FINCH_ROOTFS_BASENAME))
 # TODO ROOTFS URL
 endif
 
@@ -373,6 +371,14 @@ mdlint-ctr:
 	$(BINARYNAME) run --rm -v "$(shell pwd):/repo:ro" -w /repo avtodev/markdown-lint:v1 --ignore CHANGELOG.md '**/*.md'
 
 .PHONY: clean
+ifeq ($(GOOS),windows)
+clean:
+	-@rm -rf $(OUTDIR) 2>/dev/null || true
+	-@rm -rf ./deps/finch-core/_output || true
+	-@rm ./*.tar.gz 2>/dev/null || true
+	-@rm ./*.qcow2 2>/dev/null || true
+	-@rm ./test-coverage.* 2>/dev/null || true
+else
 clean:
 	-sudo pkill '^socket_vmnet'
 	-sudo pkill '^qemu-system-'
@@ -385,3 +391,4 @@ clean:
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true
+endif

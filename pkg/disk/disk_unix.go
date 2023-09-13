@@ -20,7 +20,7 @@ import (
 // EnsureUserDataDisk checks the current disk configuration and fixes it if needed.
 func (m *userDataDiskManager) EnsureUserDataDisk() error {
 	if m.limaDiskExists() {
-		diskPath := m.finch.UserDataDiskPath(m.homeDir)
+		diskPath := m.finch.UserDataDiskPath(m.rootDir)
 
 		if *m.config.VMType == "vz" {
 			info, err := m.getDiskInfo(diskPath)
@@ -81,7 +81,7 @@ func (m *userDataDiskManager) DetachUserDataDisk() error {
 }
 
 func (m *userDataDiskManager) persistentDiskExists() bool {
-	_, err := m.fs.Stat(m.finch.UserDataDiskPath(m.homeDir))
+	_, err := m.fs.Stat(m.finch.UserDataDiskPath(m.rootDir))
 	return err == nil
 }
 
@@ -154,14 +154,14 @@ func (m *userDataDiskManager) createLimaDisk() error {
 func (m *userDataDiskManager) attachPersistentDiskToLimaDisk() error {
 	limaPath := fmt.Sprintf("%s/_disks/%s/datadisk", m.finch.LimaHomePath(), diskName)
 	if !m.persistentDiskExists() {
-		disksDir := path.Dir(m.finch.UserDataDiskPath(m.homeDir))
+		disksDir := path.Dir(m.finch.UserDataDiskPath(m.rootDir))
 		_, err := m.fs.Stat(disksDir)
 		if errors.Is(err, fs.ErrNotExist) {
 			if err := m.fs.MkdirAll(disksDir, 0o755); err != nil {
 				return fmt.Errorf("could not create persistent disk directory: %w", err)
 			}
 		}
-		if err = m.fs.Rename(limaPath, m.finch.UserDataDiskPath(m.homeDir)); err != nil {
+		if err = m.fs.Rename(limaPath, m.finch.UserDataDiskPath(m.rootDir)); err != nil {
 			return fmt.Errorf("could not move data disk to persistent path: %w", err)
 		}
 	}
@@ -180,7 +180,7 @@ func (m *userDataDiskManager) attachPersistentDiskToLimaDisk() error {
 		}
 	}
 
-	err = m.fs.SymlinkIfPossible(m.finch.UserDataDiskPath(m.homeDir), limaPath)
+	err = m.fs.SymlinkIfPossible(m.finch.UserDataDiskPath(m.rootDir), limaPath)
 	if err != nil {
 		return err
 	}

@@ -12,6 +12,7 @@ import (
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
+	"github.com/runfinch/finch/pkg/flog"
 	fpath "github.com/runfinch/finch/pkg/path"
 )
 
@@ -46,8 +47,9 @@ type userDataDiskManager struct {
 	ecc     command.Creator
 	fs      diskFS
 	finch   fpath.Finch
-	homeDir string
+	rootDir string
 	config  *config.Finch
+	logger  flog.Logger
 }
 
 // NewUserDataDiskManager is a constructor for UserDataDiskManager.
@@ -56,16 +58,18 @@ func NewUserDataDiskManager(
 	ecc command.Creator,
 	fs diskFS,
 	finch fpath.Finch,
-	homeDir string,
+	rootDir string,
 	config *config.Finch,
+	logger flog.Logger,
 ) UserDataDiskManager {
 	return &userDataDiskManager{
 		lcc:     lcc,
 		ecc:     ecc,
 		fs:      fs,
 		finch:   finch,
-		homeDir: homeDir,
+		rootDir: rootDir,
 		config:  config,
+		logger:  logger,
 	}
 }
 

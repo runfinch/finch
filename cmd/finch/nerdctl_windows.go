@@ -10,7 +10,7 @@ import (
 )
 
 func convertToWSLPath(systemDeps NerdctlCommandSystemDeps, winPath string) (string, error) {
-	var path = filepath.Clean(winPath)
+	path := filepath.Clean(winPath)
 	var err error
 
 	path, err = systemDeps.FilePathAbs(winPath)

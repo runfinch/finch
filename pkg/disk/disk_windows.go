@@ -16,8 +16,12 @@ import (
 // EnsureUserDataDisk checks the current disk configuration and fixes it if needed.
 // on Windows, this is a no-op.
 func (m *userDataDiskManager) EnsureUserDataDisk() error {
-	diskPath := m.finch.UserDataDiskPath(m.homeDir)
+	diskPath := m.finch.UserDataDiskPath(m.rootDir)
 	disksDir := filepath.Dir(diskPath)
+
+	m.logger.Debugf("diskPath: %s", diskPath)
+	m.logger.Debugf("disksDir: %s", disksDir)
+
 	if _, err := m.fs.Stat(disksDir); errors.Is(err, fs.ErrNotExist) {
 		if err := m.fs.MkdirAll(disksDir, 0o755); err != nil {
 			return fmt.Errorf("could not create persistent disk directory: %w", err)
@@ -30,17 +34,24 @@ func (m *userDataDiskManager) EnsureUserDataDisk() error {
 		}
 	}
 
+	if err := m.attachDisk(diskPath); err != nil {
+		return fmt.Errorf("could not attach persistent disk: %w", err)
+	}
+
 	return nil
 }
 
 // DetachUserDataDisk unmounts the disk in wsl.
 func (m *userDataDiskManager) DetachUserDataDisk() error {
-	out, err := m.ecc.Create(
+	cmd := m.ecc.Create(
 		"wsl.exe",
 		"--unmount",
-		`\\?\`+m.finch.UserDataDiskPath(m.homeDir),
-	).CombinedOutput()
+		`\\?\`+m.finch.UserDataDiskPath(m.rootDir),
+	)
 
+	m.logger.Debugf("running attach cmd: %s", cmd.String())
+
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("failed to attach disk: %w, command output: %s", err, out)
 	}
@@ -66,6 +77,8 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 		return fmt.Errorf("failed to get disk size: %w", err)
 	}
 
+	m.logger.Infof("creating disk at path: %s", diskPath)
+
 	out, err := m.ecc.Create("powershell.exe", fmt.Sprintf(`@"
 create vdisk file="%s" type="expandable" maximum=%d
 select vdisk file="%s"
@@ -75,7 +88,6 @@ format quick fs=ntfs label=FinchDataDiskNTFS
 detach vdisk
 "@ | diskpart`, diskPath, size, diskPath),
 	).CombinedOutput()
-
 	if err != nil {
 		return fmt.Errorf("failed to create disk: %w, command output: %s", err, out)
 	}
@@ -84,14 +96,19 @@ detach vdisk
 }
 
 func (m *userDataDiskManager) attachDisk(diskPath string) error {
-	out, err := m.ecc.Create(
+	m.logger.Infof("attaching disk at path: %s", diskPath)
+
+	cmd := m.ecc.Create(
 		"wsl.exe",
 		"--mount",
 		"--bare",
 		"--vhd",
 		diskPath,
-	).CombinedOutput()
+	)
 
+	m.logger.Debugf("running attach cmd: %s", cmd.String())
+
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("failed to attach disk: %w, command output: %s", err, out)
 	}

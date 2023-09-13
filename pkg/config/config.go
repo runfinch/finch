@@ -12,7 +12,7 @@ package config
 import (
 	"errors"
 	"fmt"
-	"path"
+	"path/filepath"
 
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
@@ -127,7 +127,7 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 		if errors.Is(err, afero.ErrFileNotFound) {
 			log.Infof("Using default values due to missing config file at %q", cfgPath)
 			defCfg := applyDefaults(&Finch{}, systemDeps, mem)
-			if err := ensureConfigDir(fs, path.Dir(cfgPath), log); err != nil {
+			if err := ensureConfigDir(fs, filepath.Dir(cfgPath), log); err != nil {
 				return nil, fmt.Errorf("failed to ensure %q directory: %w", cfgPath, err)
 			}
 			if err := writeConfig(defCfg, fs, cfgPath); err != nil {
