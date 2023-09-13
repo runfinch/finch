@@ -27,15 +27,7 @@ containerd:
   user: false
 
 provision:
-- mode: boot
-  script: |
-    systemctl stop NetworkManager-wait-online.service
-    systemctl reset-failed NetworkManager-wait-online.service
-    systemctl mask NetworkManager-wait-online.service
-- mode: boot
-  script: |
-    modprobe virtiofs
-- mode: boot
+- mode: system
   script: |
     modprobe br_netfilter
     cat <<EOF > /etc/sysctl.d/99-finch.conf
@@ -44,6 +36,15 @@ provision:
     net.ipv4.ip_forward = 1
     EOF
     sysctl --system
+- mode: system
+  script: |
+    # systemd services stays running between lima VM reboots.
+    # Because the vsock port is randomized on vm start, the hostagent
+    # waits for the guestagent to be listening at a new port, while the
+    # guestagent just stays running at the original port. This causes
+    # vm stop => vm start to timeout.
+    # TODO: fix this in a Lima PR
+    systemctl restart lima-guestagent
 # # `user` is executed without the root privilege
 - mode: user
   script: |
@@ -80,7 +81,7 @@ provision:
     sudo mkdir -p /mnt/lima-finch/cni
     sudo mount --bind /mnt/lima-finch/cni /var/lib/cni
     mkdir -p  ~/.local/share/cni
-    sudo mount --bind /mnt/lima-finch/cni  ~/.local/share/cni
+    sudo mount --bind /mnt/lima-finch/cni ~/.local/share/cni
 
     # Make sure buildkit is restarted with containerd, so it uses the correct UUID
     sudo systemctl add-requires buildkit.service containerd.service
