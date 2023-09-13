@@ -90,8 +90,6 @@ mounts:
 # `/mnt/lima-${VOLUME}`.
 # 🟢 Builtin default: null
 # For Finch, this value should always be the same as the diskName in pkg/disk/disk.go
-additionalDisks:
-- "finch"
 
 ssh:
   # A localhost port of the host. Forwarded to port 22 of the guest.

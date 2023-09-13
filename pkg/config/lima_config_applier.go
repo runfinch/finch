@@ -43,6 +43,7 @@ sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
 	`
 
 	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
+	wslDiskFormatScriptHeader                 = "# soci installation and configuring"
 )
 
 // LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.
@@ -141,6 +142,16 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 
 	toggleSnaphotters(&limaCfg, snapshotters)
 
+	if *lca.cfg.VMType != "wsl2" {
+		limaCfg.AdditionalDisks = append(limaCfg.AdditionalDisks, limayaml.Disk{
+			Name: "finch",
+		})
+	}
+
+	if *lca.cfg.VMType == "wsl2" {
+		ensureWslDiskFormatScript(&limaCfg)
+	}
+
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal the lima config file: %w", err)
@@ -202,4 +213,37 @@ func findSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
 	}
 
 	return scriptIdx, hasSociInstallationScript
+}
+
+func ensureWslDiskFormatScript(limaCfg *limayaml.LimaYAML) {
+	if _, hasScript := findWslDiskFormatScript(limaCfg); hasScript {
+		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
+			Mode: "system",
+			Script: fmt.Sprintf(`%s
+#!/bin/bash
+# Reformat disk
+if [ -z "$(blkid -s TYPE -t LABEL=FinchDataDiskNTFS -o device)" ]; then
+	mkfs -t ext4 -L "FinchDataDisk" -F $(blkid -s TYPE -t LABEL=FinchDataDiskNTFS -o device)
+fi
+
+mkdir -p /mnt/lima-finch
+mount  "$(blkid -s TYPE -t LABEL=FinchDataDisk -o device)" /mnt/lima-finch
+`, userModeEmulationProvisioningScriptHeader),
+		})
+	}
+}
+
+func findWslDiskFormatScript(limaCfg *limayaml.LimaYAML) (int, bool) {
+	hasWslDiskFormatScript := false
+	var scriptIdx int
+	for idx, prov := range limaCfg.Provision {
+		trimmed := strings.Trim(prov.Script, " ")
+		if !hasWslDiskFormatScript && strings.HasPrefix(trimmed, wslDiskFormatScriptHeader) {
+			hasWslDiskFormatScript = true
+			scriptIdx = idx
+			break
+		}
+	}
+
+	return scriptIdx, hasWslDiskFormatScript
 }
