@@ -142,7 +142,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 			nerdctlArgs = append(nerdctlArgs, arg)
 		case strings.HasPrefix(arg, "-f") || strings.HasPrefix(arg, "--file") ||
 			strings.HasPrefix(arg, "--project-directory") || strings.HasPrefix(arg, "--env-file") ||
-			strings.HasPrefix(arg, "--cosign-key") || strings.HasPrefix(arg, "-label-file"):
+			strings.HasPrefix(arg, "--cosign-key") || strings.HasPrefix(arg, "--label-file") || strings.HasPrefix(arg, "--cidfile"):
 			args[i+1], err = handleFilePath(nc.systemDeps, args[i+1])
 			if err != nil {
 				return err

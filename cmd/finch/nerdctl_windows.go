@@ -45,10 +45,18 @@ func handleVolume(systemDeps NerdctlCommandSystemDeps, v string) (string, error)
 		return "", fmt.Errorf("invalid volume mount: %s does not contain : separator", v)
 	}
 	hostPath := cleanArg[:colonIndex]
+	// This is a named volume, from https://github.com/containerd/nerdctl/blob/main/pkg/mountutil/mountutil.go#L76
+	if !strings.Contains(hostPath, "\\") {
+		return v, nil
+	}
+	// This is an anonymous volume
+	if len(hostPath) == 0 {
+		return v, nil
+	}
 	hostPath, err := systemDeps.FilePathAbs(hostPath)
 	// If it's an anonymous volume, then the path won't exist
 	if err != nil {
-		return v, nil
+		return "", err
 	}
 
 	containerPath := cleanArg[colonIndex+1:]
