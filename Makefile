@@ -81,7 +81,6 @@ all-local: arch-test networks.yaml config.yaml lima-and-qemu local-core finch.ya
 .PHONY: finch-core
 finch-core:
 	cd deps/finch-core && \
-		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
 		"$(MAKE)"
