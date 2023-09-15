@@ -87,6 +87,7 @@ type UserHomeDir interface {
 	GetUserHome() (string, error)
 }
 
+// WorkingDirectory mocks out os.Getwd.
 type WorkingDirectory interface {
 	GetWd() (string, error)
 }

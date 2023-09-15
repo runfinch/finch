@@ -16,6 +16,8 @@ import (
 // Finch provides a set of methods that calculate paths relative to the Finch path.
 type Finch string
 
+// FinchRootDir returns the path to the Finch root directory.
+// $HOME on UNIX and $LocalAppData on Windows.
 func (Finch) FinchRootDir(stdLib system.StdLib) (string, error) {
 	if runtime.GOOS == "windows" {
 		return stdLib.Env("LOCALAPPDATA"), nil
@@ -29,7 +31,7 @@ func (Finch) FinchRootDir(stdLib system.StdLib) (string, error) {
 	return home, nil
 }
 
-// ConfigFilePath returns the path to Finch config file.
+// FinchDir returns the path to the Finch config directory.
 func (Finch) FinchDir(rootDir string) string {
 	return filepath.Join(rootDir, ".finch")
 }
@@ -118,6 +120,6 @@ func FindFinch(deps FinchFinderDeps) (Finch, error) {
 	}
 	// The directory structure is finch_home/bin/finch,
 	// where the last path comment (i.e., finch) is the executable that starts this process.
-	res := deps.FilePathJoin(realPath, "../../")
+	res := deps.FilePathJoin(realPath, "..", "..")
 	return Finch(res), nil
 }
