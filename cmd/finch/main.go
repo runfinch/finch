@@ -64,7 +64,15 @@ func xmain(logger flog.Logger,
 	return newApp(logger, fp, fs, fc, stdOut, home, finchRootPath).Execute()
 }
 
-var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Finch, stdOut io.Writer, home, finchRootPath string) *cobra.Command {
+var newApp = func(
+	logger flog.Logger,
+	fp path.Finch,
+	fs afero.Fs,
+	fc *config.Finch,
+	stdOut io.Writer,
+	home,
+	finchRootPath string,
+) *cobra.Command {
 	usage := fmt.Sprintf("%v <command>", finchRootCmd)
 	rootCmd := &cobra.Command{
 		Use:           usage,
