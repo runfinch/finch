@@ -43,6 +43,8 @@ type nerdctlCommandCreator struct {
 	fs         afero.Fs
 }
 
+type argHandler func(systemDeps NerdctlCommandSystemDeps, string []string, index int) error
+
 func newNerdctlCommandCreator(
 	creator command.LimaCmdCreator,
 	systemDeps NerdctlCommandSystemDeps,
@@ -91,22 +93,32 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		skip                        bool
 	)
 
-	// convert build context to wsl path for windows, handleFilePath no-op unix
+	alias, hasAlias := aliasMap[cmdName]
+	var key = ""
+	if hasAlias {
+		cmdName = alias
+		key = cmdName
+	} else if len(args) > 0 {
+		// for commands like image build, container run
+		key = fmt.Sprintf("%s %s", cmdName, args[0])
+	}
 
-	if cmdName == "build" || cmdName == "builder" {
-		if args[len(args)-1] != "--debug" {
-			args[len(args)-1], err = handleFilePath(nc.systemDeps, args[len(args)-1])
-			if err != nil {
-				return err
-			}
-		} else {
-			args[len(args)-2], err = handleFilePath(nc.systemDeps, args[len(args)-2])
-			if err != nil {
-				return err
+	// First check if command requires any handling
+	aMap, hasArgHandler := argHandlerMap[key]
+	for i, arg := range args {
+		if hasArgHandler {
+			// Check if argument for the command needs handling, sometimes it can be --file=<filename>
+			b, _, _ := strings.Cut(arg, "=")
+			h, ok := aMap[b]
+			if ok {
+				err = h(nc.systemDeps, args, i)
+				if err != nil {
+					return err
+				}
+				// This is required when the positional argument at i is mutated by argHandler, eg -v=C:\Users:/tmp:ro
+				arg = args[i]
 			}
 		}
-	}
-	for i, arg := range args {
 		// parsing environment values from the command line may pre-fetch and
 		// consume the next argument; this loop variable will skip these pre-consumed
 		// entries from the command line
@@ -136,26 +148,14 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 			case "--add-host":
 				args[i+1] = resolveIP(args[i+1], nc.logger)
 			default:
+				fmt.Printf("args are %v", args)
 				resolvedIP := resolveIP(arg[11:], nc.logger)
 				arg = fmt.Sprintf("%s%s", arg[0:11], resolvedIP)
 			}
 			nerdctlArgs = append(nerdctlArgs, arg)
-		case strings.HasPrefix(arg, "-f") || strings.HasPrefix(arg, "--file") ||
-			strings.HasPrefix(arg, "--project-directory") || strings.HasPrefix(arg, "--env-file") ||
-			strings.HasPrefix(arg, "--cosign-key") || strings.HasPrefix(arg, "-label-file"):
-			args[i+1], err = handleFilePath(nc.systemDeps, args[i+1])
 			if err != nil {
 				return err
 			}
-			nerdctlArgs = append(nerdctlArgs, arg)
-
-		case strings.HasPrefix(arg, "-v") || strings.HasPrefix(arg, "--volume"):
-			args[i+1], err = handleVolume(nc.systemDeps, args[i+1])
-			if err != nil {
-				return err
-			}
-			nerdctlArgs = append(nerdctlArgs, arg)
-
 		default:
 			nerdctlArgs = append(nerdctlArgs, arg)
 		}
@@ -194,7 +194,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	limaArgs := append(nc.GetLimaArgs(), passedEnvArgs...)
 
-	limaArgs = append(limaArgs, []string{nerdctlCmdName, cmdName}...)
+	limaArgs = append(limaArgs, append([]string{nerdctlCmdName}, strings.Fields(cmdName)...)...)
 
 	var finalArgs []string
 	for key, val := range envVars {
