@@ -12,3 +12,7 @@ func handleFilePath(systemDeps NerdctlCommandSystemDeps, path string) (string, e
 func handleVolume(systemDeps NerdctlCommandSystemDeps, v string) (string, error) {
 	return v, nil
 }
+
+var aliasMap = map[string]string{}
+
+var argHandlerMap = map[string]map[string]argHandler{}
