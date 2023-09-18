@@ -149,6 +149,45 @@ jobs:
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e
         shell: zsh {0}
+  e2e-tests-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          [
+            [self-hosted, windows, amd64, 2022, test],
+          ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      # - name: Set output variables
+      #   id: vars
+      #   run: |
+      #     has_creds=${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}
+      #     echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
+      # - name: configure aws credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   if: steps.vars.outputs.has_creds == true
+      #   with:
+      #     role-to-assume: ${{ secrets.ROLE }}
+      #     role-session-name: credhelper-test
+      #     aws-region: ${{ secrets.REGION }}
+      - name: Clean up previous files
+        run: |
+        echo "cleanup"
+      - name: Build project
+        run: |
+          make
+      - run: |
+          git status
+          git clean -f -d
+          # REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e
+          make test-e2e
   mdlint:
     runs-on: ubuntu-latest
     steps:
