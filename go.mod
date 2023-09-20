@@ -12,7 +12,7 @@ require (
 	github.com/onsi/gomega v1.27.10
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.6
-	github.com/runfinch/common-tests v0.7.3
+	github.com/runfinch/common-tests v0.7.4
 	github.com/shirou/gopsutil/v3 v3.23.8
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/afero v1.9.5
