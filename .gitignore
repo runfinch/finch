@@ -11,3 +11,4 @@ tmp/
 .vscode/
 tools_bin/
 test-coverage.*
+*.syso

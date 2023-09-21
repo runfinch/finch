@@ -196,7 +196,18 @@ uninstall.vde:
 uninstall: uninstall.finch
 
 .PHONY: finch
-finch:
+ifeq ($(GOOS),windows)
+finch: finch-windows finch-general
+else
+finch: finch-unix
+endif
+
+finch-windows:
+	$(GO) generate cmd/finch/main_windows.go
+
+finch-unix: finch-general
+
+finch-general:
 	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
 
 .PHONY: release
