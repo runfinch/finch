@@ -6,10 +6,18 @@
 package disk
 
 import (
+	"bytes"
+	_ "embed"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"path/filepath"
+	"text/template"
+
+	"github.com/spf13/afero"
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 // EnsureUserDataDisk checks the current disk configuration and fixes it if needed.
@@ -70,6 +78,15 @@ func (m *userDataDiskManager) diskExists(diskPath string) (bool, error) {
 	return true, nil
 }
 
+//go:embed createDiskAdmin.TEMPLATE.ps1
+var createDiskTmpl string
+
+type createDiskOpts struct {
+	Path         string
+	Size         int64
+	TempFilePath string
+}
+
 func (m *userDataDiskManager) createDisk(diskPath string) error {
 	size, err := sizeInMB()
 	if err != nil {
@@ -78,15 +95,25 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 
 	m.logger.Infof("creating disk at path: %s", diskPath)
 
-	out, err := m.ecc.Create("powershell.exe", fmt.Sprintf(`@"
-create vdisk file="%s" type="expandable" maximum=%d
-select vdisk file="%s"
-attach vdisk
-create partition primary
-format quick fs=ntfs label=FinchDataDiskNTFS
-detach vdisk
-"@ | diskpart`, diskPath, size, diskPath),
-	).CombinedOutput()
+	tempScript, _ := afero.TempFile(m.fs, "", "finchCreateDiskScript*.ps1")
+	tempOut, _ := afero.TempFile(m.fs, "", "finchCreateDiskOutput*")
+
+	t := template.Must(template.New("createDisk").Parse(createDiskTmpl))
+	opts := createDiskOpts{
+		Path:         diskPath,
+		Size:         size,
+		TempFilePath: tempOut.Name(),
+	}
+	_ = t.Execute(tempScript, opts)
+	_ = tempOut.Close()
+	_ = tempScript.Close()
+
+	out, err := m.ecc.Create("powershell.exe", "-Command", tempScript.Name()).CombinedOutput()
+	m.logger.Infof("createDisk out: %s", out)
+
+	_ = m.fs.Remove(tempScript.Name())
+	_ = m.fs.Remove(tempOut.Name())
+
 	if err != nil {
 		return fmt.Errorf("failed to create disk: %w, command output: %s", err, out)
 	}
@@ -108,8 +135,9 @@ func (m *userDataDiskManager) attachDisk(diskPath string) error {
 	m.logger.Debugf("running attach cmd: %s", cmd.String())
 
 	out, err := cmd.CombinedOutput()
+	outDecoded, _ := FromUTF16leToString(bytes.NewBuffer(out))
 	if err != nil {
-		return fmt.Errorf("failed to attach disk: %w, command output: %s", err, out)
+		return fmt.Errorf("failed to attach disk: %w, command output: %s", err, outDecoded)
 	}
 
 	return nil
@@ -122,4 +150,22 @@ func sizeInMB() (int64, error) {
 	}
 
 	return sizeB / 1048576, nil
+}
+
+// FromUTF16le returns an io.Reader for UTF16le data.
+// Windows uses little endian by default, use unicode.UseBOM policy to retrieve BOM from the text,
+// and unicode.LittleEndian as a fallback.
+func FromUTF16le(r io.Reader) io.Reader {
+	o := transform.NewReader(r, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder())
+	return o
+}
+
+// FromUTF16leToString reads from Unicode 16 LE encoded data from an io.Reader and returns a string.
+func FromUTF16leToString(r io.Reader) (string, error) {
+	out, err := io.ReadAll(FromUTF16le(r))
+	if err != nil {
+		return "", err
+	}
+
+	return string(out), nil
 }
