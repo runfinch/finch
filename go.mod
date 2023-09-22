@@ -15,7 +15,7 @@ require (
 	github.com/runfinch/common-tests v0.7.3
 	github.com/shirou/gopsutil/v3 v3.23.8
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/afero v1.9.5
+	github.com/spf13/afero v1.10.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 	github.com/xorcare/pointer v1.2.2
