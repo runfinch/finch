@@ -12,9 +12,10 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"os"
 	"path/filepath"
-	"text/template"
 
+	"github.com/runfinch/finch/pkg/winutil"
 	"github.com/spf13/afero"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
@@ -95,27 +96,36 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 
 	m.logger.Infof("creating disk at path: %s", diskPath)
 
-	tempScript, _ := afero.TempFile(m.fs, "", "finchCreateDiskScript*.ps1")
 	tempOut, _ := afero.TempFile(m.fs, "", "finchCreateDiskOutput*")
+	dpgoPath := filepath.Join(filepath.Base(string(m.finch)), "diskpart.exe")
 
-	t := template.Must(template.New("createDisk").Parse(createDiskTmpl))
-	opts := createDiskOpts{
-		Path:         diskPath,
-		Size:         size,
-		TempFilePath: tempOut.Name(),
-	}
-	_ = t.Execute(tempScript, opts)
 	_ = tempOut.Close()
-	_ = tempScript.Close()
+	execPath, err := os.Executable()
+	if err != nil {
+		return fmt.Errorf("failed to get executable path: %w", err)
+	}
 
-	out, err := m.ecc.Create("powershell.exe", "-Command", tempScript.Name()).CombinedOutput()
-	m.logger.Infof("createDisk out: %s", out)
+	if err := winutil.RunElevated(
+		dpgoPath,
+		filepath.Dir(execPath),
+		[]string{
+			"--path",
+			diskPath,
+			"--size",
+			fmt.Sprint(size),
+			fmt.Sprintf("%s 2>&1", tempOut.Name()),
+		},
+	); err != nil {
+		return fmt.Errorf("failed to run command: %s", err)
+	}
 
-	_ = m.fs.Remove(tempScript.Name())
+	tempOutContents, _ := afero.ReadFile(m.fs, tempOut.Name())
+	m.logger.Infof("createDisk out: %s", string(tempOutContents))
+
 	_ = m.fs.Remove(tempOut.Name())
 
 	if err != nil {
-		return fmt.Errorf("failed to create disk: %w, command output: %s", err, out)
+		return fmt.Errorf("failed to create disk: %w, command output: %s", err, tempOutContents)
 	}
 
 	return nil
