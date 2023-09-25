@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	sociVersion                              = "0.3.0"
+	sociVersion                              = "0.4.0"
 	sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
 	sociDownloadURLFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
