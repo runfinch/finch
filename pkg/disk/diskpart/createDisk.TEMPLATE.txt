@@ -1,0 +1,7 @@
+create vdisk file="{{ .Path }}" type="expandable" maximum={{ .Size }}
+select vdisk file="{{ .Path }}"
+attach vdisk
+create partition primary
+format quick fs=ntfs label=FinchDataDiskNTFS
+detach vdisk
+
