@@ -1,7 +1,10 @@
 # Lazy-pulling using SOCI Snapshotter
 
-| :bird: Requirement | finch >= 0.8.0 |
-|--------------------|----------------|
+| :bird: Requirement for pull and run | finch >= 0.8.0 |
+|-----------------------------------|----------------|
+
+| :bird: Requirement for push with SOCI | finch >= 0.9.0 |
+|---------------------------------------|----------------|
 
 ## Using SOCI
 
