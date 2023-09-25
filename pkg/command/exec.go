@@ -59,3 +59,7 @@ func (c *execCmd) SetStdout(stdout io.Writer) {
 func (c *execCmd) SetStderr(stderr io.Writer) {
 	c.Stderr = stderr
 }
+
+func (c *execCmd) StdinPipe() (io.WriteCloser, error) {
+	return c.Cmd.StdinPipe()
+}

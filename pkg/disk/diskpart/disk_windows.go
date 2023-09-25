@@ -6,13 +6,14 @@ package main
 import (
 	"bytes"
 	_ "embed"
+	"fmt"
 	"io"
-	"strings"
 	"text/template"
+
+	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
-	"github.com/spf13/cobra"
 )
 
 var createDiskCommand *cobra.Command
@@ -33,8 +34,8 @@ func newDiskCommand(ecc *command.ExecCmdCreator, logger flog.Logger, stdOut io.W
 
 func newCreateDiskCommand(ecc *command.ExecCmdCreator, logger flog.Logger, stdOut io.Writer) *cobra.Command {
 	createDiskCommand = &cobra.Command{
-		Use:   "disk",
-		Args:  cobra.ExactArgs(3),
+		Use:   "create",
+		Args:  cobra.NoArgs,
 		Short: "Creates a new disk",
 		RunE:  newDiskAction(ecc, logger, stdOut).runAdapter,
 	}
@@ -92,25 +93,36 @@ func (cd *createDiskAction) createDisk(path string, size int64) error {
 		Size: size,
 	}
 
-	var tmpl, dpStdin, dpStdout bytes.Buffer
-
+	var tmpl, dpStdout bytes.Buffer
 	if err := t.Execute(&tmpl, opts); err != nil {
 		return err
 	}
 
-	cmd := cd.ecc.Create("diskpart.exe")
-	cmd.SetStdin(&dpStdin)
-	cmd.SetStdout(&dpStdout)
-
-	if err := cmd.Run(); err != nil {
+	cmd := cd.ecc.Create(`C:\Windows\System32\diskpart.exe`)
+	dpStdin, err := cmd.StdinPipe()
+	if err != nil {
 		return err
 	}
 
-	for _, line := range strings.Split(tmpl.String(), "\n") {
-		dpStdin.WriteString(line)
+	cmd.SetStdout(&dpStdout)
+
+	cd.logger.Debugln("starting diskpart to exit")
+	if err := cmd.Start(); err != nil {
+		return err
 	}
 
-	cd.logger.Infof("createDisk stdout: %s", dpStdout.String())
+	go func() {
+		cd.logger.Debugf("writing %s to diskpart stdin", tmpl.String())
+		fmt.Fprintf(dpStdin, "%s\r\n", tmpl.String())
+		dpStdin.Close()
+	}()
+
+	cd.logger.Debugln("waiting for diskpart to exit")
+	if err := cmd.Wait(); err != nil {
+		return err
+	}
+
+	cd.logger.Infof("stdout: %s", dpStdout.String())
 
 	return nil
 }

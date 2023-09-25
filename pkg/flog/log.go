@@ -19,6 +19,7 @@ type Logger interface {
 	Errorf(format string, args ...interface{})
 	Fatal(args ...interface{})
 	SetLevel(level Level)
+	SetFormatter(formatter Formatter)
 }
 
 // Level denotes a log level. Check the constants below for more information.
@@ -28,4 +29,13 @@ type Level int
 const (
 	Debug Level = iota
 	Panic
+)
+
+// Formatter denotes a log formatter. Check the constants below for more information.
+type Formatter int
+
+//go:generate stringer -type=Formatter
+const (
+	Text Formatter = iota
+	JSON
 )
