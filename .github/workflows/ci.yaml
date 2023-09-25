@@ -4,14 +4,16 @@ name: CI
 on:
   push:
     branches:
-      - main
+      # TODO: change to main when opening PR to merge windev branch in.
+      - windev
     paths-ignore:
       - '**.md'
       - 'contrib/**'
       - '.github/CODEOWNERS'
   pull_request:
     branches:
-      - main
+      # TODO: change to main when opening PR to merge windev branch in.
+      - windev
     paths-ignore:
       - '**.md'
       - 'contrib/**'
@@ -94,6 +96,7 @@ jobs:
           cache: true
       - run: make check-licenses
   e2e-tests:
+    if: github.repository == 'TODO; remove on merge with main, skip macOS for now...'
     strategy:
       fail-fast: false
       matrix:
@@ -149,6 +152,65 @@ jobs:
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e
         shell: zsh {0}
+  e2e-tests-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          [
+            [self-hosted, windows, amd64, test],
+          ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive # need to fetch recursively for local core build
+      # - name: Set output variables
+      #   id: vars
+      #   run: |
+      #     $has_creds=${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}
+      #     echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
+      # - name: configure aws credentials
+      #   if: steps.vars.outputs.has_creds == true
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ secrets.ROLE }}
+      #     role-session-name: credhelper-test
+      #     aws-region: ${{ secrets.REGION }}
+      - name: Clean up previous files
+        run: |
+          echo "TODO: cleanup"
+          make clean
+          cd deps/finch-core && make clean
+      - name : Check Priveleges and WSL2 command
+        run: |
+          whoami
+          echo "current session ID:"
+          [System.Diagnostics.Process]::GetCurrentProcess().SessionId
+          "C:\Program Files\WSL\wsl.exe" -l -v
+          $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+          $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+          Start-Process PowerShell -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$pwd'; & '$PSCommandPath';`"";
+          echo $LASTEXITCODE
+          $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+          $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+          # Start-Process PowerShell -RedirectStandardOutput C:\stdout.txt -RedirectStandardError C:\stderr.txt -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$pwd'; & '$PSCommandPath';`"";
+          # Start-Process PowerShell -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$pwd'; & '$PSCommandPath';`"";
+          # exit;
+          wsl --update --pre-release
+          wsl
+          wsl --set-default-version 2
+      - name: Build project
+        run: |
+          make
+      - name: Run e2e Tests
+        run: |
+          git status
+          git clean -f -d
+          make test-e2e
   mdlint:
     runs-on: ubuntu-latest
     steps:
