@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -89,7 +90,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "happy path",
 			cmdName: "build",
-			args:    []string{"-t", "demo", "."},
+			args:    []string{"-t", "demo", "C:\\Users"},
 			wantErr: nil,
 			mockSvc: func(
 				t *testing.T,
@@ -109,12 +110,15 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
 				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\Users").Return("C:\\Users", nil)
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "Users").Return("\\mnt\\c\\Users")
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+				ncsd.EXPECT().FilePathToSlash("\\mnt\\c\\Users").Return("/mnt/c/Users")
 
 				c := mocks.NewCommand(ctrl)
 				// alias substitution, build => image build
-				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "image", "build", "-t", "demo", ".").Return(c)
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "image", "build", "-t", "demo", "/mnt/c/Users").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -661,7 +665,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			// t.Parallel()
+			t.Parallel()
 
 			ctrl := gomock.NewController(t)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
@@ -670,6 +674,435 @@ func TestNerdctlCommand_run(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, lcc, ncsd, logger, ctrl, fs)
 			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
+		})
+	}
+}
+
+type ContainsSubstring struct {
+	substr string
+}
+
+func (m *ContainsSubstring) Matches(x interface{}) bool {
+	s, ok := x.(string)
+	if !ok {
+		return false
+	}
+	return strings.Contains(s, m.substr)
+}
+
+func (m *ContainsSubstring) String() string {
+	return fmt.Sprintf("contains substring %q", m.substr)
+}
+
+func ContainsStr(substr string) gomock.Matcher {
+	return &ContainsSubstring{substr: substr}
+}
+
+func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
+	t.Parallel()
+	testCases := []struct {
+		name    string
+		cmdName string
+		args    []string
+		wantErr error
+		mockSvc func(*testing.T, *mocks.LimaCmdCreator, *mocks.NerdctlCommandSystemDeps, *mocks.Logger, *gomock.Controller, afero.Fs)
+	}{
+		{
+			name:    "mount type is bind and src",
+			cmdName: "run",
+			args:    []string{"--mount", "type=bind,src=C:\\workdir,target=/app", "alpine:latest"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil).Times(2)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath).Times(2)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath).Times(2)
+
+				c := mocks.NewCommand(ctrl)
+				// alias substitution, run => container run
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run", "--mount", ContainsStr("src=/mnt/c/workdir"), "alpine:latest").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "mount type is bind and source",
+			cmdName: "run",
+			args:    []string{"--mount", "type=bind,source=C:\\workdir,target=/app", "alpine:latest"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil).Times(2)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath).Times(2)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath).Times(2)
+
+				c := mocks.NewCommand(ctrl)
+				// alias substitution, run => container run
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run", "--mount", ContainsStr("source=/mnt/c/workdir"), "alpine:latest").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "mount type is bind and is concatenated to --mount option",
+			cmdName: "run",
+			args:    []string{"--mount=type=bind,source=C:\\workdir,target=/app", "alpine:latest"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil).Times(2)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath).Times(2)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath).Times(2)
+
+				c := mocks.NewCommand(ctrl)
+				// alias substitution, run => container run
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run", ContainsStr("source=/mnt/c/workdir"), "alpine:latest").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "mount type is bind and source is not a windows directory",
+			cmdName: "run",
+			args:    []string{"--mount", "type=bind,source=something,target=/app", "alpine:latest"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil).Times(1)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath).Times(1)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath).Times(1)
+
+				c := mocks.NewCommand(ctrl)
+				// alias substitution, run => container run
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run", "--mount", ContainsStr("source=something"), "alpine:latest").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "mount type is not bind",
+			cmdName: "run",
+			args:    []string{"--mount", "type=notbind,source=C:/workdir,target=/app", "alpine:latest"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil).Times(1)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath).Times(1)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath).Times(1)
+
+				c := mocks.NewCommand(ctrl)
+				// alias substitution, run => container run
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run", "--mount", "type=notbind,source=C:/workdir,target=/app", "alpine:latest").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			ctrl := gomock.NewController(t)
+			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
+			logger := mocks.NewLogger(ctrl)
+			fs := afero.NewMemMapFs()
+			tc.mockSvc(t, lcc, ncsd, logger, ctrl, fs)
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
+		})
+	}
+}
+
+func TestNerdctlCommand_run_CpCommand(t *testing.T) {
+	t.Parallel()
+	var (
+		hostcopyPath = filepath.Join(string(filepath.Separator), "mnt", "c", "workdir", "test")
+		wslcopyPath  = filepath.ToSlash(hostcopyPath)
+	)
+
+	testCases := []struct {
+		name    string
+		cmdName string
+		args    []string
+		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
+	}{
+		{
+			name:    "copy into container",
+			cmdName: "cp",
+			args:    []string{"C:\\workdir\\test", "somecontainer:/tmp"},
+			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+
+				ncsd.EXPECT().FilePathAbs("C:\\workdir\\test").Return("C:\\workdir\\test", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir\\test").Return(hostcopyPath)
+				ncsd.EXPECT().FilePathToSlash(hostcopyPath).Return(wslcopyPath)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "cp", wslcopyPath, "somecontainer:/tmp").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "copy out of container",
+			cmdName: "cp",
+			args:    []string{"somecontainer:/tmp/test", "C:\\workdir\\test"},
+			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+
+				ncsd.EXPECT().FilePathAbs("C:\\workdir\\test").Return("C:\\workdir\\test", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir\\test").Return(hostcopyPath)
+				ncsd.EXPECT().FilePathToSlash(hostcopyPath).Return(wslcopyPath)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "cp", "somecontainer:/tmp/test", wslcopyPath).Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "copy with options",
+			cmdName: "cp",
+			args:    []string{"-L", "somecontainer:/tmp/test", "C:\\workdir\\test"},
+			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+
+				ncsd.EXPECT().FilePathAbs("C:\\workdir\\test").Return("C:\\workdir\\test", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir\\test").Return(hostcopyPath)
+				ncsd.EXPECT().FilePathToSlash(hostcopyPath).Return(wslcopyPath)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "cp", "-L", "somecontainer:/tmp/test", wslcopyPath).Return(c)
+				c.EXPECT().Run()
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
+			logger := mocks.NewLogger(ctrl)
+			tc.mockSvc(lcc, logger, ctrl, ncsd)
+
+			assert.NoError(t, newNerdctlCommand(lcc, ncsd, logger, nil).run(tc.cmdName, tc.args))
+		})
+	}
+}
+
+func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
+	t.Parallel()
+	var (
+		buildContext        = filepath.Join(string(filepath.Separator), "mnt", "c", "workdir", "buildcontext")
+		wslBuildContextPath = filepath.ToSlash(buildContext)
+		secretPath          = filepath.Join(string(filepath.Separator), "mnt", "c", "workdir", "secret")
+		wslSecretPath       = filepath.ToSlash(secretPath)
+	)
+
+	testCases := []struct {
+		name    string
+		cmdName string
+		args    []string
+		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
+	}{
+		{
+			name:    "build without options",
+			cmdName: "build",
+			args:    []string{"C:\\workdir\\buildcontext"},
+			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+
+				ncsd.EXPECT().FilePathAbs("C:\\workdir\\buildcontext").Return("C:\\workdir\\buildcontext", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir\\buildcontext").Return(buildContext)
+				ncsd.EXPECT().FilePathToSlash(buildContext).Return(wslBuildContextPath)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "image", "build", wslBuildContextPath).Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "build with file option",
+			cmdName: "build",
+			args:    []string{"-f", "C:\\workdir\\buildcontext", "C:\\workdir\\buildcontext"},
+			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+
+				ncsd.EXPECT().FilePathAbs("C:\\workdir\\buildcontext").Return("C:\\workdir\\buildcontext", nil).Times(2)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir\\buildcontext").Return(buildContext).Times(2)
+				ncsd.EXPECT().FilePathToSlash(buildContext).Return(wslBuildContextPath).Times(2)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "image", "build", "-f", wslBuildContextPath, wslBuildContextPath).Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "build with secret option",
+			cmdName: "build",
+			args:    []string{"--secret", "src=C:\\workdir\\secret", "C:\\workdir\\buildcontext"},
+			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+
+				ncsd.EXPECT().FilePathAbs("C:\\workdir\\buildcontext").Return("C:\\workdir\\buildcontext", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir\\buildcontext").Return(buildContext)
+				ncsd.EXPECT().FilePathToSlash(buildContext).Return(wslBuildContextPath)
+
+				ncsd.EXPECT().FilePathAbs("C:\\workdir\\secret").Return("C:\\workdir\\secret", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir\\secret").Return(secretPath)
+				ncsd.EXPECT().FilePathToSlash(secretPath).Return(wslSecretPath)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "image", "build", "--secret", fmt.Sprintf("src=%s", wslSecretPath), wslBuildContextPath).Return(c)
+				c.EXPECT().Run()
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
+			logger := mocks.NewLogger(ctrl)
+			tc.mockSvc(lcc, logger, ctrl, ncsd)
+
+			assert.NoError(t, newNerdctlCommand(lcc, ncsd, logger, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }
