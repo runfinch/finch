@@ -70,7 +70,7 @@ arch-test:
 
 .PHONY: all
 ifeq ($(GOOS),windows)
-all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml
+all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml dpgo
 else
 all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
 endif
@@ -203,6 +203,7 @@ finch: finch-unix
 endif
 
 finch-windows:
+	GOBIN=$(GOBIN) go install github.com/tc-hib/go-winres
 	$(GO) generate cmd/finch/main_windows.go
 
 finch-unix: finch-general
