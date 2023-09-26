@@ -4,4 +4,3 @@ attach vdisk
 create partition primary
 format quick fs=ntfs label=FinchDataDiskNTFS
 detach vdisk
-

@@ -15,10 +15,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/runfinch/finch/pkg/winutil"
 	"github.com/spf13/afero"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
+
+	"github.com/runfinch/finch/pkg/winutil"
 )
 
 // EnsureUserDataDisk checks the current disk configuration and fixes it if needed.
@@ -97,7 +98,7 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 	m.logger.Infof("creating disk at path: %s", diskPath)
 
 	tempOut, _ := afero.TempFile(m.fs, "", "finchCreateDiskOutput*")
-	dpgoPath := filepath.Join(filepath.Base(string(m.finch)), "diskpart.exe")
+	dpgoPath := filepath.Join(string(m.finch), "bin", "dpgo.exe")
 
 	_ = tempOut.Close()
 	execPath, err := os.Executable()
@@ -109,11 +110,16 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 		dpgoPath,
 		filepath.Dir(execPath),
 		[]string{
+			"--json",
+			"disk",
+			"create",
 			"--path",
 			diskPath,
 			"--size",
 			fmt.Sprint(size),
-			fmt.Sprintf("%s 2>&1", tempOut.Name()),
+			">",
+			tempOut.Name(),
+			"2>&1",
 		},
 	); err != nil {
 		return fmt.Errorf("failed to run command: %s", err)
