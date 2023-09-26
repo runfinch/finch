@@ -16,7 +16,7 @@ import (
 // https://learn.microsoft.com/en-us/windows/win32/winprog/windows-data-types
 type (
 	DWORD     uint32
-	HANDLE    uintptr
+	HANDLE    windows.Handle
 	HINSTANCE HANDLE
 	HKEY      HANDLE
 	HWND      HANDLE
@@ -66,37 +66,40 @@ var (
 	procShellExecuteEx = modshell32.NewProc("ShellExecuteExW")
 )
 
+// RunElevated allows a new process with Administrator access to be started. It constructs a command starting
+// in the form of "cmd /C <program binary> <args...>". This allows output piping and other common cmd.exe
+// conventions to work.
 func RunElevated(exePath, wd string, args []string) error {
+	// runas designates that the process will be launched as Administrator
 	verb := "runas"
+	cmdPath := `C:\Windows\System32\cmd.exe`
 
 	verbPtr, err := syscall.UTF16PtrFromString(verb)
 	if err != nil {
 		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", verb, err)
 	}
-	exePtr, err := syscall.UTF16PtrFromString(`C:\Windows\System32\cmd.exe`)
+	exePtr, err := syscall.UTF16PtrFromString(cmdPath)
 	if err != nil {
-		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", exePath, err)
+		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", cmdPath, err)
 	}
-	cwdPtr, err := syscall.UTF16PtrFromString(wd)
+	wdPtr, err := syscall.UTF16PtrFromString(wd)
 	if err != nil {
 		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", verb, err)
 	}
 
-	cmdArgs := []string{"/K"}
+	cmdArgs := []string{"/C"}
 	baseArgs := append(cmdArgs, exePath)
 	args = append(baseArgs, args...)
-	argPtr, err := syscall.UTF16PtrFromString(strings.Join(args, " "))
+	argsStr := strings.Join(args, " ")
+	argPtr, err := syscall.UTF16PtrFromString(argsStr)
 	if err != nil {
-		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", verb, err)
+		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", argsStr, err)
 	}
 
-	// SW_HIDE = 0
-	// SW_NORMAL = 1
-	var showCmd int32 = 1
-	if err = ShellExecuteAndWait(0, verbPtr, exePtr, argPtr, cwdPtr, showCmd); err != nil {
-		return err
-	}
-	return nil
+	// Identical to https://pkg.go.dev/golang.org/x/sys/windows#ShellExecute,
+	// except it customizes the SEE_MASK_NOCLOSEPROCESS fMask to allow the caller to wait for
+	// execution to terminate.
+	return ShellExecuteAndWait(0, verbPtr, exePtr, argPtr, wdPtr, windows.SW_HIDE)
 }
 
 func ShellExecuteAndWait(hwnd HWND, verb, exe, args, wd LPCWSTR, nShowCmd int32) error {
@@ -113,8 +116,34 @@ func ShellExecuteAndWait(hwnd HWND, verb, exe, args, wd LPCWSTR, nShowCmd int32)
 	return ShellExecuteEx(i)
 }
 
-// some of the code below was borrowed from
+// Some of the code below (particularly the error handling) was borrowed from
 // https://github.com/AllenDang/w32/blob/65507298e138d537445133ed145a1f2685782b34/shell32.go#L110
+// Copyright 2010-2012 The W32 Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the following comment:
+// Copyright (c) 2010-2012 The w32 Authors. All rights reserved.
+
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+// 3. The names of the authors may not be used to endorse or promote products
+//    derived from this software without specific prior written permission.
+
+// THIS SOFTWARE IS PROVIDED BY THE AUTHORS “AS IS” AND ANY EXPRESS OR
+// IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+// NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+// THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 func ShellExecuteEx(pExecInfo *SHELLEXECUTEINFOW) error {
 	ret, _, _ := procShellExecuteEx.Call(uintptr(unsafe.Pointer(pExecInfo)))
 	if ret == 1 && pExecInfo.fMask&SEE_MASK_NOCLOSEPROCESS != 0 {
