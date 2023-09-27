@@ -102,13 +102,8 @@ func Test_applyDefaults(t *testing.T) {
 			name: "happy path",
 			cfg:  &Finch{},
 			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
-				deps.EXPECT().NumCPU().Return(8)
-				// 12,884,901,888 == 12GiB
-				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(2),
-				Memory: pointer.String("3GiB"),
 				VMType: pointer.String("wsl2"),
 			},
 		},
@@ -118,14 +113,9 @@ func Test_applyDefaults(t *testing.T) {
 				VMType: pointer.String("wsl"),
 			},
 			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
-				deps.EXPECT().NumCPU().Return(8)
-				// 12,884,901,888 == 12GiB
-				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
 
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(2),
-				Memory: pointer.String("3GiB"),
 				VMType: pointer.String("wsl"),
 			},
 		},

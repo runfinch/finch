@@ -16,3 +16,5 @@ func handleVolume(systemDeps NerdctlCommandSystemDeps, v string) (string, error)
 var aliasMap = map[string]string{}
 
 var argHandlerMap = map[string]map[string]argHandler{}
+
+var commandHanderMap = map[string]commandHandler{}
