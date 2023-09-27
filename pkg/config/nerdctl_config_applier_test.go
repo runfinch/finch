@@ -110,13 +110,17 @@ export DOCKER_CONFIG="$FINCH_DIR"
 			},
 			finchDir:      "/finch/dir",
 			homeDir:       "/home/dir",
-			limaVMHomeDir: "/home/mock_user.linux/",
+			limaVMHomeDir: "/home/mock_user.linux",
 			mockSvc:       func(t *testing.T, fs afero.Fs) {},
 			postRunCheck:  func(t *testing.T, fs afero.Fs) {},
 			want: fmt.Errorf(
-				"failed to read config file: %w",
-				&fs.PathError{Op: "open", Path: filepath.Join(string(filepath.Separator),
-					"home", "mock_user.linux", ".bashrc"), Err: errors.New("file does not exist")},
+				"failed to read config file %q: %w",
+				filepath.Join(string(filepath.Separator), "home", "mock_user.linux", ".bashrc"),
+				&fs.PathError{
+					Op:   "open",
+					Path: filepath.Join(string(filepath.Separator), "home", "mock_user.linux", ".bashrc"),
+					Err:  errors.New("file does not exist"),
+				},
 			),
 		},
 	}
@@ -198,7 +202,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {},
 			want: fmt.Errorf(
-				"failed to unmarshal config file %s: %w",
+				"failed to unmarshal config file %q: %w",
 				"/home/mock_user.linux/.config/nerdctl/nerdctl.toml",
 				errors.New("(1, 1): parsing error: keys cannot contain { character"),
 			),
