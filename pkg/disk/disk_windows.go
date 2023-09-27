@@ -97,28 +97,35 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 
 	m.logger.Infof("creating disk at path: %s", diskPath)
 
-	tempOut, _ := afero.TempFile(m.fs, "", "finchCreateDiskOutput*")
-	dpgoPath := filepath.Join(string(m.finch), "bin", "dpgo.exe")
-
-	_ = tempOut.Close()
 	execPath, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("failed to get executable path: %w", err)
 	}
 
+	tempOut, _ := afero.TempFile(m.fs, "", "finchCreateDiskOutput*")
+	// Put all paths in quotes, since they are being passed to cmd.exe.
+	dpgoPath := fmt.Sprintf(`"%s"`, filepath.Join(string(m.finch), "bin", "dpgo.exe"))
+	diskPathQuoted := fmt.Sprintf(`"%s"`, diskPath)
+	tempPathQuoted := fmt.Sprintf(`"%s"`, tempOut.Name())
+	wdPathQuoted := fmt.Sprintf(`"%s"`, filepath.Dir(execPath))
+	sizeStr := fmt.Sprint(size)
+
+	_ = tempOut.Close()
+
 	if err := winutil.RunElevated(
 		dpgoPath,
-		filepath.Dir(execPath),
+		wdPathQuoted,
 		[]string{
 			"--json",
+			"--debug",
 			"disk",
 			"create",
 			"--path",
-			diskPath,
+			diskPathQuoted,
 			"--size",
-			fmt.Sprint(size),
+			sizeStr,
 			">",
-			tempOut.Name(),
+			tempPathQuoted,
 			"2>&1",
 		},
 	); err != nil {

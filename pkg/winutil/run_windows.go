@@ -13,6 +13,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
+// Aliases for conventionally used Windows types.
 // https://learn.microsoft.com/en-us/windows/win32/winprog/windows-data-types
 type (
 	DWORD     uint32
@@ -25,6 +26,7 @@ type (
 	LPVOID    uintptr
 )
 
+// SHELLEXECUTEINFOW is the definition of the parameters that shell32.dll's ShellExecuteEx expects.
 // https://learn.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow
 type SHELLEXECUTEINFOW struct {
 	cbSize         DWORD
@@ -67,8 +69,8 @@ var (
 )
 
 // RunElevated allows a new process with Administrator access to be started. It constructs a command starting
-// in the form of "cmd /C <program binary> <args...>". This allows output piping and other common cmd.exe
-// conventions to work.
+// in the form of `cmd /C "<program binary> <args...>"`. This allows output piping and other common cmd.exe
+// conventions to work. All path arguments passed into this function, through any of the parameters, should be quoted or escaped.
 func RunElevated(exePath, wd string, args []string) error {
 	// runas designates that the process will be launched as Administrator
 	verb := "runas"
@@ -87,21 +89,22 @@ func RunElevated(exePath, wd string, args []string) error {
 		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", verb, err)
 	}
 
+	// the entire command passed after /C should be quoted, but /C itself should not be quoted
 	cmdArgs := []string{"/C"}
-	baseArgs := append(cmdArgs, exePath)
-	args = append(baseArgs, args...)
-	argsStr := strings.Join(args, " ")
-	argPtr, err := syscall.UTF16PtrFromString(argsStr)
+	args = append([]string{exePath}, args...)
+	argsStr := append(cmdArgs, fmt.Sprintf(`"%s"`, strings.Join(args, " ")))
+	finalArgStr := strings.Join(argsStr, " ")
+	argPtr, err := syscall.UTF16PtrFromString(finalArgStr)
 	if err != nil {
 		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", argsStr, err)
 	}
 
-	// Identical to https://pkg.go.dev/golang.org/x/sys/windows#ShellExecute,
-	// except it customizes the SEE_MASK_NOCLOSEPROCESS fMask to allow the caller to wait for
-	// execution to terminate.
 	return ShellExecuteAndWait(0, verbPtr, exePtr, argPtr, wdPtr, windows.SW_HIDE)
 }
 
+// ShellExecuteAndWait is identical to https://pkg.go.dev/golang.org/x/sys/windows#ShellExecute,
+// except it customizes the SEE_MASK_NOCLOSEPROCESS fMask to allow the caller to wait for
+// execution to terminate.
 func ShellExecuteAndWait(hwnd HWND, verb, exe, args, wd LPCWSTR, nShowCmd int32) error {
 	i := &SHELLEXECUTEINFOW{
 		fMask:        SEE_MASK_NOCLOSEPROCESS,
