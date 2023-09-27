@@ -95,8 +95,8 @@ func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir 
 
 	if *fc.VMType == "wsl2" {
 		cmdArr = append([]string{
-			fmt.Sprintf(`FINCH_DIR=$(/usr/bin/wslpath '%s')`, finchDir),
-			fmt.Sprintf(`AWS_DIR=$(/usr/bin/wslpath '%s')`, awsDir),
+			fmt.Sprintf(`FINCH_DIR="$(/usr/bin/wslpath '%s')"`, finchDir),
+			fmt.Sprintf(`AWS_DIR="$(/usr/bin/wslpath '%s')"`, awsDir),
 		}, cmdArr...)
 	} else {
 		cmdArr = append([]string{
@@ -105,10 +105,10 @@ func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir 
 		}, cmdArr...)
 	}
 
-	profileFilePath := fmt.Sprintf("%s.bashrc", limaVMHomeDir)
+	profileFilePath := fmt.Sprintf("%s/.bashrc", limaVMHomeDir)
 	profBuf, err := afero.ReadFile(fs, profileFilePath)
 	if err != nil {
-		return fmt.Errorf("failed to read config file: %w", err)
+		return fmt.Errorf("failed to read config file %q: %w", profileFilePath, err)
 	}
 	profStr := string(profBuf)
 	for _, element := range cmdArr {
@@ -145,22 +145,22 @@ func updateNerdctlConfig(fs afero.Fs, homeDir string, rootless bool) error {
 	var cfg Nerdctl
 	cfgBuf, err := afero.ReadFile(fs, cfgPath)
 	if err != nil {
-		return fmt.Errorf("failed to read config file %s: %w", cfgPath, err)
+		return fmt.Errorf("failed to read config file %q: %w", cfgPath, err)
 	}
 
 	if err := toml.Unmarshal(cfgBuf, &cfg); err != nil {
-		return fmt.Errorf("failed to unmarshal config file %s: %w", cfgPath, err)
+		return fmt.Errorf("failed to unmarshal config file %q: %w", cfgPath, err)
 	}
 
 	cfg.Namespace = nerdctlNamespace
 
 	updatedCfg, err := toml.Marshal(cfg)
 	if err != nil {
-		return fmt.Errorf("failed to marshal config file %s: %w", cfgPath, err)
+		return fmt.Errorf("failed to marshal config file %q: %w", cfgPath, err)
 	}
 
 	if err := afero.WriteFile(fs, cfgPath, updatedCfg, 0o644); err != nil {
-		return fmt.Errorf("failed to write to config file %s: %w", cfgPath, err)
+		return fmt.Errorf("failed to write to config file %q: %w", cfgPath, err)
 	}
 
 	return nil
@@ -194,7 +194,7 @@ func getLimaHomeDir(localFs afero.Fs, remoteFs afero.Fs, limaInstanceDir string,
 		return home, nil
 	}
 
-	return "/home/" + user + ".linux/", nil
+	return "/home/" + user + ".linux", nil
 }
 
 // Apply gets SSH and SFTP clients and uses them to update the nerdctl config.
