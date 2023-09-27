@@ -30,8 +30,8 @@ type AdditionalDirectory struct {
 
 // Finch represents the configuration file for Finch CLI.
 type Finch struct {
-	CPUs   *int    `yaml:"cpus"`
-	Memory *string `yaml:"memory"`
+	CPUs   *int    `yaml:"cpus,omitempty"`
+	Memory *string `yaml:"memory,omitempty"`
 	// Snapshotters: the snapshotters that will be installed and configured automatically on vm init or on vm start.
 	// Values: `soci` for SOCI snapshotter; `overlayfs` for default overlay snapshotter.
 	Snapshotters []string `yaml:"snapshotters,omitempty"`

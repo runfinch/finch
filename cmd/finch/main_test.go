@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
 	"testing"
 
 	"gopkg.in/yaml.v3"
@@ -37,32 +38,11 @@ func TestMainFunc(_ *testing.T) {
 func TestXmain(t *testing.T) {
 	t.Parallel()
 
-	testCases := []struct {
+	var testCases = []struct {
 		name    string
 		mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
 		wantErr error
 	}{
-		{
-			name:    "happy path",
-			wantErr: nil,
-			mockSvc: func(
-				logger *mocks.Logger,
-				ffd *mocks.FinchFinderDeps,
-				fs afero.Fs,
-				loadCfgDeps *mocks.LoadSystemDeps,
-				mem *mocks.Memory,
-			) {
-				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
-
-				ffd.EXPECT().GetUserHome().Return("/home", nil)
-				ffd.EXPECT().Executable().Return("/bin/path", nil)
-				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
-				ffd.EXPECT().FilePathJoin("/real/bin/path", "../../").Return("/real")
-				loadCfgDeps.EXPECT().NumCPU().Return(16)
-				// 12_884_901_888 == 12GiB
-				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
-			},
-		},
 		{
 			name: "failed to find the finch path from path.FindFinch",
 			wantErr: fmt.Errorf("failed to find the installation path of Finch: %w",
@@ -102,6 +82,64 @@ func TestXmain(t *testing.T) {
 		},
 	}
 
+	darwinTestCases := []struct {
+		name    string
+		mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
+		wantErr error
+	}{
+		{
+			name:    "happy path",
+			wantErr: nil,
+			mockSvc: func(
+				logger *mocks.Logger,
+				ffd *mocks.FinchFinderDeps,
+				fs afero.Fs,
+				loadCfgDeps *mocks.LoadSystemDeps,
+				mem *mocks.Memory,
+			) {
+				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
+
+				ffd.EXPECT().GetUserHome().Return("/home", nil)
+				ffd.EXPECT().Executable().Return("/bin/path", nil)
+				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "../../").Return("/real")
+				loadCfgDeps.EXPECT().NumCPU().Return(16)
+				// 12_884_901_888 == 12GiB
+				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
+			},
+		},
+	}
+
+	windowsTestCases := []struct {
+		name    string
+		mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
+		wantErr error
+	}{
+		{
+			name:    "happy path",
+			wantErr: nil,
+			mockSvc: func(
+				logger *mocks.Logger,
+				ffd *mocks.FinchFinderDeps,
+				fs afero.Fs,
+				loadCfgDeps *mocks.LoadSystemDeps,
+				mem *mocks.Memory,
+			) {
+				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
+
+				ffd.EXPECT().GetUserHome().Return("/home", nil)
+				ffd.EXPECT().Executable().Return("/bin/path", nil)
+				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "../../").Return("/real")
+			},
+		},
+	}
+
+	if runtime.GOOS == "windows" {
+		testCases = append(testCases, windowsTestCases...)
+	} else {
+		testCases = append(testCases, darwinTestCases...)
+	}
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
