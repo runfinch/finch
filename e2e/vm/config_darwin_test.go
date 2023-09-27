@@ -21,7 +21,7 @@ import (
 	"github.com/runfinch/finch/pkg/config"
 )
 
-var finchConfigFilePath string = os.Getenv("HOME") + "/.finch/finch.yaml"
+var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
 
 var testConfig = func(o *option.Option, installed bool) {
 	ginkgo.Describe("Config (after init)", ginkgo.Serial, func() {
