@@ -92,6 +92,8 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 }
 
 func TestNerdctlCommand_withVMErrors(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name    string
 		cmdName string

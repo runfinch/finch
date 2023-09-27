@@ -2,11 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //go:build darwin
-// +build darwin
 
 package config
 
-import "github.com/xorcare/pointer"
+import (
+	"math"
+
+	"github.com/docker/go-units"
+	"github.com/xorcare/pointer"
+
+	"github.com/runfinch/finch/pkg/fmemory"
+)
 
 func vmDefault(cfg *Finch) {
 	if cfg.VMType == nil {
