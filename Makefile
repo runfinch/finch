@@ -213,7 +213,7 @@ finch-general:
 
 .PHONY: dpgo
 dpgo:
-	$(GO) build -o $(OUTDIR)/bin/dpgo.exe $(PACKAGE)/pkg/disk/diskpart
+	$(GO) build -o $(OUTDIR)/bin/dpgo.exe $(PACKAGE)/pkg/disk/dpgo
 
 .PHONY: release
 release: check-licenses all download-licenses

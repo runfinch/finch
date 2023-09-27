@@ -10,14 +10,11 @@ import (
 	_ "embed"
 	"errors"
 	"fmt"
-	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
 
 	"github.com/spf13/afero"
-	"golang.org/x/text/encoding/unicode"
-	"golang.org/x/text/transform"
 
 	"github.com/runfinch/finch/pkg/winutil"
 )
@@ -158,7 +155,7 @@ func (m *userDataDiskManager) attachDisk(diskPath string) error {
 	m.logger.Debugf("running attach cmd: %v", cmd)
 
 	out, err := cmd.CombinedOutput()
-	outDecoded, _ := FromUTF16leToString(bytes.NewBuffer(out))
+	outDecoded, _ := winutil.FromUTF16leToString(bytes.NewBuffer(out))
 	if err != nil {
 		return fmt.Errorf("failed to attach disk: %w, command output: %s", err, outDecoded)
 	}
@@ -173,22 +170,4 @@ func sizeInMB() (int64, error) {
 	}
 
 	return sizeB / 1048576, nil
-}
-
-// FromUTF16le returns an io.Reader for UTF16le data.
-// Windows uses little endian by default, use unicode.UseBOM policy to retrieve BOM from the text,
-// and unicode.LittleEndian as a fallback.
-func FromUTF16le(r io.Reader) io.Reader {
-	o := transform.NewReader(r, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder())
-	return o
-}
-
-// FromUTF16leToString reads from Unicode 16 LE encoded data from an io.Reader and returns a string.
-func FromUTF16leToString(r io.Reader) (string, error) {
-	out, err := io.ReadAll(FromUTF16le(r))
-	if err != nil {
-		return "", err
-	}
-
-	return string(out), nil
 }
