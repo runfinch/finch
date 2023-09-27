@@ -5,7 +5,10 @@
 
 package config
 
-import "github.com/xorcare/pointer"
+import (
+	"github.com/runfinch/finch/pkg/fmemory"
+	"github.com/xorcare/pointer"
+)
 
 // Does not matter if Rosetta is set, no-op
 func rosettaDefault(cfg *Finch) {
@@ -15,4 +18,12 @@ func vmDefault(cfg *Finch) {
 	if cfg.VMType == nil {
 		cfg.VMType = pointer.String("wsl2")
 	}
+}
+
+// no-op , not configurable in wsl
+func memoryDefault(cfg *Finch, mem fmemory.Memory) {
+}
+
+// no-op , not configurable in wsl
+func cpuDefault(cfg *Finch, deps LoadSystemDeps) {
 }

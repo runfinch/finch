@@ -4,11 +4,6 @@
 package config
 
 import (
-	"math"
-
-	"github.com/docker/go-units"
-	"github.com/xorcare/pointer"
-
 	"github.com/runfinch/finch/pkg/fmemory"
 )
 
@@ -29,26 +24,4 @@ func applyDefaults(cfg *Finch, deps LoadSystemDeps, mem fmemory.Memory) *Finch {
 	rosettaDefault(cfg)
 
 	return cfg
-}
-
-func memoryDefault(cfg *Finch, mem fmemory.Memory) {
-	if cfg.Memory == nil {
-		defaultMemory := math.Round(float64(mem.TotalMemory()) * 0.25)
-		if defaultMemory >= fallbackMemory {
-			cfg.Memory = pointer.String(units.BytesSize(defaultMemory))
-		} else {
-			cfg.Memory = pointer.String(units.BytesSize(fallbackMemory))
-		}
-	}
-}
-
-func cpuDefault(cfg *Finch, deps LoadSystemDeps) {
-	if cfg.CPUs == nil {
-		defaultCPUs := int(math.Round(float64(deps.NumCPU()) * 0.25))
-		if defaultCPUs >= fallbackCPUs {
-			cfg.CPUs = pointer.Int(defaultCPUs)
-		} else {
-			cfg.CPUs = pointer.Int(fallbackCPUs)
-		}
-	}
 }
