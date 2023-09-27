@@ -26,24 +26,24 @@ func convertToWSLPath(systemDeps NerdctlCommandSystemDeps, winPath string) (stri
 }
 
 // substitues wsl path for the provided option in place for nerdctl args
-func handleFilePath(systemDeps NerdctlCommandSystemDeps, args []string, index int) error {
-	var prefix = args[index]
+func handleFilePath(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+	var prefix = nerdctlCmdArgs[index]
 
 	// If --filename="<filepath> then we need to cut <filepath> and convert that to wsl path
-	if strings.Contains(args[index], "=") {
+	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, after, _ := strings.Cut(prefix, "=")
 		wslPath, err := convertToWSLPath(systemDeps, after)
 		if err != nil {
 			return err
 		}
-		args[index] = fmt.Sprintf("%s=%s", before, wslPath)
+		nerdctlCmdArgs[index] = fmt.Sprintf("%s=%s", before, wslPath)
 	} else {
-		if (index + 1) < len(args) {
-			wslPath, err := convertToWSLPath(systemDeps, args[index+1])
+		if (index + 1) < len(nerdctlCmdArgs) {
+			wslPath, err := convertToWSLPath(systemDeps, nerdctlCmdArgs[index+1])
 			if err != nil {
 				return err
 			}
-			args[index+1] = wslPath
+			nerdctlCmdArgs[index+1] = wslPath
 		} else {
 			return fmt.Errorf("invalid positional parameter for %s", prefix)
 		}
@@ -52,16 +52,16 @@ func handleFilePath(systemDeps NerdctlCommandSystemDeps, args []string, index in
 }
 
 // hanldes -v/--volumes option. For anonymous volumes and named volumes this is no-op. For bind mounts path is converted to wsl path.
-func handleVolume(systemDeps NerdctlCommandSystemDeps, args []string, index int) error {
-	var prefix = args[index]
+func handleVolume(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+	var prefix = nerdctlCmdArgs[index]
 	var v = ""
 	var found = false
 	var before = ""
-	if strings.Contains(args[index], "=") {
+	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
-		if (index + 1) < len(args) {
-			v = args[index+1]
+		if (index + 1) < len(nerdctlCmdArgs) {
+			v = nerdctlCmdArgs[index+1]
 		} else {
 			return fmt.Errorf("invalid positional parameter for %s", prefix)
 		}
@@ -99,24 +99,24 @@ func handleVolume(systemDeps NerdctlCommandSystemDeps, args []string, index int)
 	}
 
 	if found {
-		args[index] = fmt.Sprintf("%s=%s:%s%s", before, wslHostPath, containerPath, readWrite)
+		nerdctlCmdArgs[index] = fmt.Sprintf("%s=%s:%s%s", before, wslHostPath, containerPath, readWrite)
 	} else {
-		args[index+1] = fmt.Sprintf("%s:%s%s", wslHostPath, containerPath, readWrite)
+		nerdctlCmdArgs[index+1] = fmt.Sprintf("%s:%s%s", wslHostPath, containerPath, readWrite)
 	}
 	return nil
 }
 
 // translates source path of the bind mount to wslpath for --mount option
-func handleBindMounts(systemDeps NerdctlCommandSystemDeps, args []string, index int) error {
-	var prefix = args[index]
+func handleBindMounts(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+	var prefix = nerdctlCmdArgs[index]
 	var v = ""
 	var found = false
 	var before = ""
-	if strings.Contains(args[index], "=") {
+	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
-		if (index + 1) < len(args) {
-			v = args[index+1]
+		if (index + 1) < len(nerdctlCmdArgs) {
+			v = nerdctlCmdArgs[index+1]
 		} else {
 			return fmt.Errorf("invalid positional parameter for %s", prefix)
 		}
@@ -164,25 +164,25 @@ func handleBindMounts(systemDeps NerdctlCommandSystemDeps, args []string, index 
 		s = s + "," + strings.Join(ro, ",")
 	}
 	if found {
-		args[index] = fmt.Sprintf("%s=%s", before, s)
+		nerdctlCmdArgs[index] = fmt.Sprintf("%s=%s", before, s)
 	} else {
-		args[index+1] = s
+		nerdctlCmdArgs[index+1] = s
 	}
 
 	return nil
 }
 
 // handles --output/-o for build command
-func handleOutputOption(systemDeps NerdctlCommandSystemDeps, args []string, index int) error {
-	var prefix = args[index]
+func handleOutputOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+	var prefix = nerdctlCmdArgs[index]
 	var v = ""
 	var found = false
 	var before = ""
-	if strings.Contains(args[index], "=") {
+	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
-		if (index + 1) < len(args) {
-			v = args[index+1]
+		if (index + 1) < len(nerdctlCmdArgs) {
+			v = nerdctlCmdArgs[index+1]
 		} else {
 			return fmt.Errorf("invalid positional parameter for %s", prefix)
 		}
@@ -209,25 +209,25 @@ func handleOutputOption(systemDeps NerdctlCommandSystemDeps, args []string, inde
 	s := mapToString(m)
 
 	if found {
-		args[index] = fmt.Sprintf("%s=%s", before, s)
+		nerdctlCmdArgs[index] = fmt.Sprintf("%s=%s", before, s)
 	} else {
-		args[index+1] = s
+		nerdctlCmdArgs[index+1] = s
 	}
 
 	return nil
 }
 
 // handles --secret option for build command.
-func handleSecretOption(systemDeps NerdctlCommandSystemDeps, args []string, index int) error {
-	var prefix = args[index]
+func handleSecretOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+	var prefix = nerdctlCmdArgs[index]
 	var v = ""
 	var found = false
 	var before = ""
-	if strings.Contains(args[index], "=") {
+	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
-		if (index + 1) < len(args) {
-			v = args[index+1]
+		if (index + 1) < len(nerdctlCmdArgs) {
+			v = nerdctlCmdArgs[index+1]
 		} else {
 			return fmt.Errorf("invalid positional parameter for %s", prefix)
 		}
@@ -253,17 +253,17 @@ func handleSecretOption(systemDeps NerdctlCommandSystemDeps, args []string, inde
 	s := mapToString(m)
 
 	if found {
-		args[index] = fmt.Sprintf("%s=%s", before, s)
+		nerdctlCmdArgs[index] = fmt.Sprintf("%s=%s", before, s)
 	} else {
-		args[index+1] = s
+		nerdctlCmdArgs[index+1] = s
 	}
 
 	return nil
 }
 
 // cp command handler, takes command arguments and converts hostpath to wsl path in place. It ignores all other arguments
-func cpHandler(systemDeps NerdctlCommandSystemDeps, cmdArgs []string) error {
-	for i, arg := range cmdArgs {
+func cpHandler(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string) error {
+	for i, arg := range nerdctlCmdArgs {
 		// -L and --follow-symlink don't have to be processed
 		if strings.HasPrefix(arg, "-") || arg == "cp" {
 			continue
@@ -279,29 +279,29 @@ func cpHandler(systemDeps NerdctlCommandSystemDeps, cmdArgs []string) error {
 			if err != nil {
 				return err
 			}
-			cmdArgs[i] = wslPath
+			nerdctlCmdArgs[i] = wslPath
 		}
 	}
 	return nil
 }
 
 // this is the handler for image build command. It translates build context to wsl path.
-func imageBuildHandler(systemDeps NerdctlCommandSystemDeps, cmdArgs []string) error {
+func imageBuildHandler(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string) error {
 	var err error
-	argLen := len(cmdArgs) - 1
+	argLen := len(nerdctlCmdArgs) - 1
 	// -h/--help don't have buildcontext, just return
-	for _, a := range cmdArgs {
+	for _, a := range nerdctlCmdArgs {
 		if a == "--help" || a == "-h" {
 			return nil
 		}
 	}
-	if cmdArgs[argLen] != "--debug" {
-		cmdArgs[argLen], err = convertToWSLPath(systemDeps, cmdArgs[argLen])
+	if nerdctlCmdArgs[argLen] != "--debug" {
+		nerdctlCmdArgs[argLen], err = convertToWSLPath(systemDeps, nerdctlCmdArgs[argLen])
 		if err != nil {
 			return err
 		}
 	} else {
-		cmdArgs[argLen-1], err = convertToWSLPath(systemDeps, cmdArgs[argLen-1])
+		nerdctlCmdArgs[argLen-1], err = convertToWSLPath(systemDeps, nerdctlCmdArgs[argLen-1])
 		if err != nil {
 			return err
 		}
