@@ -182,7 +182,10 @@ func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.L
 			limaCfg.MountType = pointer.String("virtiofs")
 		} else if *lca.cfg.VMType == "qemu" {
 			limaCfg.MountType = pointer.String("reverse-sshfs")
+		} else if *lca.cfg.VMType == "wsl" {
+			limaCfg.MountType = pointer.String("wsl")
 		}
+
 		limaCfg.Rosetta.Enabled = pointer.Bool(false)
 		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
 		limaCfg.VMType = lca.cfg.VMType

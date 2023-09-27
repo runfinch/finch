@@ -1,3 +1,4 @@
 # Every field is optional, even an empty file would work
 memory: 4GiB
 cpus: 4
+vmType: wsl
