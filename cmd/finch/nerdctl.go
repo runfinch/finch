@@ -43,8 +43,10 @@ type nerdctlCommandCreator struct {
 	fs         afero.Fs
 }
 
-type argHandler func(systemDeps NerdctlCommandSystemDeps, string []string, index int) error
-type commandHandler func(systemDeps NerdctlCommandSystemDeps, string []string) error
+type (
+	argHandler     func(systemDeps NerdctlCommandSystemDeps, args []string, index int) error
+	commandHandler func(systemDeps NerdctlCommandSystemDeps, args []string) error
+)
 
 func newNerdctlCommandCreator(
 	creator command.LimaCmdCreator,

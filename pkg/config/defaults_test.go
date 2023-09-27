@@ -113,20 +113,21 @@ func Test_applyDefaults(t *testing.T) {
 				VMType: pointer.String("wsl"),
 			},
 			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
-
 			},
 			want: &Finch{
 				VMType: pointer.String("wsl"),
 			},
 		},
 	}
-	if runtime.GOOS == "darwin" {
-		testCases = darwinTestCases
-	} else if runtime.GOOS == "windows" {
-		testCases = windowsTestCases
-	} else {
-		t.Skip("Skipping tests for runtime " + runtime.GOOS)
+	switch runtime.GOOS {
+	case "windows":
+		testCases = append(testCases, windowsTestCases...)
+	case "darwin":
+		testCases = append(testCases, darwinTestCases...)
+	default:
+		t.Skip("Not running tests for " + runtime.GOOS)
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
