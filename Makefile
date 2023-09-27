@@ -50,20 +50,9 @@ else ifneq (,$(findstring x86_64,$(ARCH)))
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/
 	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230918164920.qcow2
 	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1695247723.tar.gz
-	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/aarch64/finch-rootfs-production-arm64-1690920104.tar.zst
-	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/aarch64/finch-rootfs-production-arm64-1690920104.tar
-	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
-	FINCH_ROOTFS_BASENAME := $(subst .zst,,$(FINCH_ROOTFS_BASENAME))
-# TODO ROOTFS URL
-else ifneq (,$(findstring x86_64,$(ARCH)))
-	SUPPORTED_ARCH = true
-	LIMA_ARCH = x86_64
-	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230713205042.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1689037160.tar.gz
 	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1693001442.tar
 	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
-	FINCH_ROOTFS_BASENAME := $(subst .zst,,$(FINCH_ROOTFS_BASENAME))
+	FINCH_ROOTFS_BASENAME := $(subst .gz,,$(FINCH_ROOTFS_BASENAME))
 endif
 
 FINCH_OS_HASH := `$(sha) $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`

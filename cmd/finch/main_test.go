@@ -38,7 +38,7 @@ func TestMainFunc(_ *testing.T) {
 func TestXmain(t *testing.T) {
 	t.Parallel()
 
-	var testCases = []struct {
+	testCases := []struct {
 		name    string
 		mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
 		wantErr error
