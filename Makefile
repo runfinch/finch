@@ -26,6 +26,14 @@ VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always -
 GITCOMMIT := $(shell git rev-parse HEAD)$(shell if ! git diff --no-ext-diff --quiet --exit-code; then echo .m; fi)
 LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
 
+GOOS ?= $(shell $(GO) env GOOS)
+ifeq ($(GOOS),windows)
+BINARYNAME := $(addsuffix .exe, $(BINARYNAME))
+sha = sha256sum
+else
+sha = shasum -a 256
+endif
+
 .DEFAULT_GOAL := all
 
 INSTALLED ?= false
@@ -42,22 +50,44 @@ else ifneq (,$(findstring x86_64,$(ARCH)))
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/
 	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230918164920.qcow2
 	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1695247723.tar.gz
+	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/aarch64/finch-rootfs-production-arm64-1690920104.tar.zst
+	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
+	FINCH_ROOTFS_BASENAME := $(subst .zst,,$(FINCH_ROOTFS_BASENAME))
+# TODO ROOTFS URL
+else ifneq (,$(findstring x86_64,$(ARCH)))
+	SUPPORTED_ARCH = true
+	LIMA_ARCH = x86_64
+	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230713205042.qcow2
+	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1689037160.tar.gz
+	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1690920103.tar.zst
+	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
+	FINCH_ROOTFS_BASENAME := $(subst .zst,,$(FINCH_ROOTFS_BASENAME))
 endif
 
-FINCH_OS_HASH := `shasum -a 256 $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
+FINCH_OS_HASH := `$(sha) $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
 FINCH_OS_DIGEST := "sha256:$(FINCH_OS_HASH)"
 FINCH_OS_IMAGE_LOCATION_ROOT ?= $(DEST)
 FINCH_OS_IMAGE_LOCATION ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_OS_BASENAME)
+
+# TODO: Windows PoC extracting rootfs...
+FINCH_ROOTFS_HASH := `$(sha) $(OUTDIR)/os/$(FINCH_ROOTFS_BASENAME) | cut -d ' ' -f 1`
+FINCH_ROOTFS_DIGEST := "sha256:$(FINCH_ROOTFS_HASH)"
+FINCH_ROOTFS_LOCATION ?= $(DEST)/os/$(FINCH_ROOTFS_BASENAME)
 
 .PHONY: arch-test
 arch-test:
 	@if [ $(SUPPORTED_ARCH) != "true" ]; then echo "Unsupported architecture: $(ARCH)"; exit "1"; fi
 
 .PHONY: all
+ifeq ($(GOOS),windows)
+all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml
+else
 all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
+endif
 
 .PHONY: all-local
-all-local: arch-test finch networks.yaml config.yaml lima-and-qemu local-core finch.yaml
+all-local: arch-test networks.yaml config.yaml lima-and-qemu local-core finch.yaml
 
 .PHONY: finch-core
 finch-core:
@@ -66,6 +96,18 @@ finch-core:
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
 		"$(MAKE)"
+
+	mkdir -p _output
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
+	rm -rf $(OUTDIR)/lima-template
+
+.PHONY: finch-core-local
+finch-core-local:
+	cd deps/finch-core && \
+		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
+		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
+		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
+		"$(MAKE)" all lima
 
 	mkdir -p _output
 	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
@@ -97,16 +139,35 @@ lima-and-qemu: networks.yaml
 	rm -rf $(OUTDIR)/downloads
 
 
+FINCH_IMAGE_LOCATION ?=
+FINCH_IMAGE_DIGEST ?=
+ifeq ($(GOOS),windows)
+	FINCH_IMAGE_LOCATION := "file://$(FINCH_ROOTFS_LOCATION)"
+	FINCH_IMAGE_DIGEST := $(FINCH_ROOTFS_DIGEST)
+else
+	FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION)
+	FINCH_IMAGE_DIGEST := $(FINCH_OS_DIGEST)
+endif
 .PHONY: finch.yaml
 finch.yaml: finch-core
 	mkdir -p $(OUTDIR)/os
 	cp finch.yaml $(OUTDIR)/os
 	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
 	# this sed command uses the alternative separator of "|" because the image location uses "/"
-	sed -i.bak -e "s|<finch_image_location>|$(FINCH_OS_IMAGE_LOCATION)|g" $(OUTDIR)/os/finch.yaml
+	sed -i.bak -e "s|<finch_image_location>|$(FINCH_IMAGE_LOCATION)|g" $(OUTDIR)/os/finch.yaml
 	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" $(OUTDIR)/os/finch.yaml
-	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_OS_DIGEST)/g" $(OUTDIR)/os/finch.yaml
-	rm $(OUTDIR)/os/*.yaml.bak
+	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" $(OUTDIR)/os/finch.yaml
+
+# TODO: Windows PoC - clean this up / consolidate
+.PHONY: finch.yaml
+finch.windows.yaml: finch-core-local
+	mkdir -p $(OUTDIR)/os
+	cp finch.windows.yaml $(OUTDIR)/os/finch.yaml
+	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
+	# this sed command uses the alternative separator of "|" because the image location uses "/"
+	sed -i.bak -e "s|<finch_image_location>|$(FINCH_IMAGE_LOCATION)|g" $(OUTDIR)/os/finch.yaml
+	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" $(OUTDIR)/os/finch.yaml
+	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" $(OUTDIR)/os/finch.yaml
 
 .PHONY: networks.yaml
 networks.yaml:
@@ -315,7 +376,7 @@ mdlint:
 .PHONY: mdlint-ctr
 # If markdownlint is not installed, you can run markdownlint within a container.
 mdlint-ctr:
-	finch run --rm -v "$(shell pwd):/repo:ro" -w /repo avtodev/markdown-lint:v1 --ignore CHANGELOG.md '**/*.md'
+	$(BINARYNAME) run --rm -v "$(shell pwd):/repo:ro" -w /repo avtodev/markdown-lint:v1 --ignore CHANGELOG.md '**/*.md'
 
 .PHONY: clean
 clean:

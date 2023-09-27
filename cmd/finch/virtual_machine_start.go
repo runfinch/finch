@@ -79,6 +79,7 @@ func (sva *startVMAction) run() error {
 		return err
 	}
 
+	// TODO: don't run this on Windows
 	err = sva.userDataDiskManager.EnsureUserDataDisk()
 	if err != nil {
 		return err

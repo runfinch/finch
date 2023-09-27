@@ -93,6 +93,7 @@ func (iva *initVMAction) run() error {
 
 	instanceName := fmt.Sprintf("--name=%v", limaInstanceName)
 	limaCmd := iva.creator.CreateWithoutStdio("start", instanceName, iva.baseYamlFilePath, "--tty=false")
+
 	iva.logger.Info("Initializing and starting Finch virtual machine...")
 	logs, err := limaCmd.CombinedOutput()
 	if err != nil {
