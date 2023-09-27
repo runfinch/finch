@@ -44,6 +44,7 @@ type nerdctlCommandCreator struct {
 }
 
 type argHandler func(systemDeps NerdctlCommandSystemDeps, string []string, index int) error
+type commandHandler func(systemDeps NerdctlCommandSystemDeps, string []string) error
 
 func newNerdctlCommandCreator(
 	creator command.LimaCmdCreator,
@@ -89,23 +90,40 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		return err
 	}
 	var (
-		nerdctlArgs, envs, fileEnvs []string
-		skip                        bool
+		nerdctlArgs, envs, fileEnvs       []string
+		skip, hasCmdHander, hasArgHandler bool
+		cmdHandler                        commandHandler
+		aMap                              map[string]argHandler
 	)
 
 	alias, hasAlias := aliasMap[cmdName]
-	var key = ""
 	if hasAlias {
 		cmdName = alias
-		key = cmdName
-	} else if len(args) > 0 {
-		// for commands like image build, container run
-		key = fmt.Sprintf("%s %s", cmdName, args[0])
+		cmdHandler, hasCmdHander = commandHandlerMap[alias]
+		aMap, hasArgHandler = argHandlerMap[alias]
+	} else {
+		// Check if the command has a handler
+		cmdHandler, hasCmdHander = commandHandlerMap[cmdName]
+		aMap, hasArgHandler = argHandlerMap[cmdName]
+
+		if !hasCmdHander && !hasArgHandler && len(args) > 0 {
+			// for commands like image build, container run
+			key := fmt.Sprintf("%s %s", cmdName, args[0])
+			cmdHandler, hasCmdHander = commandHandlerMap[key]
+			aMap, hasArgHandler = argHandlerMap[key]
+		}
 	}
 
-	// First check if command requires any handling
-	aMap, hasArgHandler := argHandlerMap[key]
+	// First check if the command has command handler
+	if hasCmdHander {
+		err := cmdHandler(nc.systemDeps, args)
+		if err != nil {
+			return err
+		}
+	}
+
 	for i, arg := range args {
+		// Check if command requires arg handling
 		if hasArgHandler {
 			// Check if argument for the command needs handling, sometimes it can be --file=<filename>
 			b, _, _ := strings.Cut(arg, "=")
@@ -148,7 +166,6 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 			case "--add-host":
 				args[i+1] = resolveIP(args[i+1], nc.logger)
 			default:
-				fmt.Printf("args are %v", args)
 				resolvedIP := resolveIP(arg[11:], nc.logger)
 				arg = fmt.Sprintf("%s%s", arg[0:11], resolvedIP)
 			}

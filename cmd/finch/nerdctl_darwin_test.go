@@ -20,7 +20,6 @@ import (
 
 	"github.com/runfinch/finch/pkg/flog"
 
-	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/mocks"
 )
 

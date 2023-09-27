@@ -40,21 +40,6 @@ func TestLoad(t *testing.T) {
 				&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into config.Finch"}},
 			),
 		},
-		{
-			name: "config file doesn't pass validation",
-			path: "/config.yaml",
-			mockSvc: func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
-				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(`memory: 4GiB
-cpus: 0
-`,
-				), 0o600))
-			},
-			want: nil,
-			wantErr: fmt.Errorf(
-				"failed to validate config file: %w",
-				errors.New("specified number of CPUs (0) must be greater than 0"),
-			),
-		},
 	}
 
 	darwinTestCases := []struct {
@@ -149,6 +134,21 @@ cpus: 8
 			},
 			wantErr: nil,
 		},
+		{
+			name: "config file doesn't pass validation",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(`memory: 4GiB
+cpus: 0
+`,
+				), 0o600))
+			},
+			want: nil,
+			wantErr: fmt.Errorf(
+				"failed to validate config file: %w",
+				errors.New("specified number of CPUs (0) must be greater than 0"),
+			),
+		},
 	}
 
 	windowsTestCases := []struct {
@@ -167,9 +167,6 @@ memory: 4GiB
 cpus: 8
 `
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
-				deps.EXPECT().NumCPU().Return(8)
-				// 12_884_901_888 == 12GiB
-				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
 			},
 			want: &Finch{
 				Memory: pointer.String("4GiB"),
@@ -183,12 +180,8 @@ cpus: 8
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(""), 0o600))
-				deps.EXPECT().NumCPU().Return(4).Times(2)
-				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(2)
 			},
 			want: &Finch{
-				Memory: pointer.String("3GiB"),
-				CPUs:   pointer.Int(2),
 				VMType: pointer.String("wsl2"),
 			},
 			wantErr: nil,
@@ -198,12 +191,9 @@ cpus: 8
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("memory: 2GiB"), 0o600))
-				deps.EXPECT().NumCPU().Return(4).Times(2)
-				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(1)
 			},
 			want: &Finch{
 				Memory: pointer.String("2GiB"),
-				CPUs:   pointer.Int(2),
 				VMType: pointer.String("wsl2"),
 			},
 			wantErr: nil,
@@ -213,12 +203,8 @@ cpus: 8
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("unknownField: 2GiB"), 0o600))
-				deps.EXPECT().NumCPU().Return(4).Times(2)
-				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(2)
 			},
 			want: &Finch{
-				Memory: pointer.String("3GiB"),
-				CPUs:   pointer.Int(2),
 				VMType: pointer.String("wsl2"),
 			},
 			wantErr: nil,
@@ -228,12 +214,8 @@ cpus: 8
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
 				l.EXPECT().Infof("Using default values due to missing config file at %q", "/config.yaml")
-				deps.EXPECT().NumCPU().Return(4).Times(1)
-				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(1)
 			},
 			want: &Finch{
-				Memory: pointer.String("3GiB"),
-				CPUs:   pointer.Int(2),
 				VMType: pointer.String("wsl2"),
 			},
 			wantErr: nil,
