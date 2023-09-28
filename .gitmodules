@@ -1,4 +1,4 @@
-[submodule "deps/finch-core"]
+[submodule "finch-core"]
 	path = deps/finch-core
-	url = https://github.com/vsiravar/finch-core-public.git
+	url = https://github.com/runfinch/finch-core.git
 	branch = windev
