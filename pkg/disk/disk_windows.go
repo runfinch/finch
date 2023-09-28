@@ -58,7 +58,7 @@ func (m *userDataDiskManager) DetachUserDataDisk() error {
 		`\\?\`+m.finch.UserDataDiskPath(m.rootDir),
 	)
 
-	m.logger.Debugf("running attach cmd: %s", cmd.String())
+	m.logger.Debugf("running attach cmd: %v", cmd)
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -148,7 +148,7 @@ func (m *userDataDiskManager) attachDisk(diskPath string) error {
 		diskPath,
 	)
 
-	m.logger.Debugf("running attach cmd: %s", cmd.String())
+	m.logger.Debugf("running attach cmd: %v", cmd)
 
 	out, err := cmd.CombinedOutput()
 	outDecoded, _ := FromUTF16leToString(bytes.NewBuffer(out))

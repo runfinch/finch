@@ -58,28 +58,6 @@ func TestXmain(t *testing.T) {
 				ffd.EXPECT().Executable().Return("", errors.New("failed to find executable path"))
 			},
 		},
-		{
-			name: "failed to load finch config because of invalid YAML",
-			wantErr: fmt.Errorf("failed to load config: %w",
-				fmt.Errorf("failed to unmarshal config file: %w",
-					&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into config.Finch"}},
-				),
-			),
-			mockSvc: func(
-				_ *mocks.Logger,
-				ffd *mocks.FinchFinderDeps,
-				fs afero.Fs,
-				_ *mocks.LoadSystemDeps,
-				_ *mocks.Memory,
-			) {
-				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte("this isn't YAML"), 0o600))
-
-				ffd.EXPECT().GetUserHome().Return("/home", nil)
-				ffd.EXPECT().Executable().Return("/bin/path", nil)
-				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
-				ffd.EXPECT().FilePathJoin("/real/bin/path", "../../").Return("/real")
-			},
-		},
 	}
 
 	darwinTestCases := []struct {
@@ -102,10 +80,32 @@ func TestXmain(t *testing.T) {
 				ffd.EXPECT().GetUserHome().Return("/home", nil)
 				ffd.EXPECT().Executable().Return("/bin/path", nil)
 				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
-				ffd.EXPECT().FilePathJoin("/real/bin/path", "../../").Return("/real")
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
 				loadCfgDeps.EXPECT().NumCPU().Return(16)
 				// 12_884_901_888 == 12GiB
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
+			},
+		},
+		{
+			name: "failed to load finch config because of invalid YAML",
+			wantErr: fmt.Errorf("failed to load config: %w",
+				fmt.Errorf("failed to unmarshal config file: %w",
+					&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into config.Finch"}},
+				),
+			),
+			mockSvc: func(
+				_ *mocks.Logger,
+				ffd *mocks.FinchFinderDeps,
+				fs afero.Fs,
+				_ *mocks.LoadSystemDeps,
+				_ *mocks.Memory,
+			) {
+				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte("this isn't YAML"), 0o600))
+
+				ffd.EXPECT().GetUserHome().Return("/home", nil)
+				ffd.EXPECT().Executable().Return("/bin/path", nil)
+				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
 			},
 		},
 	}
@@ -128,9 +128,33 @@ func TestXmain(t *testing.T) {
 				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
 
 				ffd.EXPECT().GetUserHome().Return("/home", nil)
+				ffd.EXPECT().Env("LOCALAPPDATA").Return("/home/")
 				ffd.EXPECT().Executable().Return("/bin/path", nil)
 				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
-				ffd.EXPECT().FilePathJoin("/real/bin/path", "../../").Return("/real")
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
+			},
+		},
+		{
+			name: "failed to load finch config because of invalid YAML",
+			wantErr: fmt.Errorf("failed to load config: %w",
+				fmt.Errorf("failed to unmarshal config file: %w",
+					&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into config.Finch"}},
+				),
+			),
+			mockSvc: func(
+				_ *mocks.Logger,
+				ffd *mocks.FinchFinderDeps,
+				fs afero.Fs,
+				_ *mocks.LoadSystemDeps,
+				_ *mocks.Memory,
+			) {
+				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte("this isn't YAML"), 0o600))
+
+				ffd.EXPECT().GetUserHome().Return("/home", nil)
+				ffd.EXPECT().Env("LOCALAPPDATA").Return("/home/")
+				ffd.EXPECT().Executable().Return("/bin/path", nil)
+				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
 			},
 		},
 	}

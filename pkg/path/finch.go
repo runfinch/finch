@@ -18,12 +18,12 @@ type Finch string
 
 // FinchRootDir returns the path to the Finch root directory.
 // $HOME on UNIX and $LocalAppData on Windows.
-func (Finch) FinchRootDir(stdLib system.StdLib) (string, error) {
+func (Finch) FinchRootDir(ffd FinchFinderDeps) (string, error) {
 	if runtime.GOOS == "windows" {
-		return stdLib.Env("LOCALAPPDATA"), nil
+		return ffd.Env("LOCALAPPDATA"), nil
 	}
 
-	home, err := stdLib.GetUserHome()
+	home, err := ffd.GetUserHome()
 	if err != nil {
 		return "", err
 	}

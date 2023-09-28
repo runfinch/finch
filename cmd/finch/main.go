@@ -52,7 +52,7 @@ func xmain(logger flog.Logger,
 	if err != nil {
 		return fmt.Errorf("failed to get user home directory: %w", err)
 	}
-	finchRootPath, err := fp.FinchRootDir(*system.NewStdLib())
+	finchRootPath, err := fp.FinchRootDir(ffd)
 	if err != nil {
 		return fmt.Errorf("failed to get finch root path: %w", err)
 	}
