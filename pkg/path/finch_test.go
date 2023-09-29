@@ -6,6 +6,8 @@ package path
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/runfinch/finch/pkg/mocks"
@@ -20,70 +22,75 @@ func TestFinch_ConfigFilePath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.ConfigFilePath("homeDir")
-	assert.Equal(t, res, "homeDir/.finch/finch.yaml")
+	assert.Equal(t, res, filepath.Join("homeDir", ".finch", "finch.yaml"))
 }
 
 func TestFinch_UserDataDiskPath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.UserDataDiskPath("homeDir")
-	assert.Equal(t, res, fmt.Sprintf("homeDir/.finch/.disks/%s", mockFinch.generatePathSum()))
+	if runtime.GOOS == "windows" {
+		assert.Equal(t, res, filepath.Join("homeDir", ".finch", ".disks", mockFinch.generatePathSum()+".vhdx"))
+	} else {
+		assert.Equal(t, res, filepath.Join("homeDir", ".finch", ".disks", mockFinch.generatePathSum()))
+
+	}
 }
 
 func TestFinch_LimaHomePath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.LimaHomePath()
-	assert.Equal(t, res, "mock_finch/lima/data")
+	assert.Equal(t, res, filepath.Join("mock_finch", "lima", "data"))
 }
 
 func TestFinch_LimaInstancePath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.LimaInstancePath()
-	assert.Equal(t, res, "mock_finch/lima/data/finch")
+	assert.Equal(t, res, filepath.Join("mock_finch", "lima", "data", "finch"))
 }
 
 func TestFinch_LimactlPath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.LimactlPath()
-	assert.Equal(t, res, "mock_finch/lima/bin/limactl")
+	assert.Equal(t, res, filepath.Join("mock_finch", "lima", "bin", "limactl"))
 }
 
 func TestFinch_BaseYamlFilePath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.BaseYamlFilePath()
-	assert.Equal(t, res, "mock_finch/os/finch.yaml")
+	assert.Equal(t, res, filepath.Join("mock_finch", "os", "finch.yaml"))
 }
 
 func TestFinch_LimaConfigDirectoryPath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.LimaConfigDirectoryPath()
-	assert.Equal(t, res, "mock_finch/lima/data/_config")
+	assert.Equal(t, res, filepath.Join("mock_finch", "lima", "data", "_config"))
 }
 
 func TestFinch_LimaOverrideConfigPath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.LimaOverrideConfigPath()
-	assert.Equal(t, res, "mock_finch/lima/data/_config/override.yaml")
+	assert.Equal(t, res, filepath.Join("mock_finch", "lima", "data", "_config", "override.yaml"))
 }
 
 func TestFinch_LimaSSHPrivateKeyPath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.LimaSSHPrivateKeyPath()
-	assert.Equal(t, res, "mock_finch/lima/data/_config/user")
+	assert.Equal(t, res, filepath.Join("mock_finch", "lima", "data", "_config", "user"))
 }
 
 func TestFinch_QemuBinDir(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.QEMUBinDir()
-	assert.Equal(t, res, "mock_finch/lima/bin")
+	assert.Equal(t, res, filepath.Join("mock_finch", "lima", "bin"))
 }
 
 func TestFindFinch(t *testing.T) {
@@ -102,7 +109,7 @@ func TestFindFinch(t *testing.T) {
 			mockSvc: func(deps *mocks.FinchFinderDeps) {
 				deps.EXPECT().Executable().Return("/bin/path", nil)
 				deps.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
-				deps.EXPECT().FilePathJoin("/real/bin/path", "../../").Return("/real")
+				deps.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
 			},
 		},
 		{
