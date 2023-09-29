@@ -12,23 +12,9 @@ import (
 	fpath "github.com/runfinch/finch/pkg/path"
 )
 
-const (
-	// diskName must always be consistent with the value under additionalDisks in finch.yaml.
-	diskName = "finch"
-	diskSize = "50G"
-)
-
 // UserDataDiskManager is used to check the user data disk configuration and create it if needed.
 type UserDataDiskManager interface {
 	EnsureUserDataDisk() error
-}
-
-type qemuDiskInfo struct {
-	VirtualSize int    `json:"virtual-size"`
-	Filename    string `json:"filename"`
-	Format      string `json:"format"`
-	ActualSize  int    `json:"actual-size"`
-	DirtyFlag   bool   `json:"dirty-flag"`
 }
 
 // fs functions required for setting up the user data disk.
