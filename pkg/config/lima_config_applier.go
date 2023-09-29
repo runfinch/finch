@@ -41,8 +41,6 @@ sudo systemctl restart containerd.service
 sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
 
 	`
-
-	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
 )
 
 // LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.

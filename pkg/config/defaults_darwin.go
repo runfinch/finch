@@ -14,6 +14,12 @@ import (
 	"github.com/runfinch/finch/pkg/fmemory"
 )
 
+const (
+	// 2,147,483,648 => 2GiB.
+	fallbackMemory float64 = 2_147_483_648
+	fallbackCPUs   int     = 2
+)
+
 func vmDefault(cfg *Finch) {
 	if cfg.VMType == nil {
 		cfg.VMType = pointer.String("qemu")
