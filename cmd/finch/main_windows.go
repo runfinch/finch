@@ -6,6 +6,9 @@
 package main
 
 import (
+	"github.com/spf13/afero"
+	"github.com/spf13/cobra"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
@@ -15,8 +18,6 @@ import (
 	"github.com/runfinch/finch/pkg/fssh"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/system"
-	"github.com/spf13/afero"
-	"github.com/spf13/cobra"
 )
 
 func virtualMachineCommands(
@@ -27,7 +28,6 @@ func virtualMachineCommands(
 	fs afero.Fs,
 	fc *config.Finch,
 ) *cobra.Command {
-
 	optionalDepGroups := []*dependency.Group{
 		credhelper.NewDependencyGroup(ecc, fs, fp, logger, fc, system.NewStdLib().Env("USER"),
 			system.NewStdLib().Arch()),

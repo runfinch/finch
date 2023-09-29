@@ -16,6 +16,20 @@ import (
 	limaStore "github.com/lima-vm/lima/pkg/store"
 )
 
+const (
+	// diskName must always be consistent with the value under additionalDisks in finch.yaml.
+	diskName = "finch"
+	diskSize = "50G"
+)
+
+type qemuDiskInfo struct {
+	VirtualSize int    `json:"virtual-size"`
+	Filename    string `json:"filename"`
+	Format      string `json:"format"`
+	ActualSize  int    `json:"actual-size"`
+	DirtyFlag   bool   `json:"dirty-flag"`
+}
+
 // EnsureUserDataDisk checks the current disk configuration and fixes it if needed.
 func (m *userDataDiskManager) EnsureUserDataDisk() error {
 	if m.limaDiskExists() {

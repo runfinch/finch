@@ -9,7 +9,7 @@ import (
 	"github.com/runfinch/finch/pkg/command"
 )
 
-// Ensures wsl 2 is available and sets version to 2 which is required for finch to work
+// SupportsWSL2 checks if system supports WSL2 and sets default version to 2.
 func SupportsWSL2(cmdCreator command.Creator) error {
 	return cmdCreator.Create("wsl", "--set-default-version", "2").Run()
 }

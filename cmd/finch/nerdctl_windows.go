@@ -25,9 +25,9 @@ func convertToWSLPath(systemDeps NerdctlCommandSystemDeps, winPath string) (stri
 	return path, nil
 }
 
-// substitues wsl path for the provided option in place for nerdctl args
+// substitutes wsl path for the provided option in place for nerdctl args.
 func handleFilePath(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
-	var prefix = nerdctlCmdArgs[index]
+	prefix := nerdctlCmdArgs[index]
 
 	// If --filename="<filepath> then we need to cut <filepath> and convert that to wsl path
 	if strings.Contains(nerdctlCmdArgs[index], "=") {
@@ -53,10 +53,10 @@ func handleFilePath(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string
 
 // hanldes -v/--volumes option. For anonymous volumes and named volumes this is no-op. For bind mounts path is converted to wsl path.
 func handleVolume(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
-	var prefix = nerdctlCmdArgs[index]
-	var v = ""
-	var found = false
-	var before = ""
+	prefix := nerdctlCmdArgs[index]
+	v := ""
+	found := false
+	before := ""
 	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
@@ -106,12 +106,12 @@ func handleVolume(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, 
 	return nil
 }
 
-// translates source path of the bind mount to wslpath for --mount option
+// translates source path of the bind mount to wslpath for --mount option.
 func handleBindMounts(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
-	var prefix = nerdctlCmdArgs[index]
-	var v = ""
-	var found = false
-	var before = ""
+	prefix := nerdctlCmdArgs[index]
+	v := ""
+	found := false
+	before := ""
 	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
@@ -172,12 +172,12 @@ func handleBindMounts(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []stri
 	return nil
 }
 
-// handles --output/-o for build command
+// handles --output/-o for build command.
 func handleOutputOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
-	var prefix = nerdctlCmdArgs[index]
-	var v = ""
-	var found = false
-	var before = ""
+	prefix := nerdctlCmdArgs[index]
+	v := ""
+	found := false
+	before := ""
 	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
@@ -219,10 +219,10 @@ func handleOutputOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []st
 
 // handles --secret option for build command.
 func handleSecretOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
-	var prefix = nerdctlCmdArgs[index]
-	var v = ""
-	var found = false
-	var before = ""
+	prefix := nerdctlCmdArgs[index]
+	v := ""
+	found := false
+	before := ""
 	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
@@ -261,7 +261,7 @@ func handleSecretOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []st
 	return nil
 }
 
-// cp command handler, takes command arguments and converts hostpath to wsl path in place. It ignores all other arguments
+// cp command handler, takes command arguments and converts hostpath to wsl path in place. It ignores all other arguments.
 func cpHandler(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string) error {
 	for i, arg := range nerdctlCmdArgs {
 		// -L and --follow-symlink don't have to be processed
