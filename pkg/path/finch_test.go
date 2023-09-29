@@ -33,7 +33,6 @@ func TestFinch_UserDataDiskPath(t *testing.T) {
 		assert.Equal(t, res, filepath.Join("homeDir", ".finch", ".disks", mockFinch.generatePathSum()+".vhdx"))
 	} else {
 		assert.Equal(t, res, filepath.Join("homeDir", ".finch", ".disks", mockFinch.generatePathSum()))
-
 	}
 }
 
