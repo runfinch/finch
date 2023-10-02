@@ -50,9 +50,8 @@ else ifneq (,$(findstring x86_64,$(ARCH)))
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/
 	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230918164920.qcow2
 	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1695247723.tar.gz
-	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1693001442.tar
+	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1694791577.tar.gz
 	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
-	FINCH_ROOTFS_BASENAME := $(subst .gz,,$(FINCH_ROOTFS_BASENAME))
 endif
 
 FINCH_OS_HASH := `$(sha) $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
