@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1696348966298,
+  "lastUpdate": 1696349040748,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -15634,6 +15634,156 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 526,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20385b7c5c0a45f5495615ebb3ce70220ab15969",
+          "message": "build(deps): Bump github.com/shirou/gopsutil/v3 from 3.23.8 to 3.23.9 (#588)\n\nBumps\r\n[github.com/shirou/gopsutil/v3](https://github.com/shirou/gopsutil) from\r\n3.23.8 to 3.23.9.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/shirou/gopsutil/releases\">github.com/shirou/gopsutil/v3's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v3.23.9</h2>\r\n<!-- raw HTML omitted -->\r\n<h2>What's Changed</h2>\r\n<h3>cpu</h3>\r\n<ul>\r\n<li>chore: replace deprecated ioutil package to os and io by <a\r\nhref=\"https://github.com/shirou\"><code>@​shirou</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1524\">shirou/gopsutil#1524</a></li>\r\n<li>Add some support for NetBSD by <a\r\nhref=\"https://github.com/darkgeek\"><code>@​darkgeek</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1530\">shirou/gopsutil#1530</a></li>\r\n</ul>\r\n<h3>host</h3>\r\n<ul>\r\n<li>ci(lint): ensure io/ioutil replacement by <a\r\nhref=\"https://github.com/mmorel-35\"><code>@​mmorel-35</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1525\">shirou/gopsutil#1525</a></li>\r\n</ul>\r\n<h3>load</h3>\r\n<ul>\r\n<li>[load][windows] Fix DATA RACE in load. Avg() by <a\r\nhref=\"https://github.com/tossp\"><code>@​tossp</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1527\">shirou/gopsutil#1527</a></li>\r\n</ul>\r\n<h3>mem</h3>\r\n<ul>\r\n<li>Add support for reading AnonHugePages from /proc/meminfo by <a\r\nhref=\"https://github.com/kevinconaway\"><code>@​kevinconaway</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1519\">shirou/gopsutil#1519</a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/kevinconaway\"><code>@​kevinconaway</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1519\">shirou/gopsutil#1519</a></li>\r\n<li><a href=\"https://github.com/tossp\"><code>@​tossp</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1527\">shirou/gopsutil#1527</a></li>\r\n<li><a href=\"https://github.com/darkgeek\"><code>@​darkgeek</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1530\">shirou/gopsutil#1530</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/shirou/gopsutil/compare/v3.23.8...v3.23.9\">https://github.com/shirou/gopsutil/compare/v3.23.8...v3.23.9</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/826376d46a11715af329824f2ee2ba3f8b274759\"><code>826376d</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1530\">#1530</a>\r\nfrom darkgeek/feature/netbsd-arm64-port</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/66ee833b9ea2277fafc7878aa0f5db1ed2a592d2\"><code>66ee833</code></a>\r\nMakefile: revert back to original one</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/826037fe4be5cef3c1e693e1f909b7330c8b57cd\"><code>826037f</code></a>\r\nFix build_test on amd64 NetBSD</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/7ffb24dbe3d9e4e11b30c72d11009015330446e3\"><code>7ffb24d</code></a>\r\nMerge branch 'shirou:master' into feature/netbsd-arm64-port</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/def3572629f18c1dae4789ff8ddce716078697ed\"><code>def3572</code></a>\r\nformat the code</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/4a46201e00ab39278656b0e9727a1b9167312e5c\"><code>4a46201</code></a>\r\ncpu &amp;&amp; host: fix compile time errors</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/734a7a6e5532143f572ecdaf3269dd1447e40ade\"><code>734a7a6</code></a>\r\ndisk: we should use frsize as the real block size</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/dd0253b0ec811dd1f7cf419e244ebe0a328ff0d1\"><code>dd0253b</code></a>\r\ndisk: fix various bugs</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/2fabf15a16dca198f735a5de2722158576e986a9\"><code>2fabf15</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1527\">#1527</a>\r\nfrom tossp/add-load-for-windows</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/03d43fb5a25e9c62cc3662c11e05c2bb7c00d651\"><code>03d43fb</code></a>\r\n[load][windows] Fix DATA RACE in load. Avg()</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/shirou/gopsutil/compare/v3.23.8...v3.23.9\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/shirou/gopsutil/v3&package-manager=go_modules&previous-version=3.23.8&new-version=3.23.9)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-10-03T08:59:33-07:00",
+          "tree_id": "d5f0365a52714678ee89b845b66393761462b635",
+          "url": "https://github.com/runfinch/finch/commit/20385b7c5c0a45f5495615ebb3ce70220ab15969"
+        },
+        "date": 1696349039730,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 49352815465,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.8467,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 100,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 49.35,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1884721152,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2220752,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 47298,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 31509471723,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3948,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 38.46,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 31.51,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 25223168,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1413536,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 29937,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 469718927,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.325,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 26.92,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.4697,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 31090,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 499,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
           }
