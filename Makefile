@@ -355,7 +355,8 @@ gen-code:
 .PHONY: lint
 # To run golangci-lint locally: https://golangci-lint.run/usage/install/#local-installation
 lint:
-	golangci-lint run
+	env GOOS=windows golangci-lint run
+	env GOOS=darwin golangci-lint run
 
 .PHONY: mdlint
 # Install it locally: https://github.com/igorshubovych/markdownlint-cli#installation
