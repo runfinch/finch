@@ -345,12 +345,13 @@ test-benchmark-container:
 # GOBIN is introduced to maintain a set of tool binaries dedicated to our project use.
 #
 # To add a new tool binary to the recipe below, please also checkout out `pkg/tools.go`.
-gen-code: GOBIN = $(CURDIR)/tools_bin
+# gen-code: GOBIN = $(CURDIR)/tools_bin
 gen-code:
-	GOBIN=$(GOBIN) go install github.com/golang/mock/mockgen
-	GOBIN=$(GOBIN) go install golang.org/x/tools/cmd/stringer
-    # Make sure that we are using the tool binaries which are just built to generate code.
-	PATH=$(GOBIN):$(PATH) go generate ./...
+	@echo "TODO: use GOBIN instead of installing tools globally"
+	go install github.com/golang/mock/mockgen
+	go install golang.org/x/tools/cmd/stringer
+	# TODO: Make sure that we are using the tool binaries which are just built to generate code.
+	go generate ./...
 
 .PHONY: lint
 # To run golangci-lint locally: https://golangci-lint.run/usage/install/#local-installation

@@ -26,7 +26,10 @@ concurrency:
 
 jobs:
   gen-code-no-diff:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
