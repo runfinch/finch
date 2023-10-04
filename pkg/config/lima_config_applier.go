@@ -215,7 +215,7 @@ func findSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
 }
 
 func ensureWslDiskFormatScript(limaCfg *limayaml.LimaYAML) {
-	if _, hasScript := findWslDiskFormatScript(limaCfg); !hasScript {
+	if hasScript := findWslDiskFormatScript(limaCfg); !hasScript {
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
 			Mode: "system",
 			Script: fmt.Sprintf(`%s
@@ -232,17 +232,15 @@ mount "$(blkid -s TYPE -t LABEL=FinchDataDisk -o device)" /mnt/lima-finch
 	}
 }
 
-func findWslDiskFormatScript(limaCfg *limayaml.LimaYAML) (int, bool) {
+func findWslDiskFormatScript(limaCfg *limayaml.LimaYAML) bool {
 	hasWslDiskFormatScript := false
-	var scriptIdx int
-	for idx, prov := range limaCfg.Provision {
+	for _, prov := range limaCfg.Provision {
 		trimmed := strings.Trim(prov.Script, " ")
 		if !hasWslDiskFormatScript && strings.HasPrefix(trimmed, wslDiskFormatScriptHeader) {
 			hasWslDiskFormatScript = true
-			scriptIdx = idx
 			break
 		}
 	}
 
-	return scriptIdx, hasWslDiskFormatScript
+	return hasWslDiskFormatScript
 }
