@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 //go:build windows
 // +build windows
 
@@ -86,7 +89,7 @@ func RunElevated(exePath, wd string, args []string) error {
 	}
 	wdPtr, err := syscall.UTF16PtrFromString(wd)
 	if err != nil {
-		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", verb, err)
+		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", wd, err)
 	}
 
 	// the entire command passed after /C should be quoted, but /C itself should not be quoted
