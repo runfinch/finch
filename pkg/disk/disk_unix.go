@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	// diskName must always be consistent with the value under additionalDisks in finch.yaml.
+	// diskName must always be consistent with the value set for AdditionalDisks in lima_config_applier.go.
 	diskName = "finch"
 )
 
