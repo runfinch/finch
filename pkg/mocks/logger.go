@@ -168,6 +168,18 @@ func (mr *LoggerMockRecorder) Infoln(arg0 ...interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Infoln", reflect.TypeOf((*Logger)(nil).Infoln), arg0...)
 }
 
+// SetFormatter mocks base method.
+func (m *Logger) SetFormatter(arg0 flog.Formatter) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetFormatter", arg0)
+}
+
+// SetFormatter indicates an expected call of SetFormatter.
+func (mr *LoggerMockRecorder) SetFormatter(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetFormatter", reflect.TypeOf((*Logger)(nil).SetFormatter), arg0)
+}
+
 // SetLevel mocks base method.
 func (m *Logger) SetLevel(arg0 flog.Level) {
 	m.ctrl.T.Helper()

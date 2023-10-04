@@ -7,17 +7,18 @@ import (
 	"fmt"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
 
 	"github.com/spf13/cobra"
 )
 
-func newStopVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger) *cobra.Command {
+func newStopVMCommand(limaCmdCreator command.LimaCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *cobra.Command {
 	stopVMCommand := &cobra.Command{
 		Use:   "stop",
 		Short: "Stop the virtual machine",
-		RunE:  newStopVMAction(limaCmdCreator, logger).runAdapter,
+		RunE:  newStopVMAction(limaCmdCreator, diskManager, logger).runAdapter,
 	}
 
 	stopVMCommand.Flags().BoolP("force", "f", false, "forcibly stop finch VM")
@@ -26,12 +27,13 @@ func newStopVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger)
 }
 
 type stopVMAction struct {
-	creator command.LimaCmdCreator
-	logger  flog.Logger
+	creator     command.LimaCmdCreator
+	diskManager disk.UserDataDiskManager
+	logger      flog.Logger
 }
 
-func newStopVMAction(creator command.LimaCmdCreator, logger flog.Logger) *stopVMAction {
-	return &stopVMAction{creator: creator, logger: logger}
+func newStopVMAction(creator command.LimaCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *stopVMAction {
+	return &stopVMAction{creator: creator, diskManager: diskManager, logger: logger}
 }
 
 func (sva *stopVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
@@ -88,6 +90,10 @@ func (sva *stopVMAction) stopVM(force bool) error {
 	} else {
 		sva.logger.Info("Stopping existing Finch virtual machine...")
 	}
+
+	// ignore error, this is to ensure that the disk mount doesn't linger after the VM stops
+	_ = sva.diskManager.DetachUserDataDisk()
+
 	logs, err := limaCmd.CombinedOutput()
 	if err != nil {
 		sva.logger.Errorf("Finch virtual machine failed to stop, debug logs:\n%s", logs)

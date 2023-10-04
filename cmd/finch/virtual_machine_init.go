@@ -86,6 +86,9 @@ func (iva *initVMAction) run() error {
 		return err
 	}
 
+	// ignore error, this is to ensure that the disk is only mounted once
+	_ = iva.diskManager.DetachUserDataDisk()
+
 	err = iva.diskManager.EnsureUserDataDisk()
 	if err != nil {
 		return err
@@ -98,6 +101,8 @@ func (iva *initVMAction) run() error {
 	logs, err := limaCmd.CombinedOutput()
 	if err != nil {
 		iva.logger.Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
+		// ignore error, this is to ensure that the disk mount doesn't linger after the VM fails to start
+		_ = iva.diskManager.DetachUserDataDisk()
 		return err
 	}
 	iva.logger.Info("Finch virtual machine started successfully")

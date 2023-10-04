@@ -14,8 +14,6 @@ import (
 	"github.com/xorcare/pointer"
 )
 
-const userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
-
 // applyInit changes settings that will only apply to the VM after a new init.
 func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
 	hasSupport, hasSupportErr := SupportsVirtualizationFramework(lca.cmdCreator)
