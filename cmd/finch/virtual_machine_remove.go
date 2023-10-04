@@ -9,16 +9,17 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/lima"
 
 	"github.com/runfinch/finch/pkg/flog"
 )
 
-func newRemoveVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger) *cobra.Command {
+func newRemoveVMCommand(limaCmdCreator command.LimaCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *cobra.Command {
 	removeVMCommand := &cobra.Command{
 		Use:   "remove",
 		Short: "Remove the virtual machine instance",
-		RunE:  newRemoveVMAction(limaCmdCreator, logger).runAdapter,
+		RunE:  newRemoveVMAction(limaCmdCreator, diskManager, logger).runAdapter,
 	}
 
 	removeVMCommand.Flags().BoolP("force", "f", false, "forcibly remove finch VM")
@@ -27,12 +28,13 @@ func newRemoveVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logge
 }
 
 type removeVMAction struct {
-	creator command.LimaCmdCreator
-	logger  flog.Logger
+	creator     command.LimaCmdCreator
+	logger      flog.Logger
+	diskManager disk.UserDataDiskManager
 }
 
-func newRemoveVMAction(creator command.LimaCmdCreator, logger flog.Logger) *removeVMAction {
-	return &removeVMAction{creator: creator, logger: logger}
+func newRemoveVMAction(creator command.LimaCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *removeVMAction {
+	return &removeVMAction{creator: creator, logger: logger, diskManager: diskManager}
 }
 
 func (rva *removeVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
@@ -73,6 +75,7 @@ func (rva *removeVMAction) assertVMIsStopped(creator command.LimaCmdCreator, log
 }
 
 func (rva *removeVMAction) removeVM(force bool) error {
+	_ = rva.diskManager.DetachUserDataDisk()
 	limaCmd := rva.createVMRemoveCommand(force)
 	if force {
 		rva.logger.Info("Forcibly removing Finch virtual machine...")

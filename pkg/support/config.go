@@ -5,6 +5,7 @@ package support
 
 import (
 	"path"
+	"path/filepath"
 
 	fpath "github.com/runfinch/finch/pkg/path"
 )
@@ -30,9 +31,9 @@ func NewBundleConfig(finch fpath.Finch, homeDir string) BundleConfig {
 
 func (bc *bundleConfig) LogFiles() []string {
 	return []string{
-		path.Join(bc.finch.LimaInstancePath(), "ha.stderr.log"),
-		path.Join(bc.finch.LimaInstancePath(), "ha.stdout.log"),
-		path.Join(bc.finch.LimaInstancePath(), "serial.log"),
+		filepath.Join(bc.finch.LimaInstancePath(), "ha.stderr.log"),
+		filepath.Join(bc.finch.LimaInstancePath(), "ha.stdout.log"),
+		filepath.Join(bc.finch.LimaInstancePath(), "serial.log"),
 	}
 }
 

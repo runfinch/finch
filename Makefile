@@ -70,7 +70,7 @@ arch-test:
 
 .PHONY: all
 ifeq ($(GOOS),windows)
-all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml
+all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml dpgo
 else
 all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
 endif
@@ -81,7 +81,6 @@ all-local: arch-test networks.yaml config.yaml lima-and-qemu local-core finch.ya
 .PHONY: finch-core
 finch-core:
 	cd deps/finch-core && \
-		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
 		"$(MAKE)"
@@ -111,6 +110,8 @@ local-core:
 		"$(MAKE)" lima lima-socket-vmnet
 
 	mkdir -p _output
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
+	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C  $(OUTDIR)/lima
 	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
 	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)/lima
 	rm -rf $(OUTDIR)/lima-template
@@ -195,8 +196,24 @@ uninstall.vde:
 uninstall: uninstall.finch
 
 .PHONY: finch
-finch:
+ifeq ($(GOOS),windows)
+finch: finch-windows finch-general
+else
+finch: finch-unix
+endif
+
+finch-windows:
+	GOBIN=$(GOBIN) go install github.com/tc-hib/go-winres
+	$(GO) generate cmd/finch/main_windows.go
+
+finch-unix: finch-general
+
+finch-general:
 	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
+
+.PHONY: dpgo
+dpgo:
+	$(GO) build -o $(OUTDIR)/bin/dpgo.exe $(PACKAGE)/pkg/disk/dpgo
 
 .PHONY: release
 release: check-licenses all download-licenses
@@ -370,6 +387,14 @@ mdlint-ctr:
 	$(BINARYNAME) run --rm -v "$(shell pwd):/repo:ro" -w /repo avtodev/markdown-lint:v1 --ignore CHANGELOG.md '**/*.md'
 
 .PHONY: clean
+ifeq ($(GOOS),windows)
+clean:
+	-@rm -rf $(OUTDIR) 2>/dev/null || true
+	-@rm -rf ./deps/finch-core/_output || true
+	-@rm ./*.tar.gz 2>/dev/null || true
+	-@rm ./*.qcow2 2>/dev/null || true
+	-@rm ./test-coverage.* 2>/dev/null || true
+else
 clean:
 	-sudo pkill '^socket_vmnet'
 	-sudo pkill '^qemu-system-'
@@ -382,3 +407,4 @@ clean:
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true
+endif

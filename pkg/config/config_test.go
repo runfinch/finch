@@ -4,7 +4,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"runtime"
 	"testing"
@@ -135,19 +134,19 @@ cpus: 8
 			wantErr: nil,
 		},
 		{
-			name: "config file doesn't pass validation",
+			name: "config file does not exist",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
-				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(`memory: 4GiB
-cpus: 0
-`,
-				), 0o600))
+				l.EXPECT().Infof("Using default values due to missing config file at %q", "/config.yaml")
+				deps.EXPECT().NumCPU().Return(4).Times(1)
+				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(1)
 			},
-			want: nil,
-			wantErr: fmt.Errorf(
-				"failed to validate config file: %w",
-				errors.New("specified number of CPUs (0) must be greater than 0"),
-			),
+			want: &Finch{
+				Memory: pointer.String("3GiB"),
+				CPUs:   pointer.Int(2),
+				VMType: pointer.String("wsl2"),
+			},
+			wantErr: nil,
 		},
 	}
 

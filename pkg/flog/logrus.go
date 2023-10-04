@@ -3,7 +3,9 @@
 
 package flog
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/sirupsen/logrus"
+)
 
 // Logrus implements the Logger interface.
 type Logrus struct{}
@@ -72,5 +74,15 @@ func (l *Logrus) SetLevel(level Level) {
 		logrus.SetLevel(logrus.DebugLevel)
 	case Panic:
 		logrus.SetLevel(logrus.PanicLevel)
+	}
+}
+
+// SetFormatter sets the formatter of the logger.
+func (l *Logrus) SetFormatter(formatter Formatter) {
+	switch formatter {
+	case Text:
+		logrus.SetFormatter(&logrus.TextFormatter{})
+	case JSON:
+		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
 }

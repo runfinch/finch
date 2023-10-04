@@ -13,13 +13,13 @@ import (
 	"io/fs"
 	"path"
 
+	"github.com/docker/go-units"
 	limaStore "github.com/lima-vm/lima/pkg/store"
 )
 
 const (
-	// diskName must always be consistent with the value under additionalDisks in finch.yaml.
+	// diskName must always be consistent with the value set for AdditionalDisks in lima_config_applier.go.
 	diskName = "finch"
-	diskSize = "50G"
 )
 
 type qemuDiskInfo struct {
@@ -33,7 +33,7 @@ type qemuDiskInfo struct {
 // EnsureUserDataDisk checks the current disk configuration and fixes it if needed.
 func (m *userDataDiskManager) EnsureUserDataDisk() error {
 	if m.limaDiskExists() {
-		diskPath := m.finch.UserDataDiskPath(m.homeDir)
+		diskPath := m.finch.UserDataDiskPath(m.rootDir)
 
 		if *m.config.VMType == "vz" {
 			info, err := m.getDiskInfo(diskPath)
@@ -88,8 +88,13 @@ func (m *userDataDiskManager) EnsureUserDataDisk() error {
 	return nil
 }
 
+// DetachUserDataDisk is a no-op on Unix because Lima does the detaching.
+func (m *userDataDiskManager) DetachUserDataDisk() error {
+	return nil
+}
+
 func (m *userDataDiskManager) persistentDiskExists() bool {
-	_, err := m.fs.Stat(m.finch.UserDataDiskPath(m.homeDir))
+	_, err := m.fs.Stat(m.finch.UserDataDiskPath(m.rootDir))
 	return err == nil
 }
 
@@ -148,7 +153,11 @@ func (m *userDataDiskManager) convertToRaw(diskPath string) error {
 }
 
 func (m *userDataDiskManager) createLimaDisk() error {
-	cmd := m.lcc.CreateWithoutStdio("disk", "create", diskName, "--size", diskSize, "--format", "raw")
+	size, err := sizeString()
+	if err != nil {
+		return fmt.Errorf("failed to get disk size: %w", err)
+	}
+	cmd := m.lcc.CreateWithoutStdio("disk", "create", diskName, "--size", size, "--format", "raw")
 	if logs, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("failed to create disk, debug logs:\n%s", logs)
 	}
@@ -158,14 +167,14 @@ func (m *userDataDiskManager) createLimaDisk() error {
 func (m *userDataDiskManager) attachPersistentDiskToLimaDisk() error {
 	limaPath := fmt.Sprintf("%s/_disks/%s/datadisk", m.finch.LimaHomePath(), diskName)
 	if !m.persistentDiskExists() {
-		disksDir := path.Dir(m.finch.UserDataDiskPath(m.homeDir))
+		disksDir := path.Dir(m.finch.UserDataDiskPath(m.rootDir))
 		_, err := m.fs.Stat(disksDir)
 		if errors.Is(err, fs.ErrNotExist) {
 			if err := m.fs.MkdirAll(disksDir, 0o755); err != nil {
 				return fmt.Errorf("could not create persistent disk directory: %w", err)
 			}
 		}
-		if err = m.fs.Rename(limaPath, m.finch.UserDataDiskPath(m.homeDir)); err != nil {
+		if err = m.fs.Rename(limaPath, m.finch.UserDataDiskPath(m.rootDir)); err != nil {
 			return fmt.Errorf("could not move data disk to persistent path: %w", err)
 		}
 	}
@@ -184,7 +193,7 @@ func (m *userDataDiskManager) attachPersistentDiskToLimaDisk() error {
 		}
 	}
 
-	err = m.fs.SymlinkIfPossible(m.finch.UserDataDiskPath(m.homeDir), limaPath)
+	err = m.fs.SymlinkIfPossible(m.finch.UserDataDiskPath(m.rootDir), limaPath)
 	if err != nil {
 		return err
 	}
@@ -203,4 +212,13 @@ func (m *userDataDiskManager) unlockLimaDisk() error {
 		return fmt.Errorf("failed to unlock disk, debug logs:\n%s", logs)
 	}
 	return nil
+}
+
+func sizeString() (string, error) {
+	sizeB, err := diskSize()
+	if err != nil {
+		return "", err
+	}
+
+	return units.BytesSize(float64(sizeB)), nil
 }
