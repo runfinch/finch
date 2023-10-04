@@ -77,7 +77,8 @@ func TestXmain(t *testing.T) {
 			) {
 				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
 
-				ffd.EXPECT().GetUserHome().Return("/home", nil)
+				// called additionally in FinchRootDir
+				ffd.EXPECT().GetUserHome().Return("/home", nil).Times(2)
 				ffd.EXPECT().Executable().Return("/bin/path", nil)
 				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
 				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
@@ -102,7 +103,8 @@ func TestXmain(t *testing.T) {
 			) {
 				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte("this isn't YAML"), 0o600))
 
-				ffd.EXPECT().GetUserHome().Return("/home", nil)
+				// called additionally in FinchRootDir
+				ffd.EXPECT().GetUserHome().Return("/home", nil).Times(2)
 				ffd.EXPECT().Executable().Return("/bin/path", nil)
 				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
 				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
