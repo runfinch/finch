@@ -115,7 +115,7 @@ export DOCKER_CONFIG="$FINCH_DIR"
 			postRunCheck:  func(t *testing.T, fs afero.Fs) {},
 			want: fmt.Errorf(
 				"failed to read config file %q: %w",
-				filepath.Join(string(filepath.Separator), "home", "mock_user.linux", ".bashrc"),
+				filepath.ToSlash(filepath.Join(string(filepath.Separator), "home", "mock_user.linux", ".bashrc")),
 				&fs.PathError{
 					Op:   "open",
 					Path: filepath.Join(string(filepath.Separator), "home", "mock_user.linux", ".bashrc"),
