@@ -22,6 +22,13 @@ type Logger interface {
 	SetFormatter(formatter Formatter)
 }
 
+// Log defines the properties of every log message.
+type Log struct {
+	Level   string `json:"level,omitempty"`
+	Message string `json:"msg,omitempty"`
+	Time    string `json:"time,omitempty"`
+}
+
 // Level denotes a log level. Check the constants below for more information.
 type Level int
 

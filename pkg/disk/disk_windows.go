@@ -7,15 +7,17 @@ package disk
 
 import (
 	"bytes"
-	_ "embed"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/afero"
 
+	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/winutil"
 )
 
@@ -77,9 +79,6 @@ func (m *userDataDiskManager) diskExists(diskPath string) (bool, error) {
 	return true, nil
 }
 
-//go:embed createDiskAdmin.TEMPLATE.ps1
-var createDiskTmpl string
-
 type createDiskOpts struct {
 	Path         string
 	Size         int64
@@ -126,16 +125,57 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 			"2>&1",
 		},
 	); err != nil {
-		return fmt.Errorf("failed to run command: %s", err)
+		return fmt.Errorf("failed to run dpgo command: %w", err)
 	}
 
 	tempOutContents, _ := afero.ReadFile(m.fs, tempOut.Name())
-	m.logger.Infof("createDisk out: %s", string(tempOutContents))
-
+	dpGoOutStr := strings.TrimSpace(string(tempOutContents))
+	m.logger.Debugf("create disk cmd stdout: %s", dpGoOutStr)
 	_ = m.fs.Remove(tempOut.Name())
 
-	if err != nil {
-		return fmt.Errorf("failed to create disk: %w, command output: %s", err, tempOutContents)
+	lines := strings.Split(dpGoOutStr, "\n")
+	var logs []flog.Log
+	for _, l := range lines {
+		// Fix new lines
+		nl := strings.ReplaceAll(l, `\r\n`, `\n`)
+		nl = strings.ReplaceAll(nl, `\r`, `\n`)
+		var logParsed flog.Log
+		if err = json.Unmarshal([]byte(l), &logParsed); err != nil {
+			return fmt.Errorf("error parsing create disk log: %w, log string: %s", err, nl)
+		}
+		logs = append(logs, logParsed)
+	}
+	m.logger.Debugf("create disk cmd stdout parsed: %v", logs)
+
+	// Make sure all of the DiskPart success logs are present
+	diskPartSuccessMessages := []string{
+		"DiskPart successfully created the virtual disk file.",
+		"DiskPart successfully selected the virtual disk file.",
+		"DiskPart successfully attached the virtual disk file.",
+		"DiskPart succeeded in creating the specified partition.",
+		"DiskPart successfully formatted the volume.",
+		"DiskPart successfully detached the virtual disk file.",
+	}
+	foundLog := false
+	for _, l := range logs {
+		if strings.Contains(l.Message, "create disk cmd stdout: ") {
+			foundLog = true
+			for _, m := range diskPartSuccessMessages {
+				if !strings.Contains(l.Message, m) {
+					return fmt.Errorf(
+						"diskpart failed to create working disk because missing message %s, check output: %s",
+						m,
+						l.Message,
+					)
+				}
+			}
+		}
+		if foundLog {
+			break
+		}
+	}
+	if !foundLog {
+		return fmt.Errorf("failed to find diskpart logs, check output: %v", logs)
 	}
 
 	return nil

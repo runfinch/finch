@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 //go:build windows
 // +build windows
 
@@ -106,13 +109,13 @@ func (cd *createDiskAction) createDisk(path string, size int64) error {
 
 	cmd.SetStdout(&dpStdout)
 
-	cd.logger.Debugln("starting diskpart to exit")
+	cd.logger.Debugln("starting diskpart")
 	if err := cmd.Start(); err != nil {
 		return err
 	}
 
 	go func() {
-		cd.logger.Debugf("writing %s to diskpart stdin", tmpl.String())
+		cd.logger.Debugf("writing to diskpart stdin: %s", tmpl.String())
 		fmt.Fprintf(dpStdin, "%s\r\n", tmpl.String())
 		dpStdin.Close()
 	}()
@@ -122,7 +125,7 @@ func (cd *createDiskAction) createDisk(path string, size int64) error {
 		return err
 	}
 
-	cd.logger.Infof("stdout: %s", dpStdout.String())
+	cd.logger.Debugf("create disk cmd stdout: %s\n", dpStdout.String())
 
 	return nil
 }
