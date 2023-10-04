@@ -79,12 +79,6 @@ func (m *userDataDiskManager) diskExists(diskPath string) (bool, error) {
 	return true, nil
 }
 
-type createDiskOpts struct {
-	Path         string
-	Size         int64
-	TempFilePath string
-}
-
 func (m *userDataDiskManager) createDisk(diskPath string) error {
 	size, err := sizeInMB()
 	if err != nil {
