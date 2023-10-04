@@ -22,7 +22,6 @@ import (
 )
 
 // EnsureUserDataDisk checks the current disk configuration and fixes it if needed.
-// on Windows, this is a no-op.
 func (m *userDataDiskManager) EnsureUserDataDisk() error {
 	diskPath := m.finch.UserDataDiskPath(m.rootDir)
 	disksDir := filepath.Dir(diskPath)
@@ -57,11 +56,11 @@ func (m *userDataDiskManager) DetachUserDataDisk() error {
 		`\\?\`+m.finch.UserDataDiskPath(m.rootDir),
 	)
 
-	m.logger.Debugf("running attach cmd: %v", cmd)
+	m.logger.Debugf("running detach cmd: %v", cmd)
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("failed to attach disk: %w, command output: %s", err, out)
+		return fmt.Errorf("failed to detach disk: %w, command output: %s", err, out)
 	}
 
 	return nil
