@@ -18,6 +18,7 @@ require (
 	github.com/spf13/afero v1.10.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
+	github.com/tc-hib/go-winres v0.3.1
 	github.com/xorcare/pointer v1.2.2
 	golang.org/x/crypto v0.14.0
 	golang.org/x/exp v0.0.0-20230810033253-352e893a4cad
@@ -44,7 +45,6 @@ require (
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
-	github.com/tc-hib/go-winres v0.3.1 // indirect
 	github.com/tc-hib/winres v0.1.6 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
