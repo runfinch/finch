@@ -43,7 +43,7 @@ func TestContainer(t *testing.T) {
 		if runtime.GOOS == "windows" {
 			// wsl2 cgroup v2 is mounted at /sys/fs/cgroup/unified,
 			// containerd expects it at /sys/fs/cgroup based on https://github.com/containerd/cgroups/blob/cc78c6c1e32dc5bde018d92999910fdace3cfa27/utils.go#L36
-			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unavailable, DefaultHostGatewayIP: "192.168.5.2"})
+			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Hybrid, DefaultHostGatewayIP: "192.168.5.2"})
 
 		} else {
 			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified, DefaultHostGatewayIP: "192.168.5.2"})
