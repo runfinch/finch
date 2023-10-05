@@ -13,6 +13,7 @@ import (
 	"io"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -219,7 +220,6 @@ func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix 
 	if err != nil {
 		return err
 	}
-
 	return bb.copyAndRedactFile(zipCopy, buf)
 }
 
@@ -290,14 +290,18 @@ func (bb *bundleBuilder) getPlatformData() (*PlatformData, error) {
 }
 
 func (bb *bundleBuilder) getOSVersion() (string, error) {
-	cmd := bb.ecc.Create("sw_vers", "-productVersion")
+	var cmd command.Command
+	if runtime.GOOS == "windows" {
+		cmd = bb.ecc.Create("cmd", "/c", "ver")
+	} else {
+		cmd = bb.ecc.Create("sw_vers", "-productVersion")
+	}
 	out, err := cmd.Output()
 	if err != nil {
 		return "", err
 	}
 
 	os := strings.TrimSuffix(string(out), "\n")
-
 	return os, nil
 }
 
