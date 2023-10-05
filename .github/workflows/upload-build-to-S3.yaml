@@ -16,12 +16,12 @@ jobs:
     runs-on: [self-hosted, macos, arm64, 11, release]
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
         with:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
         with:
           go-version-file: go.mod
           cache: true
@@ -36,7 +36,7 @@ jobs:
         shell: zsh {0}
 
       - name: Upload macos aarch64 build
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
           name: finch.macos-aarch64
           path: finch.*.aarch64.tar.gz
@@ -46,12 +46,12 @@ jobs:
     runs-on: [self-hosted, macos, amd64, 11, release]
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
         with:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
         with:
           go-version-file: go.mod
           cache: true
@@ -66,7 +66,7 @@ jobs:
         shell: zsh {0}
 
       - name: Upload macos x86_64 build
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
           name: finch.macos-x86_64
           path: finch.*.x86_64.tar.gz
@@ -79,26 +79,26 @@ jobs:
       - macos-x86_64-build
       - macos-aarch64-build
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
         with:
           fetch-depth: 0
           persist-credentials: false
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: dependency-upload-session
           aws-region: ${{ secrets.REGION }}
 
       - name: Download macos aarch64 build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: finch.macos-aarch64
           path: build
 
       - name: Download macos x86_64 build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: finch.macos-x86_64
           path: build
