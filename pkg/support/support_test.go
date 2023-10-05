@@ -7,6 +7,7 @@ import (
 	"archive/zip"
 	"io"
 	"os/user"
+	"runtime"
 	"testing"
 	"time"
 
@@ -69,7 +70,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				if runtime.GOOS == "windows" {
+					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
+				} else {
+					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 				ecc.EXPECT().Create("uname", "-m").Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
@@ -111,7 +116,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				if runtime.GOOS == "windows" {
+					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
+				} else {
+					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 				ecc.EXPECT().Create("uname", "-m").Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
@@ -150,7 +159,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				if runtime.GOOS == "windows" {
+					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
+				} else {
+					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 				ecc.EXPECT().Create("uname", "-m").Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
@@ -188,7 +201,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				if runtime.GOOS == "windows" {
+					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
+				} else {
+					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 				ecc.EXPECT().Create("uname", "-m").Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
@@ -226,7 +243,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				if runtime.GOOS == "windows" {
+					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
+				} else {
+					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 				ecc.EXPECT().Create("uname", "-m").Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
@@ -265,7 +286,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				if runtime.GOOS == "windows" {
+					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
+				} else {
+					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 				ecc.EXPECT().Create("uname", "-m").Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)

@@ -105,7 +105,7 @@ var newApp = func(
 	supportBundleBuilder := support.NewBundleBuilder(
 		logger,
 		fs,
-		support.NewBundleConfig(fp, system.NewStdLib().Env("HOME")),
+		support.NewBundleConfig(fp, finchRootPath),
 		fp,
 		ecc,
 		lcc,
