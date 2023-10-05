@@ -52,7 +52,7 @@ func CreateOption() (*option.Option, error) {
 		return nil, fmt.Errorf("failed to get the current working directory: %w", err)
 	}
 
-	subject := filepath.Join(wd, "../../_output/bin/finch")
+	subject := filepath.Join(wd, "..", "..", "_output", "bin", "finch")
 	if *Installed {
 		subject = InstalledTestSubject
 	}
