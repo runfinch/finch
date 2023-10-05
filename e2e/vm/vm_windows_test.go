@@ -7,12 +7,15 @@
 package vm
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 
 	"github.com/runfinch/common-tests/command"
+	"github.com/runfinch/common-tests/option"
 
 	"github.com/runfinch/finch/e2e"
 )
@@ -32,8 +35,8 @@ func TestVM(t *testing.T) {
 	}, func(bytes []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
-		command.New(o, "vm", "stop", "-f").WithTimeoutInSeconds(90).Run()
-		command.New(o, "vm", "remove", "-f").WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "stop").WithTimeoutInSeconds(90).Run()
+		command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()
 	}, func() {})
 
 	ginkgo.Describe("", func() {
@@ -48,4 +51,10 @@ func TestVM(t *testing.T) {
 
 	gomega.RegisterFailHandler(ginkgo.Fail)
 	ginkgo.RunSpecs(t, description)
+}
+
+var resetDisks = func(o *option.Option, installed bool) {
+	finchRootDir := os.Getenv("LOCALAPPDATA")
+	dataDiskDir := filepath.Join(finchRootDir, ".finch", ".disks")
+	gomega.Expect(os.RemoveAll(dataDiskDir)).ShouldNot(gomega.HaveOccurred())
 }
