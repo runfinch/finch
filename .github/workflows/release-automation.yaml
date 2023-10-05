@@ -12,12 +12,12 @@ jobs:
     outputs:
       tag: ${{ steps.latest-tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
         with:
             fetch-depth: 0
       - name: 'Get the latest tag'
         id: latest-tag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        uses: "WyriHaximus/github-action-get-previous-tag@385a2a0b6abf6c2efeb95adfac83d96d6f968e0c" # v1.3.0
     
   build-and-test-finch-pkg:
     needs: get-latest-tag
