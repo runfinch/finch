@@ -108,7 +108,7 @@ func virtualMachineCommands(
 	return newVirtualMachineCommand(
 		lcc,
 		logger,
-		dependencies(ecc, fc, fp, fs, lcc, logger),
+		dependencies(ecc, fc, fp, fs, lcc, logger, fp.FinchDir(finchRootPath)),
 		config.NewLimaApplier(fc, ecc, fs, fp.LimaOverrideConfigPath(), system.NewStdLib()),
 		config.NewNerdctlApplier(
 			fssh.NewDialer(),

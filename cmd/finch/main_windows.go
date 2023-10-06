@@ -26,6 +26,7 @@ func dependencies(
 	fs afero.Fs,
 	_ command.LimaCmdCreator,
 	logger flog.Logger,
+	finchDir string,
 ) []*dependency.Group {
 	return []*dependency.Group{
 		credhelper.NewDependencyGroup(
@@ -34,7 +35,7 @@ func dependencies(
 			fp,
 			logger,
 			fc,
-			system.NewStdLib().Env("USER"),
+			finchDir,
 			system.NewStdLib().Arch(),
 		),
 	}
