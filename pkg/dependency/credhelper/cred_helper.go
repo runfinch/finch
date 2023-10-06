@@ -6,6 +6,7 @@ package credhelper
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/spf13/afero"
 
@@ -28,10 +29,10 @@ func NewDependencyGroup(
 	fp path.Finch,
 	logger flog.Logger,
 	fc *config.Finch,
-	user string,
+	finchDir string,
 	arch string,
 ) *dependency.Group {
-	deps := newDeps(execCmdCreator, fs, fp, logger, fc, user, arch)
+	deps := newDeps(execCmdCreator, fs, fp, logger, fc, finchDir, arch)
 	return dependency.NewGroup(deps, description, errMsg)
 }
 
@@ -49,7 +50,7 @@ func newDeps(
 	fp path.Finch,
 	logger flog.Logger,
 	fc *config.Finch,
-	user string,
+	finchDir string,
 	arch string,
 ) []dependency.Dependency {
 	var deps []dependency.Dependency
@@ -63,8 +64,7 @@ func newDeps(
 		return deps
 	}
 	configs := map[string]helperConfig{}
-	installFolder := fmt.Sprintf("/Users/%s/.finch/cred-helpers/", user)
-	finchPath := fmt.Sprintf("/Users/%s/.finch/", user)
+	installFolder := filepath.Join(finchDir, "cred-helpers")
 
 	const versionEcr = "0.7.0"
 	const hashEcr = "sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714"
@@ -74,13 +74,13 @@ func newDeps(
 	hcEcr := helperConfig{
 		binaryName: "docker-credential-ecr-login", credHelperURL: credHelperURLEcr,
 		hash: hashEcr, installFolder: installFolder,
-		finchPath: finchPath,
+		finchPath: finchDir,
 	}
 	configs["ecr-login"] = hcEcr
 
 	for _, helper := range fc.CredsHelpers {
 		if configs[helper] != (helperConfig{}) {
-			binaries := newCredHelperBinary(fp, fs, execCmdCreator, logger, helper, user, configs[helper])
+			binaries := newCredHelperBinary(fp, fs, execCmdCreator, logger, helper, configs[helper])
 			deps = append(deps, dependency.Dependency(binaries))
 		}
 	}

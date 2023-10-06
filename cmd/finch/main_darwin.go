@@ -25,6 +25,7 @@ func dependencies(
 	fs afero.Fs,
 	lcc command.LimaCmdCreator,
 	logger flog.Logger,
+	finchRootPath string,
 ) []*dependency.Group {
 	return []*dependency.Group{
 		credhelper.NewDependencyGroup(
@@ -33,7 +34,7 @@ func dependencies(
 			fp,
 			logger,
 			fc,
-			system.NewStdLib().Env("USER"),
+			finchRootPath,
 			system.NewStdLib().Arch(),
 		),
 		vmnet.NewDependencyGroup(ecc, lcc, fs, fp, logger),

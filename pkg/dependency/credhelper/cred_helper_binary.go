@@ -34,7 +34,7 @@ type credhelperbin struct {
 var _ dependency.Dependency = (*credhelperbin)(nil)
 
 func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator, l flog.Logger, helper string,
-	user string, hcfg helperConfig,
+	hcfg helperConfig,
 ) *credhelperbin {
 	return &credhelperbin{
 		// TODO: consider replacing fp with only the strings that are used instead of the entire type
@@ -43,7 +43,6 @@ func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator,
 		cmdCreator: cmdCreator,
 		l:          l,
 		helper:     helper,
-		user:       user,
 		hcfg:       hcfg,
 	}
 }
