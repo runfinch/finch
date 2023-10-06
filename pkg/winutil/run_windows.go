@@ -18,6 +18,8 @@ import (
 
 // Aliases for conventionally used Windows types.
 // https://learn.microsoft.com/en-us/windows/win32/winprog/windows-data-types
+//
+//revive:disable:exported // use exact names from SHELLEXECUTEINFOW
 type (
 	DWORD     uint32
 	HANDLE    windows.Handle
@@ -28,6 +30,8 @@ type (
 	LPCWSTR   *uint16
 	LPVOID    uintptr
 )
+
+//revive:enable
 
 // SHELLEXECUTEINFOW is the definition of the parameters that shell32.dll's ShellExecuteEx expects.
 // https://learn.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow
@@ -50,6 +54,8 @@ type SHELLEXECUTEINFOW struct {
 }
 
 // https://learn.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-shellexecuteinfow
+//
+//revive:disable:var-naming // use exact names from SHELLEXECUTEINFOW, not CamelCase
 const (
 	SE_ERR_FNF              = 2
 	SE_ERR_PNF              = 3
@@ -64,6 +70,8 @@ const (
 	SE_ERR_NOASSOC          = 31
 	SEE_MASK_NOCLOSEPROCESS = 0x00000040
 )
+
+//revive:enable
 
 var (
 	modshell32 = syscall.NewLazyDLL("shell32.dll")
@@ -95,11 +103,11 @@ func RunElevated(exePath, wd string, args []string) error {
 	// the entire command passed after /C should be quoted, but /C itself should not be quoted
 	cmdArgs := []string{"/C"}
 	args = append([]string{exePath}, args...)
-	argsStr := append(cmdArgs, fmt.Sprintf(`"%s"`, strings.Join(args, " ")))
-	finalArgStr := strings.Join(argsStr, " ")
+	cmdArgs = append(cmdArgs, fmt.Sprintf(`"%s"`, strings.Join(args, " ")))
+	finalArgStr := strings.Join(cmdArgs, " ")
 	argPtr, err := syscall.UTF16PtrFromString(finalArgStr)
 	if err != nil {
-		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", argsStr, err)
+		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", cmdArgs, err)
 	}
 
 	return ShellExecuteAndWait(0, verbPtr, exePtr, argPtr, wdPtr, windows.SW_HIDE)
@@ -118,8 +126,9 @@ func ShellExecuteAndWait(hwnd HWND, verb, exe, args, wd LPCWSTR, nShowCmd int32)
 		lpDirectory:  wd,
 		nShow:        nShowCmd,
 	}
+	/* #nosec G103 */
 	i.cbSize = DWORD(unsafe.Sizeof(*i))
-	return ShellExecuteEx(i)
+	return shellExecuteEx(i)
 }
 
 // Some of the code below (particularly the error handling) was borrowed from
@@ -150,7 +159,8 @@ func ShellExecuteAndWait(hwnd HWND, verb, exe, args, wd LPCWSTR, nShowCmd int32)
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-func ShellExecuteEx(pExecInfo *SHELLEXECUTEINFOW) error {
+func shellExecuteEx(pExecInfo *SHELLEXECUTEINFOW) error {
+	/* #nosec G103 */
 	ret, _, _ := procShellExecuteEx.Call(uintptr(unsafe.Pointer(pExecInfo)))
 	if ret == 1 && pExecInfo.fMask&SEE_MASK_NOCLOSEPROCESS != 0 {
 		s, e := syscall.WaitForSingleObject(syscall.Handle(pExecInfo.hProcess), syscall.INFINITE)
@@ -160,7 +170,7 @@ func ShellExecuteEx(pExecInfo *SHELLEXECUTEINFOW) error {
 		case syscall.WAIT_FAILED:
 			return os.NewSyscallError("WaitForSingleObject", e)
 		default:
-			return fmt.Errorf("Unexpected result from WaitForSingleObject")
+			return fmt.Errorf("unexpected result from WaitForSingleObject")
 		}
 	}
 	errorMsg := ""

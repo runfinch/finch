@@ -16,7 +16,7 @@ import (
 	fpath "github.com/runfinch/finch/pkg/path"
 )
 
-const DISK_SIZE = "50GB"
+const diskSizeStr = "50GB"
 
 // UserDataDiskManager is used to check the user data disk configuration and create it if needed.
 type UserDataDiskManager interface {
@@ -63,7 +63,7 @@ func NewUserDataDiskManager(
 }
 
 func diskSize() (int64, error) {
-	size, err := units.RAMInBytes(DISK_SIZE)
+	size, err := units.RAMInBytes(diskSizeStr)
 	if err != nil {
 		return 0, err
 	}

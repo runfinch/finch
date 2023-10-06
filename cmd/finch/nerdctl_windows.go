@@ -267,20 +267,19 @@ func cpHandler(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string) err
 		// -L and --follow-symlink don't have to be processed
 		if strings.HasPrefix(arg, "-") || arg == "cp" {
 			continue
-		} else {
-			// If argument contains container path, then continue
-			colon := strings.Index(arg, ":")
-
-			// this is a container path
-			if colon > 1 {
-				continue
-			}
-			wslPath, err := convertToWSLPath(systemDeps, arg)
-			if err != nil {
-				return err
-			}
-			nerdctlCmdArgs[i] = wslPath
 		}
+		// If argument contains container path, then continue
+		colon := strings.Index(arg, ":")
+
+		// this is a container path
+		if colon > 1 {
+			continue
+		}
+		wslPath, err := convertToWSLPath(systemDeps, arg)
+		if err != nil {
+			return err
+		}
+		nerdctlCmdArgs[i] = wslPath
 	}
 	return nil
 }

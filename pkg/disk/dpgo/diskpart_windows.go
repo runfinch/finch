@@ -4,6 +4,9 @@
 //go:build windows
 // +build windows
 
+// Package main is the entrypoint of the diskpart utility executable that is
+// run as a separate process from Finch such that it can be given elevated
+// Administrator privileges
 package main
 
 import (
@@ -12,7 +15,6 @@ import (
 	"io"
 	"os"
 
-	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -24,14 +26,13 @@ const diskpartRootCmd = "dpgo"
 
 func main() {
 	logger := flog.NewLogrus()
-	fs := afero.NewOsFs()
 	stdOut := os.Stdout
-	if err := xmain(logger, fs, stdOut); err != nil {
+	if err := xmain(logger, stdOut); err != nil {
 		logger.Fatal(err)
 	}
 }
 
-func xmain(logger flog.Logger, fs afero.Fs, stdOut io.Writer) error {
+func xmain(logger flog.Logger, stdOut io.Writer) error {
 	rootCmd := &cobra.Command{
 		Use:           fmt.Sprintf("%v <command>", diskpartRootCmd),
 		Short:         "dpgo: utility to interact with diskpart",

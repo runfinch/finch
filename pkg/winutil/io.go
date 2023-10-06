@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+// Package winutil provides provides utility functions to run commands with
+// elevated Administrator privileges.
 package winutil
 
 import (
