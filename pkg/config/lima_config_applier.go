@@ -87,7 +87,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 	if cfgExists, err := afero.Exists(lca.fs, lca.limaConfigPath); err != nil {
 		return fmt.Errorf("error checking if file at path %s exists, error: %w", lca.limaConfigPath, err)
 	} else if !cfgExists {
-		if err := afero.WriteFile(lca.fs, lca.limaConfigPath, []byte(""), 0o644); err != nil {
+		if err := afero.WriteFile(lca.fs, lca.limaConfigPath, []byte(""), 0o600); err != nil {
 			return fmt.Errorf("failed to create the an empty lima config file: %w", err)
 		}
 	}
@@ -156,7 +156,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		return fmt.Errorf("failed to marshal the lima config file: %w", err)
 	}
 
-	if err := afero.WriteFile(lca.fs, lca.limaConfigPath, limaCfgBytes, 0o644); err != nil {
+	if err := afero.WriteFile(lca.fs, lca.limaConfigPath, limaCfgBytes, 0o600); err != nil {
 		return fmt.Errorf("failed to write to the lima config file: %w", err)
 	}
 

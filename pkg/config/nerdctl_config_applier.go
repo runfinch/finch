@@ -60,7 +60,7 @@ func NewNerdctlApplier(
 func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd string) (string, error) {
 	if !strings.Contains(profStr, cmd) {
 		profBufWithCmd := fmt.Sprintf("%s\n%s", profStr, cmd)
-		if err := afero.WriteFile(fs, profileFilePath, []byte(profBufWithCmd), 0o644); err != nil {
+		if err := afero.WriteFile(fs, profileFilePath, []byte(profBufWithCmd), 0o600); err != nil {
 			return "", fmt.Errorf("failed to write to profile file: %w", err)
 		}
 		return profBufWithCmd, nil
@@ -132,12 +132,12 @@ func updateNerdctlConfig(fs afero.Fs, homeDir string, rootless bool) error {
 		cfgPath = nerdctlRootfulCfgPath
 	}
 
-	if err := fs.MkdirAll(path.Dir(cfgPath), 0o755); err != nil {
+	if err := fs.MkdirAll(path.Dir(cfgPath), 0o700); err != nil {
 		return fmt.Errorf("failed to create config dir (dir(filepath)) %s: %w", cfgPath, err)
 	}
 
 	if _, err := fs.Stat(cfgPath); errors.Is(err, afero.ErrFileNotFound) {
-		if err := afero.WriteFile(fs, cfgPath, []byte{}, 0o644); err != nil {
+		if err := afero.WriteFile(fs, cfgPath, []byte{}, 0o600); err != nil {
 			return fmt.Errorf("failed to create %q with afero.WriteFile: %w", cfgPath, err)
 		}
 	}
@@ -159,7 +159,7 @@ func updateNerdctlConfig(fs afero.Fs, homeDir string, rootless bool) error {
 		return fmt.Errorf("failed to marshal config file %q: %w", cfgPath, err)
 	}
 
-	if err := afero.WriteFile(fs, cfgPath, updatedCfg, 0o644); err != nil {
+	if err := afero.WriteFile(fs, cfgPath, updatedCfg, 0o600); err != nil {
 		return fmt.Errorf("failed to write to config file %q: %w", cfgPath, err)
 	}
 
