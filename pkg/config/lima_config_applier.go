@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 
+	goyaml "github.com/goccy/go-yaml"
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/xorcare/pointer"
@@ -102,6 +103,12 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		return fmt.Errorf("failed to unmarshal the lima config file: %w", err)
 	}
 
+	// Unmarshall with custom unmarshaler for Disk:
+	// https://github.com/lima-vm/lima/blob/v0.17.2/pkg/limayaml/load.go#L16
+	if err := goyaml.UnmarshalWithOptions(b, &limaCfg, goyaml.DisallowDuplicateKey(), goyaml.CustomUnmarshaler[limayaml.Disk](unmarshalDisk)); err != nil {
+		return fmt.Errorf("failed to unmarshal the lima config file: %w", err)
+	}
+
 	limaCfg.CPUs = lca.cfg.CPUs
 	limaCfg.Memory = lca.cfg.Memory
 	limaCfg.Mounts = []limayaml.Mount{}
@@ -141,7 +148,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 
 	toggleSnaphotters(&limaCfg, snapshotters)
 
-	if *lca.cfg.VMType != "wsl2" {
+	if *lca.cfg.VMType != "wsl2" && len(limaCfg.AdditionalDisks) == 0 {
 		limaCfg.AdditionalDisks = append(limaCfg.AdditionalDisks, limayaml.Disk{
 			Name: "finch",
 		})
@@ -243,4 +250,14 @@ func findWslDiskFormatScript(limaCfg *limayaml.LimaYAML) bool {
 	}
 
 	return hasWslDiskFormatScript
+}
+
+// https://github.com/lima-vm/lima/blob/v0.17.2/pkg/limayaml/load.go#L16
+func unmarshalDisk(dst *limayaml.Disk, b []byte) error {
+	var s string
+	if err := goyaml.Unmarshal(b, &s); err == nil {
+		*dst = limayaml.Disk{Name: s}
+		return nil
+	}
+	return goyaml.Unmarshal(b, dst)
 }
