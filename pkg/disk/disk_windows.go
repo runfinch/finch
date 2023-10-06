@@ -66,18 +66,6 @@ func (m *userDataDiskManager) DetachUserDataDisk() error {
 	return nil
 }
 
-func (m *userDataDiskManager) diskExists(diskPath string) (bool, error) {
-	disksDir := filepath.Dir(diskPath)
-	_, err := m.fs.Stat(filepath.Dir(diskPath))
-	if errors.Is(err, fs.ErrNotExist) {
-		if err := m.fs.MkdirAll(disksDir, 0o755); err != nil {
-			return false, fmt.Errorf("could not create persistent disk directory: %w", err)
-		}
-	}
-
-	return true, nil
-}
-
 func (m *userDataDiskManager) createDisk(diskPath string) error {
 	size, err := sizeInMB()
 	if err != nil {

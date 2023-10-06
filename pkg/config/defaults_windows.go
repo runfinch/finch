@@ -12,7 +12,7 @@ import (
 )
 
 // Does not matter if Rosetta is set, no-op.
-func rosettaDefault(cfg *Finch) {
+func rosettaDefault(_ *Finch) {
 }
 
 func vmDefault(cfg *Finch) {
@@ -22,9 +22,9 @@ func vmDefault(cfg *Finch) {
 }
 
 // no-op , not configurable in wsl.
-func memoryDefault(cfg *Finch, mem fmemory.Memory) {
+func memoryDefault(_ *Finch, _ fmemory.Memory) {
 }
 
 // no-op , not configurable in wsl.
-func cpuDefault(cfg *Finch, deps LoadSystemDeps) {
+func cpuDefault(_ *Finch, _ LoadSystemDeps) {
 }
