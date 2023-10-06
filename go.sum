@@ -313,8 +313,8 @@ github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
-github.com/runfinch/common-tests v0.7.6 h1:hvH6LA/pc6kxD1AIZARnPEgq8v6Lzk4JR6w7s03py24=
-github.com/runfinch/common-tests v0.7.6/go.mod h1:wlIorbxwYhupJoxpwB9+fMFIWH0BwfOze+iRH4EW99g=
+github.com/runfinch/common-tests v0.7.7 h1:ZJjRI4fk02C1Qoj3A9Z+Jdkk2pUZiSqH5L/3peIN1Qs=
+github.com/runfinch/common-tests v0.7.7/go.mod h1:3BP9a6r5HeILCy/0IiTeC0zwyAgkUI0X2WZWZIctPj4=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/sergi/go-diff v1.2.0 h1:XU+rvMAioB0UC3q1MFrIQy4Vo5/4VsRDQQXHsEya6xQ=
