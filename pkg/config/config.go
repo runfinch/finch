@@ -99,7 +99,7 @@ func writeConfig(cfg *Finch, fs afero.Fs, path string) error {
 		return fmt.Errorf("failed to write to marshal config: %w", err)
 	}
 
-	if err := afero.WriteFile(fs, path, cfgBuf, 0o755); err != nil {
+	if err := afero.WriteFile(fs, path, cfgBuf, 0o600); err != nil {
 		return fmt.Errorf("failed to write to config file: %w", err)
 	}
 
@@ -113,7 +113,7 @@ func ensureConfigDir(fs afero.Fs, path string, log flog.Logger) error {
 	}
 	if !dirExists {
 		log.Infof("%q directory doesn't exist, attempting to create it", path)
-		if err := fs.Mkdir(path, 0o755); err != nil {
+		if err := fs.Mkdir(path, 0o700); err != nil {
 			return fmt.Errorf("failed to create config directory: %w", err)
 		}
 	}

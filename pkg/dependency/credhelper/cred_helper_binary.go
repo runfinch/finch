@@ -86,7 +86,7 @@ func updateConfigFile(bin *credhelperbin) error {
 
 		defer fileRead.Close() //nolint:errcheck // closing the file
 		if strings.Compare(credsStore, binCfgName) != 0 {
-			file, err := bin.fs.OpenFile(cfgPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
+			file, err := bin.fs.OpenFile(cfgPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o600)
 			if err != nil {
 				return err
 			}
@@ -181,7 +181,7 @@ func (bin *credhelperbin) Install() error {
 		return fmt.Errorf("error installing binary %s, err: %w", bin.hcfg.binaryName, err)
 	}
 
-	err = bin.fs.Chmod(bin.fullInstallPath(), 0o755)
+	err = bin.fs.Chmod(bin.fullInstallPath(), 0o700)
 	if err != nil {
 		return err
 	}
