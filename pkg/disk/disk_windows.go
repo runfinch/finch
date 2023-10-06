@@ -30,7 +30,7 @@ func (m *userDataDiskManager) EnsureUserDataDisk() error {
 	m.logger.Debugf("disksDir: %s", disksDir)
 
 	if _, err := m.fs.Stat(disksDir); errors.Is(err, fs.ErrNotExist) {
-		if err := m.fs.MkdirAll(disksDir, 0o755); err != nil {
+		if err := m.fs.MkdirAll(disksDir, 0o700); err != nil {
 			return fmt.Errorf("could not create persistent disk directory: %w", err)
 		}
 	}
