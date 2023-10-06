@@ -10,6 +10,6 @@ import (
 	"github.com/runfinch/finch/pkg/fmemory"
 )
 
-func validate(cfg *Finch, log flog.Logger, systemDeps LoadSystemDeps, mem fmemory.Memory) error {
+func validate(_ *Finch, _ flog.Logger, _ LoadSystemDeps, _ fmemory.Memory) error {
 	return nil
 }

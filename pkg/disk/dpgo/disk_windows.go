@@ -46,8 +46,8 @@ func newCreateDiskCommand(ecc *command.ExecCmdCreator, logger flog.Logger, stdOu
 	createDiskCommand.Flags().StringP("path", "p", "", "the full path to the disk")
 	createDiskCommand.Flags().Int64P("size", "s", 0, "the size of the disk")
 
-	createDiskCommand.MarkFlagRequired("path")
-	createDiskCommand.MarkFlagRequired("size")
+	_ = createDiskCommand.MarkFlagRequired("path")
+	_ = createDiskCommand.MarkFlagRequired("size")
 
 	return createDiskCommand
 }
@@ -75,10 +75,8 @@ func (cd *createDiskAction) run() error {
 	if err != nil {
 		return err
 	}
-	if err := cd.createDisk(path, size); err != nil {
-		return err
-	}
-	return nil
+
+	return cd.createDisk(path, size)
 }
 
 //go:embed createDisk.TEMPLATE.txt
@@ -117,7 +115,9 @@ func (cd *createDiskAction) createDisk(path string, size int64) error {
 	go func() {
 		cd.logger.Debugf("writing to diskpart stdin: %s", tmpl.String())
 		fmt.Fprintf(dpStdin, "%s\r\n", tmpl.String())
-		dpStdin.Close()
+		if err := dpStdin.Close(); err != nil {
+			cd.logger.Debugf("failed to close diskpart stdin: %w", err)
+		}
 	}()
 
 	cd.logger.Debugln("waiting for diskpart to exit")

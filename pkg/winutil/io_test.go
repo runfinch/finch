@@ -14,6 +14,8 @@ import (
 )
 
 func TestFromUTF16le(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name         string
 		r            io.Reader
@@ -49,6 +51,7 @@ func TestFromUTF16le(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			tc.postRunCheck(t, FromUTF16le(tc.r))
 		})
 	}
@@ -88,9 +91,9 @@ func TestFromUTF16leToString(t *testing.T) {
 		},
 		{
 			name:         "error reading buffer",
-			r:            NewErrorReader("read error!"),
+			r:            newErrorReader("read error"),
 			postRunCheck: func(t *testing.T, str string) {},
-			wantErr:      errors.New("read error!"),
+			wantErr:      errors.New("read error"),
 		},
 	}
 
@@ -110,10 +113,10 @@ type errReader struct {
 	errMsg string
 }
 
-func (er errReader) Read(p []byte) (n int, err error) {
+func (er errReader) Read(_ []byte) (n int, err error) {
 	return 0, errors.New(er.errMsg)
 }
 
-func NewErrorReader(errMsg string) errReader {
+func newErrorReader(errMsg string) errReader {
 	return errReader{errMsg: errMsg}
 }
