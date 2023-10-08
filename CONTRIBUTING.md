@@ -298,7 +298,7 @@ To save time while developing e2e tests, use the [`Focus`](https://onsi.github.i
 
 ### Go File Naming
 
-Keep file names to one word if possible (e.g., avoid stuttering with package name: prefer `thing/factory.go` over `thing/thing_factory.go`). If there have to be more than one words, use underscores as separators. Do not use hyphens or camelCase.
+Keep file names to one word if possible (e.g., avoid stuttering with package name: prefer `thing/factory.go` over `thing/thing_factory.go`). If there has to be more than one word, use underscores as separators. Do not use hyphens or camelCase.
 
 Rationale: It's more readable (i.e., `complicateddistirbutedsystem` vs `complicated_distributed_system`). Furthermore, the practical reason to avoid underscores as separators is that the suffix may later become either an OS or an architecture, but we think that the potential risk is outweighed by the readability gain.
 
