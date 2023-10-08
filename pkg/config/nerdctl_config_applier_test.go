@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/xorcare/pointer"
 
 	"github.com/runfinch/finch/pkg/mocks"
 )
@@ -128,7 +129,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.config/nerdctl/nerdctl.toml")
 				require.NoError(t, err)
-				assert.Equal(t, []byte(`namespace = "finch"`+"\n"), fileBytes)
+				assert.Equal(t, []byte(`host_gateway_ip = "192.168.31.1"`+"\n"+`namespace = "finch"`+"\n"), fileBytes)
 			},
 			want: nil,
 		},
@@ -140,7 +141,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/etc/nerdctl/nerdctl.toml")
 				require.NoError(t, err)
-				assert.Equal(t, []byte(`namespace = "finch"`+"\n"), fileBytes)
+				assert.Equal(t, []byte(`host_gateway_ip = "192.168.31.1"`+"\n"+`namespace = "finch"`+"\n"), fileBytes)
 			},
 			want: nil,
 		},
@@ -156,7 +157,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.config/nerdctl/nerdctl.toml")
 				require.NoError(t, err)
-				assert.Equal(t, []byte(`namespace = "finch"`+"\n"), fileBytes)
+				assert.Equal(t, []byte(`host_gateway_ip = "192.168.31.1"`+"\n"+`namespace = "finch"`+"\n"), fileBytes)
 			},
 			want: nil,
 		},
@@ -179,13 +180,20 @@ func Test_updateNerdctlConfig(t *testing.T) {
 
 	for _, tc := range testCases {
 		tc := tc
+		fc := &Finch{
+			CPUs: pointer.Int(4),
+			Memory: pointer.String("4GiB"),
+			VMType: pointer.String("qemu"),
+			Rosetta: pointer.Bool(false),
+			HostGatewayIP: pointer.String("192.168.31.1"),
+		}
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
 			fs := afero.NewMemMapFs()
 
 			tc.mockSvc(t, fs)
-			got := updateNerdctlConfig(fs, tc.user, tc.rootless)
+			got := updateNerdctlConfig(fc, fs, tc.user, tc.rootless)
 			require.Equal(t, tc.want, got)
 
 			tc.postRunCheck(t, fs)
@@ -243,7 +251,7 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			d := mocks.NewDialer(ctrl)
 
 			tc.mockSvc(t, fs, d)
-			got := NewNerdctlApplier(d, fs, tc.path, tc.hostUser).Apply(tc.remoteAddr)
+			got := NewNerdctlApplier(nil, d, fs, tc.path, tc.hostUser).Apply(tc.remoteAddr)
 
 			assert.Equal(t, tc.want, got)
 		})
