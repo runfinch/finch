@@ -23,7 +23,7 @@ var testStdoutRs = []command.Replacement{
 func TestNerdctlCommandCreator_create(t *testing.T) {
 	t.Parallel()
 
-	cmd := newNerdctlCommandCreator(nil, nil, nil, nil).create("build", "build description")
+	cmd := newNerdctlCommandCreator(nil, nil, nil, nil, nil).create("build", "build description")
 	assert.Equal(t, cmd.Name(), "build")
 	assert.Equal(t, cmd.DisableFlagParsing, true)
 }
@@ -83,10 +83,11 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
+			ecc := mocks.NewCommandCreator(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			assert.True(t, newNerdctlCommand(lcc, ncsd, logger, nil).shouldReplaceForHelp(tc.cmdName, tc.args))
+			assert.True(t, newNerdctlCommand(ecc, lcc, ncsd, logger, nil).shouldReplaceForHelp(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -99,7 +100,8 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 		cmdName string
 		args    []string
 		wantErr error
-		mockSvc func(*testing.T, *mocks.LimaCmdCreator, *mocks.NerdctlCommandSystemDeps, *mocks.Logger, *gomock.Controller, afero.Fs)
+		mockSvc func(*testing.T, *mocks.CommandCreator, *mocks.LimaCmdCreator, *mocks.NerdctlCommandSystemDeps, *mocks.Logger,
+			*gomock.Controller, afero.Fs)
 	}{
 		{
 			name:    "stopped VM",
@@ -109,6 +111,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
 				t *testing.T,
+				ecc *mocks.CommandCreator,
 				lcc *mocks.LimaCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -130,6 +133,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
 				t *testing.T,
+				ecc *mocks.CommandCreator,
 				lcc *mocks.LimaCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -149,6 +153,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			wantErr: errors.New("unrecognized system status"),
 			mockSvc: func(
 				t *testing.T,
+				ecc *mocks.CommandCreator,
 				lcc *mocks.LimaCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -168,6 +173,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			wantErr: errors.New("get status error"),
 			mockSvc: func(
 				t *testing.T,
+				ecc *mocks.CommandCreator,
 				lcc *mocks.LimaCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -186,12 +192,13 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
+			ecc := mocks.NewCommandCreator(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
-			tc.mockSvc(t, lcc, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
+			tc.mockSvc(t, ecc, lcc, ncsd, logger, ctrl, fs)
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ecc, lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
 		})
 	}
 }
