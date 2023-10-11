@@ -65,7 +65,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(lcc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(lcc, ncsd, logger, nil).runAdapter(tc.cmd, tc.args))
+			assert.NoError(t, newNerdctlCommand(nil, lcc, ncsd, logger, nil).runAdapter(tc.cmd, tc.args))
 		})
 	}
 }
@@ -622,7 +622,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, lcc, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(nil, lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
 		})
 	}
 }

@@ -9,9 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	dockerops "github.com/docker/docker/opts"
-	"github.com/lima-vm/lima/pkg/networks"
-
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
@@ -37,6 +34,7 @@ type NerdctlCommandSystemDeps interface {
 }
 
 type nerdctlCommandCreator struct {
+	ecc        command.Creator
 	creator    command.LimaCmdCreator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
@@ -49,12 +47,13 @@ type (
 )
 
 func newNerdctlCommandCreator(
+	ecc command.Creator,
 	creator command.LimaCmdCreator,
 	systemDeps NerdctlCommandSystemDeps,
 	logger flog.Logger,
 	fs afero.Fs,
 ) *nerdctlCommandCreator {
-	return &nerdctlCommandCreator{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
+	return &nerdctlCommandCreator{ecc: ecc, creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
 }
 
 func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.Command {
@@ -65,21 +64,24 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 		// the args passed to nerdctlCommand.run will be empty because
 		// cobra will try to parse `-d alpine` as if alpine is the value of the `-d` flag.
 		DisableFlagParsing: true,
-		RunE:               newNerdctlCommand(ncc.creator, ncc.systemDeps, ncc.logger, ncc.fs).runAdapter,
+		RunE:               newNerdctlCommand(ncc.ecc, ncc.creator, ncc.systemDeps, ncc.logger, ncc.fs).runAdapter,
 	}
 
 	return command
 }
 
 type nerdctlCommand struct {
+	ecc        command.Creator
 	creator    command.LimaCmdCreator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
 	fs         afero.Fs
 }
 
-func newNerdctlCommand(creator command.LimaCmdCreator, systemDeps NerdctlCommandSystemDeps, logger flog.Logger, fs afero.Fs) *nerdctlCommand {
-	return &nerdctlCommand{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
+func newNerdctlCommand(ecc command.Creator, creator command.LimaCmdCreator, systemDeps NerdctlCommandSystemDeps,
+	logger flog.Logger, fs afero.Fs,
+) *nerdctlCommand {
+	return &nerdctlCommand{ecc: ecc, creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
 }
 
 func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
@@ -166,9 +168,15 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		case strings.HasPrefix(arg, "--add-host"):
 			switch arg {
 			case "--add-host":
-				args[i+1] = resolveIP(args[i+1], nc.logger)
+				args[i+1], err = resolveIP(args[i+1], nc.logger, nc.ecc)
+				if err != nil {
+					return err
+				}
 			default:
-				resolvedIP := resolveIP(arg[11:], nc.logger)
+				resolvedIP, err := resolveIP(arg[11:], nc.logger, nc.ecc)
+				if err != nil {
+					return err
+				}
 				arg = fmt.Sprintf("%s%s", arg[0:11], resolvedIP)
 			}
 			nerdctlArgs = append(nerdctlArgs, arg)
@@ -358,19 +366,6 @@ func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 s
 		return skip, []string{}, err
 	}
 	return skip, envs, nil
-}
-
-func resolveIP(host string, logger flog.Logger) string {
-	parts := strings.SplitN(host, ":", 2)
-	// If the IP Address is a string called "host-gateway", replace this value with the IP address that can be used to
-	// access host from the containers.
-	// TODO: make the host gateway ip configurable.
-	if parts[1] == dockerops.HostGatewayName {
-		resolvedIP := networks.SlirpGateway
-		logger.Debugf(`Resolving special IP "host-gateway" to %q for host %q`, resolvedIP, parts[0])
-		return fmt.Sprintf("%s:%s", parts[0], resolvedIP)
-	}
-	return host
 }
 
 var nerdctlCmds = map[string]string{
