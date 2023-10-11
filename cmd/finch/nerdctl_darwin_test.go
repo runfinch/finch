@@ -284,6 +284,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				t *testing.T,
+				ecc *mocks.CommandCreator,
 				lcc *mocks.LimaCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,

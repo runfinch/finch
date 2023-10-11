@@ -105,7 +105,8 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 
 	// Unmarshall with custom unmarshaler for Disk:
 	// https://github.com/lima-vm/lima/blob/v0.17.2/pkg/limayaml/load.go#L16
-	if err := goyaml.UnmarshalWithOptions(b, &limaCfg, goyaml.DisallowDuplicateKey(), goyaml.CustomUnmarshaler[limayaml.Disk](unmarshalDisk)); err != nil {
+	if err := goyaml.UnmarshalWithOptions(b, &limaCfg, goyaml.DisallowDuplicateKey(),
+		goyaml.CustomUnmarshaler[limayaml.Disk](unmarshalDisk)); err != nil {
 		return fmt.Errorf("failed to unmarshal the lima config file: %w", err)
 	}
 
