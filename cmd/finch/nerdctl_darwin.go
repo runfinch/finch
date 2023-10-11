@@ -22,7 +22,7 @@ var argHandlerMap = map[string]map[string]argHandler{}
 
 var commandHandlerMap = map[string]commandHandler{}
 
-func resolveIP(host string, logger flog.Logger, ecc command.Creator) (string, error) {
+func resolveIP(host string, logger flog.Logger, _ command.Creator) (string, error) {
 	parts := strings.SplitN(host, ":", 2)
 	// If the IP Address is a string called "host-gateway", replace this value with the IP address that can be used to
 	// access host from the containers.
