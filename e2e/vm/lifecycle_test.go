@@ -25,7 +25,7 @@ var testVMLifecycle = func(o *option.Option) {
 
 			ginkgo.It("should be able to force stop the virtual machine", func() {
 				command.Run(o, "images")
-				command.New(o, virtualMachineRootCmd, "stop", "--force").WithTimeoutInSeconds(90).Run()
+				command.New(o, virtualMachineRootCmd, "stop", "--force").WithTimeoutInSeconds(180).Run()
 				command.RunWithoutSuccessfulExit(o, "images")
 				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
 			})

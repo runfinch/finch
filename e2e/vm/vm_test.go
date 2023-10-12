@@ -46,8 +46,8 @@ var resetVM = func(o *option.Option, installed bool) string {
 	ginkgo.DeferCleanup(func() {
 		writeFile(finchConfigFilePath, origFinchCfg)
 		writeFile(limaConfigFilePath, origLimaCfg)
-		command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(180).Run()
-		command.New(o, virtualMachineRootCmd, "remove").WithTimeoutInSeconds(180).Run()
+		command.New(o, virtualMachineRootCmd, "stop", "-f").WithTimeoutInSeconds(180).Run()
+		command.New(o, virtualMachineRootCmd, "remove", "-f").WithTimeoutInSeconds(180).Run()
 		if runtime.GOOS == "windows" {
 			gomega.Expect(exec.Command("wsl", "--shutdown").Run()).Should(gomega.BeNil())
 		}
