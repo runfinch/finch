@@ -4,6 +4,9 @@
 
 package vm
 
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
-var finchConfigFilePath = os.Getenv("LOCALAPPDATA") + "/.finch/finch.yaml"
+var finchConfigFilePath = filepath.Join(os.Getenv("LOCALAPPDATA"), ".finch", "finch.yaml")
