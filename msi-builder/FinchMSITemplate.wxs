@@ -40,7 +40,30 @@
           <Directory Id="lima63339460" Name="lima">
             <Directory Id="bineb6dcfb9" Name="bin">
               <Component Id="Component_Lima" Guid="{CFC5E6F4-FEEC-4470-B7B5-5F3E9A5E483C}" Win64="yes">
+                <File Id="cygpath_exe" Source="__SOURCE__\lima\bin\cygpath.exe" />
+                <File Id="gzip_exe" Source="__SOURCE__\lima\bin\gzip.exe" />
                 <File Id="limactl_exe" Source="__SOURCE__\lima\bin\limactl.exe" />
+                <File Id="msys_2_0_dll" Source="__SOURCE__\lima\bin\msys-2.0.dll" />
+                <File Id="msys_asn1_8_dll" Source="__SOURCE__\lima\bin\msys-asn1-8.dll" />
+                <File Id="msys_com_err_1_dll" Source="__SOURCE__\lima\bin\msys-com_err-1.dll" />
+                <File Id="msys_crypt_0_dll" Source="__SOURCE__\lima\bin\msys-crypt-0.dll" />
+                <File Id="msys_crypto_3_dll" Source="__SOURCE__\lima\bin\msys-crypto-3.dll" />
+                <File Id="msys_gcc_s_seh_1_dll" Source="__SOURCE__\lima\bin\msys-gcc_s-seh-1.dll" />
+                <File Id="msys_gssapi_3_dll" Source="__SOURCE__\lima\bin\msys-gssapi-3.dll" />
+                <File Id="msys_hcrypto_4_dll" Source="__SOURCE__\lima\bin\msys-hcrypto-4.dll" />
+                <File Id="msys_heimbase_1_dll" Source="__SOURCE__\lima\bin\msys-heimbase-1.dll" />
+                <File Id="msys_heimntlm_0_dll" Source="__SOURCE__\lima\bin\msys-heimntlm-0.dll" />
+                <File Id="msys_hx509_5_dll" Source="__SOURCE__\lima\bin\msys-hx509-5.dll" />
+                <File Id="msys_iconv_2_dll" Source="__SOURCE__\lima\bin\msys-iconv-2.dll" />
+                <File Id="msys_intl_8_dll" Source="__SOURCE__\lima\bin\msys-intl-8.dll" />
+                <File Id="msys_krb5_26_dll" Source="__SOURCE__\lima\bin\msys-krb5-26.dll" />
+                <File Id="msys_roken_18_dll" Source="__SOURCE__\lima\bin\msys-roken-18.dll" />
+                <File Id="msys_sqlite3_0_dll" Source="__SOURCE__\lima\bin\msys-sqlite3-0.dll" />
+                <File Id="msys_wind_0_dll" Source="__SOURCE__\lima\bin\msys-wind-0.dll" />
+                <File Id="msys_z_dll" Source="__SOURCE__\lima\bin\msys-z.dll" />
+                <File Id="ssh_keygen_exe" Source="__SOURCE__\lima\bin\ssh-keygen.exe" />
+                <File Id="ssh_exe" Source="__SOURCE__\lima\bin\ssh.exe" />
+                <File Id="tar_exe" Source="__SOURCE__\lima\bin\tar.exe" />
               </Component>
             </Directory>
             <Directory Id="data76b01c5f" Name="data">
