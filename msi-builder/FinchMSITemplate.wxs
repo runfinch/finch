@@ -1,0 +1,102 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:env="http://schemas.microsoft.com/wix/EnvironmentExtension">
+  <Product Id="*" Name="Finch" Version="__VERSION__" Manufacturer="Finch" Language="1033" UpgradeCode="{CEFD5EBC-C1EA-45C5-B98B-7D709952BC98}">
+    <Package InstallerVersion="200" Compressed="yes" Platform="x64" InstallScope="perMachine" />
+    <Media Id="1" Cabinet="finch.cab" EmbedCab="yes" />
+    <Upgrade Id="{CEFD5EBC-C1EA-45C5-B98B-7D709952BC98}">
+      <UpgradeVersion OnlyDetect="no" Property="OLD_VERSIONS_FOUND" Minimum="0.0.0" Maximum="__VERSION__" IncludeMinimum="yes" IncludeMaximum="no" />
+      <UpgradeVersion OnlyDetect="yes" Property="NEWER_VERSION_FOUND" Minimum="__VERSION__" IncludeMinimum="no" />
+    </Upgrade>
+    <Condition Message="A newer version of this software is already installed.">
+      NOT NEWER_VERSION_FOUND
+    </Condition>
+    <Feature Id="ProductFeature" Title="Finch" Level="1">
+      <ComponentGroupRef Id="FinchComponents" />
+    </Feature>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="Finch">
+          <Component Id="Component_Resource" Guid="36bd6135-0759-40c7-bef7-1c7fa0189a42" Win64="yes">
+            <File Id="config_yaml" Source="__SOURCE__\config.yaml" />
+            <File Id="finch_ico" Source="__SOURCE__\finch.ico" />
+            <File Id="LICENSE_rtf" Source="__SOURCE__\LICENSE.rtf" />
+            <File Id="postinstall_bat" Source="__SOURCE__\postinstall.bat" />
+            <File Id="uninstall_bat" Source="__SOURCE__\uninstall.bat" />
+          </Component>
+          <Directory Id="bincecd86bf" Name="bin">
+            <Component Id="Component_Finch" Guid="c0ced166-84de-4bd8-96ab-45db96fb20cf" Win64="yes">
+              <File Id="dpgo_exe" Source="__SOURCE__\bin\dpgo.exe" />
+              <File Id="finch_exe" Source="__SOURCE__\bin\finch.exe" KeyPath="yes">
+                <Shortcut
+                  Id="startMenuShortcut"
+                  Directory="ProgramMenuFolder"
+                  Name="Finch"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Advertise="yes"
+                  Icon="finch.ico" />
+              </File>
+              <Environment Id="UpdatePath" Name="PATH" Value="[INSTALLFOLDER]bin" Permanent="no" Part="last" Action="set" System="yes" />
+            </Component>
+          </Directory>
+          <Directory Id="lima63339460" Name="lima">
+            <Directory Id="bineb6dcfb9" Name="bin">
+              <Component Id="Component_Lima" Guid="cfc5e6f4-feec-4470-b7b5-5f3e9a5e483c" Win64="yes">
+                <File Id="limactl_exe" Source="__SOURCE__\lima\bin\limactl.exe" />
+              </Component>
+            </Directory>
+            <Directory Id="data76b01c5f" Name="data">
+              <Directory Id="_configb09d75e9" Name="_config">
+                <Component Id="Component_Data" Guid="d76243e1-c60f-4a7b-b3b2-3b3ae295b77e" Win64="yes">
+                  <File Id="networks_yaml" Source="__SOURCE__\lima\data\_config\networks.yaml" />
+                </Component>
+              </Directory>
+            </Directory>
+            <Directory Id="share49fac817" Name="share">
+              <Directory Id="lima314b6ebf" Name="lima">
+                <Component Id="Component_Share" Guid="6859323f-b11b-455b-8ac7-21eebe8e3f71" Win64="yes">
+                  <File Id="lima_guestagent_Linux_x86_64" Source="__SOURCE__\lima\share\lima\lima-guestagent.Linux-x86_64" />
+                </Component>
+              </Directory>
+            </Directory>
+          </Directory>
+          <Directory Id="osfa5c59e6" Name="os">
+            <Component Id="Component_Roofts" Guid="1616c052-615c-4edb-aabf-db76176fe0ee" Win64="yes">
+              <File Id="finch_rootfs_production_amd64_tar_gz" Source="__SOURCE__\os\__ROOTFS__" />
+              <File Id="finch_yaml" Source="__SOURCE__\os\finch.yaml" />
+            </Component>
+          </Directory>
+
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder" />
+    </Directory>
+    <ComponentGroup Id="FinchComponents" Directory="INSTALLFOLDER">
+      <ComponentRef Id="Component_Resource" />
+      <ComponentRef Id="Component_Finch" />
+      <ComponentRef Id="Component_Lima" />
+      <ComponentRef Id="Component_Data" />
+      <ComponentRef Id="Component_Share" />
+      <ComponentRef Id="Component_Roofts" />
+    </ComponentGroup>
+    <CustomAction Id="RunPostInstallScript" FileKey="postinstall_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Return="check" Execute="deferred" Impersonate="no" />
+    <CustomAction Id="RunUninstallScript" FileKey="uninstall_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Execute="deferred" Return="ignore" Impersonate="no" />
+    <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallInitialize" />
+      <Custom Action="RunPostInstallScript" After="InstallFiles">NOT Installed</Custom>
+      <Custom Action="RunUninstallScript" After="InstallInitialize">REMOVE="ALL"</Custom> 
+    </InstallExecuteSequence>
+    <Property Id="WIXUI_INSTALLDIR" Value="ProgramFiles64Folder" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+    <UIRef Id="WixUI_InstallDir" />
+    <WixVariable Id="WixUILicenseRtf" Value="__SOURCE__\LICENSE.rtf" />
+    <UI>
+      <UIRef Id="WixUI_Common" />
+      <DialogRef Id="LicenseAgreementDlg" />
+      <DialogRef Id="VerifyReadyDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ExitDialog" />
+      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+    </UI>
+    <Icon Id="finch.ico" SourceFile="__SOURCE__\finch.ico" />
+  </Product>
+</Wix>
