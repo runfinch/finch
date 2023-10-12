@@ -64,7 +64,6 @@
               <File Id="finch_yaml" Source="__SOURCE__\os\finch.yaml" />
             </Component>
           </Directory>
-
         </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder" />
