@@ -4,14 +4,16 @@ name: CI
 on:
   push:
     branches:
-      - main
+      # TODO: revert to main on merge of windev branch with main
+      - windev
     paths-ignore:
       - '**.md'
       - 'contrib/**'
       - '.github/CODEOWNERS'
   pull_request:
     branches:
-      - main
+      # TODO: revert to main on merge of windev branch with main
+      - windev
     paths-ignore:
       - '**.md'
       - 'contrib/**'
@@ -26,7 +28,10 @@ concurrency:
 
 jobs:
   gen-code-no-diff:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
@@ -36,7 +41,11 @@ jobs:
       - run: make gen-code
       - run: git diff --exit-code
   unit-tests:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
@@ -48,18 +57,18 @@ jobs:
       - run: make test-unit
   # It's recommended to run golangci-lint in a job separate from other jobs (go test, etc) because different jobs run in parallel.
   go-linter:
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest]
     name: lint
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
         with:
           go-version-file: go.mod
-          cache: true
-      - name: golangci-lint
+          cache: false # caching can result in tar errors that files already exist
+      - name: set GOOS env to windows
+        run: |
+          echo "GOOS=windows" >> $GITHUB_ENV
+      - name: golangci-lint - windows
         uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3.7.0
         with:
           # Pin the version in case all the builds start to fail at the same time.
@@ -67,6 +76,17 @@ jobs:
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
           version: v1.53.3
           args: --fix=false --timeout=5m
+      - name: set GOOS env to darwin
+        run: |
+          echo "GOOS=darwin" >> $GITHUB_ENV
+      - name: golangci-lint - darwin
+        uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3.7.0
+        with:
+          # Pin the version in case all the builds start to fail at the same time.
+          # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
+          # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
+          version: v1.53.3
+          args: --fix=false --timeout=5m --skip-dirs="(^|/)deps($|/)"
   shellcheck:
     name: ShellCheck
     runs-on: ubuntu-latest
@@ -115,7 +135,7 @@ jobs:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0
           persist-credentials: false
-          submodules: true
+          submodules: recursive
       - name: Set output variables
         id: vars
         run: |
@@ -153,6 +173,67 @@ jobs:
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e
         shell: zsh {0}
+  windows-e2e-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          [
+            [self-hosted, windows, amd64, test],
+          ]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 180
+    steps:
+      - name: Configure git CRLF settings
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v4
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - name: Set output variables
+        id: vars
+        run: |
+          $has_creds="${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}"
+          echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        if: env.has_creds == 'true'
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: credhelper-test
+          aws-region: ${{ secrets.REGION }}
+      - name: Remove Finch VM
+        run: |
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+      - name: Clean up previous files
+        run: |
+          Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
+          make clean
+          cd deps/finch-core && make clean
+      - name: Build project
+        run: |
+          make
+      - name: Run e2e tests
+        run: |
+          # set path to use newer ssh version
+          $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
+          $env:Path = $newPath
+
+          # set networking config option to allow for VM/container -> host communication
+          echo "[experimental]`nnetworkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
+          
+          git status
+          git clean -f -d
+          make test-e2e
   mdlint:
     runs-on: ubuntu-latest
     steps:

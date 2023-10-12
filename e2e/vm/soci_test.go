@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/onsi/ginkgo/v2"
@@ -28,7 +29,7 @@ const (
 var testSoci = func(o *option.Option, installed bool) {
 	ginkgo.Describe("SOCI", func() {
 		var limactlO *option.Option
-		var fpath, realFinchPath, limactlPath, limaHomePathEnv, wd string
+		var fpath, realFinchPath, limactlPath, limaHomePathEnv, wd, vmType string
 		var err error
 		var port int
 
@@ -52,13 +53,18 @@ var testSoci = func(o *option.Option, installed bool) {
 			limactlO, err = option.New([]string{limactlPath},
 				option.Env([]string{limaHomePathEnv}))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			if runtime.GOOS == "windows" {
+				vmType = "wsl2"
+			} else {
+				vmType = "qemu"
+			}
 		})
 
 		ginkgo.It("finch pull should have same mounts as nerdctl pull with SOCI", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
-			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
-				"- soci\nvmType: qemu\nrosetta: false"))
+			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
+				"- soci\nvmType: %s\nrosetta: false", vmType)))
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			command.New(o, "pull", "--snapshotter=soci", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
@@ -73,8 +79,8 @@ var testSoci = func(o *option.Option, installed bool) {
 		ginkgo.It("finch run should have same mounts as nerdctl run with SOCI", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
-			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
-				"- soci\nvmType: qemu\nrosetta: false"))
+			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
+				"- soci\nvmType: %s\nrosetta: false", vmType)))
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			command.New(o, "run", "--snapshotter=soci", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
@@ -88,8 +94,8 @@ var testSoci = func(o *option.Option, installed bool) {
 		ginkgo.It("finch push should work", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
-			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
-				"- soci\nvmType: qemu\nrosetta: false"))
+			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
+				"- soci\nvmType: %s\nrosetta: false", vmType)))
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			port = fnet.GetFreePort()
 			command.New(o, "run", "-dp", fmt.Sprintf("%d:5000", port), "--name", "registry", registryImage).

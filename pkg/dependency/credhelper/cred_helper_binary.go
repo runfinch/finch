@@ -27,7 +27,6 @@ type credhelperbin struct {
 	cmdCreator command.Creator
 	l          flog.Logger
 	helper     string
-	user       string
 	hcfg       helperConfig
 }
 
