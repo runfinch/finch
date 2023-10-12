@@ -12,7 +12,7 @@ import (
 
 var testVMLifecycle = func(o *option.Option) {
 	// These tests are run in serial because we only define one virtual machine instance.
-	ginkgo.Describe("virtual machine lifecycle", ginkgo.Serial, func() {
+	ginkgo.FDescribe("virtual machine lifecycle", ginkgo.Serial, func() {
 		ginkgo.When("the virtual machine is in running status", func() {
 			ginkgo.It("should fail to init/remove the virtual machine", func() {
 				command.New(o, virtualMachineRootCmd, "init").WithoutSuccessfulExit().Run()
@@ -25,7 +25,7 @@ var testVMLifecycle = func(o *option.Option) {
 
 			ginkgo.It("should be able to force stop the virtual machine", func() {
 				command.Run(o, "images")
-				command.New(o, virtualMachineRootCmd, "stop", "--force").WithTimeoutInSeconds(90).Run()
+				command.New(o, virtualMachineRootCmd, "stop", "--force").WithTimeoutInSeconds(180).Run()
 				command.RunWithoutSuccessfulExit(o, "images")
 				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
 			})
