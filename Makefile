@@ -336,15 +336,15 @@ test-e2e: test-e2e-vm-serial
 
 .PHONY: test-e2e-vm-serial
 test-e2e-vm-serial: test-e2e-container
-	go test -ldflags $(LDFLAGS) -timeout 45m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
 test-e2e-container:
-	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/container -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
 test-e2e-vm:
-	go test -ldflags $(LDFLAGS) -timeout 45m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
 .PHONY: test-benchmark
 test-benchmark:
@@ -367,8 +367,12 @@ gen-code: GOBIN = $(CURDIR)/tools_bin
 gen-code:
 	GOBIN=$(GOBIN) go install github.com/golang/mock/mockgen
 	GOBIN=$(GOBIN) go install golang.org/x/tools/cmd/stringer
-    # Make sure that we are using the tool binaries which are just built to generate code.
+	# Make sure that we are using the tool binaries which are just built to generate code.
+ifeq ($(GOOS),windows)
+	powershell ./scripts/gen-code-windows.ps1
+else
 	PATH=$(GOBIN):$(PATH) go generate ./...
+endif
 
 .PHONY: lint
 # To run golangci-lint locally: https://golangci-lint.run/usage/install/#local-installation
