@@ -12,7 +12,7 @@ import (
 
 var testVMLifecycle = func(o *option.Option) {
 	// These tests are run in serial because we only define one virtual machine instance.
-	ginkgo.FDescribe("virtual machine lifecycle", ginkgo.Serial, func() {
+	ginkgo.Describe("virtual machine lifecycle", ginkgo.Serial, func() {
 		ginkgo.When("the virtual machine is in running status", func() {
 			ginkgo.It("should fail to init/remove the virtual machine", func() {
 				command.New(o, virtualMachineRootCmd, "init").WithoutSuccessfulExit().Run()
