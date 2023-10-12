@@ -50,6 +50,7 @@ var testFinchConfigFile = func(o *option.Option) {
 			for command.StdoutStr(o, "inspect", "-f", "{{.State.Running}}", containerID) != "true" {
 				time.Sleep(1 * time.Second)
 			}
+			time.Sleep(10 * time.Second)
 			registry := fmt.Sprintf(`localhost:%d`, port)
 			command.Run(o, "login", registry, "-u", "testUser", "-p", "testPassword")
 
