@@ -141,14 +141,24 @@ func (lcc *limaCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, arg
 		path = fmt.Sprintf("%s:%s", lcc.binPath, path)
 		pathEnv = fmt.Sprintf("%s=%s", envKeyPath, path)
 	}
-	pathIdx := slices.IndexFunc(lcc.systemDeps.Environ(), func(pathItem string) bool {
-		return strings.HasPrefix(pathItem, fmt.Sprintf("%s=", envKeyPath))
-	})
-	newPathEnv := slices.Replace(lcc.systemDeps.Environ(), pathIdx, pathIdx+1, pathEnv)
-	newPathEnv = append(newPathEnv, limaHomeEnv)
+
+	newPathEnv := replaceOrAppend(lcc.systemDeps.Environ(), envKeyLimaHome, limaHomeEnv)
+	newPathEnv = replaceOrAppend(newPathEnv, envKeyPath, pathEnv)
+
 	cmd.SetEnv(newPathEnv)
 	cmd.SetStdin(stdin)
 	cmd.SetStdout(stdout)
 	cmd.SetStderr(stderr)
 	return cmd
+}
+
+func replaceOrAppend(orig []string, varName, newVar string) []string {
+	envIdx := slices.IndexFunc(orig, func(envVar string) bool {
+		return strings.HasPrefix(envVar, fmt.Sprintf("%s=", varName))
+	})
+
+	if envIdx != -1 {
+		return slices.Replace(orig, envIdx, envIdx+1, newVar)
+	}
+	return append(orig, newVar)
 }

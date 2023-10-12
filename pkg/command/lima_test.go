@@ -27,8 +27,6 @@ const (
 	envKeyLimaHome   = "LIMA_HOME"
 	mockQemuBinPath  = "/lima/bin"
 	mockSystemPath   = "/usr/bin"
-	envKeyPath       = "PATH"
-	finalPath        = mockQemuBinPath + ":" + mockSystemPath
 )
 
 var mockArgs = []string{"shell", "finch"}
