@@ -44,7 +44,7 @@ func TestVM(t *testing.T) {
 
 	ginkgo.Describe("", func() {
 		testVMLifecycle(o)
-		testAdditionalDisk(o)
+		testAdditionalDisk(o, *e2e.Installed)
 		testConfig(o, *e2e.Installed)
 		testFinchConfigFile(o)
 		testVersion(o)

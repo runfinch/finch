@@ -22,8 +22,6 @@ import (
 	"github.com/runfinch/finch/e2e"
 )
 
-var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
-
 const defaultLimaConfigFilePath = "../../_output/lima/data/_config/override.yaml"
 
 func readFile(filePath string) []byte {
