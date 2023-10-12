@@ -8,5 +8,5 @@ package command_test
 
 const (
 	envKeyPath = "Path"
-	finalPath  = mockQemuBinPath + `\:` + mockSystemPath
+	finalPath  = mockQemuBinPath + `\;` + mockSystemPath
 )
