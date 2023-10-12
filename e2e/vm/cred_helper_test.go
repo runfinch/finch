@@ -26,11 +26,11 @@ var testCredHelper = func(o *option.Option, installed bool, registry string) {
 			}
 		})
 		ginkgo.It("should pull from container registry", func() {
-			resetVM(o, installed)
-			resetDisks(o, installed)
 			if registry == "" {
 				ginkgo.Skip("No Provided Container Registry Url")
 			}
+			resetVM(o, installed)
+			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\ncreds_helpers:\n    "+
 				"- ecr-login\nvmType: %s\nrosetta: true", vmType)))
 			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
