@@ -15,7 +15,7 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER" Name="Finch">
-          <Component Id="Component_Resource" Guid="36bd6135-0759-40c7-bef7-1c7fa0189a42" Win64="yes">
+          <Component Id="Component_Resource" Guid="{36BD6135-0759-40C7-BEF7-1C7FA0189A42}" Win64="yes">
             <File Id="config_yaml" Source="__SOURCE__\config.yaml" />
             <File Id="finch_ico" Source="__SOURCE__\finch.ico" />
             <File Id="LICENSE_rtf" Source="__SOURCE__\LICENSE.rtf" />
@@ -23,7 +23,7 @@
             <File Id="uninstall_bat" Source="__SOURCE__\uninstall.bat" />
           </Component>
           <Directory Id="bincecd86bf" Name="bin">
-            <Component Id="Component_Finch" Guid="c0ced166-84de-4bd8-96ab-45db96fb20cf" Win64="yes">
+            <Component Id="Component_Finch" Guid="{C0CED166-84DE-4BD8-96AB-45DB96FB20CF}" Win64="yes">
               <File Id="dpgo_exe" Source="__SOURCE__\bin\dpgo.exe" />
               <File Id="finch_exe" Source="__SOURCE__\bin\finch.exe" KeyPath="yes">
                 <Shortcut
@@ -39,32 +39,31 @@
           </Directory>
           <Directory Id="lima63339460" Name="lima">
             <Directory Id="bineb6dcfb9" Name="bin">
-              <Component Id="Component_Lima" Guid="cfc5e6f4-feec-4470-b7b5-5f3e9a5e483c" Win64="yes">
+              <Component Id="Component_Lima" Guid="{CFC5E6F4-FEEC-4470-B7B5-5F3E9A5E483C}" Win64="yes">
                 <File Id="limactl_exe" Source="__SOURCE__\lima\bin\limactl.exe" />
               </Component>
             </Directory>
             <Directory Id="data76b01c5f" Name="data">
               <Directory Id="_configb09d75e9" Name="_config">
-                <Component Id="Component_Data" Guid="d76243e1-c60f-4a7b-b3b2-3b3ae295b77e" Win64="yes">
+                <Component Id="Component_Data" Guid="{D76243E1-C60F-4A7B-B3B2-3B3AE295B77E}" Win64="yes">
                   <File Id="networks_yaml" Source="__SOURCE__\lima\data\_config\networks.yaml" />
                 </Component>
               </Directory>
             </Directory>
             <Directory Id="share49fac817" Name="share">
               <Directory Id="lima314b6ebf" Name="lima">
-                <Component Id="Component_Share" Guid="6859323f-b11b-455b-8ac7-21eebe8e3f71" Win64="yes">
+                <Component Id="Component_Share" Guid="{6859323F-B11B-455B-8AC7-21EEBE8E3F71}" Win64="yes">
                   <File Id="lima_guestagent_Linux_x86_64" Source="__SOURCE__\lima\share\lima\lima-guestagent.Linux-x86_64" />
                 </Component>
               </Directory>
             </Directory>
           </Directory>
           <Directory Id="osfa5c59e6" Name="os">
-            <Component Id="Component_Roofts" Guid="1616c052-615c-4edb-aabf-db76176fe0ee" Win64="yes">
+            <Component Id="Component_Roofts" Guid="{1616C052-615C-4EDB-AABF-DB76176FE0EE}" Win64="yes">
               <File Id="finch_rootfs_production_amd64_tar_gz" Source="__SOURCE__\os\__ROOTFS__" />
               <File Id="finch_yaml" Source="__SOURCE__\os\finch.yaml" />
             </Component>
           </Directory>
-
         </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder" />
