@@ -134,6 +134,19 @@ jobs:
         run: |
           $version="${{ needs.get-tag-name.outputs.version }}"
           aws s3 cp "./msi-builder/build/signed/Finch-$version.msi" "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$version.msi" --no-progress
+      - name: Remove Finch VM and Clean Up Previous Environment
+        if: ${{ always() }}
+        run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          make clean
+          cd deps/finch-core && make clean
+          exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
   
   msi-e2e-tests:
     needs:
@@ -184,6 +197,8 @@ jobs:
         run: |
           Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
+          make clean
+          cd deps/finch-core && make clean
       - name: Uninstall Finch silently
         run: |
           $productCode = (Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Finch*" } | Select-Object -ExpandProperty IdentifyingNumber)
@@ -213,7 +228,7 @@ jobs:
           $env:INSTALLED="true"
           make test-e2e
       - name: Uninstall Finch silently
-        if: always()
+        if: ${{ always() }}
         run: |
           $productCode = (Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Finch*" } | Select-Object -ExpandProperty IdentifyingNumber)
           if ($productCode) {
@@ -221,3 +236,16 @@ jobs:
           } else {
               Write-Output "Finch not found or it wasn't installed using MSI."
           }
+      - name: Remove Finch VM and Clean Up Previous Environment
+        if: ${{ always() }}
+        run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          make clean
+          cd deps/finch-core && make clean
+          exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
