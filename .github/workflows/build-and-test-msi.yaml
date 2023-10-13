@@ -134,3 +134,90 @@ jobs:
         run: |
           $version="${{ needs.get-tag-name.outputs.version }}"
           aws s3 cp "./msi-builder/build/signed/Finch-$version.msi" "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$version.msi" --no-progress
+  
+  msi-e2e-tests:
+    needs:
+      - get-tag-name
+      - windows-msi-build
+    strategy:
+      fail-fast: false
+    runs-on: [self-hosted, windows, amd64, release]
+    timeout-minutes: 180
+    steps:
+      - name: Configure git CRLF settings
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - name: Set up Python
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        with:
+          python-version: '3.x'
+      - name: Install AWS CLI
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        with:
+          ref: ${{ needs.get-tag-name.outputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - name: Set output variables
+        id: vars
+        run: |
+          $has_creds="${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}"
+          echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: msi-test
+          aws-region: ${{ secrets.REGION }}
+      - name: Remove Finch VM
+        run: |
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+      - name: Clean up previous files
+        run: |
+          Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
+      - name: Uninstall Finch silently
+        run: |
+          $productCode = (Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Finch*" } | Select-Object -ExpandProperty IdentifyingNumber)
+          if ($productCode) {
+              msiexec /x $productCode /qn
+          } else {
+              Write-Output "Finch not found or it wasn't installed using MSI."
+          }
+      - name: Download MSI from S3
+        run: |
+          $version="${{ needs.get-tag-name.outputs.version }}"
+          aws s3 cp "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$version.msi" ./Finch.msi
+      - name: Install MSI silently
+        run: |
+          Start-Process 'Finch.msi' -ArgumentList '/quiet' -Wait
+          echo "C:\Program Files\Finch\bin" >> $env:GITHUB_PATH
+      - name: Run e2e tests
+        run: |
+          # set path to use newer ssh version
+          $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
+          $env:Path = $newPath
+          # set networking config option to allow for VM/container -> host communication
+          echo "[experimental]`nnetworkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
+          
+          git status
+          git clean -f -d
+          $env:INSTALLED="true"
+          make test-e2e
+      - name: Uninstall Finch silently
+        if: always()
+        run: |
+          $productCode = (Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Finch*" } | Select-Object -ExpandProperty IdentifyingNumber)
+          if ($productCode) {
+              msiexec /x $productCode /qn
+          } else {
+              Write-Output "Finch not found or it wasn't installed using MSI."
+          }
