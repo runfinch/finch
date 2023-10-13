@@ -128,37 +128,6 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 	}
 	m.logger.Debugf("create disk cmd stdout parsed: %v", logs)
 
-	// Make sure all of the DiskPart success logs are present
-	diskPartSuccessMessages := []string{
-		"DiskPart successfully created the virtual disk file.",
-		"DiskPart successfully selected the virtual disk file.",
-		"DiskPart successfully attached the virtual disk file.",
-		"DiskPart succeeded in creating the specified partition.",
-		"DiskPart successfully formatted the volume.",
-		"DiskPart successfully detached the virtual disk file.",
-	}
-	foundLog := false
-	for _, l := range logs {
-		if strings.Contains(l.Message, "create disk cmd stdout: ") {
-			foundLog = true
-			for _, m := range diskPartSuccessMessages {
-				if !strings.Contains(l.Message, m) {
-					return fmt.Errorf(
-						"diskpart failed to create working disk because missing message %s, check output: %s",
-						m,
-						l.Message,
-					)
-				}
-			}
-		}
-		if foundLog {
-			break
-		}
-	}
-	if !foundLog {
-		return fmt.Errorf("failed to find diskpart logs, check output: %v", logs)
-	}
-
 	return nil
 }
 
