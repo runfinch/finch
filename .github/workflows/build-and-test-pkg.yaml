@@ -107,11 +107,7 @@ jobs:
       - name: Install MSI silently
         run: |
           Start-Process 'Finch.msi' -ArgumentList '/quiet' -Wait
-          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH","User")
-      - name: Run Finch version command
-        run: |
-          Write-Output $env:PATH
-          & "C:\Program Files\Finch\bin\finch.exe" version -ErrorAction SilentlyContinue
+          $env:PATH += ";C:\Program Files\Finch\bin"
       - name: Run e2e tests
         run: |
           # set path to use newer ssh version
