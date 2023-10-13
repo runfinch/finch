@@ -107,6 +107,9 @@ jobs:
       - name: Install MSI silently
         run: |
           Start-Process 'Finch.msi' -ArgumentList '/quiet' -Wait
+      - name: Run Finch version command
+        run: |
+          finch version 
       - name: Run e2e tests
         run: |
           # set path to use newer ssh version
@@ -120,6 +123,7 @@ jobs:
           $env:INSTALLED="true"
           make test-e2e
       - name: Uninstall Finch silently
+        if: always()
         run: |
           $productCode = (Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Finch*" } | Select-Object -ExpandProperty IdentifyingNumber)
           if ($productCode) {
@@ -128,6 +132,7 @@ jobs:
               Write-Output "Finch not found or it wasn't installed using MSI."
           }
       - name: Delete installer
+        if: always()
         run: |
           Remove-Item "./Finch.msi" -Force
       
