@@ -107,7 +107,7 @@ jobs:
       - name: Install MSI silently
         run: |
           Start-Process 'Finch.msi' -ArgumentList '/quiet' -Wait
-          $env:PATH += ";C:\Program Files\Finch\bin"
+          echo "C:\Program Files\Finch\bin" >> $env:GITHUB_PATH
       - name: Run e2e tests
         run: |
           # set path to use newer ssh version
@@ -129,8 +129,4 @@ jobs:
           } else {
               Write-Output "Finch not found or it wasn't installed using MSI."
           }
-      - name: Delete installer
-        if: always()
-        run: |
-          Remove-Item "./Finch.msi" -Force
       
