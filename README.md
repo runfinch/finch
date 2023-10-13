@@ -21,11 +21,13 @@ Finch provides a simple client which is integrated with [nerdctl](https://github
 
 With Finch, you can leverage these existing projects without chasing down all the details. Just install and start running and building your containers!
 
-## Getting Started with Finch on macOS
+## Getting Started with Finch
 
 The project will in the near future have a more full set of documentation and tutorials. For now let's get started here. As mentioned above, `finch` integrates with `nerdctl`. While Finch doesn't implement 100% of the upstream commands, the most common commands are in place and working. The [nerdctl Command Reference](https://github.com/containerd/nerdctl#command-reference) can be relied upon as a starting point for documentation.
 
 ### Installing Finch
+
+#### macOS
 
 To get started with Finch on macOS, the prerequisites are:
 
@@ -35,11 +37,20 @@ To get started with Finch on macOS, the prerequisites are:
 
 Download a release package for your architecture from the [project's GitHub releases](https://github.com/runfinch/finch/releases) page, and once downloaded double click and follow the directions.
 
-#### Installing Finch via [brew](https://brew.sh/)
+##### Installing Finch via [brew](https://brew.sh/)
 
 ```sh
 brew install --cask finch
 ```
+
+#### Windows
+To get started with Finch on Windows, the prerequisites are:
+
+* Windows 10 version 2004 and higher (Build 19041 and higher)
+* AMD64 based Windows system
+* WSL 2 installed (`wsl --install`)
+
+Download an MSI installer from the [project's GitHub releases](https://github.com/runfinch/finch/releases) page, and once downloaded double click and follow the directions.
 
 Once the installation is complete, `finch vm init` is required once to set up the underlying system. This initial setup usually takes about a minute.
 
@@ -95,7 +106,11 @@ The installer will install Finch and its dependencies in its own area of your sy
 
 ### Configuration
 
-Finch has a simple and extensible configuration. A configuration file at `${HOME}/.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
+Finch has a simple and extensible configuration.
+
+#### macOS
+
+A configuration file at `${HOME}/.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
 
 For a full list of configuration options, check [the struct here](pkg/config/config.go#L30).
 
@@ -147,14 +162,59 @@ vmType: "qemu"
 rosetta: false
 ```
 
+#### Windows
+
+A configuration file at `$env:LOCALAPPDATA\.finch\finch.yaml` will be generated on first run. Currently, this config file does not have options for system resource [limits due to limitations in WSL](https://github.com/microsoft/WSL/issues/8570).
+
+
+For a full list of configuration options, check [the struct here](pkg/config/config.go#L30).
+
+An example `finch.yaml` looks like this:
+
+```yaml
+# snapshotters: the snapshotters a user wants to use (the first snapshotter will be set as the default snapshotter)
+# Supported Snapshotters List:
+# - soci https://github.com/awslabs/soci-snapshotter/tree/main
+# Once the option has been set the snapshotters will be installed on either finch vm init or finch vm start.
+# The snapshotters binary will be downloaded on the virtual machine and will be configured and ready for use.
+# To change your default snpahotter back to overlayfs, simply remove the snapshotters value from finch.yaml or set snapshotters to `overlayfs`
+# To completely remove the snapshotters' binaries, shell into your VM and remove /usr/local/bin/{snapshotter binary}
+# and remove the snapshotter configuration in the containerd config file found at /etc/containerd/config.toml
+snapshotters: 
+    - soci
+# creds_helpers: a list of credential helpers that will be installed and configured automatically. 
+# Supported Credential Helpers List: 
+# - ecr-login https://github.com/awslabs/amazon-ecr-credential-helper
+# Once the option has been set the credential helper will be installed on either finch vm init or finch vm start. 
+# The binary will be downloaded on the host machine and a config.json will be created and populated inside the ~/.finch/ folder 
+# if it doesn't already exist. If it already exists, the value of credsStore will be overwritten. 
+# To opt out of using the credential helper, remove the value from the credsStore parameter of config.json 
+# and remove the creds_helper value from finch.yaml. 
+# To completely remove the credential helper, either remove the binary from $env:LOCALAPPDATA\.finch\creds-helpers or remove the creds-helpers
+# folder entirely. (optional)
+creds_helpers: 
+  - ecr-login
+
+# sets wsl2 Hypervisor to use to launch the VM. (optional)
+vmType: "wsl2"
+```
+
 ### FAQ
 
 This section contains frequently-asked questions regarding working with Finch.
 
 #### How to shell into the VM?
 
+##### macOS
+
 ```sh
 LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl shell finch
+```
+
+##### Windows
+
+```sh
+wsl -d lima-finch
 ```
 
 ## What's next?
@@ -164,7 +224,6 @@ We are excited to start this project in the open, and we'd love to hear from you
 As the project gets a bit of momentum, maintainers will start creating milestones and look to establish a regular release cadence. In time, we'll also start to curate a public roadmap from the community ideas and issues that roll in. We already have some ideas, including:
 
 * More minimal guest OS footprint
-* Windows client support
 * Linux client support
 * Formal extensibility
 * Continued performance improvement, ongoing
