@@ -43,11 +43,11 @@ Download a release package for your architecture from the [project's GitHub rele
 brew install --cask finch
 ```
 
-#### windows
-To get started with Finch on macOS, the prerequisites are:
+#### Windows
+To get started with Finch on Windows, the prerequisites are:
 
 * Windows 10 version 2004 and higher (Build 19041 and higher)
-* Intel system for windows
+* Intel system for Windows
 * WSL 2 installed (`wsl --install`)
 
 Download a msi installer from the [project's GitHub releases](https://github.com/runfinch/finch/releases) page, and once downloaded double click and follow the directions.
@@ -163,7 +163,7 @@ vmType: "qemu"
 rosetta: false
 ```
 
-#### windows
+#### Windows
 
 A configuration file at `$env:LOCALAPPDATA\.finch\finch.yaml` will be generated on first run. Currently, this config file does not have options for system resource [limits due to limitations in WSL](https://github.com/microsoft/WSL/issues/8570).
 
@@ -212,7 +212,7 @@ This section contains frequently-asked questions regarding working with Finch.
 LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl shell finch
 ```
 
-##### windows
+##### Windows
 
 ```sh
 wsl -d lima-finch
