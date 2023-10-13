@@ -1,10 +1,7 @@
 {
     "RT_GROUP_ICON": {
       "APP": {
-        "0000": [
-          "icon.png",
-          "icon16.png"
-        ]
+        "0000": "./../msi-builder/finch.ico"
       }
     },
     "RT_MANIFEST": {
@@ -43,7 +40,7 @@
             "0409": {
               "Comments": "",
               "CompanyName": "RunFinch",
-              "FileDescription": "An open source client for container development",
+              "FileDescription": "Finch",
               "FileVersion": "",
               "InternalName": "runfinch/finch",
               "LegalCopyright": "Amazon.com, Inc. or its affiliates. All Rights Reserved",

@@ -91,10 +91,10 @@ jobs:
       - name: generate and download signed msi
         run: |
           $version="${{ needs.get-tag-name.outputs.version }}"
-
+          $tag="${{ needs.get-tag-name.outputs.tag }}"
           powershell .\msi-builder\BuildFinchMSI.ps1 -Version $version
           $timestamp=[math]::truncate((Get-Date (Get-Date).ToUniversalTime() -UFormat "%s"))
-          $unsignedMSI="Finch-$version-$timestamp.msi"
+          $unsignedMSI="Finch-$tag-$timestamp.msi"
           Write-Host "Upload unsigned MSI: $unsignedMSI"
 
           aws s3 cp "./msi-builder/build/Finch-$version.msi" "${{ secrets.WINDOWS_UNSIGNED_BUCKET }}$unsignedMSI" --acl bucket-owner-full-control --no-progress
@@ -110,7 +110,7 @@ jobs:
               $signedMSI = aws s3 ls ${{ secrets.WINDOWS_SIGNED_BUCKET }} 2>&1 | Where-Object { $_ -match "$unsignedMSI" } | Sort-Object -Descending | Select-Object -First 1 | ForEach-Object { ($_ -split '\s+')[-1] }
               if ($signedMSI -and ($signedMSI -notlike "*An error occurred (404) when calling the HeadObject operation*")) {
                   try {
-                      aws s3 cp "${{ secrets.WINDOWS_SIGNED_BUCKET }}$signedMSI" "./msi-builder/build/signed/Finch-$version.msi"
+                      aws s3 cp "${{ secrets.WINDOWS_SIGNED_BUCKET }}$signedMSI" "./msi-builder/build/signed/Finch-$tag.msi"
                       break
                   } catch {
                       Write-Host "Error during copy: $_"
@@ -132,8 +132,8 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: upload signed MSI to S3
         run: |
-          $version="${{ needs.get-tag-name.outputs.version }}"
-          aws s3 cp "./msi-builder/build/signed/Finch-$version.msi" "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$version.msi" --no-progress
+          $tag="${{ needs.get-tag-name.outputs.tag }}"
+          aws s3 cp "./msi-builder/build/signed/Finch-$tag.msi" "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$tag.msi" --no-progress
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
         run: |
@@ -209,8 +209,8 @@ jobs:
           }
       - name: Download MSI from S3
         run: |
-          $version="${{ needs.get-tag-name.outputs.version }}"
-          aws s3 cp "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$version.msi" ./Finch.msi
+          $tag="${{ needs.get-tag-name.outputs.tag }}"
+          aws s3 cp "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$tag.msi" ./Finch.msi
       - name: Install MSI silently
         run: |
           Start-Process 'Finch.msi' -ArgumentList '/quiet' -Wait
