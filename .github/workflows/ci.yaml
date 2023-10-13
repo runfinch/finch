@@ -234,6 +234,19 @@ jobs:
           git status
           git clean -f -d
           make test-e2e
+      - name: Remove Finch VM and Clean Up Previous Environment
+        if: ${{ always() }}
+        run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          make clean
+          cd deps/finch-core && make clean
+          exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
   mdlint:
     runs-on: ubuntu-latest
     steps:
