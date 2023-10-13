@@ -93,23 +93,31 @@ jobs:
           $version="${{ needs.get-tag-name.outputs.version }}"
 
           powershell .\msi-builder\BuildFinchMSI.ps1 -Version $version
-          aws s3 cp "./msi-builder/build/Finch-$version.msi" "${{ secrets.WINDOWS_UNSIGNED_BUCKET }}Finch-$version.msi" --acl bucket-owner-full-control --no-progress
+          $timestamp=[math]::truncate((Get-Date (Get-Date).ToUniversalTime() -UFormat "%s"))
+          $unsignedMSI="Finch-$version-$timestamp.msi"
+          Write-Host "Upload unsigned MSI: $unsignedMSI"
+
+          aws s3 cp "./msi-builder/build/Finch-$version.msi" "${{ secrets.WINDOWS_UNSIGNED_BUCKET }}$unsignedMSI" --acl bucket-owner-full-control --no-progress
           New-Item -Path "./msi-builder/build/signed/" -ItemType Directory -Force
 
+          Write-Host "Attemp to download signed MSI"
           $retryCount = 0
           $maxRetries = 20
           $delay = 5
 
           while ($retryCount -lt $maxRetries) {
-              try {
-                Start-Sleep -Seconds $delay
-                $signedMSI = aws s3 ls ${{ secrets.WINDOWS_SIGNED_BUCKET }} | Where-Object { $_ -match "Finch-$version.msi" } | Sort-Object -Descending | Select-Object -First 1 | ForEach-Object { ($_ -split '\s+')[-1] }
-                aws s3 cp "${{ secrets.WINDOWS_SIGNED_BUCKET }}$signedMSI" "./msi-builder/build/signed/Finch-$version.msi"
-                break
-              } catch {
-                $retryCount++
-                Write-Host "Exception: $_"
-                Write-Host "Retry $retryCount/$maxRetries..."
+              Start-Sleep -Seconds $delay
+              $signedMSI = aws s3 ls ${{ secrets.WINDOWS_SIGNED_BUCKET }} 2>&1 | Where-Object { $_ -match "$unsignedMSI" } | Sort-Object -Descending | Select-Object -First 1 | ForEach-Object { ($_ -split '\s+')[-1] }
+              if ($signedMSI -and ($signedMSI -notlike "*An error occurred (404) when calling the HeadObject operation*")) {
+                  try {
+                      aws s3 cp "${{ secrets.WINDOWS_SIGNED_BUCKET }}$signedMSI" "./msi-builder/build/signed/Finch-$version.msi"
+                      break
+                  } catch {
+                      Write-Host "Error during copy: $_"
+                  }
+              } else {
+                  $retryCount++
+                  Write-Host "Unable to find the signed MSI or encountered an error. Retry $retryCount/$maxRetries..."
               }
           }
 
