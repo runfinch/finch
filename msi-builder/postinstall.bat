@@ -6,6 +6,8 @@ if exist "%FilePath%" (
     powershell -Command "$installPath = '%InstallDir%'.Replace('\', '/'); (Get-Content '%FilePath%') -replace '__INSTALLFOLDER__', $installPath | Set-Content '%FilePath%'"
 )
 
+icacls "%InstallDir%\lima\data" /grant Users:(OI)(CI)M
+
 :: Delete files and directories if they exist
 if exist "%InstallDir%\lima\data\finch\" rmdir /s /q "%InstallDir%\lima\data\finch\"
 if exist "%InstallDir%\lima\data\_config\override.yaml" del /f /q "%InstallDir%\lima\data\_config\override.yaml"

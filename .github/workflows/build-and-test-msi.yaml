@@ -39,8 +39,8 @@ jobs:
           if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Version matches format: $version"
           else
-            echo "Version $version doesn't match format. Using default: 0.0.0"
-            version="0.0.0"
+            echo "Version $version doesn't match format. Using test version: 0.0.1"
+            version="0.0.1"
           fi
           echo "version=$version" >> ${GITHUB_OUTPUT}
   
