@@ -16,21 +16,6 @@ import (
 // Finch provides a set of methods that calculate paths relative to the Finch path.
 type Finch string
 
-// FinchRootDir returns the path to the Finch root directory.
-// $HOME on UNIX and $LocalAppData on Windows.
-func (Finch) FinchRootDir(ffd FinchFinderDeps) (string, error) {
-	if runtime.GOOS == "windows" {
-		return ffd.Env("LOCALAPPDATA"), nil
-	}
-
-	home, err := ffd.GetUserHome()
-	if err != nil {
-		return "", err
-	}
-
-	return home, nil
-}
-
 // FinchDir returns the path to the Finch config directory.
 func (Finch) FinchDir(rootDir string) string {
 	return filepath.Join(rootDir, ".finch")
