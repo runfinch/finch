@@ -197,22 +197,19 @@ vmType: "wsl2"
 
 This section contains frequently-asked questions regarding working with Finch.
 
-#### macOS
+#### How to shell into the VM?
 
-##### How to shell into the VM?
+##### macOS
 
 ```sh
 LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl shell finch
 ```
 
-#### windows
-
-##### How to shell into the VM?
+##### windows
 
 ```sh
 wsl -d lima-finch
 ```
-
 
 ## What's next?
 
