@@ -47,11 +47,10 @@ brew install --cask finch
 To get started with Finch on Windows, the prerequisites are:
 
 * Windows 10 version 2004 and higher (Build 19041 and higher)
-* Intel system for Windows
+* AMD64 based Windows system
 * WSL 2 installed (`wsl --install`)
 
-Download a msi installer from the [project's GitHub releases](https://github.com/runfinch/finch/releases) page, and once downloaded double click and follow the directions.
-
+Download an MSI installer from the [project's GitHub releases](https://github.com/runfinch/finch/releases) page, and once downloaded double click and follow the directions.
 
 Once the installation is complete, `finch vm init` is required once to set up the underlying system. This initial setup usually takes about a minute.
 
