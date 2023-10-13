@@ -117,7 +117,8 @@ jobs:
           
           git status
           git clean -f -d
-          INSTALLED=true make test-e2e
+          $env:INSTALLED="true"
+          make test-e2e
       - name: Uninstall Finch silently
         run: |
           $productCode = (Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Finch*" } | Select-Object -ExpandProperty IdentifyingNumber)
