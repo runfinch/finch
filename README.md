@@ -27,8 +27,9 @@ The project will in the near future have a more full set of documentation and tu
 
 ### Installing Finch
 
+<!-- markdownlint-disable MD024 -->
 #### macOS
-
+<!-- markdownlint-restore -->
 To get started with Finch on macOS, the prerequisites are:
 
 * macOS catalina (10.15) or higher, newer versions are tested on a best-effort basis
@@ -43,7 +44,9 @@ Download a release package for your architecture from the [project's GitHub rele
 brew install --cask finch
 ```
 
+<!-- markdownlint-disable MD024 -->
 #### Windows
+<!-- markdownlint-restore -->
 To get started with Finch on Windows, the prerequisites are:
 
 * Windows 10 version 2004 and higher (Build 19041 and higher)
@@ -108,8 +111,9 @@ The installer will install Finch and its dependencies in its own area of your sy
 
 Finch has a simple and extensible configuration.
 
+<!-- markdownlint-disable MD024 -->
 #### macOS
-
+<!-- markdownlint-restore -->
 A configuration file at `${HOME}/.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
 
 For a full list of configuration options, check [the struct here](pkg/config/config.go#L30).
@@ -161,11 +165,10 @@ vmType: "qemu"
 # If true, also sets vmType to "vz".
 rosetta: false
 ```
-
+<!-- markdownlint-disable MD024 -->
 #### Windows
-
+<!-- markdownlint-restore -->
 A configuration file at `$env:LOCALAPPDATA\.finch\finch.yaml` will be generated on first run. Currently, this config file does not have options for system resource [limits due to limitations in WSL](https://github.com/microsoft/WSL/issues/8570).
-
 
 For a full list of configuration options, check [the struct here](pkg/config/config.go#L30).
 
@@ -205,13 +208,17 @@ This section contains frequently-asked questions regarding working with Finch.
 
 #### How to shell into the VM?
 
+<!-- markdownlint-disable MD024 -->
 ##### macOS
+<!-- markdownlint-restore -->
 
 ```sh
 LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl shell finch
 ```
 
+<!-- markdownlint-disable MD024 -->
 ##### Windows
+<!-- markdownlint-restore -->
 
 ```sh
 wsl -d lima-finch
