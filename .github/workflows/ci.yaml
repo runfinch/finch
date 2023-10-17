@@ -4,16 +4,14 @@ name: CI
 on:
   push:
     branches:
-      # TODO: revert to main on merge of windev branch with main
-      - windev
+      - main
     paths-ignore:
       - '**.md'
       - 'contrib/**'
       - '.github/CODEOWNERS'
   pull_request:
     branches:
-      # TODO: revert to main on merge of windev branch with main
-      - windev
+      - main
     paths-ignore:
       - '**.md'
       - 'contrib/**'
