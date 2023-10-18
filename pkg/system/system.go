@@ -52,6 +52,11 @@ type EnvChecker interface {
 	LookupEnv(key string) (string, bool)
 }
 
+// PipeGetter mocks out os.Pipe.
+type PipeGetter interface {
+	Pipe() (*os.File, *os.File, error)
+}
+
 // StdinGetter mocks out os.Stdin.
 type StdinGetter interface {
 	Stdin() *os.File
@@ -60,6 +65,11 @@ type StdinGetter interface {
 // StdoutGetter mocks out os.Stdout.
 type StdoutGetter interface {
 	Stdout() *os.File
+}
+
+// StdoutSetter mocks out redirecting os.Stdout.
+type StdoutSetter interface {
+	SetStdout(*os.File)
 }
 
 // StderrGetter mocks out os.Stderr.
