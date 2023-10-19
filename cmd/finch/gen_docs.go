@@ -53,10 +53,11 @@ func newGenDocsGenerateCommand(
 	deps GenDocsSystemDeps,
 ) *cobra.Command {
 	genDocsGenerateCommand := &cobra.Command{
-		Use:   "generate",
-		Args:  cobra.NoArgs,
-		Short: "Generate Finch docs",
-		RunE:  newGenDocsGenerateAction(rootCmd, logger, fs, deps).runAdapter,
+		Use:    "generate",
+		Args:   cobra.NoArgs,
+		Hidden: true,
+		Short:  "Generate Finch docs",
+		RunE:   newGenDocsGenerateAction(rootCmd, logger, fs, deps).runAdapter,
 	}
 
 	genDocsGenerateCommand.Flags().StringP("path", "p", "", "Doc output directory")
@@ -106,7 +107,7 @@ func (gd *genDocsAction) captureHelpOutput(cmd *cobra.Command, outDir string) er
 		}
 	}
 
-	if !cmd.Runnable() {
+	if !cmd.Runnable() || cmd.Hidden {
 		return nil
 	}
 
