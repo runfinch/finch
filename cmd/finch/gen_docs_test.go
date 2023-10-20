@@ -96,9 +96,10 @@ func TestGenDocsAction_runAdapter(t *testing.T) {
 				require.Equal(t, string(buf), fmt.Sprintf(`---
 title: "test-command"
 ---
+
 ## test-command
 
-%s
+%sbash
   test-command [flags]
 %s
 `, codeBlock, codeBlock))
