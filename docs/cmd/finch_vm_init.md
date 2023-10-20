@@ -1,8 +1,4 @@
----
-title: "finch vm init"
----
-
-## finch vm init
+# finch vm init
 
 Initialize the virtual machine
 
@@ -10,7 +6,7 @@ Initialize the virtual machine
   finch vm init [flags]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for init

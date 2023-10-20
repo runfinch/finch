@@ -1,8 +1,4 @@
----
-title: "finch logs"
----
-
-## finch logs
+# finch logs
 
 Fetch the logs of a container.
 
@@ -15,7 +11,7 @@ The following containers are supported:
 finch logs [flags] CONTAINER
 ```
 
-### Options
+## Options
 
 ```bash
   -f, --follow         Follow log output

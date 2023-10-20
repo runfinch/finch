@@ -1,8 +1,4 @@
----
-title: "finch login"
----
-
-## finch login
+# finch login
 
 Log in to a container registry
 
@@ -10,7 +6,7 @@ Log in to a container registry
 finch login [flags] [SERVER]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help              help for login

@@ -1,8 +1,4 @@
----
-title: "finch container"
----
-
-## finch container
+# finch container
 
 Manage containers
 
@@ -10,7 +6,7 @@ Manage containers
 finch container [flags]
 ```
 
-### Commands
+## Commands
 
 ```bash
   attach   Attach stdin, stdout, and stderr to a running container.
@@ -37,7 +33,7 @@ finch container [flags]
   wait     Block until one or more containers stop, then print their exit codes.
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for container

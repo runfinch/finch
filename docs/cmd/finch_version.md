@@ -1,8 +1,4 @@
----
-title: "finch version"
----
-
-## finch version
+# finch version
 
 Shows Finch version information
 
@@ -10,7 +6,7 @@ Shows Finch version information
   finch version [flags]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for version

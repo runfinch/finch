@@ -1,8 +1,4 @@
----
-title: "finch pull"
----
-
-## finch pull
+# finch pull
 
 Pull an image from a registry. Optionally specify "ipfs://" or "ipns://" scheme to pull image from IPFS.
 
@@ -10,7 +6,7 @@ Pull an image from a registry. Optionally specify "ipfs://" or "ipns://" scheme 
 finch pull [flags] NAME[:TAG]
 ```
 
-### Options
+## Options
 
 ```bash
       --all-platforms                                  Pull content for all platforms

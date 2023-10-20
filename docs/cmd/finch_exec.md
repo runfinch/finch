@@ -1,8 +1,4 @@
----
-title: "finch exec"
----
-
-## finch exec
+# finch exec
 
 Run a command in a running container
 
@@ -10,7 +6,7 @@ Run a command in a running container
 finch exec [flags] CONTAINER COMMAND [ARG...]
 ```
 
-### Options
+## Options
 
 ```bash
   -d, --detach             Detached mode: run command in the background

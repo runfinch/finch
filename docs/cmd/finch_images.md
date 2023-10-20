@@ -1,12 +1,8 @@
----
-title: "finch images"
----
-
-## finch images
+# finch images
 
 List images
 
-### Properties
+## Properties
 
 - REPOSITORY: Repository
 - TAG:        Tag
@@ -21,7 +17,7 @@ List images
 finch images [flags] [REPOSITORY[:TAG]]
 ```
 
-### Options
+## Options
 
 ```bash
   -a, --all              (unimplemented yet, always true) (default true)

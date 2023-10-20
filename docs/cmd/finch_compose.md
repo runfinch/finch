@@ -1,8 +1,4 @@
----
-title: "finch compose"
----
-
-## finch compose
+# finch compose
 
 Compose
 
@@ -10,7 +6,7 @@ Compose
 finch compose [flags] COMMAND
 ```
 
-### Commands
+## Commands
 
 ```bash
   build    Build or rebuild services
@@ -38,7 +34,7 @@ finch compose [flags] COMMAND
   version  Show the Compose version information
 ```
 
-### Options
+## Options
 
 ```bash
       --env-file string            Specify an alternate environment file

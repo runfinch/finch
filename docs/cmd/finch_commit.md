@@ -1,8 +1,4 @@
----
-title: "finch commit"
----
-
-## finch commit
+# finch commit
 
 Create a new image from a container's changes
 
@@ -10,7 +6,7 @@ Create a new image from a container's changes
 finch commit [flags] CONTAINER REPOSITORY[:TAG]
 ```
 
-### Options
+## Options
 
 ```bash
   -a, --author string        Author (e.g., "finch contributor <finch-dev@example.com>")

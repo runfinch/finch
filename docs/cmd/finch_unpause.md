@@ -1,8 +1,4 @@
----
-title: "finch unpause"
----
-
-## finch unpause
+# finch unpause
 
 Unpause all processes within one or more containers
 
@@ -10,7 +6,7 @@ Unpause all processes within one or more containers
 finch unpause [flags] CONTAINER [CONTAINER, ...]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for unpause

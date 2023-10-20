@@ -1,8 +1,4 @@
----
-title: "finch volume"
----
-
-## finch volume
+# finch volume
 
 Manage volumes
 
@@ -10,7 +6,7 @@ Manage volumes
 finch volume [flags]
 ```
 
-### Commands
+## Commands
 
 ```bash
   create   Create a volume
@@ -20,7 +16,7 @@ finch volume [flags]
   rm       Remove one or more volumes
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for volume

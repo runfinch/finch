@@ -1,8 +1,4 @@
----
-title: "finch logout"
----
-
-## finch logout
+# finch logout
 
 Log out from a container registry
 
@@ -10,7 +6,7 @@ Log out from a container registry
 finch logout [flags] [SERVER]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for logout

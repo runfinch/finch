@@ -1,8 +1,4 @@
----
-title: "finch builder"
----
-
-## finch builder
+# finch builder
 
 Manage builds
 
@@ -10,7 +6,7 @@ Manage builds
 finch builder [flags]
 ```
 
-### Commands
+## Commands
 
 ```bash
   build  Build an image from a Dockerfile. Needs buildkitd to be running.
@@ -18,7 +14,7 @@ finch builder [flags]
   prune  Clean up BuildKit build cache
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for builder

@@ -1,8 +1,4 @@
----
-title: "finch wait"
----
-
-## finch wait
+# finch wait
 
 Block until one or more containers stop, then print their exit codes.
 
@@ -10,7 +6,7 @@ Block until one or more containers stop, then print their exit codes.
 finch wait [flags] CONTAINER [CONTAINER, ...]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for wait

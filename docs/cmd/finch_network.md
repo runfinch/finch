@@ -1,8 +1,4 @@
----
-title: "finch network"
----
-
-## finch network
+# finch network
 
 Manage networks
 
@@ -10,7 +6,7 @@ Manage networks
 finch network [flags]
 ```
 
-### Commands
+## Commands
 
 ```bash
   create   Create a network
@@ -20,7 +16,7 @@ finch network [flags]
   rm       Remove one or more networks
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for network

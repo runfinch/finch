@@ -1,8 +1,4 @@
----
-title: "finch port"
----
-
-## finch port
+# finch port
 
 List port mappings or a specific mapping for the container
 
@@ -10,7 +6,7 @@ List port mappings or a specific mapping for the container
 finch port [flags] CONTAINER [PRIVATE_PORT[/PROTO]]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for port

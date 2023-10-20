@@ -1,8 +1,4 @@
----
-title: "finch events"
----
-
-## finch events
+# finch events
 
 Get real time events from the server
 
@@ -10,7 +6,7 @@ Get real time events from the server
 finch events [flags]
 ```
 
-### Options
+## Options
 
 ```bash
       --format string   Format the output using the given Go template, e.g, '{{json .}}'

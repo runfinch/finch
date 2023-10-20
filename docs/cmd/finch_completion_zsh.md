@@ -1,8 +1,4 @@
----
-title: "finch completion zsh"
----
-
-## finch completion zsh
+# finch completion zsh
 
 Generate the autocompletion script for the zsh shell.
 
@@ -23,7 +19,7 @@ To load completions for every new session, execute once:
   finch completion zsh [flags]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help              help for zsh

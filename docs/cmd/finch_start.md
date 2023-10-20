@@ -1,8 +1,4 @@
----
-title: "finch start"
----
-
-## finch start
+# finch start
 
 Start one or more running containers
 
@@ -10,7 +6,7 @@ Start one or more running containers
 finch start [flags] CONTAINER [CONTAINER, ...]
 ```
 
-### Options
+## Options
 
 ```bash
   -a, --attach               Attach STDOUT/STDERR and forward signals

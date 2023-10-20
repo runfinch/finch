@@ -1,8 +1,4 @@
----
-title: "finch rm"
----
-
-## finch rm
+# finch rm
 
 Remove one or more containers
 
@@ -10,7 +6,7 @@ Remove one or more containers
 finch rm [flags] CONTAINER [CONTAINER, ...]
 ```
 
-### Options
+## Options
 
 ```bash
   -f, --force     Force the removal of a running|paused|unknown container (uses SIGKILL)

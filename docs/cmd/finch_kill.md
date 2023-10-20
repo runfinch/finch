@@ -1,8 +1,4 @@
----
-title: "finch kill"
----
-
-## finch kill
+# finch kill
 
 Kill one or more running containers
 
@@ -10,7 +6,7 @@ Kill one or more running containers
 finch kill [flags] CONTAINER [CONTAINER, ...]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help            help for kill

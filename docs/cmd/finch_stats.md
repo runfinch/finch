@@ -1,8 +1,4 @@
----
-title: "finch stats"
----
-
-## finch stats
+# finch stats
 
 Display a live stream of container(s) resource usage statistics.
 
@@ -10,7 +6,7 @@ Display a live stream of container(s) resource usage statistics.
 finch stats [flags]
 ```
 
-### Options
+## Options
 
 ```bash
   -a, --all             Show all containers (default shows just running)

@@ -1,8 +1,4 @@
----
-title: "finch vm stop"
----
-
-## finch vm stop
+# finch vm stop
 
 Stop the virtual machine
 
@@ -10,7 +6,7 @@ Stop the virtual machine
   finch vm stop [flags]
 ```
 
-### Options
+## Options
 
 ```bash
   -f, --force   forcibly stop finch VM

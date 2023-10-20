@@ -1,8 +1,4 @@
----
-title: "finch load"
----
-
-## finch load
+# finch load
 
 Supports both Docker Image Spec v1.2 and OCI Image Spec v1.0.
 
@@ -10,7 +6,7 @@ Supports both Docker Image Spec v1.2 and OCI Image Spec v1.0.
 finch load [flags]
 ```
 
-### Options
+## Options
 
 ```bash
       --all-platforms      Import content for all platforms

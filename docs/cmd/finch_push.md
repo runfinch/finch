@@ -1,8 +1,4 @@
----
-title: "finch push"
----
-
-## finch push
+# finch push
 
 Push an image or a repository to a registry. Optionally specify "ipfs://" or "ipns://" scheme to push image to IPFS.
 
@@ -10,7 +6,7 @@ Push an image or a repository to a registry. Optionally specify "ipfs://" or "ip
 finch push [flags] NAME[:TAG]
 ```
 
-### Options
+## Options
 
 ```bash
       --all-platforms                      Push content for all platforms

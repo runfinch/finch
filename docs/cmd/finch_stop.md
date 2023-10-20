@@ -1,8 +1,4 @@
----
-title: "finch stop"
----
-
-## finch stop
+# finch stop
 
 Stop one or more running containers
 
@@ -10,7 +6,7 @@ Stop one or more running containers
 finch stop [flags] CONTAINER [CONTAINER, ...]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help       help for stop

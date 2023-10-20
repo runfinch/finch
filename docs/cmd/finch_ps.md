@@ -1,8 +1,4 @@
----
-title: "finch ps"
----
-
-## finch ps
+# finch ps
 
 List containers
 
@@ -10,7 +6,7 @@ List containers
 finch ps [flags]
 ```
 
-### Options
+## Options
 
 ```bash
   -a, --all              Show all containers (default shows just running)

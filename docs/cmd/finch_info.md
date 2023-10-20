@@ -1,8 +1,4 @@
----
-title: "finch info"
----
-
-## finch info
+# finch info
 
 Display system-wide information
 
@@ -10,7 +6,7 @@ Display system-wide information
 finch info [flags]
 ```
 
-### Options
+## Options
 
 ```bash
   -f, --format string   Format the output using the given Go template, e.g, '{{json .}}'

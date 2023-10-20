@@ -1,8 +1,4 @@
----
-title: "finch system"
----
-
-## finch system
+# finch system
 
 Manage containerd
 
@@ -10,7 +6,7 @@ Manage containerd
 finch system [flags]
 ```
 
-### Commands
+## Commands
 
 ```bash
   events  Get real time events from the server
@@ -18,7 +14,7 @@ finch system [flags]
   prune   Remove unused data
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for system

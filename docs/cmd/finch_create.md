@@ -1,8 +1,4 @@
----
-title: "finch create"
----
-
-## finch create
+# finch create
 
 Create a new container. Optionally specify "ipfs://" or "ipns://" scheme to pull image from IPFS.
 
@@ -10,7 +6,7 @@ Create a new container. Optionally specify "ipfs://" or "ipns://" scheme to pull
 finch create [flags] IMAGE [COMMAND] [ARG...]
 ```
 
-### Options
+## Options
 
 ```bash
       --add-host strings                               Add a custom host-to-IP mapping (host:ip)

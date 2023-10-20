@@ -1,8 +1,4 @@
----
-title: "finch cp"
----
-
-## finch cp
+# finch cp
 
 Copy files/folders between a running container and the local filesystem.
 This command requires 'tar' to be installed on the host (not in the container).
@@ -14,7 +10,7 @@ finch cp [flags] CONTAINER:SRC_PATH DEST_PATH|-
   finch cp [flags] SRC_PATH|- CONTAINER:DEST_PATH
 ```
 
-### Options
+## Options
 
 ```bash
   -L, --follow-link   Always follow symbolic link in SRC_PATH.

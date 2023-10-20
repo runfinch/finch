@@ -1,8 +1,4 @@
----
-title: "finch build"
----
-
-## finch build
+# finch build
 
 Build an image from a Dockerfile. Needs buildkitd to be running.
 If Dockerfile is not present and -f is not specified, it will look for Containerfile and build with it.
@@ -11,7 +7,7 @@ If Dockerfile is not present and -f is not specified, it will look for Container
 finch build [flags] PATH
 ```
 
-### Options
+## Options
 
 ```bash
       --build-arg stringArray    Set build-time variables

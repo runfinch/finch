@@ -1,8 +1,4 @@
----
-title: "finch image"
----
-
-## finch image
+# finch image
 
 Manage images
 
@@ -10,7 +6,7 @@ Manage images
 finch image [flags]
 ```
 
-### Commands
+## Commands
 
 ```bash
   build    Build an image from a Dockerfile. Needs buildkitd to be running.
@@ -29,7 +25,7 @@ finch image [flags]
   tag      Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help   help for image

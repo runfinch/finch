@@ -1,8 +1,4 @@
----
-title: "finch restart"
----
-
-## finch restart
+# finch restart
 
 Restart one or more running containers
 
@@ -10,7 +6,7 @@ Restart one or more running containers
 finch restart [flags] CONTAINER [CONTAINER, ...]
 ```
 
-### Options
+## Options
 
 ```bash
   -h, --help        help for restart

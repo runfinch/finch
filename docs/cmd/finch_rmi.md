@@ -1,8 +1,4 @@
----
-title: "finch rmi"
----
-
-## finch rmi
+# finch rmi
 
 Remove one or more images
 
@@ -10,7 +6,7 @@ Remove one or more images
 finch rmi [flags] IMAGE [IMAGE, ...]
 ```
 
-### Options
+## Options
 
 ```bash
       --async   Asynchronous mode

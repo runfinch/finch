@@ -1,8 +1,4 @@
----
-title: "finch run"
----
-
-## finch run
+# finch run
 
 Run a command in a new container. Optionally specify "ipfs://" or "ipns://" scheme to pull image from IPFS.
 
@@ -10,7 +6,7 @@ Run a command in a new container. Optionally specify "ipfs://" or "ipns://" sche
 finch run [flags] IMAGE [COMMAND] [ARG...]
 ```
 
-### Options
+## Options
 
 ```bash
       --add-host strings                               Add a custom host-to-IP mapping (host:ip)

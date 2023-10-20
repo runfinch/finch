@@ -1,8 +1,4 @@
----
-title: "finch history"
----
-
-## finch history
+# finch history
 
 Show the history of an image
 
@@ -10,7 +6,7 @@ Show the history of an image
 finch history [flags] IMAGE
 ```
 
-### Options
+## Options
 
 ```bash
   -f, --format string   Format the output using the given Go template, e.g, '{{json .}}'

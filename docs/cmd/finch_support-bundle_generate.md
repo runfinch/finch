@@ -1,8 +1,4 @@
----
-title: "finch support-bundle generate"
----
-
-## finch support-bundle generate
+# finch support-bundle generate
 
 Generates a collection of logs and configs that can be uploaded to a Github issue to help debug issues.
 
@@ -10,7 +6,7 @@ Generates a collection of logs and configs that can be uploaded to a Github issu
   finch support-bundle generate [flags]
 ```
 
-### Options
+## Options
 
 ```bash
       --exclude stringArray   files to exclude from the support bundle. if you specify a base name, all files matching that base name will be excluded. if you specify an absolute or relative path, only exact matches will be excluded
