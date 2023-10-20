@@ -6,13 +6,13 @@ title: "finch network"
 
 Manage networks
 
-```
+```bash
 finch network [flags]
 ```
 
 ### Commands
 
-```
+```bash
   create   Create a network
   inspect  Display detailed information on one or more networks
   ls       List networks
@@ -22,6 +22,6 @@ finch network [flags]
 
 ### Options
 
-```
+```bash
   -h, --help   help for network
 ```

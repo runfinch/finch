@@ -7,13 +7,13 @@ title: "finch build"
 Build an image from a Dockerfile. Needs buildkitd to be running.
 If Dockerfile is not present and -f is not specified, it will look for Containerfile and build with it.
 
-```
+```bash
 finch build [flags] PATH
 ```
 
 ### Options
 
-```
+```bash
       --build-arg stringArray    Set build-time variables
       --buildkit-host string     BuildKit address [$BUILDKIT_HOST] (default "unix:///run/buildkit/buildkitd.sock")
       --cache-from stringArray   External cache sources (eg. user/app:cache, type=local,src=path/to/dir)

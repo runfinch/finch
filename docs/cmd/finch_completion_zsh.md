@@ -19,13 +19,13 @@ To load completions for every new session, execute once:
 
 ####
 
-```
+```bash
   finch completion zsh [flags]
 ```
 
 ### Options
 
-```
+```bash
   -h, --help              help for zsh
       --no-descriptions   disable completion descriptions
 ```

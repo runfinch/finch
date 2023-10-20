@@ -6,13 +6,13 @@ title: "finch stats"
 
 Display a live stream of container(s) resource usage statistics.
 
-```
+```bash
 finch stats [flags]
 ```
 
 ### Options
 
-```
+```bash
   -a, --all             Show all containers (default shows just running)
       --format string   Pretty-print images using a Go template, e.g, '{{json .}}'
   -h, --help            help for stats

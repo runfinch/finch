@@ -17,13 +17,13 @@ To load completions for every new session, execute once:
 
 ####
 
-```
+```bash
   finch completion bash
 ```
 
 ### Options
 
-```
+```bash
   -h, --help              help for bash
       --no-descriptions   disable completion descriptions
 ```

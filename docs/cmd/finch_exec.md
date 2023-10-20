@@ -6,13 +6,13 @@ title: "finch exec"
 
 Run a command in a running container
 
-```
+```bash
 finch exec [flags] CONTAINER COMMAND [ARG...]
 ```
 
 ### Options
 
-```
+```bash
   -d, --detach             Detached mode: run command in the background
   -e, --env stringArray    Set environment variables
       --env-file strings   Set environment variables from file

@@ -173,7 +173,7 @@ func (gd *genDocsAction) captureHelpOutput(cmd *cobra.Command, outDir string) er
 	return nil
 }
 
-//go:embed doc.TEMPLATE.md
+//go:embed doc.TEMPLATE
 var docTmpl string
 
 type docTmplOpts struct {

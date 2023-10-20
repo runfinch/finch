@@ -6,13 +6,13 @@ title: "finch ps"
 
 List containers
 
-```
+```bash
 finch ps [flags]
 ```
 
 ### Options
 
-```
+```bash
   -a, --all              Show all containers (default shows just running)
   -f, --filter strings   Filter matches containers based on given conditions
       --format string    Format the output using the given Go template, e.g, '{{json .}}', 'wide'

@@ -11,13 +11,13 @@ The following containers are supported:
 - Containers created with 'finch compose'.
 - Containers created with Kubernetes (EXPERIMENTAL).
 
-```
+```bash
 finch logs [flags] CONTAINER
 ```
 
 ### Options
 
-```
+```bash
   -f, --follow         Follow log output
   -h, --help           help for logs
       --since string   Show logs since timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)

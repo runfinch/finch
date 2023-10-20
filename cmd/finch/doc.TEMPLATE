@@ -10,7 +10,7 @@ title: "{{ .CmdPath }}"
 
 {{.Properties}}
 
-{{end}}```
+{{end}}```bash
 {{ .Usage }}
 ```{{if gt (len .Aliases) 0}}
 
@@ -26,13 +26,13 @@ title: "{{ .CmdPath }}"
 
 ### Commands
 
-```
+```bash
 {{ .Commands }}
 ```{{end}}{{if gt (len .Options) 0}}
 
 ### Options
 
-```
+```bash
 {{ .Options }}
 ```{{end}}{{if gt (len .SeeAlso) 0}}
 
