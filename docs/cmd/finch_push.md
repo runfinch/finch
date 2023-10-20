@@ -1,6 +1,7 @@
 ---
 title: "finch push"
 ---
+
 ## finch push
 
 Push an image or a repository to a registry. Optionally specify "ipfs://" or "ipns://" scheme to push image to IPFS.
@@ -10,6 +11,7 @@ finch push [flags] NAME[:TAG]
 ```
 
 ### Options
+
 ```
       --all-platforms                      Push content for all platforms
       --allow-nondistributable-artifacts   Allow pushing images with non-distributable blobs

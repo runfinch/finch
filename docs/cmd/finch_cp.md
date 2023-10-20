@@ -1,6 +1,7 @@
 ---
 title: "finch cp"
 ---
+
 ## finch cp
 
 Copy files/folders between a running container and the local filesystem.
@@ -14,6 +15,7 @@ finch cp [flags] CONTAINER:SRC_PATH DEST_PATH|-
 ```
 
 ### Options
+
 ```
   -L, --follow-link   Always follow symbolic link in SRC_PATH.
   -h, --help          help for cp

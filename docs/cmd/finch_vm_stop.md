@@ -1,6 +1,7 @@
 ---
 title: "finch vm stop"
 ---
+
 ## finch vm stop
 
 Stop the virtual machine
@@ -10,6 +11,7 @@ Stop the virtual machine
 ```
 
 ### Options
+
 ```
   -f, --force   forcibly stop finch VM
   -h, --help    help for stop

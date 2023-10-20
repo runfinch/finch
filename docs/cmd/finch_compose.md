@@ -1,6 +1,7 @@
 ---
 title: "finch compose"
 ---
+
 ## finch compose
 
 Compose
@@ -10,6 +11,7 @@ finch compose [flags] COMMAND
 ```
 
 ### Commands
+
 ```
   build    Build or rebuild services
   config   Validate and view the Compose file
@@ -37,6 +39,7 @@ finch compose [flags] COMMAND
 ```
 
 ### Options
+
 ```
       --env-file string            Specify an alternate environment file
   -f, --f stringArray              Alias of --file

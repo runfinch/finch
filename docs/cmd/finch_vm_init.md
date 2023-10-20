@@ -1,6 +1,7 @@
 ---
 title: "finch vm init"
 ---
+
 ## finch vm init
 
 Initialize the virtual machine
@@ -10,6 +11,7 @@ Initialize the virtual machine
 ```
 
 ### Options
+
 ```
   -h, --help   help for init
 ```

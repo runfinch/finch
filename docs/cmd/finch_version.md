@@ -1,6 +1,7 @@
 ---
 title: "finch version"
 ---
+
 ## finch version
 
 Shows Finch version information
@@ -10,6 +11,7 @@ Shows Finch version information
 ```
 
 ### Options
+
 ```
   -h, --help   help for version
 ```

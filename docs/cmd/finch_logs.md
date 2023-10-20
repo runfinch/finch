@@ -1,6 +1,7 @@
 ---
 title: "finch logs"
 ---
+
 ## finch logs
 
 Fetch the logs of a container.
@@ -15,6 +16,7 @@ finch logs [flags] CONTAINER
 ```
 
 ### Options
+
 ```
   -f, --follow         Follow log output
   -h, --help           help for logs

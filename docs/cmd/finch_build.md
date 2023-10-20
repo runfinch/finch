@@ -1,6 +1,7 @@
 ---
 title: "finch build"
 ---
+
 ## finch build
 
 Build an image from a Dockerfile. Needs buildkitd to be running.
@@ -11,6 +12,7 @@ finch build [flags] PATH
 ```
 
 ### Options
+
 ```
       --build-arg stringArray    Set build-time variables
       --buildkit-host string     BuildKit address [$BUILDKIT_HOST] (default "unix:///run/buildkit/buildkitd.sock")

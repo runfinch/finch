@@ -1,6 +1,7 @@
 ---
 title: "finch ps"
 ---
+
 ## finch ps
 
 List containers
@@ -10,6 +11,7 @@ finch ps [flags]
 ```
 
 ### Options
+
 ```
   -a, --all              Show all containers (default shows just running)
   -f, --filter strings   Filter matches containers based on given conditions

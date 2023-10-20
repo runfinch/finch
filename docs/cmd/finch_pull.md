@@ -1,6 +1,7 @@
 ---
 title: "finch pull"
 ---
+
 ## finch pull
 
 Pull an image from a registry. Optionally specify "ipfs://" or "ipns://" scheme to pull image from IPFS.
@@ -10,6 +11,7 @@ finch pull [flags] NAME[:TAG]
 ```
 
 ### Options
+
 ```
       --all-platforms                                  Pull content for all platforms
       --cosign-certificate-identity string             The identity expected in a valid Fulcio certificate for --verify=cosign. Valid values include email address, DNS names, IP addresses, and URIs. Either --cosign-certificate-identity or --cosign-certificate-identity-regexp must be set for keyless flows

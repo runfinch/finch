@@ -1,6 +1,7 @@
 ---
 title: "finch network"
 ---
+
 ## finch network
 
 Manage networks
@@ -10,6 +11,7 @@ finch network [flags]
 ```
 
 ### Commands
+
 ```
   create   Create a network
   inspect  Display detailed information on one or more networks
@@ -19,6 +21,7 @@ finch network [flags]
 ```
 
 ### Options
+
 ```
   -h, --help   help for network
 ```

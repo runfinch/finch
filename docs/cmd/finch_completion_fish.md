@@ -1,6 +1,7 @@
 ---
 title: "finch completion fish"
 ---
+
 ## finch completion fish
 
 Generate the autocompletion script for the fish shell.
@@ -20,6 +21,7 @@ You will need to start a new shell for this setup to take effect.
 ```
 
 ### Options
+
 ```
   -h, --help              help for fish
       --no-descriptions   disable completion descriptions

@@ -1,6 +1,7 @@
 ---
 title: "finch vm status"
 ---
+
 ## finch vm status
 
 Status of the virtual machine
@@ -10,6 +11,7 @@ Status of the virtual machine
 ```
 
 ### Options
+
 ```
   -h, --help   help for status
 ```

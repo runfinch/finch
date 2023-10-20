@@ -1,6 +1,7 @@
 ---
 title: "finch stats"
 ---
+
 ## finch stats
 
 Display a live stream of container(s) resource usage statistics.
@@ -10,6 +11,7 @@ finch stats [flags]
 ```
 
 ### Options
+
 ```
   -a, --all             Show all containers (default shows just running)
       --format string   Pretty-print images using a Go template, e.g, '{{json .}}'

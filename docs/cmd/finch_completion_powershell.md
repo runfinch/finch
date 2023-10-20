@@ -1,6 +1,7 @@
 ---
 title: "finch completion powershell"
 ---
+
 ## finch completion powershell
 
 Generate the autocompletion script for powershell.
@@ -17,6 +18,7 @@ to your powershell profile.
 ```
 
 ### Options
+
 ```
   -h, --help              help for powershell
       --no-descriptions   disable completion descriptions

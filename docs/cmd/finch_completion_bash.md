@@ -1,6 +1,7 @@
 ---
 title: "finch completion bash"
 ---
+
 ## finch completion bash
 
 Generate the autocompletion script for the bash shell.
@@ -21,6 +22,7 @@ To load completions for every new session, execute once:
 ```
 
 ### Options
+
 ```
   -h, --help              help for bash
       --no-descriptions   disable completion descriptions

@@ -1,6 +1,7 @@
 ---
 title: "finch update"
 ---
+
 ## finch update
 
 Update one or more running containers
@@ -10,6 +11,7 @@ finch update [flags] CONTAINER [CONTAINER, ...]
 ```
 
 ### Options
+
 ```
       --blkio-weight uint16         Block IO (relative weight), between 10 and 1000, or 0 to disable (default 0)
       --cpu-period uint             Limit CPU CFS (Completely Fair Scheduler) period

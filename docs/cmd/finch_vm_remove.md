@@ -1,6 +1,7 @@
 ---
 title: "finch vm remove"
 ---
+
 ## finch vm remove
 
 Remove the virtual machine instance
@@ -10,6 +11,7 @@ Remove the virtual machine instance
 ```
 
 ### Options
+
 ```
   -f, --force   forcibly remove finch VM
   -h, --help    help for remove

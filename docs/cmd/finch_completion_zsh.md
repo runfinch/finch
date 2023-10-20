@@ -1,6 +1,7 @@
 ---
 title: "finch completion zsh"
 ---
+
 ## finch completion zsh
 
 Generate the autocompletion script for the zsh shell.
@@ -23,6 +24,7 @@ To load completions for every new session, execute once:
 ```
 
 ### Options
+
 ```
   -h, --help              help for zsh
       --no-descriptions   disable completion descriptions

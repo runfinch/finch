@@ -1,6 +1,7 @@
 ---
 title: "finch inspect"
 ---
+
 ## finch inspect
 
 Return low-level information on objects.
@@ -10,6 +11,7 @@ finch inspect [flags]
 ```
 
 ### Options
+
 ```
   -f, --format string   Format the output using the given Go template, e.g, '{{json .}}'
   -h, --help            help for inspect
