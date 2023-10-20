@@ -122,7 +122,10 @@ func (gd *genDocsAction) captureHelpOutput(cmd *cobra.Command, outDir string) er
 
 	// redirect Stdout to pipe
 	rescueStdout := gd.deps.Stdout()
-	r, w, _ := gd.deps.Pipe()
+	r, w, err := gd.deps.Pipe()
+	if err != nil {
+		return fmt.Errorf("error while creating pipe to capture stdout: %w", err)
+	}
 	gd.deps.SetStdout(w)
 
 	rootCmd := cmd.Root()
@@ -134,6 +137,9 @@ func (gd *genDocsAction) captureHelpOutput(cmd *cobra.Command, outDir string) er
 	// rootCmd.SetOutput() would work for all "default finch" commands, but doesn't work
 	// for the nerdctl commands. Getting it to work would remove the need to capture all Stdout.
 	if err := rootCmd.Execute(); err != nil {
+		// This is pretty much impossible because cobra checks if --help is set and if it is it doesn't
+		// actually run the command.
+		// https://github.com/spf13/cobra/blob/main/command.go#L1096-L1099
 		return fmt.Errorf("error while executing command (args=%v): %w", args, err)
 	}
 	gd.deps.SetStdout(rescueStdout)

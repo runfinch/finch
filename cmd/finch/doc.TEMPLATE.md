@@ -1,11 +1,14 @@
 ---
 title: "{{ .CmdPath }}"
 ---
-## {{ .CmdPath }}
+## {{ .CmdPath }}{{if gt (len .Description) 0}}
 
 {{ .Description }}
 
+{{end}}
+
 {{if gt (len .Properties) 0}}### Properties
+
 {{.Properties}}
 
 {{end}}```
