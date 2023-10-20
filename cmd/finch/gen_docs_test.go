@@ -93,7 +93,7 @@ func TestGenDocsAction_runAdapter(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				buf, err := afero.ReadFile(fs, "outDir/test-command.md")
 				require.NoError(t, err)
-				require.Equal(t, string(buf), fmt.Sprintf(`## test-command
+				require.Equal(t, string(buf), fmt.Sprintf(`# test-command
 
 %sbash
   test-command [flags]
