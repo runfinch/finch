@@ -1,2 +1,6 @@
 # Modern IDEs usually automatically wrap long lines in *.md files, so this may be unnecessary.
 line-length: false
+
+MD024:
+  # Only check sibling headings
+  siblings_only: true
