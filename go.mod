@@ -9,7 +9,7 @@ require (
 	github.com/google/go-licenses v1.6.0
 	github.com/lima-vm/lima v0.17.2
 	github.com/onsi/ginkgo/v2 v2.13.0
-	github.com/onsi/gomega v1.28.0
+	github.com/onsi/gomega v1.28.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.6
 	github.com/runfinch/common-tests v0.7.8
@@ -57,7 +57,7 @@ require (
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/goccy/go-yaml v1.11.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/licenseclassifier v0.0.0-20210722185704-3043a050f148 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
