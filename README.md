@@ -27,9 +27,8 @@ The project will in the near future have a more full set of documentation and tu
 
 ### Installing Finch
 
-<!-- markdownlint-disable MD024 -->
 #### macOS
-<!-- markdownlint-restore -->
+
 To get started with Finch on macOS, the prerequisites are:
 
 * macOS catalina (10.15) or higher, newer versions are tested on a best-effort basis
