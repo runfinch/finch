@@ -103,7 +103,7 @@ func (gd *genDocsAction) run(outDir string) error {
 func (gd *genDocsAction) captureHelpOutput(cmd *cobra.Command, outDir string) error {
 	for _, c := range cmd.Commands() {
 		if err := gd.captureHelpOutput(c, outDir); err != nil {
-			return err
+			return fmt.Errorf("error while generating docs for %s: %w", c.CommandPath(), err)
 		}
 	}
 
@@ -150,6 +150,10 @@ func (gd *genDocsAction) captureHelpOutput(cmd *cobra.Command, outDir string) er
 		return fmt.Errorf("error while reading stdout from pipe: %w", err)
 	}
 
+	// Link to parent command page if parent command is also runnable.
+	// For example, if `finch vm` and `finch vm init` both had their own Run/RunE methods defined,
+	// finch vm init's documentation page would link to finch vm's page.
+	// If this condition is not met, then there is no "SEE ALSO" section.
 	seeAlso := ""
 	if cmd.HasParent() && cmd.Parent().Runnable() {
 		parentName := cmd.Parent().CommandPath()

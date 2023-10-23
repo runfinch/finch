@@ -2,12 +2,12 @@
 
 Shows Finch version information
 
-```bash
+```text
   finch version [flags]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for version
 ```

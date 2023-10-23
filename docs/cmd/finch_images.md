@@ -13,13 +13,13 @@ List images
 - SIZE:       Size of the unpacked snapshots
 - BLOB SIZE:  Size of the blobs (such as layer tarballs) in the content store
 
-```bash
+```text
 finch images [flags] [REPOSITORY[:TAG]]
 ```
 
 ## Options
 
-```bash
+```text
   -a, --all              (unimplemented yet, always true) (default true)
       --digests          Show digests (compatible with Docker, unlike ID)
   -f, --filter strings   Filter output based on conditions provided

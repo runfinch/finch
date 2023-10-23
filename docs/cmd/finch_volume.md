@@ -2,13 +2,13 @@
 
 Manage volumes
 
-```bash
+```text
 finch volume [flags]
 ```
 
 ## Commands
 
-```bash
+```text
   create   Create a volume
   inspect  Display detailed information on one or more volumes
   ls       List volumes
@@ -18,6 +18,6 @@ finch volume [flags]
 
 ## Options
 
-```bash
+```text
   -h, --help   help for volume
 ```

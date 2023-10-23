@@ -2,12 +2,12 @@
 
 Start the virtual machine
 
-```bash
+```text
   finch vm start [flags]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for start
 ```

@@ -2,13 +2,13 @@
 
 Manage images
 
-```bash
+```text
 finch image [flags]
 ```
 
 ## Commands
 
-```bash
+```text
   build    Build an image from a Dockerfile. Needs buildkitd to be running.
   convert  convert an image
   decrypt  decrypt an image
@@ -27,6 +27,6 @@ finch image [flags]
 
 ## Options
 
-```bash
+```text
   -h, --help   help for image
 ```

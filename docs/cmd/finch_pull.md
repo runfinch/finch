@@ -2,13 +2,13 @@
 
 Pull an image from a registry. Optionally specify "ipfs://" or "ipns://" scheme to pull image from IPFS.
 
-```bash
+```text
 finch pull [flags] NAME[:TAG]
 ```
 
 ## Options
 
-```bash
+```text
       --all-platforms                                  Pull content for all platforms
       --cosign-certificate-identity string             The identity expected in a valid Fulcio certificate for --verify=cosign. Valid values include email address, DNS names, IP addresses, and URIs. Either --cosign-certificate-identity or --cosign-certificate-identity-regexp must be set for keyless flows
       --cosign-certificate-identity-regexp string      A regular expression alternative to --cosign-certificate-identity for --verify=cosign. Accepts the Go regular expression syntax described at https://golang.org/s/re2syntax. Either --cosign-certificate-identity or --cosign-certificate-identity-regexp must be set for keyless flows

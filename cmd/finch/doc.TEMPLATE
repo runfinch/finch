@@ -6,7 +6,7 @@
 
 {{.Properties}}
 
-{{end}}```bash
+{{end}}```text
 {{ .Usage }}
 ```{{if gt (len .Aliases) 0}}
 
@@ -22,13 +22,13 @@
 
 ## Commands
 
-```bash
+```text
 {{ .Commands }}
 ```{{end}}{{if gt (len .Options) 0}}
 
 ## Options
 
-```bash
+```text
 {{ .Options }}
 ```{{end}}{{if gt (len .SeeAlso) 0}}
 

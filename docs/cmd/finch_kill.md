@@ -2,13 +2,13 @@
 
 Kill one or more running containers
 
-```bash
+```text
 finch kill [flags] CONTAINER [CONTAINER, ...]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help            help for kill
   -s, --signal string   Signal to send to the container (default "KILL")
 ```

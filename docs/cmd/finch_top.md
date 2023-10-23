@@ -2,12 +2,12 @@
 
 Display the running processes of a container
 
-```bash
+```text
 finch top CONTAINER [ps OPTIONS] [flags]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for top
 ```

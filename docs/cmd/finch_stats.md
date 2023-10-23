@@ -2,13 +2,13 @@
 
 Display a live stream of container(s) resource usage statistics.
 
-```bash
+```text
 finch stats [flags]
 ```
 
 ## Options
 
-```bash
+```text
   -a, --all             Show all containers (default shows just running)
       --format string   Pretty-print images using a Go template, e.g, '{{json .}}'
   -h, --help            help for stats

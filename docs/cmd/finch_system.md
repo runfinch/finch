@@ -2,13 +2,13 @@
 
 Manage containerd
 
-```bash
+```text
 finch system [flags]
 ```
 
 ## Commands
 
-```bash
+```text
   events  Get real time events from the server
   info    Display system-wide information
   prune   Remove unused data
@@ -16,6 +16,6 @@ finch system [flags]
 
 ## Options
 
-```bash
+```text
   -h, --help   help for system
 ```

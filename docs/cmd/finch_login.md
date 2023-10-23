@@ -2,13 +2,13 @@
 
 Log in to a container registry
 
-```bash
+```text
 finch login [flags] [SERVER]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help              help for login
   -p, --password string   Password
       --password-stdin    Take the password from stdin

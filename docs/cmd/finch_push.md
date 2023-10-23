@@ -2,13 +2,13 @@
 
 Push an image or a repository to a registry. Optionally specify "ipfs://" or "ipns://" scheme to push image to IPFS.
 
-```bash
+```text
 finch push [flags] NAME[:TAG]
 ```
 
 ## Options
 
-```bash
+```text
       --all-platforms                      Push content for all platforms
       --allow-nondistributable-artifacts   Allow pushing images with non-distributable blobs
       --cosign-key string                  Path to the private key file, KMS URI or Kubernetes Secret for --sign=cosign

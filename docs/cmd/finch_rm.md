@@ -2,13 +2,13 @@
 
 Remove one or more containers
 
-```bash
+```text
 finch rm [flags] CONTAINER [CONTAINER, ...]
 ```
 
 ## Options
 
-```bash
+```text
   -f, --force     Force the removal of a running|paused|unknown container (uses SIGKILL)
   -h, --help      help for rm
   -v, --volumes   Remove volumes associated with the container

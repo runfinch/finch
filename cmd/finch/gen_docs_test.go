@@ -95,7 +95,7 @@ func TestGenDocsAction_runAdapter(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, string(buf), fmt.Sprintf(`# test-command
 
-%sbash
+%stext
   test-command [flags]
 %s
 `, codeBlock, codeBlock))

@@ -2,13 +2,13 @@
 
 Manage builds
 
-```bash
+```text
 finch builder [flags]
 ```
 
 ## Commands
 
-```bash
+```text
   build  Build an image from a Dockerfile. Needs buildkitd to be running.
   debug  Debug Dockerfile
   prune  Clean up BuildKit build cache
@@ -16,6 +16,6 @@ finch builder [flags]
 
 ## Options
 
-```bash
+```text
   -h, --help   help for builder
 ```

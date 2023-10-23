@@ -2,12 +2,12 @@
 
 Unpause all processes within one or more containers
 
-```bash
+```text
 finch unpause [flags] CONTAINER [CONTAINER, ...]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for unpause
 ```

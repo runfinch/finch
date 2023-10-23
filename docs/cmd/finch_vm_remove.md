@@ -2,13 +2,13 @@
 
 Remove the virtual machine instance
 
-```bash
+```text
   finch vm remove [flags]
 ```
 
 ## Options
 
-```bash
+```text
   -f, --force   forcibly remove finch VM
   -h, --help    help for remove
 ```

@@ -2,13 +2,13 @@
 
 Compose
 
-```bash
+```text
 finch compose [flags] COMMAND
 ```
 
 ## Commands
 
-```bash
+```text
   build    Build or rebuild services
   config   Validate and view the Compose file
   cp       Copy files/folders between a service container and the local filesystem
@@ -36,7 +36,7 @@ finch compose [flags] COMMAND
 
 ## Options
 
-```bash
+```text
       --env-file string            Specify an alternate environment file
   -f, --f stringArray              Alias of --file
       --file stringArray           Specify an alternate compose file

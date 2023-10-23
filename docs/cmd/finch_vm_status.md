@@ -2,12 +2,12 @@
 
 Status of the virtual machine
 
-```bash
+```text
   finch vm status [flags]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for status
 ```

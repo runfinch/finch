@@ -2,12 +2,12 @@
 
 Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
 
-```bash
+```text
 finch tag [flags] SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for tag
 ```

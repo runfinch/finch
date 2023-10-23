@@ -3,12 +3,12 @@
 Help provides help for any command in the application.
 Simply type finch help [path to command] for full details.
 
-```bash
+```text
   finch help [command] [flags]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for help
 ```

@@ -2,13 +2,13 @@
 
 Get real time events from the server
 
-```bash
+```text
 finch events [flags]
 ```
 
 ## Options
 
-```bash
+```text
       --format string   Format the output using the given Go template, e.g, '{{json .}}'
   -h, --help            help for events
 ```

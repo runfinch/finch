@@ -2,13 +2,13 @@
 
 Run a command in a running container
 
-```bash
+```text
 finch exec [flags] CONTAINER COMMAND [ARG...]
 ```
 
 ## Options
 
-```bash
+```text
   -d, --detach             Detached mode: run command in the background
   -e, --env stringArray    Set environment variables
       --env-file strings   Set environment variables from file

@@ -2,13 +2,13 @@
 
 Stop the virtual machine
 
-```bash
+```text
   finch vm stop [flags]
 ```
 
 ## Options
 
-```bash
+```text
   -f, --force   forcibly stop finch VM
   -h, --help    help for stop
 ```

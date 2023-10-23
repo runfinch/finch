@@ -2,13 +2,13 @@
 
 Manage containers
 
-```bash
+```text
 finch container [flags]
 ```
 
 ## Commands
 
-```bash
+```text
   attach   Attach stdin, stdout, and stderr to a running container.
   commit   Create a new image from a container's changes
   cp       Copy files/folders between a running container and the local filesystem.
@@ -35,6 +35,6 @@ finch container [flags]
 
 ## Options
 
-```bash
+```text
   -h, --help   help for container
 ```

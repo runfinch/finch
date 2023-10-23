@@ -2,12 +2,12 @@
 
 Block until one or more containers stop, then print their exit codes.
 
-```bash
+```text
 finch wait [flags] CONTAINER [CONTAINER, ...]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for wait
 ```

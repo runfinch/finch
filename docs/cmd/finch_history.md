@@ -2,13 +2,13 @@
 
 Show the history of an image
 
-```bash
+```text
 finch history [flags] IMAGE
 ```
 
 ## Options
 
-```bash
+```text
   -f, --format string   Format the output using the given Go template, e.g, '{{json .}}'
   -h, --help            help for history
       --no-trunc        Don't truncate output

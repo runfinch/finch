@@ -2,13 +2,13 @@
 
 Create a new image from a container's changes
 
-```bash
+```text
 finch commit [flags] CONTAINER REPOSITORY[:TAG]
 ```
 
 ## Options
 
-```bash
+```text
   -a, --author string        Author (e.g., "finch contributor <finch-dev@example.com>")
   -c, --change stringArray   Apply Dockerfile instruction to the created image (supported directives: [CMD, ENTRYPOINT])
   -h, --help                 help for commit

@@ -2,12 +2,12 @@
 
 Log out from a container registry
 
-```bash
+```text
 finch logout [flags] [SERVER]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for logout
 ```

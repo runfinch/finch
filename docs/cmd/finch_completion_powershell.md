@@ -9,13 +9,13 @@ To load completions in your current shell session:
 To load completions for every new session, add the output of the above command
 to your powershell profile.
 
-```bash
+```text
   finch completion powershell [flags]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help              help for powershell
       --no-descriptions   disable completion descriptions
 ```

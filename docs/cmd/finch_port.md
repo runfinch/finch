@@ -2,12 +2,12 @@
 
 List port mappings or a specific mapping for the container
 
-```bash
+```text
 finch port [flags] CONTAINER [PRIVATE_PORT[/PROTO]]
 ```
 
 ## Options
 
-```bash
+```text
   -h, --help   help for port
 ```
