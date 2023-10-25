@@ -38,7 +38,7 @@ downloadSignedExecutables() {
     fi
 
     tar xzvf "./installer-builder/output/executables/signed/finch-executables-${1//_/-}.zip" -C ./installer-builder/output/executables/signed
-    aws s3 "rm s3://${2}-${1//_/-}/pre-signed/package.tar.gz"
+    aws s3 rm "s3://${2}-${1//_/-}/pre-signed/package.tar.gz"
 }
 
 #$1: arch: {x86_64, aarch64}
