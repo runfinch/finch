@@ -430,6 +430,9 @@ func isDockerCompatEnvSet(systemDeps NerdctlCommandSystemDeps) bool {
 
 // ensureRemoteCredentials is called before any actions that may require remote resources, in order
 // to ensure that fresh credentials are available inside the VM.
+// For more details on how `aws configure export-credentials` works, checks the docs.
+//
+// [the docs]: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/configure/export-credentials.html
 func ensureRemoteCredentials(
 	fc *config.Finch,
 	ecc command.Creator,
@@ -446,12 +449,15 @@ func ensureRemoteCredentials(
 		).CombinedOutput()
 		if err != nil {
 			logger.Debugln("failed to run `aws configure` command")
+			return
 		}
 
 		var exportCredsOut credentials.Value
 		err = json.Unmarshal(out, &exportCredsOut)
 		if err != nil {
-			logger.Debugln("`aws configure export-credentials` output is unexpected, is command available?")
+			logger.Debugln("`aws configure export-credentials` output is unexpected, is command available? " +
+				"This may result in a broken ecr-credential helper experience.")
+			return
 		}
 
 		*outEnv = append(*outEnv, fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", exportCredsOut.AccessKeyID))
