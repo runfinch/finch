@@ -19,6 +19,8 @@ import (
 const (
 	description = "Installing Credential Helper"
 	errMsg      = "Failed to finish installing credential helper"
+	versionEcr  = "0.7.0"
+	hashEcr     = "sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714"
 )
 
 // NewDependencyGroup returns a dependency group that contains all the dependencies required to make credhelper work.
@@ -66,8 +68,6 @@ func newDeps(
 	installFolder := fmt.Sprintf("/Users/%s/.finch/cred-helpers/", user)
 	finchPath := fmt.Sprintf("/Users/%s/.finch/", user)
 
-	const versionEcr = "0.7.0"
-	const hashEcr = "sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714"
 	credHelperURLEcr := fmt.Sprintf("https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
 		"/%s/linux-%s/docker-credential-ecr-login", versionEcr, arch)
 

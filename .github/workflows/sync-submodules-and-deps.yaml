@@ -46,6 +46,34 @@ jobs:
         run: |
           ./deps/finch-core/bin/update-rootfs.sh -d ${{ secrets.DEPENDENCY_BUCKET_NAME }}
 
+      - name: Check for latest SOCI version
+        id: soci-version-check
+        uses: pozetroninc/github-action-get-latest-release@d1dafdb6e338bdab109e6afce581a01858680dfb
+        with:
+          owner: awslabs
+          repo: soci-snapshotter
+          excludes: "prerelease, draft"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update SOCI snapshotter
+        run: |
+          VERSION=$(echo ${{ steps.soci-version-check.outputs.release }} | tr -d 'v')
+          sed -E -i.bak "s/[0-9]+\.[0-9]+\.[0-9]+/$VERSION/"  ./pkg/config/lima_config_applier.go
+
+      - name: Check for latest ECR credential helper version
+        id: ecr-credential-helper-version-check
+        uses: pozetroninc/github-action-get-latest-release@d1dafdb6e338bdab109e6afce581a01858680dfb
+        with:
+          owner: awslabs
+          repo:  amazon-ecr-credential-helper
+          excludes: "prerelease, draft"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update ECR credential helper
+        run: |
+          VERSION=$(echo ${{ steps.ecr-credential-helper-version-check.outputs.release }} | tr -d 'v')
+          sed -E -i.bak "s/[0-9]+\.[0-9]+\.[0-9]+/$VERSION/" ./pkg/dependency/cred_helper.go
+
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
         with:
