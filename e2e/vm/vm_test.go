@@ -53,6 +53,7 @@ func TestVM(t *testing.T) {
 		testVirtualizationFrameworkAndRosetta(o, *e2e.Installed)
 		testSupportBundle(o)
 		testCredHelper(o, *e2e.Installed, *e2e.Registry)
+		testSoci(o, *e2e.Installed)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)

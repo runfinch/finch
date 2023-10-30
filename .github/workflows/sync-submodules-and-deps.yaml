@@ -1,0 +1,54 @@
+name: Sync Submodules and Dependencies
+
+# Pulls changes from the main branch of submodules daily at 9:00 UTC and opens a PR.
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.REGION }}
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: sync-submodules-and-deps-session
+
+      - name: Update submodules
+        run: |
+          git submodule update --remote
+
+      - name: Update OS image
+        run: |
+          ./.github/bin/update-os-image.sh
+
+      - name: Update lima dependencies url
+        run: |
+          ./deps/finch-core/bin/update-deps.sh -d ${{ secrets.DEPENDENCY_BUCKET_NAME }}
+
+      - name: Update rootfs
+        run: |
+          ./deps/finch-core/bin/update-rootfs.sh -d ${{ secrets.DEPENDENCY_BUCKET_NAME }}
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          signoff: true
+          title: 'build(deps): Bump submodules and dependencies'

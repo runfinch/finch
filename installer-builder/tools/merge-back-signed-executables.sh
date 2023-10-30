@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mergeBackSignedExecutables() {
-    for file in `ls -a ./installer-builder/output/executables/signed/Payload/EXECUTABLES_TO_SIGN`
+    for file in $(ls -a ./installer-builder/output/executables/signed/Payload/EXECUTABLES_TO_SIGN)
     do
         if [[ $file != '.' && $file != '..' ]]
         then
@@ -13,7 +13,7 @@ mergeBackSignedExecutables() {
             #3) final executable path is './a/b/c'
             originalPath=${file//__/\/}
             fullPath=./installer-builder/output/origin/_output/$originalPath
-            cp -f ./installer-builder/output/executables/signed/Payload/EXECUTABLES_TO_SIGN/$file $fullPath
+            cp -f ./installer-builder/output/executables/signed/Payload/EXECUTABLES_TO_SIGN/"$file" "$fullPath"
         fi
     done
 }

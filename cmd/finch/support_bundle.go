@@ -35,7 +35,8 @@ func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleB
 	}
 
 	supportBundleGenerateCommand.Flags().StringArray("include", []string{},
-		"additional files to include in the support bundle, specified by absolute or relative path")
+		//nolint:lll // usage string
+		`additional files to include in the support bundle, specified by absolute or relative path. to include a file from the VM, prefix the file path with "vm:"`)
 	supportBundleGenerateCommand.Flags().StringArray("exclude", []string{},
 		//nolint:lll // usage string
 		"files to exclude from the support bundle. if you specify a base name, all files matching that base name will be excluded. if you specify an absolute or relative path, only exact matches will be excluded")

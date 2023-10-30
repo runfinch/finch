@@ -1,5 +1,69 @@
 # Changelog
 
+## [0.9.0](https://github.com/runfinch/finch/compare/v0.8.0...v0.9.0) (2023-09-25)
+
+
+### Features
+
+* support push with SOCI ([#578](https://github.com/runfinch/finch/issues/578)) ([69721b7](https://github.com/runfinch/finch/commit/69721b76151a4c24d82cdc1c9338bacf72afb15d))
+* supports adding files inside the VM to support bundles ([#549](https://github.com/runfinch/finch/issues/549)) ([3b1df46](https://github.com/runfinch/finch/commit/3b1df4697e7b020d6c7339fb71bacf62ca0b3ee0))
+
+
+### Bug Fixes
+
+* enables bridge-nf-call-iptables by default ([#539](https://github.com/runfinch/finch/issues/539)) ([6ea1499](https://github.com/runfinch/finch/commit/6ea1499c1320545ba4efe8a7820dcf0998e28782))
+* **Makefile:** use POSIX tar syntax for stdin ([#529](https://github.com/runfinch/finch/issues/529)) ([e222131](https://github.com/runfinch/finch/commit/e2221310e1725b3a6072abe12e72f01859ce3320))
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/cli from 24.0.5+incompatible to 24.0.6+incompatible ([#560](https://github.com/runfinch/finch/issues/560)) ([21bb893](https://github.com/runfinch/finch/commit/21bb893105f0a4fc5541e3a8e9f5306edb739154))
+* **deps:** Bump github.com/docker/docker from 24.0.5+incompatible to 24.0.6+incompatible ([#561](https://github.com/runfinch/finch/issues/561)) ([e0160be](https://github.com/runfinch/finch/commit/e0160be4b90b9db0e9e544a8ad9b170c08b38756))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.11.0 to 2.12.0 ([#542](https://github.com/runfinch/finch/issues/542)) ([8536481](https://github.com/runfinch/finch/commit/85364818e9f5a9ca1993fa7a3fc8ce775e002a42))
+* **deps:** Bump github.com/runfinch/common-tests from 0.7.2 to 0.7.3 ([#548](https://github.com/runfinch/finch/issues/548)) ([a054ef3](https://github.com/runfinch/finch/commit/a054ef3aa028b2c50fca93631a7b547b9c535f2e))
+* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.23.7 to 3.23.8 ([#552](https://github.com/runfinch/finch/issues/552)) ([cf9399a](https://github.com/runfinch/finch/commit/cf9399a5dd125b875d6212b029ed19530898cdee))
+* **deps:** Bump golang.org/x/crypto from 0.12.0 to 0.13.0 ([#558](https://github.com/runfinch/finch/issues/558)) ([f24264d](https://github.com/runfinch/finch/commit/f24264d30805252d91b531c2bca8d9c883b88196))
+* **deps:** Bump golang.org/x/tools from 0.12.0 to 0.13.0 ([#559](https://github.com/runfinch/finch/issues/559)) ([0f56d23](https://github.com/runfinch/finch/commit/0f56d23b4e9210960c02822cd19a8a47326caa0e))
+* **deps:** Bump k8s.io/apimachinery from 0.28.0 to 0.28.1 ([#543](https://github.com/runfinch/finch/issues/543)) ([675f76f](https://github.com/runfinch/finch/commit/675f76fa6d8874587c09237faeb82d9f96c14adb))
+* **deps:** Bump k8s.io/apimachinery from 0.28.1 to 0.28.2 ([#568](https://github.com/runfinch/finch/issues/568)) ([915d658](https://github.com/runfinch/finch/commit/915d658fbd6581eec437f2c31121366ff77a5981))
+* **deps:** Bump submodules and dependencies ([#544](https://github.com/runfinch/finch/issues/544)) ([94b7497](https://github.com/runfinch/finch/commit/94b74978e135fbf6375fe1a21ce4b64b77db5ee7))
+* **deps:** Bump submodules and dependencies ([#551](https://github.com/runfinch/finch/issues/551)) ([baf645f](https://github.com/runfinch/finch/commit/baf645f250344a42bc4ee3ea53e97b2c82dbb55a))
+* **deps:** Bump submodules and dependencies ([#565](https://github.com/runfinch/finch/issues/565)) ([c02413f](https://github.com/runfinch/finch/commit/c02413f47ade25232830a04548625297267caf9f))
+* **deps:** Bump submodules and dependencies ([#567](https://github.com/runfinch/finch/issues/567)) ([f70314e](https://github.com/runfinch/finch/commit/f70314ef4a517d1fb69dc8444e621262f7e4dcd0))
+
+## [0.8.0](https://github.com/runfinch/finch/compare/v0.7.0...v0.8.0) (2023-08-16)
+
+
+### Features
+
+* adding config option for SOCI installation on VM ([#506](https://github.com/runfinch/finch/issues/506)) ([a2e077b](https://github.com/runfinch/finch/commit/a2e077b8f72dc8d8d833aedce31b3ad3f9f45eb4))
+
+
+### Bug Fixes
+
+* configure aws creds in sync submodules/deps action ([#518](https://github.com/runfinch/finch/issues/518)) ([b67452e](https://github.com/runfinch/finch/commit/b67452e012d5d00f2ff66e023b4672f7957fe625))
+* give pull request write permissions to sync job ([#520](https://github.com/runfinch/finch/issues/520)) ([55b5235](https://github.com/runfinch/finch/commit/55b5235d50feb6557108c00cd8543d21f1fdf315))
+* give token write perms to sync-submodules ([#519](https://github.com/runfinch/finch/issues/519)) ([8b639ea](https://github.com/runfinch/finch/commit/8b639eac14691caa99a6bfddd61be0b811a796d9))
+* Mount /var/folders to finch vm ([#525](https://github.com/runfinch/finch/issues/525)) ([c97d2e9](https://github.com/runfinch/finch/commit/c97d2e93edaf139c3960620ec00454f856a8daee))
+* option to use installed lima for SOCI e2e tests ([#533](https://github.com/runfinch/finch/issues/533)) ([8b66659](https://github.com/runfinch/finch/commit/8b666590631235f6430d652d5c50f0047a120893))
+* quote recursive calls to make ([#515](https://github.com/runfinch/finch/issues/515)) ([d603096](https://github.com/runfinch/finch/commit/d6030965414e80e1f3c550e67097ce5f34aeff41))
+* Restart buildkit after containerd when provisioning ([#461](https://github.com/runfinch/finch/issues/461)) ([fca1828](https://github.com/runfinch/finch/commit/fca182877ca616257527f6186dd1e88b2919feeb))
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/cli from 24.0.4+incompatible to 24.0.5+incompatible ([#495](https://github.com/runfinch/finch/issues/495)) ([e9e8617](https://github.com/runfinch/finch/commit/e9e8617b07301848dc1f6c3afa18643d212d024e))
+* **deps:** Bump github.com/docker/docker from 24.0.4+incompatible to 24.0.5+incompatible ([#497](https://github.com/runfinch/finch/issues/497)) ([6f1afbb](https://github.com/runfinch/finch/commit/6f1afbb69554148efd8eea938278bcc5104ab050))
+* **deps:** Bump github.com/lima-vm/lima from 0.16.0 to 0.17.2 ([#531](https://github.com/runfinch/finch/issues/531)) ([6e33d15](https://github.com/runfinch/finch/commit/6e33d159e2f522784860bc60ceea897a98d1fe5f))
+* **deps:** Bump github.com/onsi/gomega from 1.27.8 to 1.27.10 ([#496](https://github.com/runfinch/finch/issues/496)) ([d08d102](https://github.com/runfinch/finch/commit/d08d102d05a350a8b8e586c42ef83d51495cf4f9))
+* **deps:** Bump github.com/pkg/sftp from 1.13.5 to 1.13.6 ([#530](https://github.com/runfinch/finch/issues/530)) ([09b3846](https://github.com/runfinch/finch/commit/09b38467333e5e59eadb76cd5f4612768cde5289))
+* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.23.6 to 3.23.7 ([#513](https://github.com/runfinch/finch/issues/513)) ([83bd718](https://github.com/runfinch/finch/commit/83bd718be67ddba624e8218034c91bf399e2cccd))
+* **deps:** Bump golang.org/x/tools from 0.11.0 to 0.11.1 ([#509](https://github.com/runfinch/finch/issues/509)) ([e826bcf](https://github.com/runfinch/finch/commit/e826bcff385946bb6629db8935d3aa912befb5bb))
+* **deps:** Bump golang.org/x/tools from 0.11.1 to 0.12.0 ([#523](https://github.com/runfinch/finch/issues/523)) ([09d6514](https://github.com/runfinch/finch/commit/09d6514bfba31a898e3b3407964113f21fb6b244))
+* **deps:** Bump k8s.io/apimachinery from 0.27.3 to 0.27.4 ([#487](https://github.com/runfinch/finch/issues/487)) ([444bbc0](https://github.com/runfinch/finch/commit/444bbc0779dbe22207fec471389810e398c1cf50))
+* **deps:** Bump k8s.io/apimachinery from 0.27.4 to 0.28.0 ([#535](https://github.com/runfinch/finch/issues/535)) ([8df84cf](https://github.com/runfinch/finch/commit/8df84cf8c54bd772c28a83df918c251a540c881a))
+* **deps:** Bump submodules and dependencies ([#521](https://github.com/runfinch/finch/issues/521)) ([1b3ad94](https://github.com/runfinch/finch/commit/1b3ad94f9477eb3f8d33cbea90880f78ca403ff7))
+
 ## [0.7.0](https://github.com/runfinch/finch/compare/v0.6.2...v0.7.0) (2023-07-18)
 
 

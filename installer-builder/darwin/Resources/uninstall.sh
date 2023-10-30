@@ -8,7 +8,7 @@ fi
 
 echo "Finch-__VERSION__ will be REMOVED."
 while true; do
-    read -p "Do you wish to continue [Y/n]?" answer
+    read -r -p "Do you wish to continue [Y/n]?" answer
     [[ $answer == "y" || $answer == "Y" || $answer == "" ]] && break
     [[ $answer == "n" || $answer == "N" ]] && exit 0
     echo "Please answer with 'y' or 'n'"

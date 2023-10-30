@@ -26,6 +26,8 @@ type Command interface {
 	SetStderr(io.Writer)
 
 	Run() error
+	Start() error
+	Wait() error
 	Output() ([]byte, error)
 	CombinedOutput() ([]byte, error)
 }

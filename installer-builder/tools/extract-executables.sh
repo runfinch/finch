@@ -15,7 +15,7 @@ packageUnsignedExecutables() {
     extractExecutables ./installer-builder/output/origin/_output
 
     #prepare unsigned executable into .tar
-    cd ./installer-builder/output/executables/unsigned/package
+    cd ./installer-builder/output/executables/unsigned/package || exit
     tar -cvzf artifact.gz -C artifact .
     tar -cvzf  ../package.tar.gz manifest.yaml artifact.gz
 }
@@ -36,15 +36,15 @@ updateQEMUEntitlement() {
 
 #$1: the file object
 extractExecutables() {
-    for file in `ls -a $1`
+    for file in $(ls -a "$1")
     do
-        if [ -d $1/$file ];
+        if [ -d "$1/$file" ];
         then
             if [[ $file != '.' && $file != '..' ]];
             then
-                extractExecutables $1/$file
+                extractExecutables "$1/$file"
             fi
-        elif [[ -x $1/$file || ($file == *.dylib && !(-L $1/$file)) ]];
+        elif [[ -x $1/$file || ($file == *.dylib && ! (-L $1/$file)) ]];
         then
             #extract executables from all file directory to one folder
             #to have the ability to merge back, rename the executables with the file path
@@ -53,20 +53,20 @@ extractExecutables() {
             #1) ./a will be removed
             #2) '/' will be replaced by '__'
             #3) final executable name is 'b__c'
-            relativepath=$(echo $1/$file | sed 's|./installer-builder/output/origin/_output/||')
+            relativepath=$(echo "$1/$file" | sed 's|./installer-builder/output/origin/_output/||')
             newname=${relativepath//\//__}
 
             #copy executable to destination folder
-            cp -a $1/$file ./installer-builder/output/executables/unsigned/package/artifact/EXECUTABLES_TO_SIGN/$newname
-            codesign --remove-signature ./installer-builder/output/executables/unsigned/package/artifact/EXECUTABLES_TO_SIGN/$newname
+            cp -a "$1/$file" ./installer-builder/output/executables/unsigned/package/artifact/EXECUTABLES_TO_SIGN/"$newname"
+            codesign --remove-signature ./installer-builder/output/executables/unsigned/package/artifact/EXECUTABLES_TO_SIGN/"$newname"
 
             #qemu needs specific entitlement, handle it separately
             if [[ $file == "qemu-system-x86_64" || $file == "qemu-system-aarch64" ]];
             then
-                updateQEMUEntitlement $newname
+                updateQEMUEntitlement "$newname"
             elif [[ $file != "qemu-img" ]];
             then
-                updateEntitlement $newname
+                updateEntitlement "$newname"
             fi
         fi
     done

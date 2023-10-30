@@ -33,15 +33,15 @@ REGISTRY ?= ""
 ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = aarch64
-	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/aarch64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.aarch64-20230713205101.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1689037160.tar.gz
+	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/aarch64/images/
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.aarch64-20231026161559.qcow2
+	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1695247723.tar.gz
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
-	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230713205042.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1689037160.tar.gz
+	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20231026161553.qcow2
+	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1695247723.tar.gz
 endif
 
 FINCH_OS_HASH := `shasum -a 256 $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
@@ -65,10 +65,10 @@ finch-core:
 		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		$(MAKE)
+		"$(MAKE)"
 
 	mkdir -p _output
-	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: local-core
@@ -77,11 +77,11 @@ local-core:
 		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		$(MAKE) lima lima-socket-vmnet
+		"$(MAKE)" lima lima-socket-vmnet
 
 	mkdir -p _output
-	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
-	cd deps/finch-core/src/lima/_output && tar c * | tar Cvx  $(OUTDIR)/lima
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
+	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)/lima
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: lima-and-qemu
@@ -121,7 +121,7 @@ config.yaml:
 .PHONY: copy
 copy:
 	mkdir -p $(DEST)
-	(cd _output && tar c * | tar Cvx  $(DEST) )
+	(cd _output && tar -cf - * | tar -xvf - -C $(DEST) )
 
 .PHONY: install
 install: copy
@@ -204,6 +204,8 @@ download-licenses:
 	curl https://raw.githubusercontent.com/golangci/golangci-lint-action/master/LICENSE --output "$(LICENSEDIR)/github.com/golangci/golangci-lint-action/LICENSE"
 	mkdir -p "$(LICENSEDIR)/github.com/avto-dev/markdown-lint"
 	curl https://raw.githubusercontent.com/avto-dev/markdown-lint/master/LICENSE --output "$(LICENSEDIR)/github.com/avto-dev/markdown-lint/LICENSE"
+	mkdir -p "$(LICENSEDIR)"/github.com/ludeeus/action-shellcheck"
+	curl https://raw.githubusercontent.com/ludeeus/action-shellcheck/blob/2.0.0/LICENSE --output "$(LICENSEDIR)/github.com/ludeeus/action-shellcheck/LICENSE"
 
     ### dependencies in ci.yaml - end ###
 

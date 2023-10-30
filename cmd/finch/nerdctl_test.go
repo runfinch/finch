@@ -57,7 +57,6 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "info").Return(c)
@@ -124,7 +123,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "build", "-t", "demo", ".").Return(c)
@@ -239,7 +237,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				logger.EXPECT().SetLevel(flog.Debug)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -269,7 +266,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("ARG3")
@@ -299,7 +295,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
@@ -337,7 +332,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
@@ -373,7 +367,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncsd.EXPECT().LookupEnv("ARG2").Return("val2", true)
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
@@ -403,7 +396,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 			},
 		},
 		{
@@ -428,7 +420,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				logger.EXPECT().Debugf(`Resolving special IP "host-gateway" to %q for host %q`, "192.168.5.2", "name")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -459,7 +450,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
@@ -489,7 +479,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
@@ -519,7 +508,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				logger.EXPECT().Debugf(`Resolving special IP "host-gateway" to %q for host %q`, "192.168.5.2", "name")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -550,7 +538,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 
 				c := mocks.NewCommand(ctrl)
@@ -560,7 +547,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			},
 		},
 		{
-			name:    "with multiple nested volumes when FINCH_DOCKER_COMPAT is not set",
+			name:    "with multiple nested volumes",
 			cmdName: "run",
 			fc:      &config.Finch{},
 			args: []string{
@@ -584,7 +571,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
@@ -594,41 +580,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			},
 		},
 		{
-			name:    "with multiple nested volumes when FINCH_DOCKER_COMPAT is set",
-			cmdName: "run",
-			fc:      &config.Finch{},
-			args: []string{
-				"--rm", "-v", "/tmp:/tmp1/tmp2:rro", "--volume", "/tmp:/tmp1:rprivate,rro", "-v=/tmp:/tmp1/tmp2/tmp3/tmp4:rro",
-				"--volume=/tmp:/tmp1/tmp3/tmp4:rshared", "-v", "volume", "alpine:latest",
-			},
-			wantErr: nil,
-			mockSvc: func(
-				t *testing.T,
-				lcc *mocks.LimaCmdCreator,
-				ecc *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
-				logger *mocks.Logger,
-				ctrl *gomock.Controller,
-				fs afero.Fs,
-			) {
-				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
-				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("1", true)
-				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
-				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
-					"--rm", "-v", "volume", "-v", "/tmp:/tmp1:rprivate,rro", "-v", "/tmp:/tmp1/tmp2:rro",
-					"-v", "/tmp:/tmp1/tmp3/tmp4:rshared", "-v", "/tmp:/tmp1/tmp2/tmp3/tmp4:rro", "alpine:latest").Return(c)
-				c.EXPECT().Run()
-			},
-		},
-		{
-			name:    "with multiple nested volumes with full container run command when FINCH_DOCKER_COMPAT is set",
+			name:    "with multiple nested volumes with full container run command",
 			cmdName: "container",
 			fc:      &config.Finch{},
 			args: []string{
@@ -652,12 +604,11 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("1", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
-					"--rm", "-v", "volume", "-v", "/tmp:/tmp1:rprivate,rro", "-v", "/tmp:/tmp1/tmp2:rro",
-					"-v", "/tmp:/tmp1/tmp3/tmp4:rshared", "-v", "/tmp:/tmp1/tmp2/tmp3/tmp4:rro", "alpine:latest").Return(c)
+					"--rm", "-v", "/tmp:/tmp1/tmp2:rro", "--volume", "/tmp:/tmp1:rprivate,rro",
+					"-v=/tmp:/tmp1/tmp2/tmp3/tmp4:rro", "--volume=/tmp:/tmp1/tmp3/tmp4:rshared", "-v", "volume", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -683,7 +634,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				lcc.EXPECT().RunWithReplacingStdout(
 					testStdoutRs, "shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "pull", "test:tag", "--help").Return(nil)
@@ -711,7 +661,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				lcc.EXPECT().RunWithReplacingStdout(
 					testStdoutRs, "shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "pull", "test:tag", "--help").
@@ -740,7 +689,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
@@ -770,7 +718,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
@@ -800,7 +747,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test",
@@ -832,7 +778,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", true)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", true)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
@@ -892,7 +837,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", false)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
@@ -949,7 +893,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", true)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", true)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
@@ -1002,7 +945,6 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", true)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", true)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
-				ncsd.EXPECT().LookupEnv("FINCH_DOCKER_COMPAT").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)

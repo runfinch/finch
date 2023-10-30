@@ -41,7 +41,7 @@ jobs:
     runs-on: [self-hosted, macos, arm64, 11, release]
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
@@ -63,7 +63,7 @@ jobs:
         shell: zsh {0}
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: dependency-upload-session
@@ -79,7 +79,7 @@ jobs:
     runs-on: [self-hosted, macos, amd64, 11, release]
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
@@ -101,7 +101,7 @@ jobs:
         shell: zsh {0}
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: dependency-upload-session
@@ -130,7 +130,7 @@ jobs:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
       - name: Checkout the tag
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
@@ -152,7 +152,7 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: download-installer-session
@@ -241,7 +241,7 @@ jobs:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
       - name: Checkout the tag
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
@@ -263,7 +263,7 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: download-installer-session

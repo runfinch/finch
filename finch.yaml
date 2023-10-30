@@ -76,6 +76,11 @@ mounts:
   # 🟢 Builtin default: false
   # 🔵 This file: true (only for "/tmp/lima")
   writable: true
+- location: "/var/folders"
+  writable: true
+# Because readlink /var => private/var
+- location: "/private/var/folders"
+  writable: true
 
 # Lima disks to attach to the instance. The disks will be accessible from inside the
 # instance, labeled by name. (e.g. if the disk is named "data", it will be labeled
@@ -138,6 +143,15 @@ provision:
 - mode: boot
   script: |
     modprobe virtiofs
+- mode: boot
+  script: |
+    modprobe br_netfilter
+    cat <<EOF > /etc/sysctl.d/99-finch.conf
+    net.bridge.bridge-nf-call-iptables = 1
+    net.bridge.bridge-nf-call-ip6tables = 1
+    net.ipv4.ip_forward = 1
+    EOF
+    sysctl --system
 # # `user` is executed without the root privilege
 - mode: user
   script: |
@@ -176,7 +190,9 @@ provision:
     mkdir -p  ~/.local/share/cni
     sudo mount --bind /mnt/lima-finch/cni  ~/.local/share/cni
 
-    sudo systemctl restart containerd.service  
+    # Make sure buildkit is restarted with containerd, so it uses the correct UUID
+    sudo systemctl add-requires buildkit.service containerd.service
+    sudo systemctl restart containerd.service
 
 # Probe scripts to check readiness.
 # 🟢 Builtin default: null
