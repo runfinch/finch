@@ -14,7 +14,7 @@ import (
 	"github.com/lima-vm/lima/pkg/networks"
 	"golang.org/x/exp/slices"
 
-	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
@@ -365,7 +365,7 @@ func ensureRemoteCredentials(
 			return
 		}
 
-		var exportCredsOut credentials.Value
+		var exportCredsOut aws.Credentials
 		err = json.Unmarshal(out, &exportCredsOut)
 		if err != nil {
 			logger.Debugln("`aws configure export-credentials` output is unexpected, is command available? " +
