@@ -71,6 +71,7 @@ func updateConfigFile(bin *credhelperbin) error {
 		if err != nil {
 			return err
 		}
+		defer fileRead.Close() //nolint:errcheck // closing the file
 		bytes, err := afero.ReadAll(fileRead)
 		if err != nil {
 			return err
@@ -81,7 +82,6 @@ func updateConfigFile(bin *credhelperbin) error {
 			return err
 		}
 		credsStore := cfg.CredentialsStore
-		defer fileRead.Close() //nolint:errcheck // closing the file
 		if credsStore != binCfgName {
 			file, err := bin.fs.OpenFile(cfgPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
 			if err != nil {
