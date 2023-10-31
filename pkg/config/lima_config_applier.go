@@ -22,6 +22,7 @@ const (
 	sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
 	sociDownloadURLFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
+	sociServiceDownloadURLFormat             = "https://raw.githubusercontent.com/awslabs/soci-snapshotter/v%s/soci-snapshotter.service"
 	sociInstallationScriptFormat             = `%s
 if [ ! -f /usr/local/bin/soci ]; then
 	# download soci
@@ -29,18 +30,23 @@ if [ ! -f /usr/local/bin/soci ]; then
 	curl --retry 2 --retry-max-time 120 -OL "%s"
 	# move to usr/local/bin
 	tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
+	# changing containerd config
+	echo "    [proxy_plugins.soci]
+	type = \"snapshot\"
+	address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> /etc/containerd/config.toml
+
+	# install as a systemd service
+	curl --retry 2 --retry-max-time 120 -OL "%s"
+	mv soci-snapshotter.service /usr/local/lib/systemd/system/
+	ln -s /usr/local/lib/systemd/system/soci-snapshotter.service /etc/systemd/system/multi-user.target.wants/
+	restorecon -v /usr/local/lib/systemd/system/soci-snapshotter.service
+	systemctl daemon-reload
+	sudo systemctl add-requires soci-snapshotter.service containerd.service
+	systemctl enable --now soci-snapshotter
 fi
 
-# changing containerd config
-export config=etc/containerd/config.toml
-echo "    [proxy_plugins.soci]
-  type = \"snapshot\"
-  address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> $config
-	
 sudo systemctl restart containerd.service
-sudo soci-snapshotter-grpc &> ~/soci-snapshotter-logs &
-
-	`
+`
 
 	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
 )
@@ -251,7 +257,9 @@ func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, isDefault bool, sociVe
 	idx, hasScript := findSociInstallationScript(limaCfg)
 	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
 	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
-	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader, sociDownloadURL, sociFileName)
+	sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader,
+		sociDownloadURL, sociFileName, sociServiceDownloadURL)
 	if !hasScript && enabled {
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
 			Mode:   "system",

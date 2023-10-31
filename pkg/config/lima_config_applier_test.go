@@ -116,10 +116,12 @@ fi
 
 				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
 				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
 					sociDownloadURL,
-					sociFileName)
+					sociFileName,
+					sociServiceDownloadURL)
 
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
@@ -286,10 +288,12 @@ fi
 
 				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
 				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
 					sociDownloadURL,
-					sociFileName)
+					sociFileName,
+					sociServiceDownloadURL)
 
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
@@ -348,10 +352,12 @@ fi
 
 				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
 				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
 					sociDownloadURL,
-					sociFileName)
+					sociFileName,
+					sociServiceDownloadURL)
 
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
