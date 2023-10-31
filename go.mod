@@ -3,6 +3,7 @@ module github.com/runfinch/finch
 go 1.20
 
 require (
+	github.com/aws/aws-sdk-go-v2 v1.21.2
 	github.com/docker/cli v24.0.7+incompatible
 	github.com/docker/docker v24.0.7+incompatible
 	github.com/golang/mock v1.6.0
@@ -27,6 +28,7 @@ require (
 )
 
 require (
+	github.com/aws/smithy-go v1.15.0 // indirect
 	github.com/containerd/containerd v1.7.3 // indirect
 	github.com/docker/docker-credential-helpers v0.7.0 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
