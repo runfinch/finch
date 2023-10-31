@@ -278,8 +278,6 @@ func TestBinaries_Install(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			ctrl := gomock.NewController(t)
 			cmd := mocks.NewCommand(ctrl)
 			mFs := afero.NewMemMapFs()
