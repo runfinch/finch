@@ -173,7 +173,15 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	var additionalEnv []string
 	switch cmdName {
-	case "build", "pull", "push":
+	case "image":
+		if slices.Contains(args, "build") || slices.Contains(args, "pull") || slices.Contains(args, "push") {
+			ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+		}
+	case "container":
+		if slices.Contains(args, "run") {
+			ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+		}
+	case "build", "pull", "push", "run":
 		ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
 	}
 
