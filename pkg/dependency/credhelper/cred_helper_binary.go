@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/opencontainers/go-digest"
@@ -49,7 +50,7 @@ func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator,
 
 // updateConfigFile updates the config.json file to configure the credential helper.
 func updateConfigFile(bin *credhelperbin) error {
-	cfgPath := fmt.Sprintf("%s%s", bin.hcfg.finchPath, "config.json")
+	cfgPath := filepath.Join(bin.hcfg.finchPath, "config.json")
 	binCfgName := bin.credHelperConfigName()
 	fileExists, err := afero.Exists(bin.fs, cfgPath)
 	if err != nil {
@@ -108,7 +109,7 @@ func (bin *credhelperbin) binaryInstalled() (bool, error) {
 }
 
 func (bin *credhelperbin) configFileInstalled() (bool, error) {
-	cfgPath := fmt.Sprintf("%s%s", bin.hcfg.finchPath, "config.json")
+	cfgPath := filepath.Join(bin.hcfg.finchPath, "config.json")
 	binCfgName := bin.credHelperConfigName()
 
 	if fileExists, err := afero.Exists(bin.fs, cfgPath); err != nil {
@@ -143,7 +144,7 @@ func (bin *credhelperbin) credHelperConfigName() string {
 
 // fullInstallPath returns the full installation path of the credential helper binary.
 func (bin *credhelperbin) fullInstallPath() string {
-	return fmt.Sprintf("%s%s", bin.hcfg.installFolder, bin.hcfg.binaryName)
+	return filepath.Join(bin.hcfg.installFolder, bin.hcfg.binaryName)
 }
 
 // Installed checks if the credential helper already exists in the specified
@@ -182,8 +183,7 @@ func (bin *credhelperbin) Install() error {
 		}
 		credHelperName := strings.ReplaceAll(bin.credHelperConfigName(), "-login", "")
 		bin.l.Infof("Installing %s credential helper", credHelperName)
-		mkdirCmd := bin.cmdCreator.Create("mkdir", "-p", bin.hcfg.installFolder)
-		if _, err := mkdirCmd.Output(); err != nil {
+		if err := bin.fs.MkdirAll(bin.hcfg.installFolder, 0o700); err != nil {
 			return fmt.Errorf("error creating installation directory %s, err: %w", bin.hcfg.installFolder, err)
 		}
 
@@ -202,7 +202,7 @@ func (bin *credhelperbin) Install() error {
 		if _, err = curlCmd.Output(); err != nil {
 			return fmt.Errorf("error installing binary %s, err: %w", bin.hcfg.binaryName, err)
 		}
-		if err := bin.fs.Chmod(bin.fullInstallPath(), 0o755); err != nil {
+		if err := bin.fs.Chmod(bin.fullInstallPath(), 0o700); err != nil {
 			return err
 		}
 	}

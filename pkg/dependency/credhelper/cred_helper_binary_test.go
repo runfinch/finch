@@ -244,9 +244,8 @@ func TestBinaries_Install(t *testing.T) {
 				}
 				_, err := mFs.Create("mock_prefix/cred-helpers/docker-credential-ecr-login")
 				require.NoError(t, err)
-				cmd.EXPECT().Output().Times(2)
+				cmd.EXPECT().Output()
 				l.EXPECT().Infof("Installing %s credential helper", "ecr")
-				creator.EXPECT().Create("mkdir", "-p", "mock_prefix/cred-helpers/").Return(cmd)
 				creator.EXPECT().Create("curl", "--retry", "5", "--retry-max-time", "30", "--url",
 					"https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
 						"/0.7.0/linux-arm64/docker-credential-ecr-login", "--output",
