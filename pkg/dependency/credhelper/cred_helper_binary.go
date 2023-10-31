@@ -82,7 +82,7 @@ func updateConfigFile(bin *credhelperbin) error {
 		}
 		credsStore := cfg.CredentialsStore
 		defer fileRead.Close() //nolint:errcheck // closing the file
-		if strings.Compare(credsStore, binCfgName) != 0 {
+		if credsStore != binCfgName {
 			file, err := bin.fs.OpenFile(cfgPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
 			if err != nil {
 				return err
@@ -101,6 +101,34 @@ func updateConfigFile(bin *credhelperbin) error {
 	}
 
 	return nil
+}
+
+func (bin *credhelperbin) configFileInstalled() (bool, error) {
+	cfgPath := fmt.Sprintf("%s%s", bin.hcfg.finchPath, "config.json")
+	binCfgName := bin.credHelperConfigName()
+
+	if fileExists, err := afero.Exists(bin.fs, cfgPath); err != nil {
+		return false, err
+	} else if !fileExists {
+		return false, nil
+	}
+
+	fileRead, err := bin.fs.Open(cfgPath)
+	if err != nil {
+		return false, err
+	}
+	bytes, err := afero.ReadAll(fileRead)
+	if err != nil {
+		return false, err
+	}
+	var cfg configfile.ConfigFile
+	err = json.Unmarshal(bytes, &cfg)
+	if err != nil {
+		return false, err
+	}
+	credsStore := cfg.CredentialsStore
+	defer fileRead.Close() //nolint:errcheck // closing the file
+	return credsStore == binCfgName, nil
 }
 
 // credHelperConfigName returns the name of the credential helper binary that will be used
@@ -144,7 +172,7 @@ func (bin *credhelperbin) Installed() bool {
 		bin.l.Error(err)
 		return false
 	}
-	if strings.Compare(hash.String(), bin.hcfg.hash) != 0 {
+	if hash.String() != bin.hcfg.hash {
 		bin.l.Info("Hash of the installed credential helper binary does not match")
 		err := bin.fs.Remove(bin.fullInstallPath())
 		if err != nil {
@@ -152,6 +180,14 @@ func (bin *credhelperbin) Installed() bool {
 		}
 		return false
 	}
+
+	if cfgInstalled, err := bin.configFileInstalled(); err != nil {
+		bin.l.Error(err)
+		return false
+	} else if !cfgInstalled {
+		return false
+	}
+
 	return true
 }
 
@@ -160,7 +196,7 @@ func (bin *credhelperbin) Install() error {
 	if bin.helper == "" {
 		return nil
 	}
-	if strings.Compare(bin.helper, bin.credHelperConfigName()) != 0 {
+	if bin.helper != bin.credHelperConfigName() {
 		return nil
 	}
 	credHelperName := strings.ReplaceAll(bin.credHelperConfigName(), "-login", "")
