@@ -173,7 +173,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	var additionalEnv []string
 	switch cmdName {
-	case "build", "pull", "push":
+	case "build", "pull", "push", "run":
 		ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
 	}
 
