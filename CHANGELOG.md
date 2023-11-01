@@ -1,5 +1,36 @@
 # Changelog
 
+## [1.0.0](https://github.com/runfinch/finch/compare/v0.9.0...v1.0.0) (2023-10-31)
+
+
+### chore
+
+* update Release-As version to 1.0.0 (not-squashed) ([2c97323](https://github.com/runfinch/finch/commit/2c97323deccfbc860e304b3297c8e51f91b7e2c0))
+
+
+### Bug Fixes
+
+* ecr credential helper hash check ([#668](https://github.com/runfinch/finch/issues/668)) ([4b1b0a2](https://github.com/runfinch/finch/commit/4b1b0a2fa515bcfaaa6784ffa53a5918245cbd72))
+* ecr creds helper and credential_process ([#510](https://github.com/runfinch/finch/issues/510)) ([0525753](https://github.com/runfinch/finch/commit/0525753105403e27e5d1372588c0c87aa6b6cbe6))
+* improve creds helper UX ([#673](https://github.com/runfinch/finch/issues/673)) ([bc238cf](https://github.com/runfinch/finch/commit/bc238cf9383d0fbc983a7f76f2cc15821eafd265))
+* run SOCI as a systemd service ([#667](https://github.com/runfinch/finch/issues/667)) ([24fd649](https://github.com/runfinch/finch/commit/24fd649152b3ca18a1024d3a2ea40806c0c96cf2))
+* soci being reset on vm stop/start ([#672](https://github.com/runfinch/finch/issues/672)) ([9df7d32](https://github.com/runfinch/finch/commit/9df7d325b25fe98fdb8327bc4603ae4441b6a190))
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/cli from 24.0.6+incompatible to 24.0.7+incompatible ([#665](https://github.com/runfinch/finch/issues/665)) ([43a57ff](https://github.com/runfinch/finch/commit/43a57ffc052ba1ffcf0f50cdb08dfdb42abc9723))
+* **deps:** Bump github.com/docker/docker from 24.0.6+incompatible to 24.0.7+incompatible ([#666](https://github.com/runfinch/finch/issues/666)) ([4e06d28](https://github.com/runfinch/finch/commit/4e06d283512ed851279cb4988089f1c610896ba9))
+* **deps:** Bump github.com/lima-vm/lima from 0.17.2 to 0.18.0 ([#643](https://github.com/runfinch/finch/issues/643)) ([f181b89](https://github.com/runfinch/finch/commit/f181b8970c6d63a25d22be44820d1570c95b6f41))
+* **deps:** Bump github.com/onsi/gomega from 1.27.10 to 1.28.0 ([#583](https://github.com/runfinch/finch/issues/583)) ([9d1ad57](https://github.com/runfinch/finch/commit/9d1ad5748967b8b978131ddb50071200fcceffde))
+* **deps:** Bump github.com/runfinch/common-tests from 0.7.6 to 0.7.7 ([#609](https://github.com/runfinch/finch/issues/609)) ([e21ae83](https://github.com/runfinch/finch/commit/e21ae836d4f73ea07852e3cd1fc6cc16d56e4f32))
+* **deps:** Bump github.com/runfinch/common-tests from 0.7.7 to 0.7.8 ([#617](https://github.com/runfinch/finch/issues/617)) ([4d942f5](https://github.com/runfinch/finch/commit/4d942f550c86106a224e97f32f1bf90f1b4d44cb))
+* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.23.8 to 3.23.9 ([#588](https://github.com/runfinch/finch/issues/588)) ([20385b7](https://github.com/runfinch/finch/commit/20385b7c5c0a45f5495615ebb3ce70220ab15969))
+* **deps:** Bump golang.org/x/tools from 0.13.0 to 0.14.0 ([#610](https://github.com/runfinch/finch/issues/610)) ([8938cf3](https://github.com/runfinch/finch/commit/8938cf394f12b42da976c2963fad82c42a52aa85))
+* **deps:** Bump google.golang.org/grpc from 1.53.0 to 1.56.3 ([#658](https://github.com/runfinch/finch/issues/658)) ([321487c](https://github.com/runfinch/finch/commit/321487c9309a73625512255ff86b6ffc6977b86e))
+* **deps:** Bump k8s.io/apimachinery from 0.28.2 to 0.28.3 ([#652](https://github.com/runfinch/finch/issues/652)) ([05f9d53](https://github.com/runfinch/finch/commit/05f9d53dab468546918a332f0fc18449de774487))
+* **deps:** Bump submodules and dependencies ([#637](https://github.com/runfinch/finch/issues/637)) ([b094751](https://github.com/runfinch/finch/commit/b094751d3ba56c7855fc6f3af7b8bef2618a7206))
+
 ## [0.9.0](https://github.com/runfinch/finch/compare/v0.8.0...v0.9.0) (2023-09-25)
 
 
