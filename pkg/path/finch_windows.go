@@ -8,7 +8,6 @@ package path
 
 import (
 	"fmt"
-	"path/filepath"
 	"strings"
 
 	"golang.org/x/sys/windows/registry"
@@ -23,9 +22,8 @@ func (Finch) FinchRootDir(ffd FinchFinderDeps) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// reject any paths that end with unexpected characters
-	fileName := filepath.Base(expandedPath)
-	if strings.Contains(fileName, "&") || strings.Contains(fileName, `"`) {
+	// reject any paths that contain unexpected characters
+	if strings.Contains(expandedPath, "&") || strings.Contains(expandedPath, `"`) {
 		return "", fmt.Errorf("unexpected LOCALAPPDATA path %q", expandedPath)
 	}
 

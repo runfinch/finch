@@ -8,12 +8,12 @@ package path
 
 import (
 	"fmt"
-	"path/filepath"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/runfinch/finch/pkg/mocks"
 )
 
 func TestFinch_RootDir(t *testing.T) {
@@ -28,7 +28,7 @@ func TestFinch_RootDir(t *testing.T) {
 		{
 			name:    "happy path",
 			wantErr: nil,
-			want:    `C:\Users\User\AppData\`,
+			want:    Finch(`C:\Users\User\AppData\`),
 			mockSvc: func(deps *mocks.FinchFinderDeps) {
 				deps.EXPECT().Env("LOCALAPPDATA").Return(`C:\Users\User\AppData\`)
 			},
@@ -52,7 +52,7 @@ func TestFinch_RootDir(t *testing.T) {
 			deps := mocks.NewFinchFinderDeps(ctrl)
 			tc.mockSvc(deps)
 			res, err := mockFinch.FinchRootDir(deps)
-			assert.Equal(t, res, filepath.Join("", "", ""))
+			assert.Equal(t, Finch(res), tc.want)
 			assert.Equal(t, err, tc.wantErr)
 		})
 	}
