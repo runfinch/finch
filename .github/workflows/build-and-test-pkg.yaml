@@ -73,12 +73,6 @@ jobs:
           role-to-assume: ${{ secrets.WINDOWS_ROLE }}
           role-session-name: windows-msi
           aws-region: ${{ secrets.WINDOWS_REGION }}
-      - name: Remove Finch VM
-        run: |
-          wsl --list --verbose
-          wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
       - name: Clean up previous files
         run: |
           Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
