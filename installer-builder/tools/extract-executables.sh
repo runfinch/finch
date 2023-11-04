@@ -36,7 +36,7 @@ updateQEMUEntitlement() {
 
 #$1: the file object
 extractExecutables() {
-    for file in $(ls -a "$1")
+    for file in "$1"/{*,.*}
     do
         if [ -d "$1/$file" ];
         then
