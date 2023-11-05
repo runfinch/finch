@@ -327,6 +327,7 @@ clean:
 	-sudo rm -rf "/private/etc/sudoers.d/finch-lima"
 	-@rm -rf $(OUTDIR) 2>/dev/null || true
 	-@rm -rf ./deps/finch-core/_output || true
+	-@rm -rf ./deps/finch-core/downloads/os/$(FINCH_OS_BASENAME) || true
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true
