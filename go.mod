@@ -17,7 +17,7 @@ require (
 	github.com/shirou/gopsutil/v3 v3.23.10
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/afero v1.10.0
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	github.com/xorcare/pointer v1.2.2
 	golang.org/x/crypto v0.14.0
