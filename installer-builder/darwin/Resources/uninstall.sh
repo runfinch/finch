@@ -27,7 +27,7 @@ echo "[1/3] [DONE] Successfully deleted shortcut links"
 echo "Remove historical pkgutil packages..."
 pkgutil --pkgs | grep '^org\.Finch\.' | while read -r pkg; do
     echo "Forgetting package $pkg"
-    sudo pkgutil --forget "$pkg"
+    sudo pkgutil --forget "$pkg" > /dev/null 2>&1
 done
 
 if [ $? -eq 0 ]
