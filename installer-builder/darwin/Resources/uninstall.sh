@@ -19,7 +19,7 @@ sudo pkill '^socket_vmnet'
 sudo pkill '^qemu-system-'
 sudo pkill '^limactl'
 
-if [ "$$(readlink "/usr/local/bin/finch")" = "/Applications/Finch/bin/finch" ]; then sudo rm /usr/local/bin/finch; fi
+if [ "$(readlink '/usr/local/bin/finch')" = "/Applications/Finch/bin/finch" ]; then sudo rm /usr/local/bin/finch; fi
 
 echo "[1/3] [DONE] Successfully deleted shortcut links"
 
