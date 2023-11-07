@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1699399208767,
+  "lastUpdate": 1699399826752,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -21348,6 +21348,156 @@ window.BENCHMARK_DATA = {
             "value": 290,
             "unit": "allocs/op",
             "extra": "5 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "00ba174ad1c59981f6ce48bf80fc7e41cfed301b",
+          "message": "build(deps): Bump github.com/spf13/cobra from 1.7.0 to 1.8.0 (#686)\n\nBumps [github.com/spf13/cobra](https://github.com/spf13/cobra) from\r\n1.7.0 to 1.8.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/spf13/cobra/releases\">github.com/spf13/cobra's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v1.8.0</h2>\r\n<h2>✨ Features</h2>\r\n<ul>\r\n<li>Support usage as plugin for tools like kubectl by <a\r\nhref=\"https://github.com/nirs\"><code>@​nirs</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2018\">spf13/cobra#2018</a>\r\n- this means that programs that utilize a &quot;plugin-like&quot;\r\nstructure have much better support and usage (like for completions,\r\ncommand paths, etc.)</li>\r\n<li>Move documentation sources to site/content by <a\r\nhref=\"https://github.com/umarcor\"><code>@​umarcor</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1428\">spf13/cobra#1428</a></li>\r\n<li>Add 'one required flag' group by <a\r\nhref=\"https://github.com/marevers\"><code>@​marevers</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1952\">spf13/cobra#1952</a>\r\n- this includes a new <code>MarkFlagsOneRequired</code> API for flags\r\nwhich can be used to mark a flag group as required and cause command\r\nfailure if at least one is not used when invoked.</li>\r\n<li>Customizable error message prefix by <a\r\nhref=\"https://github.com/5ouma\"><code>@​5ouma</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2023\">spf13/cobra#2023</a>\r\n- This adds the <code>SetErrPrefix</code> and <code>ErrPrefix</code>\r\nAPIs on the <code>Command</code> struct to allow for setting a custom\r\nprefix for errors</li>\r\n<li>feat: add getters for flag completions by <a\r\nhref=\"https://github.com/avirtopeanu-ionos\"><code>@​avirtopeanu-ionos</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1943\">spf13/cobra#1943</a></li>\r\n<li>Feature: allow running persistent run hooks of all parents by <a\r\nhref=\"https://github.com/vkhoroz\"><code>@​vkhoroz</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2044\">spf13/cobra#2044</a></li>\r\n<li>Improve API to get flag completion function by <a\r\nhref=\"https://github.com/marckhouzam\"><code>@​marckhouzam</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2063\">spf13/cobra#2063</a></li>\r\n</ul>\r\n<h2>🐛 Bug fixes</h2>\r\n<ul>\r\n<li>Fix typo in fish completions by <a\r\nhref=\"https://github.com/twpayne\"><code>@​twpayne</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1945\">spf13/cobra#1945</a></li>\r\n<li>Fix grammar: 'allows to' by <a\r\nhref=\"https://github.com/supertassu\"><code>@​supertassu</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1978\">spf13/cobra#1978</a></li>\r\n<li>powershell: escape variable with curly brackets by <a\r\nhref=\"https://github.com/Luap99\"><code>@​Luap99</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1960\">spf13/cobra#1960</a></li>\r\n<li>Don't complete --help flag when flag parsing disabled by <a\r\nhref=\"https://github.com/marckhouzam\"><code>@​marckhouzam</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2061\">spf13/cobra#2061</a></li>\r\n<li>Replace all non-alphanumerics in active help env var program prefix\r\nby <a href=\"https://github.com/scop\"><code>@​scop</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1940\">spf13/cobra#1940</a></li>\r\n</ul>\r\n<h2>🔧 Maintenance</h2>\r\n<ul>\r\n<li>build(deps): bump golangci/golangci-lint-action from 3.4.0 to 3.5.0\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1971\">spf13/cobra#1971</a></li>\r\n<li>build(deps): bump golangci/golangci-lint-action from 3.5.0 to 3.6.0\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1976\">spf13/cobra#1976</a></li>\r\n<li>build(deps): bump golangci/golangci-lint-action from 3.6.0 to 3.7.0\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2021\">spf13/cobra#2021</a></li>\r\n<li>build(deps): bump actions/setup-go from 3 to 4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1934\">spf13/cobra#1934</a></li>\r\n<li>build(deps): bump github.com/cpuguy83/go-md2man/v2 from 2.0.2 to\r\n2.0.3 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2047\">spf13/cobra#2047</a></li>\r\n<li>build(deps): bump actions/checkout from 3 to 4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2028\">spf13/cobra#2028</a></li>\r\n<li>command: temporarily disable G602 due to <a\r\nhref=\"https://redirect.github.com/securego/gosec/issues/1005\">securego/gosec#1005</a>\r\nby <a href=\"https://github.com/umarcor\"><code>@​umarcor</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2022\">spf13/cobra#2022</a></li>\r\n</ul>\r\n<h2>🧪 Testing &amp; CI/CD</h2>\r\n<ul>\r\n<li>test: make fish_completions_test more robust by <a\r\nhref=\"https://github.com/branchvincent\"><code>@​branchvincent</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1980\">spf13/cobra#1980</a></li>\r\n<li>golangci: enable 'unused' and disable deprecated replaced by it by\r\n<a href=\"https://github.com/umarcor\"><code>@​umarcor</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1983\">spf13/cobra#1983</a></li>\r\n<li>cleanup: minor corrections to unit tests by <a\r\nhref=\"https://github.com/JunNishimura\"><code>@​JunNishimura</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2003\">spf13/cobra#2003</a></li>\r\n<li>ci: test golang 1.21 by <a\r\nhref=\"https://github.com/nunoadrego\"><code>@​nunoadrego</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2024\">spf13/cobra#2024</a></li>\r\n<li>Fix linter errors by <a\r\nhref=\"https://github.com/marckhouzam\"><code>@​marckhouzam</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2052\">spf13/cobra#2052</a></li>\r\n<li>Add tests for flag completion registration by <a\r\nhref=\"https://github.com/marckhouzam\"><code>@​marckhouzam</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2053\">spf13/cobra#2053</a></li>\r\n</ul>\r\n<h2>✏️ Documentation</h2>\r\n<ul>\r\n<li>doc: fix typo, Deperecated -&gt; Deprecated by <a\r\nhref=\"https://github.com/callthingsoff\"><code>@​callthingsoff</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2000\">spf13/cobra#2000</a></li>\r\n<li>Add notes to doc about the execution condition of *PreRun and\r\n*PostRun functions by <a\r\nhref=\"https://github.com/haoming29\"><code>@​haoming29</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2041\">spf13/cobra#2041</a></li>\r\n</ul>\r\n<hr />\r\n<p>Thank you everyone who contributed to this release and all your hard\r\nwork! Cobra and this community would never be possible without all of\r\nyou!!!! 🐍</p>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/spf13/cobra/compare/v1.7.0...v1.8.0\">https://github.com/spf13/cobra/compare/v1.7.0...v1.8.0</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/a0a6ae020bb3899ff0276067863e50523f897370\"><code>a0a6ae0</code></a>\r\nImprove API to get flag completion function (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2063\">#2063</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/890302a35f578311404a462b3cdd404f34db3720\"><code>890302a</code></a>\r\nSupport usage as plugin for tools like kubectl (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2018\">#2018</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/48cea5c87b5299b68c3f5b7f2c67ea948717276f\"><code>48cea5c</code></a>\r\nbuild(deps): bump actions/checkout from 3 to 4 (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2028\">#2028</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/22953d88453ec9343b4a78b9d67400a3326f3138\"><code>22953d8</code></a>\r\nReplace all non-alphanumerics in active help env var program prefix (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/1940\">#1940</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/00b68a1c260eaf2b9bcb10a3178d36cec81548ca\"><code>00b68a1</code></a>\r\nAdd tests for flag completion registration (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2053\">#2053</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/b711e8760b73c6aa1b4aa1bef3a26da5926f175d\"><code>b711e87</code></a>\r\nDon't complete --help flag when flag parsing disabled (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2061\">#2061</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/8b1eba47616566fc4d258a93da48d5d8741865f0\"><code>8b1eba4</code></a>\r\nFix linter errors (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2052\">#2052</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/4cafa37bc4bb85633b4245aa118280fe5a9edcd5\"><code>4cafa37</code></a>\r\nAllow running persistent run hooks of all parents (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2044\">#2044</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/5c962a221e70fd6b12296e5d7075f28b422f98b2\"><code>5c962a2</code></a>\r\nbuild(deps): bump github.com/cpuguy83/go-md2man/v2 from 2.0.2 to 2.0.3\r\n(<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2047\">#2047</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/efe8fa3e4453e41d6419b26c9769a51e42825632\"><code>efe8fa3</code></a>\r\nbuild(deps): bump actions/setup-go from 3 to 4 (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/1934\">#1934</a>)</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/spf13/cobra/compare/v1.7.0...v1.8.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/spf13/cobra&package-manager=go_modules&previous-version=1.7.0&new-version=1.8.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-11-07T18:27:09-05:00",
+          "tree_id": "af66057467d5a2d3a34b23f912470fffb95184db",
+          "url": "https://github.com/runfinch/finch/commit/00ba174ad1c59981f6ce48bf80fc7e41cfed301b"
+        },
+        "date": 1699399825655,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 32196370750,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.504,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 63.64,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 32.2,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1323847680,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1440800,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 30534,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 23886730334,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.6086,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 73.91,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 23.89,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 74280960,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1062920,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22595,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 260221802,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 2.137,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 17.42,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2602,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21280,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 290,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
           }
         ]
       }
