@@ -24,7 +24,12 @@ if [ "$(readlink '/usr/local/bin/finch')" = "/Applications/Finch/bin/finch" ]; t
 echo "[1/3] [DONE] Successfully deleted shortcut links"
 
 #forget from pkgutil
-pkgutil --forget "org.Finch.__VERSION__" > /dev/null 2>&1
+echo "Remove historical pkgutil packages..."
+pkgutil --pkgs | grep '^org\.Finch\.' | while read -r pkg; do
+    echo "Forgetting package $pkg"
+    sudo pkgutil --forget "$pkg" > /dev/null 2>&1
+done
+
 if [ $? -eq 0 ]
 then
   echo "[2/3] [DONE] Successfully deleted application informations"
