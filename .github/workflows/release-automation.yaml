@@ -39,3 +39,20 @@ jobs:
     needs: upload-pkg-and-dependency-source-code-to-release
     secrets: inherit
     uses: ./.github/workflows/release-homebrew.yaml
+
+  build-and-test-finch-msi:
+    build-and-test-finch-pkg:
+    needs: get-latest-tag
+    uses: ./.github/workflows/build-and-test-msi.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+  
+  upload-msi-to-release:
+      needs:
+      - get-latest-tag
+      - build-and-test-finch-msi
+    uses: ./.github/workflows/upload-msi-to-release.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
