@@ -36,6 +36,20 @@ func (m *MockUserDataDiskManager) EXPECT() *MockUserDataDiskManagerMockRecorder 
 	return m.recorder
 }
 
+// DeleteUserDataDisk mocks base method.
+func (m *MockUserDataDiskManager) DeleteUserDataDisk(force bool) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteUserDataDisk", force)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteUserDataDisk indicates an expected call of DeleteUserDataDisk.
+func (mr *MockUserDataDiskManagerMockRecorder) DeleteUserDataDisk(force interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUserDataDisk", reflect.TypeOf((*MockUserDataDiskManager)(nil).DeleteUserDataDisk), force)
+}
+
 // EnsureUserDataDisk mocks base method.
 func (m *MockUserDataDiskManager) EnsureUserDataDisk() error {
 	m.ctrl.T.Helper()
