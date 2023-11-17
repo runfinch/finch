@@ -24,7 +24,7 @@ require (
 	golang.org/x/exp v0.0.0-20230810033253-352e893a4cad
 	golang.org/x/tools v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.28.3
+	k8s.io/apimachinery v0.28.4
 )
 
 require (
@@ -52,7 +52,7 @@ require (
 	golang.org/x/sync v0.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
 	google.golang.org/grpc v1.56.3 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 )
 
 require (
