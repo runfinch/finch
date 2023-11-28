@@ -7,17 +7,12 @@ package disk
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 
-	"github.com/spf13/afero"
-
-	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/winutil"
 )
 
@@ -83,15 +78,11 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 		return fmt.Errorf("failed to get executable path: %w", err)
 	}
 
-	tempOut, _ := afero.TempFile(m.fs, "", "finchCreateDiskOutput*")
 	// Put all paths in quotes, since they are being passed to cmd.exe.
 	dpgoPath := fmt.Sprintf(`"%s"`, filepath.Join(string(m.finch), "bin", "dpgo.exe"))
 	diskPathQuoted := fmt.Sprintf(`"%s"`, diskPath)
-	tempPathQuoted := fmt.Sprintf(`"%s"`, tempOut.Name())
 	wdPathQuoted := fmt.Sprintf(`"%s"`, filepath.Dir(execPath))
 	sizeStr := fmt.Sprint(size)
-
-	_ = tempOut.Close()
 
 	if err := winutil.RunElevated(
 		dpgoPath,
@@ -105,32 +96,10 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 			diskPathQuoted,
 			"--size",
 			sizeStr,
-			">",
-			tempPathQuoted,
-			"2>&1",
 		},
 	); err != nil {
 		return fmt.Errorf("failed to run dpgo command: %w", err)
 	}
-
-	tempOutContents, _ := afero.ReadFile(m.fs, tempOut.Name())
-	dpGoOutStr := strings.TrimSpace(string(tempOutContents))
-	m.logger.Debugf("create disk cmd stdout: %s", dpGoOutStr)
-	_ = m.fs.Remove(tempOut.Name())
-
-	lines := strings.Split(dpGoOutStr, "\n")
-	var logs []flog.Log
-	for _, l := range lines {
-		// Fix new lines
-		nl := strings.ReplaceAll(l, `\r\n`, `\n`)
-		nl = strings.ReplaceAll(nl, `\r`, `\n`)
-		var logParsed flog.Log
-		if err = json.Unmarshal([]byte(l), &logParsed); err != nil {
-			return fmt.Errorf("error parsing create disk log: %w, log string: %s", err, nl)
-		}
-		logs = append(logs, logParsed)
-	}
-	m.logger.Debugf("create disk cmd stdout parsed: %v", logs)
 
 	return nil
 }

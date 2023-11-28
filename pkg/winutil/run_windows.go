@@ -79,21 +79,19 @@ var (
 	procShellExecuteEx = modshell32.NewProc("ShellExecuteExW")
 )
 
-// RunElevated allows a new process with Administrator access to be started. It constructs a command starting
-// in the form of `cmd /C "<program binary> <args...>"`. This allows output piping and other common cmd.exe
-// conventions to work. All path arguments passed into this function, through any of the parameters, should be quoted or escaped.
+// RunElevated allows a new process with Administrator access to be started.
+// All path arguments passed into this function, through any of the parameters, should be quoted or escaped.
 func RunElevated(exePath, wd string, args []string) error {
 	// runas designates that the process will be launched as Administrator
 	verb := "runas"
-	cmdPath := `C:\Windows\System32\cmd.exe`
 
 	verbPtr, err := syscall.UTF16PtrFromString(verb)
 	if err != nil {
 		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", verb, err)
 	}
-	exePtr, err := syscall.UTF16PtrFromString(cmdPath)
+	exePtr, err := syscall.UTF16PtrFromString(exePath)
 	if err != nil {
-		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", cmdPath, err)
+		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", exePath, err)
 	}
 	wdPtr, err := syscall.UTF16PtrFromString(wd)
 	if err != nil {
@@ -101,13 +99,10 @@ func RunElevated(exePath, wd string, args []string) error {
 	}
 
 	// the entire command passed after /C should be quoted, but /C itself should not be quoted
-	cmdArgs := []string{"/C"}
-	args = append([]string{exePath}, args...)
-	cmdArgs = append(cmdArgs, fmt.Sprintf(`"%s"`, strings.Join(args, " ")))
-	finalArgStr := strings.Join(cmdArgs, " ")
+	finalArgStr := strings.Join(args, " ")
 	argPtr, err := syscall.UTF16PtrFromString(finalArgStr)
 	if err != nil {
-		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", cmdArgs, err)
+		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", args, err)
 	}
 
 	return ShellExecuteAndWait(0, verbPtr, exePtr, argPtr, wdPtr, windows.SW_HIDE)
