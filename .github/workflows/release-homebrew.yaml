@@ -44,7 +44,7 @@ jobs:
         os:
           [
             [self-hosted, macos, arm64, 11, release],
-            [self-hosted, macos, arm64, 12, release],
+            [self-hosted, macos, arm64, 14, release],
             [self-hosted, macos, arm64, 13, release],
           ]
     runs-on: ${{ matrix.os }}
@@ -167,7 +167,7 @@ jobs:
         os:
           [
             [self-hosted, macos, amd64, 11, release],
-            [self-hosted, macos, amd64, 12, release],
+            [self-hosted, macos, amd64, 14, release],
             [self-hosted, macos, amd64, 13, release],
           ]
     runs-on: ${{ matrix.os }}

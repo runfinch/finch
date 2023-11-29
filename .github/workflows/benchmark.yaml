@@ -23,9 +23,9 @@ jobs:
         os:
           [
             [self-hosted, macos, amd64, 13, test],
-            [self-hosted, macos, amd64, 12, test],
+            [self-hosted, macos, amd64, 14, test],
             [self-hosted, macos, arm64, 13, test],
-            [self-hosted, macos, arm64, 12, test]
+            [self-hosted, macos, arm64, 14, test]
           ]
     runs-on: ${{ matrix.os }}
     steps:
