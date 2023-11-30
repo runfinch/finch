@@ -15,6 +15,7 @@ import (
 	"github.com/spf13/afero/sftpfs"
 
 	"github.com/runfinch/finch/pkg/fssh"
+	"github.com/runfinch/finch/pkg/lima/wrapper"
 )
 
 const (
@@ -26,19 +27,19 @@ type nerdctlConfigApplier struct {
 	dialer         fssh.Dialer
 	fs             afero.Fs
 	privateKeyPath string
-	hostUser       string
+	lima           wrapper.LimaWrapper
 }
 
 var _ NerdctlConfigApplier = (*nerdctlConfigApplier)(nil)
 
 // NewNerdctlApplier creates a new NerdctlConfigApplier that
 // applies nerdctl configuration changes by SSHing to the lima VM to update the nerdctl configuration file in it.
-func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath, hostUser string) NerdctlConfigApplier {
+func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string, lima wrapper.LimaWrapper) NerdctlConfigApplier {
 	return &nerdctlConfigApplier{
 		dialer:         dialer,
 		fs:             fs,
 		privateKeyPath: privateKeyPath,
-		hostUser:       hostUser,
+		lima:           lima,
 	}
 }
 
@@ -139,8 +140,8 @@ func updateNerdctlConfig(fs afero.Fs, user string, rootless bool) error {
 
 // Apply gets SSH and SFTP clients and uses them to update the nerdctl config.
 func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
-	user := "root"
-	sshCfg, err := fssh.NewClientConfig(nca.fs, user, nca.privateKeyPath)
+	rootUser := "root"
+	sshCfg, err := fssh.NewClientConfig(nca.fs, rootUser, nca.privateKeyPath)
 	if err != nil {
 		return fmt.Errorf("failed to create ssh client config: %w", err)
 	}
@@ -158,11 +159,15 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 	sftpFs := sftpfs.New(sftpClient)
 
 	// rootless hardcoded to false for now to match our finch.yaml file
-	if err := updateNerdctlConfig(sftpFs, user, false); err != nil {
+	if err := updateNerdctlConfig(sftpFs, rootUser, false); err != nil {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}
 
-	if err := updateEnvironment(sftpFs, nca.hostUser); err != nil {
+	user, err := nca.lima.LimaUser(false)
+	if err != nil {
+		return fmt.Errorf("failed to get lima user: %w", err)
+	}
+	if err := updateEnvironment(sftpFs, user.Username); err != nil {
 		return fmt.Errorf("failed to update the user's .profile file: %w", err)
 	}
 	return nil

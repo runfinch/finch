@@ -199,7 +199,6 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 	testCases := []struct {
 		name       string
 		path       string
-		hostUser   string
 		remoteAddr string
 		mockSvc    func(t *testing.T, fs afero.Fs, d *mocks.Dialer)
 		want       error
@@ -208,7 +207,6 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			name:       "private key path doesn't exist",
 			path:       "/private-key",
 			remoteAddr: "",
-			hostUser:   "mock-host-user",
 			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer) {
 			},
 			want: fmt.Errorf(
@@ -241,9 +239,10 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			fs := afero.NewMemMapFs()
 			d := mocks.NewDialer(ctrl)
+			lima := mocks.NewMockLimaWrapper(ctrl)
 
 			tc.mockSvc(t, fs, d)
-			got := NewNerdctlApplier(d, fs, tc.path, tc.hostUser).Apply(tc.remoteAddr)
+			got := NewNerdctlApplier(d, fs, tc.path, lima).Apply(tc.remoteAddr)
 
 			assert.Equal(t, tc.want, got)
 		})
