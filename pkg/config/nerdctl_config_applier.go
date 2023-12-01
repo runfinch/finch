@@ -146,8 +146,8 @@ func (nca *nerdctlConfigApplier) updateEnvironment(fs afero.Fs) error {
 
 // Apply gets SSH and SFTP clients and uses them to update the nerdctl config.
 func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
-	rootUser := "root"
-	sshCfg, err := fssh.NewClientConfig(nca.fs, rootUser, nca.privateKeyPath)
+	user := "root"
+	sshCfg, err := fssh.NewClientConfig(nca.fs, user, nca.privateKeyPath)
 	if err != nil {
 		return fmt.Errorf("failed to create ssh client config: %w", err)
 	}
@@ -165,7 +165,7 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 	sftpFs := sftpfs.New(sftpClient)
 
 	// rootless hardcoded to false for now to match our finch.yaml file
-	if err := updateNerdctlConfig(sftpFs, rootUser, false); err != nil {
+	if err := updateNerdctlConfig(sftpFs, user, false); err != nil {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}
 
