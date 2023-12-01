@@ -47,13 +47,26 @@ else
 fi
 
 #clean up ~/.finch directory
-[ -d ~/.finch ] && rm -rf ~/.finch
-if [ $? -eq 0 ]
-then
-  echo "[4/4] [DONE] Successfully deleted ~/.finch"
-else
-  echo "[4/4] [ERROR] Could not delete ~/.finch" >&2
-fi
+while true; do
+  read -r -p "Delete ~/.finch containing persistent user data [Y/n]? " answer
+  if [[ $answer == "y" || $answer == "Y" || $answer == "" ]]
+  then
+    [ -d ~/.finch ] && rm -rf ~/.finch
+    if [ $? -eq 0 ]
+    then
+        echo "[4/4] [DONE] Successfully deleted ~/.finch"
+    else
+        echo "[4/4] [ERROR] Could not delete ~/.finch" >&2
+    fi
+    break
+  elif [[ $answer == "n" || $answer == "N" ]]
+  then
+    echo "[4/4] Deletion of ~/.finch was aborted."
+    break
+  else
+    echo "Please answer with 'y' or 'n'"
+  fi
+done
 
 echo "Application uninstall process finished"
 exit 0
