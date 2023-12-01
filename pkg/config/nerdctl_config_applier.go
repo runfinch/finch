@@ -27,6 +27,7 @@ type nerdctlConfigApplier struct {
 	dialer         fssh.Dialer
 	fs             afero.Fs
 	privateKeyPath string
+	hostUser       string
 	lima           wrapper.LimaWrapper
 }
 
@@ -34,11 +35,12 @@ var _ NerdctlConfigApplier = (*nerdctlConfigApplier)(nil)
 
 // NewNerdctlApplier creates a new NerdctlConfigApplier that
 // applies nerdctl configuration changes by SSHing to the lima VM to update the nerdctl configuration file in it.
-func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string, lima wrapper.LimaWrapper) NerdctlConfigApplier {
+func NewNerdctlApplier(dialer fssh.Dialer, fs afero.Fs, privateKeyPath string, hostUser string, lima wrapper.LimaWrapper) NerdctlConfigApplier {
 	return &nerdctlConfigApplier{
 		dialer:         dialer,
 		fs:             fs,
 		privateKeyPath: privateKeyPath,
+		hostUser:       hostUser,
 		lima:           lima,
 	}
 }
@@ -52,45 +54,6 @@ func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd st
 		return profBufWithCmd, nil
 	}
 	return profStr, nil
-}
-
-// updateEnvironment adds variables to the user's shell's environment. Currently it uses ~/.bashrc because
-// Bash is the default shell and Bash will not load ~/.profile if ~/.bash_profile exists (which it does).
-// ~/.bash_profile sources ~/.bashrc, so ~/.bashrc is currently the best place to define additional variables.
-// The [GNU docs for Bash] explain how these files work together in more details.
-// The default location of DOCKER_CONFIG is ~/.docker/config.json. This config change sets the location to
-// ~/.finch/config.json, but from the perspective of macOS (/Users/<user>/.finch/config.json).
-// The reason that we don't set environment variables inside /root/.bashrc is that the vars inside it are
-// not able to be picked up even if we specify `sudo -E`. We have to switch to root user in order to access them, while
-// normally we would access the VM as the regular user.
-// For more information on the variable, see the registry nerdctl docs.
-//
-// [GNU docs for Bash]: https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html
-//
-// [registry nerdctl docs]: https://github.com/containerd/nerdctl/blob/master/docs/registry.md
-
-func updateEnvironment(fs afero.Fs, user string) error {
-	cmdArr := [4]string{
-		fmt.Sprintf("export DOCKER_CONFIG=\"/Users/%s/.finch\"", user),
-		fmt.Sprintf("[ -L /usr/local/bin/docker-credential-ecr-login ] "+
-			"|| sudo ln -s /Users/%s/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/", user),
-		fmt.Sprintf("[ -L /root/.aws ] || sudo ln -fs  /Users/%s/.aws /root/.aws", user),
-	}
-
-	profileFilePath := fmt.Sprintf("/home/%s.linux/.bashrc", user)
-	profBuf, err := afero.ReadFile(fs, profileFilePath)
-	if err != nil {
-		return fmt.Errorf("failed to read config file: %w", err)
-	}
-	profStr := string(profBuf)
-	for _, element := range cmdArr {
-		profStr, err = addLineToBashrc(fs, profileFilePath, profStr, element)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // updateNerdctlConfig reads from the nerdctl config and updates values.
@@ -138,6 +101,49 @@ func updateNerdctlConfig(fs afero.Fs, user string, rootless bool) error {
 	return nil
 }
 
+// updateEnvironment adds variables to the user's shell's environment. Currently it uses ~/.bashrc because
+// Bash is the default shell and Bash will not load ~/.profile if ~/.bash_profile exists (which it does).
+// ~/.bash_profile sources ~/.bashrc, so ~/.bashrc is currently the best place to define additional variables.
+// The [GNU docs for Bash] explain how these files work together in more details.
+// The default location of DOCKER_CONFIG is ~/.docker/config.json. This config change sets the location to
+// ~/.finch/config.json, but from the perspective of macOS (/Users/<user>/.finch/config.json).
+// The reason that we don't set environment variables inside /root/.bashrc is that the vars inside it are
+// not able to be picked up even if we specify `sudo -E`. We have to switch to root user in order to access them, while
+// normally we would access the VM as the regular user.
+// For more information on the variable, see the registry nerdctl docs.
+//
+// [GNU docs for Bash]: https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html
+//
+// [registry nerdctl docs]: https://github.com/containerd/nerdctl/blob/master/docs/registry.md
+func (nca *nerdctlConfigApplier) updateEnvironment(fs afero.Fs) error {
+	cmdArr := [4]string{
+		fmt.Sprintf("export DOCKER_CONFIG=\"/Users/%s/.finch\"", nca.hostUser),
+		fmt.Sprintf("[ -L /usr/local/bin/docker-credential-ecr-login ] "+
+			"|| sudo ln -s /Users/%s/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/", nca.hostUser),
+		fmt.Sprintf("[ -L /root/.aws ] || sudo ln -fs  /Users/%s/.aws /root/.aws", nca.hostUser),
+	}
+
+	limaUser, err := nca.lima.LimaUser(false)
+	if err != nil {
+		return fmt.Errorf("failed to get lima user: %w", err)
+	}
+
+	profileFilePath := fmt.Sprintf("/home/%s.linux/.bashrc", limaUser.Username)
+	profBuf, err := afero.ReadFile(fs, profileFilePath)
+	if err != nil {
+		return fmt.Errorf("failed to read config file: %w", err)
+	}
+	profStr := string(profBuf)
+	for _, element := range cmdArr {
+		profStr, err = addLineToBashrc(fs, profileFilePath, profStr, element)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Apply gets SSH and SFTP clients and uses them to update the nerdctl config.
 func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 	rootUser := "root"
@@ -163,11 +169,7 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}
 
-	user, err := nca.lima.LimaUser(false)
-	if err != nil {
-		return fmt.Errorf("failed to get lima user: %w", err)
-	}
-	if err := updateEnvironment(sftpFs, user.Username); err != nil {
+	if err := nca.updateEnvironment(sftpFs); err != nil {
 		return fmt.Errorf("failed to update the user's .profile file: %w", err)
 	}
 	return nil

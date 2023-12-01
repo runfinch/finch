@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"os/user"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -28,21 +29,26 @@ TZ6coT6ILioXcs0kX17JAAAAI2FsdmFqdXNAODg2NjVhMGJmN2NhLmFudC5hbWF6b24uY2
 9tAQI=
 -----END OPENSSH PRIVATE KEY-----`
 
-func Test_updateEnvironment(t *testing.T) {
+func TestNerdctlConfigApplier_updateEnvironment(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
 		name         string
-		user         string
-		mockSvc      func(t *testing.T, fs afero.Fs)
+		hostUser     string
+		mockSvc      func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper)
 		postRunCheck func(t *testing.T, fs afero.Fs)
 		want         error
 	}{
 		{
-			name: "happy path",
-			user: "mock_user",
-			mockSvc: func(t *testing.T, fs afero.Fs) {
+			name:     "happy path",
+			hostUser: "mock_user",
+			mockSvc: func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper) {
 				require.NoError(t, afero.WriteFile(fs, "/home/mock_user.linux/.bashrc", []byte(""), 0o644))
+
+				mockUser := &user.User{
+					Username: "mock_user",
+				}
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
@@ -56,9 +62,9 @@ func Test_updateEnvironment(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: "happy path, file already exists and already contains expected variables",
-			user: "mock_user",
-			mockSvc: func(t *testing.T, fs afero.Fs) {
+			name:     "happy path, file already exists and already contains expected variables",
+			hostUser: "mock_user",
+			mockSvc: func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper) {
 				require.NoError(
 					t,
 					afero.WriteFile(
@@ -70,6 +76,11 @@ func Test_updateEnvironment(t *testing.T) {
 						0o644,
 					),
 				)
+
+				mockUser := &user.User{
+					Username: "mock_user",
+				}
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
@@ -82,9 +93,14 @@ func Test_updateEnvironment(t *testing.T) {
 			want: nil,
 		},
 		{
-			name:         ".bashrc file doesn't exist",
-			user:         "mock_user",
-			mockSvc:      func(t *testing.T, fs afero.Fs) {},
+			name:     ".bashrc file doesn't exist",
+			hostUser: "mock_user",
+			mockSvc: func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper) {
+				mockUser := &user.User{
+					Username: "mock_user",
+				}
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {},
 			want: fmt.Errorf(
 				"failed to read config file: %w",
@@ -98,10 +114,14 @@ func Test_updateEnvironment(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
+			ctrl := gomock.NewController(t)
 			fs := afero.NewMemMapFs()
+			d := mocks.NewDialer(ctrl)
+			lima := mocks.NewMockLimaWrapper(ctrl)
 
-			tc.mockSvc(t, fs)
-			got := updateEnvironment(fs, tc.user)
+			tc.mockSvc(t, fs, lima)
+			nca, _ := NewNerdctlApplier(d, fs, "/private-key", tc.hostUser, lima).(*nerdctlConfigApplier)
+			got := nca.updateEnvironment(fs)
 			require.Equal(t, tc.want, got)
 
 			tc.postRunCheck(t, fs)
@@ -199,6 +219,7 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 	testCases := []struct {
 		name       string
 		path       string
+		hostUser   string
 		remoteAddr string
 		mockSvc    func(t *testing.T, fs afero.Fs, d *mocks.Dialer)
 		want       error
@@ -207,6 +228,7 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			name:       "private key path doesn't exist",
 			path:       "/private-key",
 			remoteAddr: "",
+			hostUser:   "mock-host-user",
 			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer) {
 			},
 			want: fmt.Errorf(
@@ -242,7 +264,7 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			lima := mocks.NewMockLimaWrapper(ctrl)
 
 			tc.mockSvc(t, fs, d)
-			got := NewNerdctlApplier(d, fs, tc.path, lima).Apply(tc.remoteAddr)
+			got := NewNerdctlApplier(d, fs, tc.path, tc.hostUser, lima).Apply(tc.remoteAddr)
 
 			assert.Equal(t, tc.want, got)
 		})
