@@ -107,6 +107,28 @@ func TestNerdctlConfigApplier_updateEnvironment(t *testing.T) {
 				&fs.PathError{Op: "open", Path: "/home/mock_user.linux/.bashrc", Err: errors.New("file does not exist")},
 			),
 		},
+		{
+			name:     "host user is not a valid linux username",
+			hostUser: "invalid.user",
+			mockSvc: func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper) {
+				require.NoError(t, afero.WriteFile(fs, "/home/lima.linux/.bashrc", []byte(""), 0o644))
+
+				mockUser := &user.User{
+					Username: "lima",
+				}
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				fileBytes, err := afero.ReadFile(fs, "/home/lima.linux/.bashrc")
+				require.NoError(t, err)
+				assert.Equal(t,
+					[]byte("\nexport DOCKER_CONFIG=\"/Users/invalid.user/.finch\""+
+						"\n[ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "+
+						"/Users/invalid.user/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/"+
+						"\n"+"[ -L /root/.aws ] || sudo ln -fs  /Users/invalid.user/.aws /root/.aws"), fileBytes)
+			},
+			want: nil,
+		},
 	}
 
 	for _, tc := range testCases {
