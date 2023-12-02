@@ -90,6 +90,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		fp.QEMUBinDir(),
 		system.NewStdLib(),
 	)
+	lima := wrapper.NewLimaWrapper()
 	supportBundleBuilder := support.NewBundleBuilder(
 		logger,
 		fs,
@@ -97,7 +98,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		fp,
 		ecc,
 		lcc,
-		wrapper.NewLimaWrapper(),
+		lima,
 	)
 
 	// append nerdctl commands
@@ -105,7 +106,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 	// append finch specific commands
 	allCommands = append(allCommands,
 		newVersionCommand(lcc, logger, stdOut),
-		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc),
+		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc, lima),
 		newSupportBundleCommand(logger, supportBundleBuilder, lcc),
 		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
 	)
@@ -122,6 +123,7 @@ func virtualMachineCommands(
 	ecc *command.ExecCmdCreator,
 	fs afero.Fs,
 	fc *config.Finch,
+	lima wrapper.LimaWrapper,
 ) *cobra.Command {
 	optionalDepGroups := []*dependency.Group{
 		vmnet.NewDependencyGroup(ecc, lcc, fs, fp, logger),
@@ -133,7 +135,7 @@ func virtualMachineCommands(
 		logger,
 		optionalDepGroups,
 		config.NewLimaApplier(fc, ecc, fs, fp.LimaOverrideConfigPath(), system.NewStdLib()),
-		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), system.NewStdLib().Env("USER")),
+		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), system.NewStdLib().Env("USER"), lima),
 		fp,
 		fs,
 		disk.NewUserDataDiskManager(lcc, ecc, &afero.OsFs{}, fp, system.NewStdLib().Env("HOME"), fc),

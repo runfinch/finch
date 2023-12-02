@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"os/user"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -28,21 +29,26 @@ TZ6coT6ILioXcs0kX17JAAAAI2FsdmFqdXNAODg2NjVhMGJmN2NhLmFudC5hbWF6b24uY2
 9tAQI=
 -----END OPENSSH PRIVATE KEY-----`
 
-func Test_updateEnvironment(t *testing.T) {
+func TestNerdctlConfigApplier_updateEnvironment(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
 		name         string
-		user         string
-		mockSvc      func(t *testing.T, fs afero.Fs)
+		hostUser     string
+		mockSvc      func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper)
 		postRunCheck func(t *testing.T, fs afero.Fs)
 		want         error
 	}{
 		{
-			name: "happy path",
-			user: "mock_user",
-			mockSvc: func(t *testing.T, fs afero.Fs) {
+			name:     "happy path",
+			hostUser: "mock_user",
+			mockSvc: func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper) {
 				require.NoError(t, afero.WriteFile(fs, "/home/mock_user.linux/.bashrc", []byte(""), 0o644))
+
+				mockUser := &user.User{
+					Username: "mock_user",
+				}
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
@@ -56,9 +62,9 @@ func Test_updateEnvironment(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: "happy path, file already exists and already contains expected variables",
-			user: "mock_user",
-			mockSvc: func(t *testing.T, fs afero.Fs) {
+			name:     "happy path, file already exists and already contains expected variables",
+			hostUser: "mock_user",
+			mockSvc: func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper) {
 				require.NoError(
 					t,
 					afero.WriteFile(
@@ -70,6 +76,11 @@ func Test_updateEnvironment(t *testing.T) {
 						0o644,
 					),
 				)
+
+				mockUser := &user.User{
+					Username: "mock_user",
+				}
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
@@ -82,14 +93,41 @@ func Test_updateEnvironment(t *testing.T) {
 			want: nil,
 		},
 		{
-			name:         ".bashrc file doesn't exist",
-			user:         "mock_user",
-			mockSvc:      func(t *testing.T, fs afero.Fs) {},
+			name:     ".bashrc file doesn't exist",
+			hostUser: "mock_user",
+			mockSvc: func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper) {
+				mockUser := &user.User{
+					Username: "mock_user",
+				}
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {},
 			want: fmt.Errorf(
 				"failed to read config file: %w",
 				&fs.PathError{Op: "open", Path: "/home/mock_user.linux/.bashrc", Err: errors.New("file does not exist")},
 			),
+		},
+		{
+			name:     "host user is not a valid linux username",
+			hostUser: "invalid.user",
+			mockSvc: func(t *testing.T, fs afero.Fs, lima *mocks.MockLimaWrapper) {
+				require.NoError(t, afero.WriteFile(fs, "/home/lima.linux/.bashrc", []byte(""), 0o644))
+
+				mockUser := &user.User{
+					Username: "lima",
+				}
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				fileBytes, err := afero.ReadFile(fs, "/home/lima.linux/.bashrc")
+				require.NoError(t, err)
+				assert.Equal(t,
+					[]byte("\nexport DOCKER_CONFIG=\"/Users/invalid.user/.finch\""+
+						"\n[ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "+
+						"/Users/invalid.user/.finch/cred-helpers/docker-credential-ecr-login /usr/local/bin/"+
+						"\n"+"[ -L /root/.aws ] || sudo ln -fs  /Users/invalid.user/.aws /root/.aws"), fileBytes)
+			},
+			want: nil,
 		},
 	}
 
@@ -98,10 +136,14 @@ func Test_updateEnvironment(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
+			ctrl := gomock.NewController(t)
 			fs := afero.NewMemMapFs()
+			d := mocks.NewDialer(ctrl)
+			lima := mocks.NewMockLimaWrapper(ctrl)
 
-			tc.mockSvc(t, fs)
-			got := updateEnvironment(fs, tc.user)
+			tc.mockSvc(t, fs, lima)
+			nca, _ := NewNerdctlApplier(d, fs, "/private-key", tc.hostUser, lima).(*nerdctlConfigApplier)
+			got := nca.updateEnvironment(fs)
 			require.Equal(t, tc.want, got)
 
 			tc.postRunCheck(t, fs)
@@ -241,9 +283,10 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			fs := afero.NewMemMapFs()
 			d := mocks.NewDialer(ctrl)
+			lima := mocks.NewMockLimaWrapper(ctrl)
 
 			tc.mockSvc(t, fs, d)
-			got := NewNerdctlApplier(d, fs, tc.path, tc.hostUser).Apply(tc.remoteAddr)
+			got := NewNerdctlApplier(d, fs, tc.path, tc.hostUser, lima).Apply(tc.remoteAddr)
 
 			assert.Equal(t, tc.want, got)
 		})
