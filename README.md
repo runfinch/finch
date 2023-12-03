@@ -145,6 +145,9 @@ vmType: "qemu"
 # Only available when using vmType "vz" on Apple Silicon running macOS 13+.
 # If true, also sets vmType to "vz".
 rosetta: false
+# finchDiskSize: the amount of disk size allocated for finch space in the virtual machine. (optional)
+# Only takes effect when a new VM is launched (only on vm init).
+finchDiskSize: 50GB
 ```
 
 ### FAQ

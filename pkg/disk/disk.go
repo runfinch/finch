@@ -22,6 +22,10 @@ import (
 const (
 	// diskName must always be consistent with the value under additionalDisks in finch.yaml.
 	diskName = "finch"
+)
+
+var (
+	// the amount of disk size allocated for finch space in the virtual machine.
 	diskSize = "50G"
 )
 
@@ -191,6 +195,9 @@ func (m *userDataDiskManager) convertToRaw(diskPath string) error {
 }
 
 func (m *userDataDiskManager) createLimaDisk() error {
+	if m.config.FinchDiskSize != nil {
+		diskSize = *m.config.FinchDiskSize
+	}
 	cmd := m.lcc.CreateWithoutStdio("disk", "create", diskName, "--size", diskSize, "--format", "raw")
 	if logs, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("failed to create disk, debug logs:\n%s", logs)
