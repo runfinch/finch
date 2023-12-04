@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1701731010825,
+  "lastUpdate": 1701731176758,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -23146,6 +23146,156 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 297,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f68b516317660dc61972a80dd985fca3180725f",
+          "message": "ci(deps): Bump google-github-actions/release-please-action from 3 to 4 (#717)\n\nBumps\r\n[google-github-actions/release-please-action](https://github.com/google-github-actions/release-please-action)\r\nfrom 3 to 4.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/google-github-actions/release-please-action/releases\">google-github-actions/release-please-action's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v4.0.0</h2>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.13...v4.0.0\">4.0.0</a>\r\n(2023-12-01)</h2>\r\n<h3>⚠ BREAKING CHANGES</h3>\r\n<ul>\r\n<li>remove most configuration options in favor of manifest configuration\r\nto configure the release-please-action</li>\r\n<li>rewrite in typescript</li>\r\n<li>remove command option in favor of setting <code>release-type</code>\r\nand\r\n<code>skip-github-release</code>/<code>skip-github-pull-request</code></li>\r\n<li>run on node20</li>\r\n<li><strong>deps:</strong> upgrade release-please to v16</li>\r\n<li>v4 release</li>\r\n</ul>\r\n<h3>Features</h3>\r\n<ul>\r\n<li><strong>deps:</strong> upgrade release-please to v16 (<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n<li>remove command option in favor of setting <code>release-type</code>\r\nand\r\n<code>skip-github-release</code>/<code>skip-github-pull-request</code>\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n<li>remove most configuration options in favor of manifest configuration\r\nto configure the release-please-action (<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n<li>run on node20 (<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n<li>v4 release (<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n</ul>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 16.3.0 to 16.3.1 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/876\">#876</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/c9291a968c291c9576e9e82a69ac316f60b980eb\">c9291a9</a>)</li>\r\n<li>restore include-component-in-tag default (false) (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/888\">#888</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/19431a1126b0d092093511e4d9074add51d1e9e1\">19431a1</a>)</li>\r\n</ul>\r\n<h3>Code Refactoring</h3>\r\n<ul>\r\n<li>rewrite in typescript (<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n</ul>\r\n<h2>v3.7.13</h2>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.12...v3.7.13\">3.7.13</a>\r\n(2023-11-06)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li><strong>deps:</strong> bump dependency versions (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/849\">#849</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/910801217bf1ec07dd4367e66345f83918f7ae57\">9108012</a>)</li>\r\n</ul>\r\n<h2>v3.7.12</h2>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.11...v3.7.12\">3.7.12</a>\r\n(2023-09-28)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 15.12.0 to 15.13.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/813\">#813</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/01b3219546e6e7c4cfdaece8cd06efa464f49e2a\">01b3219</a>)</li>\r\n</ul>\r\n<h2>v3.7.11</h2>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.10...v3.7.11\">3.7.11</a>\r\n(2023-07-20)</h2>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/google-github-actions/release-please-action/blob/main/CHANGELOG.md\">google-github-actions/release-please-action's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.12...v3.7.13\">3.7.13</a>\r\n(2023-11-06)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li><strong>deps:</strong> bump dependency versions (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/849\">#849</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/910801217bf1ec07dd4367e66345f83918f7ae57\">9108012</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.11...v3.7.12\">3.7.12</a>\r\n(2023-09-28)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 15.12.0 to 15.13.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/813\">#813</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/01b3219546e6e7c4cfdaece8cd06efa464f49e2a\">01b3219</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.9...v3.7.10\">3.7.10</a>\r\n(2023-06-23)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 15.10.4 to 15.11.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/778\">#778</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/18e5fcf19741ed0c95c18b1509f148b7977ceaaf\">18e5fcf</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.8...v3.7.9\">3.7.9</a>\r\n(2023-05-25)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 15.10.2 to 15.10.4 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/762\">#762</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/84759371f245a9245d04f684a8207ced70852d7e\">8475937</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.7...v3.7.8\">3.7.8</a>\r\n(2023-04-11)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 15.9.2 to 15.10.2 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/755\">#755</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/6730d1afa8d596ff8922e76ff5946fab917b804c\">6730d1a</a>)</li>\r\n<li>tag releases before opening new pull requests (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/753\">#753</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/6a803dfec495c1b9be1bf3c24140ad1072ef9a43\">6a803df</a>),\r\ncloses <a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/747\">#747</a></li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.6...v3.7.7\">3.7.7</a>\r\n(2023-04-10)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 15.9.1 to 15.9.2 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/746\">#746</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/c3a278c732153e274ae8130e657762ba3d524a2d\">c3a278c</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.5...v3.7.6\">3.7.6</a>\r\n(2023-03-28)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 15.8.1 to 15.9.1 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/738\">#738</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9997fc940dddf620986d5e88532ffb2cc6e22c1c\">9997fc9</a>)</li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/a6d1fd9854c8c40688a72f7e4b072a1e965860a0\"><code>a6d1fd9</code></a>\r\nchore(main): release 4.0.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/883\">#883</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/27c87c8aff660c3ce401107dc1b9a3edc572f0f0\"><code>27c87c8</code></a>\r\ndocs: fix update output key names (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/885\">#885</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/b067e38d2f241347979266f425adcc05c297d313\"><code>b067e38</code></a>\r\nchore: build dist (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/891\">#891</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/c9291a968c291c9576e9e82a69ac316f60b980eb\"><code>c9291a9</code></a>\r\nfix: bump release-please from 16.3.0 to 16.3.1 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/876\">#876</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/b1da2aee9f556aa1e7f983e52cd68c8ab8389b63\"><code>b1da2ae</code></a>\r\nbuild: remove unneeded, failing labelling step (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/890\">#890</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/de60c24be6e93649e7192ebe2cd7078614022a40\"><code>de60c24</code></a>\r\nbuild: the include-component-in-tag should default to false (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/889\">#889</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/19431a1126b0d092093511e4d9074add51d1e9e1\"><code>19431a1</code></a>\r\nfix: restore include-component-in-tag default (false) (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/888\">#888</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/eb6e95104ac0da0fbaedf60a226a0e9d282d1cfb\"><code>eb6e951</code></a>\r\nbuild: temporarily allow manual triggering to debug (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/887\">#887</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/546de4e1ec962156112b6e5b306e8dae6e73beae\"><code>546de4e</code></a>\r\nbuild: actually run main() in index.ts (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/882\">#882</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/c5182cc8b1ba400fc549efce9b4f73c58db4417b\"><code>c5182cc</code></a>\r\nbuild: update to use v4 configuration options (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/881\">#881</a>)</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3...v4\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=google-github-actions/release-please-action&package-manager=github_actions&previous-version=3&new-version=4)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-12-04T14:59:13-08:00",
+          "tree_id": "a0bee28a698cc6de0dafc0417d27a89ba31c428c",
+          "url": "https://github.com/runfinch/finch/commit/5f68b516317660dc61972a80dd985fca3180725f"
+        },
+        "date": 1701731175522,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 34072398209,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.5162,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 62.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 34.07,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1200787456,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1517736,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 32283,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24252751958,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4483,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.25,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 215474176,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1079040,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22956,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 243414550,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.7834,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 9.723,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2434,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 16384,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 20939,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 276,
             "unit": "allocs/op",
             "extra": "5 times\n8 procs"
           }
