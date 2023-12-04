@@ -97,7 +97,7 @@ The installer will install Finch and its dependencies in its own area of your sy
 
 Finch has a simple and extensible configuration. A configuration file at `${HOME}/.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
 
-For a full list of configuration options, check [the struct here](pkg/config/config.go#L30).
+For a full list of configuration options, check [the struct here](pkg/config/config.go#L34).
 
 An example `finch.yaml` looks like this:
 
