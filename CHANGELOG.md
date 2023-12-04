@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.0.1](https://github.com/runfinch/finch/compare/v1.0.0...v1.0.1) (2023-12-04)
+
+
+### Bug Fixes
+
+* Clean up all previous finch version installation registries in postinstall and uninstall ([#688](https://github.com/runfinch/finch/issues/688)) ([9afc0b9](https://github.com/runfinch/finch/commit/9afc0b9a5e73a3c261aeac87b977e44129b311bd))
+* Fix to be able to run finch build with --ssh option ([#696](https://github.com/runfinch/finch/issues/696)) ([4d1e6cf](https://github.com/runfinch/finch/commit/4d1e6cf6d8f4b6f2cbdf0229e8dcf4ad0c80d80c))
+* remove virtual machine image when running make clean ([98c8ee4](https://github.com/runfinch/finch/commit/98c8ee4f783d01cb1340e77b508d868c3bb4bf04))
+* resolve shellcheck warnings ([#684](https://github.com/runfinch/finch/issues/684)) ([d9f695a](https://github.com/runfinch/finch/commit/d9f695a39f17af6ab00722fbf5191b6fa5c9166b))
+* Use LimaUser method instead of host user name ([#712](https://github.com/runfinch/finch/issues/712)) ([7c02e08](https://github.com/runfinch/finch/commit/7c02e08394f667e1f69cd304ef0258c1f0ff1c0f))
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.21.2 to 1.22.0 ([#677](https://github.com/runfinch/finch/issues/677)) ([c450dc9](https://github.com/runfinch/finch/commit/c450dc96b5f09b57adcf48a62c09138bc04f3df5))
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.22.0 to 1.22.1 ([#682](https://github.com/runfinch/finch/issues/682)) ([2537aa6](https://github.com/runfinch/finch/commit/2537aa6490f411551f162255d152805cb5c47951))
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.22.1 to 1.23.5 ([#716](https://github.com/runfinch/finch/issues/716)) ([feedd95](https://github.com/runfinch/finch/commit/feedd953825f8736736fa6c796a4bb72cf70aabd))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.13.1 to 2.13.2 ([#708](https://github.com/runfinch/finch/issues/708)) ([cbbd064](https://github.com/runfinch/finch/commit/cbbd0645aaa5164ffe9eb31d1d1ab7220a50a03e))
+* **deps:** Bump github.com/onsi/gomega from 1.28.0 to 1.29.0 ([#662](https://github.com/runfinch/finch/issues/662)) ([5c9de37](https://github.com/runfinch/finch/commit/5c9de37cb8ba8a4d5cabfe3c640239bd1afa87e0))
+* **deps:** Bump github.com/onsi/gomega from 1.29.0 to 1.30.0 ([#693](https://github.com/runfinch/finch/issues/693)) ([2b0c54c](https://github.com/runfinch/finch/commit/2b0c54c85a227bdca0189a3e96b9981289759f53))
+* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.23.9 to 3.23.10 ([#678](https://github.com/runfinch/finch/issues/678)) ([1b2b823](https://github.com/runfinch/finch/commit/1b2b823da40454ac55b755145840bc5b03ab3091))
+* **deps:** Bump github.com/spf13/cobra from 1.7.0 to 1.8.0 ([#686](https://github.com/runfinch/finch/issues/686)) ([00ba174](https://github.com/runfinch/finch/commit/00ba174ad1c59981f6ce48bf80fc7e41cfed301b))
+* **deps:** Bump golang.org/x/crypto from 0.14.0 to 0.15.0 ([#692](https://github.com/runfinch/finch/issues/692)) ([fba68ff](https://github.com/runfinch/finch/commit/fba68ff03c01032665793b0f27681173ec03ceec))
+* **deps:** Bump golang.org/x/crypto from 0.15.0 to 0.16.0 ([#704](https://github.com/runfinch/finch/issues/704)) ([f6a920f](https://github.com/runfinch/finch/commit/f6a920fc80bf7be954527fe5bd765dddcd0d5db5))
+* **deps:** Bump k8s.io/apimachinery from 0.28.3 to 0.28.4 ([#697](https://github.com/runfinch/finch/issues/697)) ([e064d94](https://github.com/runfinch/finch/commit/e064d94b71acbd7d160c3f061ff3ade7caae3333))
+
 ## [1.0.0](https://github.com/runfinch/finch/compare/v0.9.0...v1.0.0) (2023-10-31)
 
 
