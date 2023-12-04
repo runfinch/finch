@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1701731304459,
+  "lastUpdate": 1701731518592,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -22804,6 +22804,156 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 494,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6f021a29fbabb35ef3b5b406d10932c81d2bd0c3",
+          "message": "build(deps): Bump golang.org/x/tools from 0.14.0 to 0.16.0 (#706)\n\nBumps [golang.org/x/tools](https://github.com/golang/tools) from 0.14.0\r\nto 0.16.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/golang/tools/releases\">golang.org/x/tools's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>gopls/v0.14.2</h2>\r\n<p>This release contains just one change: an upgrade of <a\r\nhref=\"https://pkg.go.dev/golang.org/x/telemetry\">x/telemetry</a><code>golang/go#63832</code></p>\r\n<p>Previously, when the telemetry mode was &quot;off&quot; (the\r\ndefault), counter data would not be uploaded, but <em>would</em> be\r\nwritten to the <a\r\nhref=\"https://pkg.go.dev/os#UserConfigDir\"><code>os.UserConfigDir()/go/telemetry/local</code></a>\r\ndirectory of the local file system. We heard from a few users that, as a\r\nmatter of policy within their organization, they need a way to prevent\r\neven this local data from being written. With this release, running <a\r\nhref=\"https://pkg.go.dev/golang.org/x/telemetry/cmd/gotelemetry\"><code>gotelemetry\r\noff</code></a> will stop gopls from writing this local counter data.\r\nNote that the <code>os.UserConfigDir()/go/telemetry/mode</code> file\r\nmust be written to record the &quot;off&quot; state.</p>\r\n<p>The new default telemetry mode is &quot;local&quot;, which behaves\r\nthe same way as &quot;off&quot; did before. In &quot;local&quot; mode,\r\ncounter data is written to the local file system, but not uploaded.\r\nLocal data can be inspected with the <code>gotelemetry view</code>\r\ncommand.</p>\r\n<p>See <a\r\nhref=\"https://redirect.github.com/golang/go/issues/63832\">golang/go#63832</a>\r\nfor more details. Thanks again for helping us support transparent\r\ntelemetry in gopls. As described in the <a\r\nhref=\"https://github.com/golang/tools/releases/tag/gopls%2Fv0.14.0\">v0.14.0\r\nrelease notes</a>, we are confident that this data will help us produce\r\na better, faster, more reliable product. In fact <a\r\nhref=\"https://github.com/golang/go/labels/gopls%2Ftelemetry-wins\">this\r\nis already happening</a>.</p>\r\n<h2>gopls/v0.14.1</h2>\r\n<p>This release contains just two changes:</p>\r\n<ul>\r\n<li>A workaround for a regression affecting some users of\r\n<code>GOPACKAGESDRIVER</code>: <a\r\nhref=\"https://redirect.github.com/golang/go/issues/63751\">golang/go#63751</a>,\r\nfor example those using gopls with an older version of <a\r\nhref=\"https://bazel.build/\">Bazel</a>. When the <a\r\nhref=\"https://pkg.go.dev/golang.org/x/tools/go/packages\"><code>go/packages</code></a>\r\ndriver is missing compiler or architecture information, gopls now\r\nassumes a default value rather than failing to load package\r\ninformation.</li>\r\n<li>A fix for a minor bug in the <a\r\nhref=\"https://github.com/golang/tools/releases/tag/gopls%2Fv0.14.0\">new</a>\r\n&quot;remove unused parameter&quot; refactoring: <a\r\nhref=\"https://redirect.github.com/golang/go/issues/63755\">golang/go#63755</a>.\r\nNotably, this bug was discovered via an automated report from someone\r\nwho had opted in to <a href=\"https://telemetry.go.dev/privacy\">Go\r\ntelemetry</a>.</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/a9ef4cfeacd705b0e43cc2935571a80b6547d70c\"><code>a9ef4cf</code></a>\r\ngo.mod: update golang.org/x dependencies</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/d9b9452656b6061e51acbfb411087aaf7ca6d342\"><code>d9b9452</code></a>\r\ngopls/internal/lsp/cache: move quick-fix bundling logic to the cache\r\npkg</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/1733061d5fbd81eec28621bcc4d1e41158618669\"><code>1733061</code></a>\r\ngo/analysis/passes/testinggoroutine: report by enclosing regions</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/b19be0fa71558b3bd27dd4210d9eee35fd52db91\"><code>b19be0f</code></a>\r\ngopls/internal/cmd/help_test.go: document</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/daa4aa59ed4efe3c28946c15b249fb8609074354\"><code>daa4aa5</code></a>\r\ngopls/internal/lsp/source: stubmethods: fix out-of-bounds index</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/a586d0db8420774bb736981052730e51efca1dac\"><code>a586d0d</code></a>\r\ngo/types/internal/play: show more types.Scope detail</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/53ad329bd98f6eea2106d46f2c1655cbbdd28242\"><code>53ad329</code></a>\r\ngopls/internal/lsp/source: move edit logic into the protocol\r\npackage</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/3c677e3f7d23999e4a31018a5f6bfade055408b7\"><code>3c677e3</code></a>\r\ngopls/internal/lsp/cache: move SuggestedFixFromCommand into cache</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/ab6af7d4bb284d8cae8d82939c658a178fa7ec9f\"><code>ab6af7d</code></a>\r\ngopls/internal/lsp/source: extract InDir to a new pathutil package</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/e7d61d9d57a6c8718dbc18fee6d5ac92d2ebd8f8\"><code>e7d61d9</code></a>\r\ngopls/internal/lsp/cache: simplify named error values</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/golang/tools/compare/v0.14.0...v0.16.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org/x/tools&package-manager=go_modules&previous-version=0.14.0&new-version=0.16.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-12-04T14:59:40-08:00",
+          "tree_id": "510aaf133525b39d73608d51de789ab238fadcca",
+          "url": "https://github.com/runfinch/finch/commit/6f021a29fbabb35ef3b5b406d10932c81d2bd0c3"
+        },
+        "date": 1701731517673,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 45880901934,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3681,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 45.88,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1285570560,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2053648,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 43510,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30644348389,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3552,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.64,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 54538240,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1377384,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 29123,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 488801604,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.3876,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 14.43,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.4887,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 32210,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 521,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
           }
