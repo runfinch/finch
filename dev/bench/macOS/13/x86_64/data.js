@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1701737328509,
+  "lastUpdate": 1701797325626,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -20586,6 +20586,156 @@ window.BENCHMARK_DATA = {
             "value": 537,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20581647a1949e7e9d258e851dd25a1105168410",
+          "message": "build(deps): Bump github.com/lima-vm/lima from 0.18.0 to 0.19.0 (#721)\n\nBumps [github.com/lima-vm/lima](https://github.com/lima-vm/lima) from\r\n0.18.0 to 0.19.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/lima-vm/lima/releases\">github.com/lima-vm/lima's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v0.19.0</h2>\r\n<p>This release fixes the disk image corruption issue with\r\n<code>--vm-type=vz</code> on ARM Mac (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2026\">#2026</a>)</p>\r\n<h2>Changes</h2>\r\n<ul>\r\n<li>\r\n<p><code>limactl</code> CLI:</p>\r\n<ul>\r\n<li>Add <code>limactl disk resize</code> command (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2034\">#2034</a>,\r\nthanks to <a\r\nhref=\"https://github.com/vasileknik76\"><code>@​vasileknik76</code></a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>VZ:</p>\r\n<ul>\r\n<li>Fix the disk image corruption issue on ARM Mac (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2026\">#2026</a>,\r\nthanks to <a\r\nhref=\"https://github.com/wpiekutowski\"><code>@​wpiekutowski</code></a>\r\nfor providing the <a\r\nhref=\"https://redirect.github.com/utmapp/UTM/issues/4840#issuecomment-1824340975\">hint</a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>QEMU:</p>\r\n<ul>\r\n<li>Skip checking the qemu binary signature on macOS 11 and older (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1981\">#1981</a>,\r\nthanks to <a\r\nhref=\"https://github.com/jandubois\"><code>@​jandubois</code></a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>Hostagent (affects port forwarding, reverse sshfs, etc.)</p>\r\n<ul>\r\n<li>Increase the limit on the number of the file descriptors (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2015\">#2015</a>,\r\nthanks to <a\r\nhref=\"https://github.com/vasileknik76\"><code>@​vasileknik76</code></a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>Guestagent:</p>\r\n<ul>\r\n<li>Switch away from SSH to vsock (vz) and virtio serial (qemu) (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1998\">#1998</a>,\r\nthanks to <a\r\nhref=\"https://github.com/balajiv113\"><code>@​balajiv113</code></a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>Misc:</p>\r\n<ul>\r\n<li>Fix SELinux issues (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1926\">#1926</a>,\r\n<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1942\">#1942</a>,\r\n<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1965\">#1965</a>,\r\nthanks to <a\r\nhref=\"https://github.com/hasan4791\"><code>@​hasan4791</code></a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>nerdctl:</p>\r\n<ul>\r\n<li>Update from <a\r\nhref=\"https://github.com/containerd/nerdctl/releases/tag/v1.6.2\">v1.6.2</a>→<a\r\nhref=\"https://github.com/containerd/nerdctl/releases/tag/v1.7.0\">v1.7.0</a>→<a\r\nhref=\"https://github.com/containerd/nerdctl/releases/tag/v1.7.1\">v1.7.1</a>\r\n(<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2044\">#2044</a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>Templates:</p>\r\n<ul>\r\n<li>AlmaLinux, Rocky Linux, Oracle Linux: update to 9.3 and 8.9 (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2024\">#2024</a>,\r\n<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2027\">#2027</a>,\r\n<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2043\">#2043</a>,\r\nthanks to <a\r\nhref=\"https://github.com/tcooper\"><code>@​tcooper</code></a>)</li>\r\n<li>Arch Linux: update to 20231115.191878</li>\r\n<li>CentOS Stream 8: update to 20231127.0 (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2043\">#2043</a>)</li>\r\n<li>CentOS Stream 9: update to 20231128.1 (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2043\">#2043</a>)</li>\r\n<li>Debian 11, 12: update to 20231013-1532 (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2027\">#2027</a>)</li>\r\n<li>Fedora: update to 39 (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1997\">#1997</a>,\r\nthanks to <a\r\nhref=\"https://github.com/ZhongRuoyu\"><code>@​ZhongRuoyu</code></a>)</li>\r\n<li>Ubuntu 22.04: update to release-20231026 (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2027\">#2027</a>)</li>\r\n<li>Add <code>template://experimental/gentoo</code> (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1935\">#1935</a>,\r\nthanks to <a\r\nhref=\"https://github.com/afbjorklund\"><code>@​afbjorklund</code></a>)</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<p>Full changes: <a\r\nhref=\"https://github.com/lima-vm/lima/milestone/39?closed=1\">https://github.com/lima-vm/lima/milestone/39?closed=1</a>\r\nThanks to <a\r\nhref=\"https://github.com/ZhongRuoyu\"><code>@​ZhongRuoyu</code></a> <a\r\nhref=\"https://github.com/afbjorklund\"><code>@​afbjorklund</code></a> <a\r\nhref=\"https://github.com/alexandear\"><code>@​alexandear</code></a> <a\r\nhref=\"https://github.com/balajiv113\"><code>@​balajiv113</code></a> <a\r\nhref=\"https://github.com/choznerol\"><code>@​choznerol</code></a> <a\r\nhref=\"https://github.com/cwegener\"><code>@​cwegener</code></a> <a\r\nhref=\"https://github.com/hasan4791\"><code>@​hasan4791</code></a> <a\r\nhref=\"https://github.com/jandubois\"><code>@​jandubois</code></a> <a\r\nhref=\"https://github.com/neowu\"><code>@​neowu</code></a> <a\r\nhref=\"https://github.com/takanohi\"><code>@​takanohi</code></a> <a\r\nhref=\"https://github.com/tcooper\"><code>@​tcooper</code></a> <a\r\nhref=\"https://github.com/terev\"><code>@​terev</code></a> <a\r\nhref=\"https://github.com/vasileknik76\"><code>@​vasileknik76</code></a>\r\n<a href=\"https://github.com/yuvipanda\"><code>@​yuvipanda</code></a></p>\r\n<h2>Usage</h2>\r\n<pre lang=\"console\"><code>[macOS]$ limactl create\r\n[macOS]$ limactl start\r\n...\r\nINFO[0029] READY. Run `lima` to open the shell.\r\n<p>[macOS]$ lima uname\r\nLinux\r\n</code></pre></p>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/b453dedb757e5fc1e249f352d0812d008e66fa3f\"><code>b453ded</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2034\">#2034</a>\r\nfrom vasileknik76/disk-resize</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/a8c703bf8b66d213d00542ef68271cd7b73612ef\"><code>a8c703b</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2044\">#2044</a>\r\nfrom AkihiroSuda/dev</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/f7526e236b193aeadeac4bb9075791337c740f0d\"><code>f7526e2</code></a>\r\nnerdctl: update to v1.7.1</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/00453cfa974e97b21e93b5d7a4bd2ab473566514\"><code>00453cf</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2043\">#2043</a>\r\nfrom AkihiroSuda/dev</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/2ada07e0130872bb7cf8abd2c87d782727071691\"><code>2ada07e</code></a>\r\ntemplates: update Oracle Linux 9 to 9.3</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/bdb9448821bac807fbfe8c8830e0548c6f2cbea0\"><code>bdb9448</code></a>\r\ntemplates: update Oracle Linux 8 to 8.9</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/4f51ccebf8275d66f13d45f109f8ddc26546c31a\"><code>4f51cce</code></a>\r\ntemplates: update CentOS Stream 9 to 20231128.1</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/c8b2548fe1a2334146e724187af6d3b9f074424c\"><code>c8b2548</code></a>\r\ntemplates: update CentOS Stream 8 to 20231127.0</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/c37043ff8ec3295a1a30e7dec6cae3c0f157dff8\"><code>c37043f</code></a>\r\ntemplates: update AlmaLinux 8 to 8.9</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/b2ad9c2eb193b2aa72cc9a3a49bd40983fef8865\"><code>b2ad9c2</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2042\">#2042</a>\r\nfrom lima-vm/dependabot/go_modules/github.com/contai...</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/lima-vm/lima/compare/v0.18.0...v0.19.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/lima-vm/lima&package-manager=go_modules&previous-version=0.18.0&new-version=0.19.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-12-05T09:25:07-08:00",
+          "tree_id": "552399c1a842efd10b1abd9a9a19ec190a47070e",
+          "url": "https://github.com/runfinch/finch/commit/20581647a1949e7e9d258e851dd25a1105168410"
+        },
+        "date": 1701797324521,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 45747138883,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.2662,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 26.67,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 45.75,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1551941632,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2049232,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 43423,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30628120228,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3872,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 35.71,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.63,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 33656832,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1375192,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 29078,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 495907270,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.724,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 24.92,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.4958,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 32314,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 524,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
           }
         ]
       }
