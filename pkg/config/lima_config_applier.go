@@ -236,11 +236,6 @@ func ensureWslDiskFormatScript(limaCfg *limayaml.LimaYAML) {
 			Mode: "system",
 			Script: fmt.Sprintf(`%s
 #!/bin/bash
-# Reformat disk
-if [ "$(blkid -s TYPE -t LABEL=FinchDataDiskNTFS -o device)" ]; then
-	mkfs -t ext4 -L "FinchDataDisk" -F $(blkid -s TYPE -t LABEL=FinchDataDiskNTFS -o device)
-fi
-
 mkdir -p /mnt/lima-finch
 mount "$(blkid -s TYPE -t LABEL=FinchDataDisk -o device)" /mnt/lima-finch
 `, wslDiskFormatScriptHeader),

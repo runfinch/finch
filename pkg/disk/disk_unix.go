@@ -215,7 +215,10 @@ func (m *userDataDiskManager) unlockLimaDisk() error {
 }
 
 func sizeString() (string, error) {
-	sizeB, err := diskSize()
+	sizeB, err := units.RAMInBytes(diskSizeStr)
+	if err != nil {
+		return 0, err
+	}
 	if err != nil {
 		return "", err
 	}

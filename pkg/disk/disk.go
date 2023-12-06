@@ -7,7 +7,6 @@
 package disk
 
 import (
-	"github.com/docker/go-units"
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -60,12 +59,4 @@ func NewUserDataDiskManager(
 		config:  config,
 		logger:  logger,
 	}
-}
-
-func diskSize() (int64, error) {
-	size, err := units.RAMInBytes(diskSizeStr)
-	if err != nil {
-		return 0, err
-	}
-	return size, nil
 }

@@ -71,7 +71,7 @@ arch-test:
 
 .PHONY: all
 ifeq ($(GOOS),windows)
-all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml dpgo
+all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml
 else
 all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
 endif
@@ -211,10 +211,6 @@ finch-unix: finch-general
 
 finch-general:
 	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
-
-.PHONY: dpgo
-dpgo:
-	$(GO) build -o $(OUTDIR)/bin/dpgo.exe $(PACKAGE)/pkg/disk/dpgo
 
 .PHONY: release
 release: check-licenses all download-licenses
