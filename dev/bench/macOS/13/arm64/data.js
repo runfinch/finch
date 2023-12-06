@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1701804987999,
+  "lastUpdate": 1701883924284,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -24046,6 +24046,156 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 285,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e40567bdd2bbfd6f1109bdbcce441d05107d3c0f",
+          "message": "ci(deps): Bump actions/setup-go from 4 to 5 (#723)\n\nBumps [actions/setup-go](https://github.com/actions/setup-go) from 4 to\r\n5.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/actions/setup-go/releases\">actions/setup-go's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v5.0.0</h2>\r\n<h2>What's Changed</h2>\r\n<p>In scope of this release, we change Nodejs runtime from node16 to\r\nnode20 (<a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/421\">actions/setup-go#421</a>).\r\nMoreover, we update some dependencies to the latest versions (<a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/445\">actions/setup-go#445</a>).</p>\r\n<p>Besides, this release contains such changes as:</p>\r\n<ul>\r\n<li>Fix hosted tool cache usage on windows by <a\r\nhref=\"https://github.com/galargh\"><code>@​galargh</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/411\">actions/setup-go#411</a></li>\r\n<li>Improve documentation regarding dependencies caching by <a\r\nhref=\"https://github.com/artemgavrilov\"><code>@​artemgavrilov</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/417\">actions/setup-go#417</a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a href=\"https://github.com/galargh\"><code>@​galargh</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/411\">actions/setup-go#411</a></li>\r\n<li><a\r\nhref=\"https://github.com/artemgavrilov\"><code>@​artemgavrilov</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/417\">actions/setup-go#417</a></li>\r\n<li><a\r\nhref=\"https://github.com/chenrui333\"><code>@​chenrui333</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/421\">actions/setup-go#421</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/actions/setup-go/compare/v4...v5.0.0\">https://github.com/actions/setup-go/compare/v4...v5.0.0</a></p>\r\n<h2>v4.1.0</h2>\r\n<h2>What's Changed</h2>\r\n<p>In scope of this release, slow installation on Windows was fixed by\r\n<a href=\"https://github.com/dsame\"><code>@​dsame</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/393\">actions/setup-go#393</a>\r\nand OS version was added to <code>primaryKey</code> for Ubuntu runners\r\nto avoid conflicts (<a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/383\">actions/setup-go#383</a>)</p>\r\n<p>This release also includes the following changes:</p>\r\n<ul>\r\n<li>Remove implicit dependencies by <a\r\nhref=\"https://github.com/nikolai-laevskii\"><code>@​nikolai-laevskii</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/378\">actions/setup-go#378</a></li>\r\n<li>Update action.yml by <a\r\nhref=\"https://github.com/mkelly\"><code>@​mkelly</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/379\">actions/setup-go#379</a></li>\r\n<li>Added a description that go-version should be specified as a string\r\ntype by <a href=\"https://github.com/n3xem\"><code>@​n3xem</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/367\">actions/setup-go#367</a></li>\r\n<li>Add note about YAML parsing versions by <a\r\nhref=\"https://github.com/dmitry-shibanov\"><code>@​dmitry-shibanov</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/382\">actions/setup-go#382</a></li>\r\n<li>Automatic update of configuration files from 05/23/2023 by <a\r\nhref=\"https://github.com/github-actions\"><code>@​github-actions</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/377\">actions/setup-go#377</a></li>\r\n<li>Bump tough-cookie and <code>@​azure/ms-rest-js</code> by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/392\">actions/setup-go#392</a></li>\r\n<li>Bump word-wrap from 1.2.3 to 1.2.4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/397\">actions/setup-go#397</a></li>\r\n<li>Bump semver from 6.3.0 to 6.3.1 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/396\">actions/setup-go#396</a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a href=\"https://github.com/mkelly\"><code>@​mkelly</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/379\">actions/setup-go#379</a></li>\r\n<li><a href=\"https://github.com/n3xem\"><code>@​n3xem</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/367\">actions/setup-go#367</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/actions/setup-go/compare/v4...v4.1.0\">https://github.com/actions/setup-go/compare/v4...v4.1.0</a></p>\r\n<h2>v4.0.1</h2>\r\n<h2>What's Changed</h2>\r\n<ul>\r\n<li>Update documentation for <code>v4</code> by <a\r\nhref=\"https://github.com/dsame\"><code>@​dsame</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/354\">actions/setup-go#354</a></li>\r\n<li>Fix glob bug in the package.json scripts section by <a\r\nhref=\"https://github.com/IvanZosimov\"><code>@​IvanZosimov</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/359\">actions/setup-go#359</a></li>\r\n<li>Bump <code>xml2js</code> dependency by <a\r\nhref=\"https://github.com/dmitry-shibanov\"><code>@​dmitry-shibanov</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/370\">actions/setup-go#370</a></li>\r\n<li>Bump <code>@actions/cache</code> dependency to v3.2.1 by <a\r\nhref=\"https://github.com/nikolai-laevskii\"><code>@​nikolai-laevskii</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/374\">actions/setup-go#374</a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/nikolai-laevskii\"><code>@​nikolai-laevskii</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-go/pull/374\">actions/setup-go#374</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/actions/setup-go/compare/v4...v4.0.1\">https://github.com/actions/setup-go/compare/v4...v4.0.1</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/0c52d547c9bc32b1aa3301fd7a9cb496313a4491\"><code>0c52d54</code></a>\r\nUpdate dependencies for node20 (<a\r\nhref=\"https://redirect.github.com/actions/setup-go/issues/445\">#445</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/bfd2fb341f32be7281829126376a12a780ca79fc\"><code>bfd2fb3</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/actions/setup-go/issues/421\">#421</a>\r\nfrom chenrui333/node20-runtime</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/3d65fa57fcbfe4a359b6b71a6c65e6eec12984eb\"><code>3d65fa5</code></a>\r\nfeat: bump to use actions/checkout@v4</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/8a505c9cf2e2726eda7f3268d6992e386a12da52\"><code>8a505c9</code></a>\r\nfeat: bump to use node20 runtime</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/883490dfd06f396ebe0b738bc313a53cf9d851e5\"><code>883490d</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/actions/setup-go/issues/417\">#417</a>\r\nfrom artemgavrilov/main</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/d45ebba0ce181dc5604aaf69ce5a0bdcbd3b1807\"><code>d45ebba</code></a>\r\nRephrase sentence</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/317c6617fa9e4e67f1e5e20ad8bc98bf298a0f8f\"><code>317c661</code></a>\r\nReplace <code>wildcards</code> term with <code>globs</code>.</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/f90673ad641a19d0689fba58b5c79adc54be5d81\"><code>f90673a</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/actions/setup-go/issues/1\">#1</a> from\r\nartemgavrilov/caching-docs-improvement</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/801823434715e45aa48743a38182d33b33675d02\"><code>8018234</code></a>\r\nImprove documentation regarding dependencies cachin</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-go/commit/d085b4fe57b6e17262cbebc67b4d2d341d8938c2\"><code>d085b4f</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/actions/setup-go/issues/411\">#411</a>\r\nfrom galargh/fix/windows-hostedtoolcache</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/actions/setup-go/compare/v4...v5\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=actions/setup-go&package-manager=github_actions&previous-version=4&new-version=5)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2023-12-06T09:29:06-08:00",
+          "tree_id": "0a4c05315eb6b3c157b3d288b75f434b6fdd437e",
+          "url": "https://github.com/runfinch/finch/commit/e40567bdd2bbfd6f1109bdbcce441d05107d3c0f"
+        },
+        "date": 1701883923260,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 33407131625,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4341,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 33.41,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1028890624,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1489928,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 31635,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24063344667,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4345,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.06,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 80740352,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1070888,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22777,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 247287925,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.9404,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 12.5,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2472,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21238,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 281,
             "unit": "allocs/op",
             "extra": "5 times\n8 procs"
           }
