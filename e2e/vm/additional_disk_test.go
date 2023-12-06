@@ -43,8 +43,9 @@ var testAdditionalDisk = func(o *option.Option) {
 			gomega.Expect(imageOutput).Should(gomega.ContainElement(savedImage))
 
 			// Changed in nerdctl v1.5 to [<name>] https://github.com/containerd/nerdctl/commit/11d80f274257c064924f40bd007756110d863a16
+			// And it changed back to <name> after upgrate to nerdctl v1.7.1
 			psOutput := command.StdoutAsLines(o, "ps", "--all", "--format", "{{.Names}}")
-			gomega.Expect(psOutput).Should(gomega.ContainElement("[" + containerName + "]"))
+			gomega.Expect(psOutput).Should(gomega.ContainElement(containerName))
 
 			volumeOutput := command.StdoutAsLines(o, "volume", "ls", "--format", "{{.Name}}")
 			gomega.Expect(volumeOutput).Should(gomega.ContainElement(volumeName))
