@@ -8,6 +8,7 @@ import (
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
+	"github.com/onsi/gomega/gexec"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
 )
@@ -19,7 +20,7 @@ const (
 	networkName   = "test-network"
 )
 
-var testAdditionalDisk = func(o *option.Option) {
+var testAdditionalDisk = func(o *option.Option, installed bool) {
 	ginkgo.Describe("Additional disk", ginkgo.Serial, func() {
 		ginkgo.It("Retains container user data after the VM is deleted", func() {
 			command.Run(o, "volume", "create", volumeName)
@@ -55,6 +56,15 @@ var testAdditionalDisk = func(o *option.Option) {
 			command.Run(o, "start", containerName)
 			gomega.Expect(command.StdoutStr(o, "exec", containerName, "cat", "/tmp/test.txt")).
 				Should(gomega.Equal("foo"))
+
+		})
+
+		ginkgo.It("finch vm init by the disk size for finch area configured in finchDiskSize of ~/.finch.yaml", func() {
+			resetVM(o, installed)
+			resetDisks(o, installed)
+			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nvmType: qemu\nrosetta: false\nfinchDiskSize: 3GB"))
+			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
 		})
 	})
 }
