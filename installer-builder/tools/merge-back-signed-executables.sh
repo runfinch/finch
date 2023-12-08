@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mergeBackSignedExecutables() {
-    for file in ./installer-builder/output/executables/signed/Payload/EXECUTABLES_TO_SIGN/{*,.*}
+    for file in $(ls -a ./installer-builder/output/executables/signed/Payload/EXECUTABLES_TO_SIGN)
     do
         if [[ $file != '.' && $file != '..' ]]
         then
