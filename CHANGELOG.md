@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/runfinch/finch/compare/v1.0.1...v1.0.2) (2023-12-08)
+
+
+### Reverts
+
+* "fix: resolve shellcheck warnings" ([#725](https://github.com/runfinch/finch/issues/725)) ([8ea255a](https://github.com/runfinch/finch/commit/8ea255abb64c653a8c35e82c9c17aec9904278c5))
+
 ## [1.0.1](https://github.com/runfinch/finch/compare/v1.0.0...v1.0.1) (2023-12-07)
 
 
