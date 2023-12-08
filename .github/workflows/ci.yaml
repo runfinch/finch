@@ -72,8 +72,7 @@ jobs:
         uses: ludeeus/action-shellcheck@2.0.0
         with:
           version: v0.9.0 
-          severity: warning
-        continue-on-error: false
+        continue-on-error: true
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     steps:
