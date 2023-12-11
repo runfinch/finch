@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.1](https://github.com/runfinch/finch/compare/v1.0.0...v1.0.1) (2023-12-11)
+
+
+### Bug Fixes
+
+* Change the default behavoir for deleting .finch folder to false when uninstall ([#732](https://github.com/runfinch/finch/issues/732)) ([e818743](https://github.com/runfinch/finch/commit/e8187432a02c59a821a0d3b39c9cbc51f75a60cd))
+* Clean up all previous finch version installation registries in postinstall and uninstall ([#688](https://github.com/runfinch/finch/issues/688)) ([9afc0b9](https://github.com/runfinch/finch/commit/9afc0b9a5e73a3c261aeac87b977e44129b311bd))
+* Fix to be able to run finch build with --ssh option ([#696](https://github.com/runfinch/finch/issues/696)) ([4d1e6cf](https://github.com/runfinch/finch/commit/4d1e6cf6d8f4b6f2cbdf0229e8dcf4ad0c80d80c))
+* Fix to delete ~/.finch when uninstalling finch ([#703](https://github.com/runfinch/finch/issues/703)) ([8d7389f](https://github.com/runfinch/finch/commit/8d7389f607fc0211ebd6cfafe13197b945d877a3))
+* remove virtual machine image when running make clean ([98c8ee4](https://github.com/runfinch/finch/commit/98c8ee4f783d01cb1340e77b508d868c3bb4bf04))
+* resolve shellcheck warnings ([#684](https://github.com/runfinch/finch/issues/684)) ([d9f695a](https://github.com/runfinch/finch/commit/d9f695a39f17af6ab00722fbf5191b6fa5c9166b))
+* Use LimaUser method instead of host user name ([#712](https://github.com/runfinch/finch/issues/712)) ([7c02e08](https://github.com/runfinch/finch/commit/7c02e08394f667e1f69cd304ef0258c1f0ff1c0f))
+
+### Reverts
+
+* "fix: resolve shellcheck warnings" ([#725](https://github.com/runfinch/finch/issues/725)) ([8ea255a](https://github.com/runfinch/finch/commit/8ea255abb64c653a8c35e82c9c17aec9904278c5))
+
 ## [1.0.0](https://github.com/runfinch/finch/compare/v0.9.0...v1.0.0) (2023-10-31)
 
 
