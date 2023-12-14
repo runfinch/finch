@@ -1,0 +1,27 @@
+{
+    ".": {
+        "package-name": "finch",
+        "changelog-sections": [
+            {
+                "type": "feat",
+                "section": "Features",
+                "hidden": false
+            },
+            {
+                "type": "fix",
+                "section": "Bug Fixes",
+                "hidden": false
+            },
+            {
+                "type": "exp",
+                "section": "Experimental",
+                "hidden": false
+            },
+            {
+                "type": "build",
+                "section": "Build System or External Dependencies",
+                "hidden": false
+            }
+        ]
+    }
+}
