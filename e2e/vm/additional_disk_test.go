@@ -56,10 +56,9 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			command.Run(o, "start", containerName)
 			gomega.Expect(command.StdoutStr(o, "exec", containerName, "cat", "/tmp/test.txt")).
 				Should(gomega.Equal("foo"))
-
 		})
 
-		ginkgo.It("finch vm init by the disk size for finch area configured in finchDiskSize of ~/.finch.yaml", func() {
+		ginkgo.It("should correctly configure disk size as specified in finch.yaml", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte("cpus: 6\nmemory: 4GiB\nvmType: qemu\nrosetta: false\nfinchDiskSize: 3GB"))

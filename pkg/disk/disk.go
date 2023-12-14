@@ -11,6 +11,7 @@ import (
 	"io/fs"
 	"path"
 
+	"github.com/docker/go-units"
 	limaStore "github.com/lima-vm/lima/pkg/store"
 	"github.com/spf13/afero"
 
@@ -24,10 +25,8 @@ const (
 	diskName = "finch"
 )
 
-var (
-	// the amount of disk size allocated for finch space in the virtual machine.
-	diskSize = "50G"
-)
+// the amount of disk size allocated for finch space in the virtual machine.
+var diskSize = "50G"
 
 // UserDataDiskManager is used to check the user data disk configuration and create it if needed.
 type UserDataDiskManager interface {
@@ -196,6 +195,10 @@ func (m *userDataDiskManager) convertToRaw(diskPath string) error {
 
 func (m *userDataDiskManager) createLimaDisk() error {
 	if m.config.FinchDiskSize != nil {
+		_, err := units.RAMInBytes(*m.config.FinchDiskSize)
+		if err != nil {
+			return err
+		}
 		diskSize = *m.config.FinchDiskSize
 	}
 	cmd := m.lcc.CreateWithoutStdio("disk", "create", diskName, "--size", diskSize, "--format", "raw")
