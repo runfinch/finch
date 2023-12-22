@@ -36,12 +36,12 @@ type versionAction struct {
 
 // NerdctlVersionOutput captures the nerdctl version.
 type NerdctlVersionOutput struct {
-	Client NerdctlClientOuput  `json:"Client"`
+	Client NerdctlClientOutput `json:"Client"`
 	Server NerdctlServerOutput `json:"Server"`
 }
 
-// NerdctlClientOuput captures the nerdctl Client output.
-type NerdctlClientOuput struct {
+// NerdctlClientOutput captures the nerdctl Client output.
+type NerdctlClientOutput struct {
 	Version    string                    `json:"Version"`
 	GitCommit  string                    `json:"GitCommit"`
 	GoVersion  string                    `json:"GoVersion"`
