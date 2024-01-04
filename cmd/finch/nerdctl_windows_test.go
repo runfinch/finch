@@ -98,6 +98,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "happy path",
 			cmdName: "build",
+			fc:      &config.Finch{},
 			args:    []string{"-t", "demo", "C:\\Users"},
 			wantErr: nil,
 			mockSvc: func(
@@ -136,6 +137,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --debug flag",
 			cmdName: "pull",
+			fc:      &config.Finch{},
 			args:    []string{"test:tag", "--debug"},
 			wantErr: nil,
 			mockSvc: func(
@@ -170,6 +172,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with environment flags parsing and env value doesn't exist",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "-e", "ARG1=val1", "--env=ARG2", "-eARG3", "alpine:latest", "env"},
 			wantErr: nil,
 			mockSvc: func(
@@ -206,6 +209,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with environment flags parsing and env value exists",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--env=ARG2", "-eARG3", "alpine:latest", "env"},
 			wantErr: nil,
 			mockSvc: func(
@@ -242,6 +246,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --env-file flag replacement",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--env-file=" + envFilePath, "alpine:latest", "env"},
 			wantErr: nil,
 			mockSvc: func(
@@ -280,6 +285,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --env-file flag replacement and existing env value",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--env-file", envFilePath, "alpine:latest", "env"},
 			wantErr: nil,
 			mockSvc: func(
@@ -318,6 +324,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --env-file flag, but the specified file does not exist",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--env-file", envFilePath, "alpine:latest", "env"},
 			wantErr: &os.PathError{Op: "open", Path: envFilePath, Err: afero.ErrFileNotFound},
 			mockSvc: func(
@@ -339,6 +346,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --add-host flag and special IP by space",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--add-host", "name:host-gateway", "alpine:latest"},
 			wantErr: nil,
 			mockSvc: func(
@@ -376,6 +384,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --add-host flag but without using special IP by space",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--add-host", "name:0.0.0.0", "alpine:latest"},
 			wantErr: nil,
 			mockSvc: func(
@@ -409,6 +418,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --add-host flag but without subsequent arg",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--add-host", "alpine:latest"},
 			wantErr: errors.New("run cmd error"),
 			mockSvc: func(
@@ -442,6 +452,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --add-host flag and special IP by equal",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--add-host=name:host-gateway", "alpine:latest"},
 			wantErr: nil,
 			mockSvc: func(
