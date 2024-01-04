@@ -25,4 +25,11 @@ sudo rm -rf "/opt/finch/"
 sudo rm -rf "/private/var/run/finch-lima"
 sudo rm -rf "/private/etc/sudoers.d/finch-lima"
 
+# Forget previous pkgutil packages starting with org.Finch except for the current version
+echo "Remove historical pkgutil packages..."
+pkgutil --pkgs | grep '^org\.Finch\.' | grep -v '^org\.Finch\.__VERSION__' | while read -r pkg; do
+    echo "Forgetting package $pkg"
+    sudo pkgutil --forget "$pkg"
+done
+
 echo "Post installation process finished."

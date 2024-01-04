@@ -24,17 +24,14 @@ const (
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
 	sociDownloadURLFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
 	sociServiceDownloadURLFormat             = "https://raw.githubusercontent.com/awslabs/soci-snapshotter/v%s/soci-snapshotter.service"
-	sociInstallationScriptFormat             = `%s
+	//nolint:lll // command string
+	sociInstallationScriptFormat = `%s
 if [ ! -f /usr/local/bin/soci ]; then
 	# download soci
 	set -e
 	curl --retry 2 --retry-max-time 120 -OL "%s"
 	# move to usr/local/bin
 	tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
-	# changing containerd config
-	echo "    [proxy_plugins.soci]
-	type = \"snapshot\"
-	address = \"/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock\" " >> /etc/containerd/config.toml
 
 	# install as a systemd service
 	curl --retry 2 --retry-max-time 120 -OL "%s"
@@ -45,9 +42,15 @@ if [ ! -f /usr/local/bin/soci ]; then
 	sudo systemctl add-requires soci-snapshotter.service containerd.service
 	systemctl enable --now soci-snapshotter
 fi
-	
+
+# changing containerd config, this seems to get reset on every VM stop/start
+if ! grep -q soci /etc/containerd/config.toml; then
+	printf '    [proxy_plugins.soci]\n      type = "snapshot"\n      address = "/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock"\n' >> /etc/containerd/config.toml
+fi
+
 sudo systemctl restart containerd.service
 `
+
 	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
 	wslDiskFormatScriptHeader                 = "# wsl disk format script"
 )

@@ -5,14 +5,19 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"strings"
 
+	"golang.org/x/exp/slices"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
 	"github.com/runfinch/finch/pkg/system"
@@ -34,11 +39,12 @@ type NerdctlCommandSystemDeps interface {
 }
 
 type nerdctlCommandCreator struct {
+	lcc        command.LimaCmdCreator
 	ecc        command.Creator
-	creator    command.LimaCmdCreator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
 	fs         afero.Fs
+	fc         *config.Finch
 }
 
 type (
@@ -47,13 +53,14 @@ type (
 )
 
 func newNerdctlCommandCreator(
+	lcc command.LimaCmdCreator,
 	ecc command.Creator,
-	creator command.LimaCmdCreator,
 	systemDeps NerdctlCommandSystemDeps,
 	logger flog.Logger,
 	fs afero.Fs,
+	fc *config.Finch,
 ) *nerdctlCommandCreator {
-	return &nerdctlCommandCreator{ecc: ecc, creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
+	return &nerdctlCommandCreator{lcc: lcc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
 }
 
 func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.Command {
@@ -64,24 +71,30 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 		// the args passed to nerdctlCommand.run will be empty because
 		// cobra will try to parse `-d alpine` as if alpine is the value of the `-d` flag.
 		DisableFlagParsing: true,
-		RunE:               newNerdctlCommand(ncc.ecc, ncc.creator, ncc.systemDeps, ncc.logger, ncc.fs).runAdapter,
+		RunE:               newNerdctlCommand(ncc.lcc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter,
 	}
 
 	return command
 }
 
 type nerdctlCommand struct {
+	lcc        command.LimaCmdCreator
 	ecc        command.Creator
-	creator    command.LimaCmdCreator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
 	fs         afero.Fs
+	fc         *config.Finch
 }
 
-func newNerdctlCommand(ecc command.Creator, creator command.LimaCmdCreator, systemDeps NerdctlCommandSystemDeps,
-	logger flog.Logger, fs afero.Fs,
+func newNerdctlCommand(
+	lcc command.LimaCmdCreator,
+	ecc command.Creator,
+	systemDeps NerdctlCommandSystemDeps,
+	logger flog.Logger,
+	fs afero.Fs,
+	fc *config.Finch,
 ) *nerdctlCommand {
-	return &nerdctlCommand{ecc: ecc, creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
+	return &nerdctlCommand{lcc: lcc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
 }
 
 func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
@@ -89,7 +102,7 @@ func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
 }
 
 func (nc *nerdctlCommand) run(cmdName string, args []string) error {
-	err := nc.assertVMIsRunning(nc.creator, nc.logger)
+	err := nc.assertVMIsRunning(nc.lcc, nc.logger)
 	if err != nil {
 		return err
 	}
@@ -216,10 +229,23 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		}
 	}
 
+	var additionalEnv []string
+	switch cmdName {
+	case "image":
+		if slices.Contains(args, "build") || slices.Contains(args, "pull") || slices.Contains(args, "push") {
+			ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+		}
+	case "container":
+		if slices.Contains(args, "run") {
+			ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+		}
+	case "build", "pull", "push", "run":
+		ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+	}
+
 	// Add -E to sudo command in order to preserve existing environment variables, more info:
 	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
-
-	limaArgs := append(nc.GetLimaArgs(), passedEnvArgs...)
+	limaArgs := append(nc.GetLimaArgs(), append(additionalEnv, passedEnvArgs...)...)
 
 	limaArgs = append(limaArgs, append([]string{nerdctlCmdName}, strings.Fields(cmdName)...)...)
 
@@ -233,10 +259,10 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	limaArgs = append(limaArgs, finalArgs...)
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
-		return nc.creator.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
+		return nc.lcc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
 	}
 
-	return nc.creator.Create(limaArgs...).Run()
+	return nc.lcc.Create(limaArgs...).Run()
 }
 
 func (nc *nerdctlCommand) assertVMIsRunning(creator command.LimaCmdCreator, logger flog.Logger) error {
@@ -366,6 +392,44 @@ func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 s
 		return skip, []string{}, err
 	}
 	return skip, envs, nil
+}
+
+// ensureRemoteCredentials is called before any actions that may require remote resources, in order
+// to ensure that fresh credentials are available inside the VM.
+// For more details on how `aws configure export-credentials` works, checks the docs.
+//
+// [the docs]: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/configure/export-credentials.html
+func ensureRemoteCredentials(
+	fc *config.Finch,
+	ecc command.Creator,
+	outEnv *[]string,
+	logger flog.Logger,
+) {
+	if slices.Contains(fc.CredsHelpers, "ecr-login") {
+		out, err := ecc.Create(
+			"aws",
+			"configure",
+			"export-credentials",
+			"--format",
+			"process",
+		).CombinedOutput()
+		if err != nil {
+			logger.Debugln("failed to run `aws configure` command")
+			return
+		}
+
+		var exportCredsOut aws.Credentials
+		err = json.Unmarshal(out, &exportCredsOut)
+		if err != nil {
+			logger.Debugln("`aws configure export-credentials` output is unexpected, is command available? " +
+				"This may result in a broken ecr-credential helper experience.")
+			return
+		}
+
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", exportCredsOut.AccessKeyID))
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", exportCredsOut.SecretAccessKey))
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SESSION_TOKEN=%s", exportCredsOut.SessionToken))
+	}
 }
 
 var nerdctlCmds = map[string]string{

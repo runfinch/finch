@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/mocks"
 )
 
@@ -23,7 +24,7 @@ var testStdoutRs = []command.Replacement{
 func TestNerdctlCommandCreator_create(t *testing.T) {
 	t.Parallel()
 
-	cmd := newNerdctlCommandCreator(nil, nil, nil, nil, nil).create("build", "build description")
+	cmd := newNerdctlCommandCreator(nil, nil, nil, nil, nil, nil).create("build", "build description")
 	assert.Equal(t, cmd.Name(), "build")
 	assert.Equal(t, cmd.DisableFlagParsing, true)
 }
@@ -83,11 +84,11 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			ecc := mocks.NewCommandCreator(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			assert.True(t, newNerdctlCommand(ecc, lcc, ncsd, logger, nil).shouldReplaceForHelp(tc.cmdName, tc.args))
+			assert.True(t, newNerdctlCommand(lcc, ecc, ncsd, logger, nil, &config.Finch{}).shouldReplaceForHelp(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -98,21 +99,23 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 	testCases := []struct {
 		name    string
 		cmdName string
+		fc      *config.Finch
 		args    []string
 		wantErr error
-		mockSvc func(*testing.T, *mocks.CommandCreator, *mocks.LimaCmdCreator, *mocks.NerdctlCommandSystemDeps, *mocks.Logger,
+		mockSvc func(*testing.T, *mocks.LimaCmdCreator, *mocks.CommandCreator, *mocks.NerdctlCommandSystemDeps, *mocks.Logger,
 			*gomock.Controller, afero.Fs)
 	}{
 		{
 			name:    "stopped VM",
 			cmdName: "build",
+			fc:      &config.Finch{},
 			args:    []string{"-t", "demo", "."},
 			wantErr: fmt.Errorf("instance %q is stopped, run `finch %s start` to start the instance",
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
 				t *testing.T,
-				ecc *mocks.CommandCreator,
 				lcc *mocks.LimaCmdCreator,
+				ecc *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
@@ -127,14 +130,15 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 		{
 			name:    "nonexistent VM",
 			cmdName: "build",
+			fc:      &config.Finch{},
 			args:    []string{"-t", "demo", "."},
 			wantErr: fmt.Errorf(
 				"instance %q does not exist, run `finch %s init` to create a new instance",
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
 				t *testing.T,
-				ecc *mocks.CommandCreator,
 				lcc *mocks.LimaCmdCreator,
+				ecc *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
@@ -149,12 +153,13 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 		{
 			name:    "unknown VM status",
 			cmdName: "build",
+			fc:      &config.Finch{},
 			args:    []string{"-t", "demo", "."},
 			wantErr: errors.New("unrecognized system status"),
 			mockSvc: func(
 				t *testing.T,
-				ecc *mocks.CommandCreator,
 				lcc *mocks.LimaCmdCreator,
+				ecc *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
@@ -169,12 +174,13 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 		{
 			name:    "status command returns an error",
 			cmdName: "build",
+			fc:      &config.Finch{},
 			args:    []string{"-t", "demo", "."},
 			wantErr: errors.New("get status error"),
 			mockSvc: func(
 				t *testing.T,
-				ecc *mocks.CommandCreator,
 				lcc *mocks.LimaCmdCreator,
+				ecc *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
@@ -197,8 +203,8 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
-			tc.mockSvc(t, ecc, lcc, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ecc, lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
+			tc.mockSvc(t, lcc, ecc, ncsd, logger, ctrl, fs)
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
 		})
 	}
 }

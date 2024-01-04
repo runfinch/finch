@@ -105,7 +105,7 @@ ssh:
   loadDotSSHPubKeys: false
   # Forward ssh agent into the instance.
   # 🟢 Builtin default: false
-  forwardAgent: null
+  forwardAgent: true
   # Forward X11 into the instance
   # 🟢 Builtin default: false
   forwardX11: null

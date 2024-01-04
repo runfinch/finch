@@ -8,43 +8,6 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@4c5670f886fe259db4d11222f7dff41c1382304d # v3.7.12
+      - uses: google-github-actions/release-please-action@cc61a07e2da466bebbc19b3a7dd01d6aecb20d1e # v4.0.2
         with:
           release-type: go
-          package-name: finch
-          # Include 'build' in the changelog and
-          # make it a releasable unit (patch version bump) because dependabot PRs uses it.
-          # For more details, see ../dependabot.yml.
-          #
-          # The mapping from type to section comes from conventional-commit-types [1]
-          # which is used by action-semantic-pull-request [2],
-          # which is used by us.
-          #
-          # [1] https://github.com/commitizen/conventional-commit-types/blob/master/index.json
-          # [2] https://github.com/amannn/action-semantic-pull-request/blob/0b14f54ac155d88e12522156e52cb6e397745cfd/README.md?plain=1#L60
-          changelog-types: >
-            [
-              {
-                "type":"feat",
-                "section":"Features",
-                "hidden":false
-              },
-              {
-                "type":"fix",
-                "section":"Bug Fixes",
-                "hidden":false
-              },
-              {
-                "type":"exp",
-                "section":"Experimental",
-                "hidden":false
-              },
-              {
-                "type":"build",
-                "section":"Build System or External Dependencies",
-                "hidden":false
-              }
-            ]
-          # Before we are at v1.0.0
-          bump-minor-pre-major: true
-
