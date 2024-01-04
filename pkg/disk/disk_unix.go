@@ -19,7 +19,8 @@ import (
 
 const (
 	// diskName must always be consistent with the value set for AdditionalDisks in lima_config_applier.go.
-	diskName = "finch"
+	diskName    = "finch"
+	diskSizeStr = "50GB"
 )
 
 type qemuDiskInfo struct {

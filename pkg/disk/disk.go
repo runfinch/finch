@@ -15,8 +15,6 @@ import (
 	fpath "github.com/runfinch/finch/pkg/path"
 )
 
-const diskSizeStr = "50GB"
-
 // UserDataDiskManager is used to check the user data disk configuration and create it if needed.
 type UserDataDiskManager interface {
 	EnsureUserDataDisk() error
