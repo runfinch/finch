@@ -190,6 +190,9 @@ jobs:
         run: |
           git config --global core.autocrlf false
           git config --global core.eol lf
+      - name: Cleanup previous checkouts
+        run: |
+          Remove-Item C:\actions-runner\_work\finch\finch -Recurse -Force -ErrorAction Ignore
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
