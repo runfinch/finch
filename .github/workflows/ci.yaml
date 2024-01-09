@@ -226,6 +226,7 @@ jobs:
           cd deps/finch-core && make clean
       - name: Build project
         run: |
+          git status
           make
       - name: Run e2e tests
         run: |
