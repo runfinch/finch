@@ -23,7 +23,7 @@ SUPPORTED_ARCH = false
 CORE_VDE_PREFIX ?= $(OUTDIR)/dependencies/vde/opt/finch
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
-GITCOMMIT := $(shell git rev-parse HEAD)$(shell if ! git diff --no-ext-diff --quiet --exit-code; then echo .m; fi)
+GITCOMMIT := $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
 
 GOOS ?= $(shell $(GO) env GOOS)
