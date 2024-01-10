@@ -1,0 +1,60 @@
+name: Upload installer
+on:
+  workflow_dispatch: # Trigger this workflow from tag
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: write   # This is required for uploading the release assets
+jobs:
+  get-version-tag:
+    name: Get the version, tag and validate the format
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+      version: ${{ steps.check-tag.outputs.version }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ inputs.ref_name }}" ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+
+          version=${tag#v}
+          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version matches format: $version"
+          else
+            echo "Error: Version $version doesn't match format."
+            exit 1
+          fi
+          echo "version=$version" >> ${GITHUB_OUTPUT}
+
+  upload-windows-msi:
+    needs: get-version-tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: download-installer-session
+          aws-region: ${{ secrets.REGION }}
+      - name: Download installers and dependency source code
+        run: |
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ get-version-tag.outputs.tag }}.msi Finch-${{ get-version-tag.outputs.tag }}.msi
+      - name: Upload installers and dependency source code to release
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+        with:
+          tag_name: ${{ get-version-tag.outputs.tag }}
+          files: |
+            Finch-${{ get-version-tag.outputs.tag }}.msi
+      - name: Delete installers and dependency source code
+        run: rm -rf Finch-${{ get-version-tag.outputs.tag }}.msi

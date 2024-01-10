@@ -4,6 +4,7 @@
 package config
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -16,7 +17,13 @@ import (
 func Test_applyDefaults(t *testing.T) {
 	t.Parallel()
 
-	testCases := []struct {
+	var testCases []struct {
+		name    string
+		cfg     *Finch
+		mockSvc func(deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+		want    *Finch
+	}
+	darwinTestCases := []struct {
 		name    string
 		cfg     *Finch
 		mockSvc func(deps *mocks.LoadSystemDeps, mem *mocks.Memory)
@@ -83,6 +90,42 @@ func Test_applyDefaults(t *testing.T) {
 				Rosetta: pointer.Bool(false),
 			},
 		},
+	}
+
+	windowsTestCases := []struct {
+		name    string
+		cfg     *Finch
+		mockSvc func(deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+		want    *Finch
+	}{
+		{
+			name: "happy path",
+			cfg:  &Finch{},
+			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+			},
+			want: &Finch{
+				VMType: pointer.String("wsl2"),
+			},
+		},
+		{
+			name: "does not fill wsl2 default when it's set to something else",
+			cfg: &Finch{
+				VMType: pointer.String("wsl"),
+			},
+			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+			},
+			want: &Finch{
+				VMType: pointer.String("wsl"),
+			},
+		},
+	}
+	switch runtime.GOOS {
+	case "windows":
+		testCases = append(testCases, windowsTestCases...)
+	case "darwin":
+		testCases = append(testCases, darwinTestCases...)
+	default:
+		t.Skip("Not running tests for " + runtime.GOOS)
 	}
 
 	for _, tc := range testCases {

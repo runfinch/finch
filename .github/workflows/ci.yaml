@@ -26,20 +26,31 @@ concurrency:
 
 jobs:
   gen-code-no-diff:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version-file: go.mod
           cache: true
       - run: make gen-code
       - run: git diff --exit-code
   unit-tests:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - name: Configure git CRLF settings
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           # Since this repository is not meant to be used as a library,
           # we don't need to test the latest 2 major releases like Go does: https://go.dev/doc/devel/release#policy.
@@ -48,36 +59,51 @@ jobs:
       - run: make test-unit
   # It's recommended to run golangci-lint in a job separate from other jobs (go test, etc) because different jobs run in parallel.
   go-linter:
+    name: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version-file: go.mod
-          cache: true
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+          cache: false # caching can result in tar errors that files already exist
+      - name: set GOOS env to windows
+        run: |
+          echo "GOOS=windows" >> $GITHUB_ENV
+      - name: golangci-lint - windows
+        uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3.7.0
         with:
           # Pin the version in case all the builds start to fail at the same time.
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
           version: v1.53.3
           args: --fix=false --timeout=5m
+      - name: set GOOS env to darwin
+        run: |
+          echo "GOOS=darwin" >> $GITHUB_ENV
+      - name: golangci-lint - darwin
+        uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3.7.0
+        with:
+          # Pin the version in case all the builds start to fail at the same time.
+          # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
+          # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
+          version: v1.53.3
+          args: --fix=false --timeout=5m --skip-dirs="(^|/)deps($|/)"
   shellcheck:
     name: ShellCheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@2.0.0
+        uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
         with:
           version: v0.9.0 
         continue-on-error: true
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version-file: go.mod
           cache: true
@@ -87,8 +113,8 @@ jobs:
   check-licenses:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version-file: go.mod
           cache: true
@@ -106,19 +132,19 @@ jobs:
           ]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0
           persist-credentials: false
-          submodules: true
+          submodules: recursive
       - name: Set output variables
         id: vars
         run: |
           has_creds=${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}
           echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
         if: steps.vars.outputs.has_creds == true
         with:
           role-to-assume: ${{ secrets.ROLE }}
@@ -149,11 +175,89 @@ jobs:
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e
         shell: zsh {0}
+  windows-e2e-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          [
+            [self-hosted, windows, amd64, test],
+          ]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 180
+    steps:
+      - name: Configure git CRLF settings
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - name: Cleanup previous checkouts
+        run: |
+          Remove-Item C:\actions-runner\_work\finch\finch -Recurse -Force -ErrorAction Ignore
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - name: Set output variables
+        id: vars
+        run: |
+          $has_creds="${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}"
+          echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        if: env.has_creds == 'true'
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: credhelper-test
+          aws-region: ${{ secrets.REGION }}
+      - name: Remove Finch VM
+        run: |
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+      - name: Clean up previous files
+        run: |
+          Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
+          make clean
+          cd deps/finch-core && make clean
+      - name: Build project
+        run: |
+          git status
+          make
+      - name: Run e2e tests
+        run: |
+          # set path to use newer ssh version
+          $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
+          $env:Path = $newPath
+
+          # set networking config option to allow for VM/container -> host communication
+          echo "[experimental]`nnetworkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
+          
+          git status
+          git clean -f -d
+          make test-e2e
+      - name: Remove Finch VM and Clean Up Previous Environment
+        if: ${{ always() }}
+        run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          make clean
+          cd deps/finch-core && make clean
+          exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
   mdlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: avto-dev/markdown-lint@v1
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: avto-dev/markdown-lint@04d43ee9191307b50935a753da3b775ab695eceb # v1.5.0
         with:
           args: '**/*.md'
           # CHANGELOG.md is only updated by release-please bot.

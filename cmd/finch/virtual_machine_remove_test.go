@@ -17,7 +17,7 @@ import (
 func TestNewRemoveVMCommand(t *testing.T) {
 	t.Parallel()
 
-	cmd := newRemoveVMCommand(nil, nil)
+	cmd := newRemoveVMCommand(nil, nil, nil)
 	assert.Equal(t, cmd.Name(), "remove")
 }
 
@@ -26,18 +26,18 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *gomock.Controller)
+		mockSvc func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller)
 		args    []string
 	}{
 		{
 			name: "should remove the instance",
 			args: []string{},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
-
+				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("remove", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
@@ -49,8 +49,9 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 			args: []string{
 				"--force",
 			},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
+				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				creator.EXPECT().CreateWithoutStdio("remove", "--force", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
 				logger.EXPECT().Info(gomock.Any()).AnyTimes()
@@ -64,11 +65,12 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
-			tc.mockSvc(logger, lcc, ctrl)
+			tc.mockSvc(logger, lcc, dm, ctrl)
 
-			cmd := newRemoveVMCommand(lcc, logger)
+			cmd := newRemoveVMCommand(lcc, dm, logger)
 			cmd.SetArgs(tc.args)
 			assert.NoError(t, cmd.Execute())
 		})
@@ -81,17 +83,18 @@ func TestRemoveVMAction_run(t *testing.T) {
 	testCases := []struct {
 		name    string
 		wantErr error
-		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *gomock.Controller)
+		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *mocks.UserDataDiskManager, *gomock.Controller)
 		force   bool
 	}{
 		{
 			name:    "should remove the instance",
 			wantErr: nil,
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+				dm.EXPECT().DetachUserDataDisk().Return(nil)
 
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("remove", limaInstanceName).Return(command)
@@ -105,7 +108,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 			name: "running VM",
 			wantErr: fmt.Errorf("the instance %q is running, run `finch %s stop` to stop the instance first",
 				limaInstanceName, virtualMachineRootCmd),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -116,7 +119,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 		{
 			name:    "nonexistent VM",
 			wantErr: fmt.Errorf("the instance %q does not exist", limaInstanceName),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
@@ -127,7 +130,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 		{
 			name:    "unknown VM status",
 			wantErr: errors.New("unrecognized system status"),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
@@ -138,7 +141,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 		{
 			name:    "status command returns an error",
 			wantErr: errors.New("get status error"),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
@@ -148,11 +151,12 @@ func TestRemoveVMAction_run(t *testing.T) {
 		{
 			name:    "should print error if virtual machine failed to remove",
 			wantErr: errors.New("failed to remove instance"),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+				dm.EXPECT().DetachUserDataDisk().Return(nil)
 
 				logs := []byte("stdout + stderr")
 				command := mocks.NewCommand(ctrl)
@@ -166,10 +170,11 @@ func TestRemoveVMAction_run(t *testing.T) {
 		{
 			name:    "should forcibly remove the instance",
 			wantErr: nil,
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("remove", "--force", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
+				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				logger.EXPECT().Info("Forcibly removing Finch virtual machine...")
 				logger.EXPECT().Info("Finch virtual machine removed successfully")
 			},
@@ -183,11 +188,12 @@ func TestRemoveVMAction_run(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 
-			tc.mockSvc(logger, lcc, ctrl)
-			err := newRemoveVMAction(lcc, logger).run(tc.force)
+			tc.mockSvc(logger, lcc, dm, ctrl)
+			err := newRemoveVMAction(lcc, dm, logger).run(tc.force)
 			assert.Equal(t, tc.wantErr, err)
 		})
 	}

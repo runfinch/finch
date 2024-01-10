@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
 	"testing"
 
 	"gopkg.in/yaml.v3"
@@ -43,27 +44,6 @@ func TestXmain(t *testing.T) {
 		wantErr error
 	}{
 		{
-			name:    "happy path",
-			wantErr: nil,
-			mockSvc: func(
-				logger *mocks.Logger,
-				ffd *mocks.FinchFinderDeps,
-				fs afero.Fs,
-				loadCfgDeps *mocks.LoadSystemDeps,
-				mem *mocks.Memory,
-			) {
-				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
-
-				ffd.EXPECT().Env("HOME").Return("/home")
-				ffd.EXPECT().Executable().Return("/bin/path", nil)
-				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
-				ffd.EXPECT().FilePathJoin("/real/bin/path", "../../").Return("/real")
-				loadCfgDeps.EXPECT().NumCPU().Return(16)
-				// 12_884_901_888 == 12GiB
-				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
-			},
-		},
-		{
 			name: "failed to find the finch path from path.FindFinch",
 			wantErr: fmt.Errorf("failed to find the installation path of Finch: %w",
 				fmt.Errorf("failed to locate the executable that starts this process: %w", errors.New("failed to find executable path")),
@@ -76,6 +56,35 @@ func TestXmain(t *testing.T) {
 				_ *mocks.Memory,
 			) {
 				ffd.EXPECT().Executable().Return("", errors.New("failed to find executable path"))
+			},
+		},
+	}
+
+	darwinTestCases := []struct {
+		name    string
+		mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
+		wantErr error
+	}{
+		{
+			name:    "happy path",
+			wantErr: nil,
+			mockSvc: func(
+				logger *mocks.Logger,
+				ffd *mocks.FinchFinderDeps,
+				fs afero.Fs,
+				loadCfgDeps *mocks.LoadSystemDeps,
+				mem *mocks.Memory,
+			) {
+				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
+
+				// called additionally in FinchRootDir
+				ffd.EXPECT().GetUserHome().Return("/home", nil).Times(2)
+				ffd.EXPECT().Executable().Return("/bin/path", nil)
+				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
+				loadCfgDeps.EXPECT().NumCPU().Return(16)
+				// 12_884_901_888 == 12GiB
+				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
 			},
 		},
 		{
@@ -94,14 +103,69 @@ func TestXmain(t *testing.T) {
 			) {
 				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte("this isn't YAML"), 0o600))
 
-				ffd.EXPECT().Env("HOME").Return("/home")
+				// called additionally in FinchRootDir
+				ffd.EXPECT().GetUserHome().Return("/home", nil).Times(2)
 				ffd.EXPECT().Executable().Return("/bin/path", nil)
 				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
-				ffd.EXPECT().FilePathJoin("/real/bin/path", "../../").Return("/real")
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
 			},
 		},
 	}
 
+	windowsTestCases := []struct {
+		name    string
+		mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
+		wantErr error
+	}{
+		{
+			name:    "happy path",
+			wantErr: nil,
+			mockSvc: func(
+				logger *mocks.Logger,
+				ffd *mocks.FinchFinderDeps,
+				fs afero.Fs,
+				loadCfgDeps *mocks.LoadSystemDeps,
+				mem *mocks.Memory,
+			) {
+				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
+
+				ffd.EXPECT().GetUserHome().Return("/home", nil)
+				ffd.EXPECT().Env("LOCALAPPDATA").Return("/home/")
+				ffd.EXPECT().Executable().Return("/bin/path", nil)
+				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
+			},
+		},
+		{
+			name: "failed to load finch config because of invalid YAML",
+			wantErr: fmt.Errorf("failed to load config: %w",
+				fmt.Errorf("failed to unmarshal config file: %w",
+					&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into config.Finch"}},
+				),
+			),
+			mockSvc: func(
+				_ *mocks.Logger,
+				ffd *mocks.FinchFinderDeps,
+				fs afero.Fs,
+				_ *mocks.LoadSystemDeps,
+				_ *mocks.Memory,
+			) {
+				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte("this isn't YAML"), 0o600))
+
+				ffd.EXPECT().GetUserHome().Return("/home", nil)
+				ffd.EXPECT().Env("LOCALAPPDATA").Return("/home/")
+				ffd.EXPECT().Executable().Return("/bin/path", nil)
+				ffd.EXPECT().EvalSymlinks("/bin/path").Return("/real/bin/path", nil)
+				ffd.EXPECT().FilePathJoin("/real/bin/path", "..", "..").Return("/real")
+			},
+		},
+	}
+
+	if runtime.GOOS == "windows" {
+		testCases = append(testCases, windowsTestCases...)
+	} else {
+		testCases = append(testCases, darwinTestCases...)
+	}
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
@@ -132,7 +196,7 @@ func TestNewApp(t *testing.T) {
 
 	require.NoError(t, afero.WriteFile(fs, "/real/config.yaml", []byte(configStr), 0o600))
 
-	cmd := newApp(l, fp, fs, &config.Finch{}, stdOut)
+	cmd := newApp(l, fp, fs, &config.Finch{}, stdOut, "", "")
 
 	assert.Equal(t, cmd.Name(), finchRootCmd)
 	assert.Equal(t, cmd.Version, version.Version)

@@ -12,15 +12,12 @@ package config
 import (
 	"errors"
 	"fmt"
-	"path"
-	"strconv"
-	"strings"
+	"path/filepath"
 
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
-	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/system"
@@ -33,8 +30,8 @@ type AdditionalDirectory struct {
 
 // Finch represents the configuration file for Finch CLI.
 type Finch struct {
-	CPUs   *int    `yaml:"cpus"`
-	Memory *string `yaml:"memory"`
+	CPUs   *int    `yaml:"cpus,omitempty"`
+	Memory *string `yaml:"memory,omitempty"`
 	// Snapshotters: the snapshotters that will be installed and configured automatically on vm init or on vm start.
 	// Values: `soci` for SOCI snapshotter; `overlayfs` for default overlay snapshotter.
 	Snapshotters []string `yaml:"snapshotters,omitempty"`
@@ -102,7 +99,7 @@ func writeConfig(cfg *Finch, fs afero.Fs, path string) error {
 		return fmt.Errorf("failed to write to marshal config: %w", err)
 	}
 
-	if err := afero.WriteFile(fs, path, cfgBuf, 0o755); err != nil {
+	if err := afero.WriteFile(fs, path, cfgBuf, 0o600); err != nil {
 		return fmt.Errorf("failed to write to config file: %w", err)
 	}
 
@@ -116,7 +113,7 @@ func ensureConfigDir(fs afero.Fs, path string, log flog.Logger) error {
 	}
 	if !dirExists {
 		log.Infof("%q directory doesn't exist, attempting to create it", path)
-		if err := fs.Mkdir(path, 0o755); err != nil {
+		if err := fs.Mkdir(path, 0o700); err != nil {
 			return fmt.Errorf("failed to create config directory: %w", err)
 		}
 	}
@@ -130,7 +127,7 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 		if errors.Is(err, afero.ErrFileNotFound) {
 			log.Infof("Using default values due to missing config file at %q", cfgPath)
 			defCfg := applyDefaults(&Finch{}, systemDeps, mem)
-			if err := ensureConfigDir(fs, path.Dir(cfgPath), log); err != nil {
+			if err := ensureConfigDir(fs, filepath.Dir(cfgPath), log); err != nil {
 				return nil, fmt.Errorf("failed to ensure %q directory: %w", cfgPath, err)
 			}
 			if err := writeConfig(defCfg, fs, cfgPath); err != nil {
@@ -156,29 +153,4 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 	}
 
 	return defCfg, nil
-}
-
-// SupportsVirtualizationFramework checks if the user's system supports Virtualization.framework.
-func SupportsVirtualizationFramework(cmdCreator command.Creator) (bool, error) {
-	cmd := cmdCreator.Create("sw_vers", "-productVersion")
-	out, err := cmd.Output()
-	if err != nil {
-		return false, fmt.Errorf("failed to run sw_vers command: %w", err)
-	}
-
-	splitVer := strings.Split(string(out), ".")
-	if len(splitVer) == 0 {
-		return false, fmt.Errorf("unexpected result from string split: %v", splitVer)
-	}
-
-	majorVersionInt, err := strconv.ParseInt(splitVer[0], 10, 64)
-	if err != nil {
-		return false, fmt.Errorf("failed to parse split sw_vers output (%s) into int: %w", splitVer[0], err)
-	}
-
-	if majorVersionInt >= 13 {
-		return true, nil
-	}
-
-	return false, nil
 }

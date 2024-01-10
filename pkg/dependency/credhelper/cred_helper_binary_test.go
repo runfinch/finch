@@ -6,6 +6,7 @@ package credhelper
 import (
 	"fmt"
 	"io/fs"
+	"path/filepath"
 	"testing"
 
 	"github.com/runfinch/finch/pkg/mocks"
@@ -25,7 +26,7 @@ const (
 func Test_credHelperConfigName(t *testing.T) {
 	t.Parallel()
 
-	got := newCredHelperBinary("", nil, nil, nil, "", "user",
+	got := newCredHelperBinary("", nil, nil, nil, "",
 		helperConfig{
 			"docker-credential-cred-helper", "", "",
 			"", "",
@@ -36,12 +37,12 @@ func Test_credHelperConfigName(t *testing.T) {
 func Test_fullInstallPath(t *testing.T) {
 	t.Parallel()
 
-	got := newCredHelperBinary("", nil, nil, nil, "", "user",
+	got := newCredHelperBinary("", nil, nil, nil, "",
 		helperConfig{
 			"docker-credential-cred-helper", "", "", "/folder/",
 			"",
 		}).fullInstallPath()
-	assert.Equal(t, "/folder/docker-credential-cred-helper", got)
+	assert.Equal(t, filepath.Join(string(filepath.Separator), "folder", "docker-credential-cred-helper"), got)
 }
 
 func Test_updateConfigFile(t *testing.T) {
@@ -126,7 +127,7 @@ func Test_updateConfigFile(t *testing.T) {
 				"mock_prefix/.finch/",
 			}
 			// hash of an empty file
-			got := updateConfigFile(newCredHelperBinary(mockFinchPath, mFs, nil, l, "ecr-login", "", hc))
+			got := updateConfigFile(newCredHelperBinary(mockFinchPath, mFs, nil, l, "ecr-login", hc))
 
 			assert.Equal(t, tc.want, got)
 			tc.postRunCheck(t, mFs)
@@ -216,7 +217,7 @@ func TestBinaries_Installed(t *testing.T) {
 				"mock_prefix/.finch/",
 			}
 			// hash of an empty file
-			got := newCredHelperBinary(mockFinchPath, mFs, nil, l, "", "", hc).Installed()
+			got := newCredHelperBinary(mockFinchPath, mFs, nil, l, "", hc).Installed()
 
 			assert.Equal(t, tc.want, got)
 		})
@@ -249,7 +250,7 @@ func TestBinaries_Install(t *testing.T) {
 				creator.EXPECT().Create("curl", "--retry", "5", "--retry-max-time", "30", "--url",
 					"https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
 						"/0.7.0/linux-arm64/docker-credential-ecr-login", "--output",
-					"mock_prefix/cred-helpers/docker-credential-ecr-login").Return(cmd)
+					filepath.Join("mock_prefix", "cred-helpers", "docker-credential-ecr-login")).Return(cmd)
 			},
 			want: nil,
 			postRunCheck: func(t *testing.T, mFs afero.Fs) {
@@ -295,7 +296,7 @@ func TestBinaries_Install(t *testing.T) {
 				"mock_prefix/.finch/",
 			}
 			fc := "ecr-login"
-			got := newCredHelperBinary(mockFinchPath, mFs, creator, l, fc, "", hc).Install()
+			got := newCredHelperBinary(mockFinchPath, mFs, creator, l, fc, hc).Install()
 			binaryInstalled = origBinaryInstalled
 			assert.Equal(t, tc.want, got)
 			tc.postRunCheck(t, mFs)
@@ -306,7 +307,7 @@ func TestBinaries_Install(t *testing.T) {
 func TestBinaries_RequiresRoot(t *testing.T) {
 	t.Parallel()
 
-	got := newCredHelperBinary(mockFinchPath, nil, nil, nil, "", "",
+	got := newCredHelperBinary(mockFinchPath, nil, nil, nil, "",
 		helperConfig{}).RequiresRoot()
 	assert.Equal(t, false, got)
 }

@@ -27,14 +27,13 @@ type credhelperbin struct {
 	cmdCreator command.Creator
 	l          flog.Logger
 	helper     string
-	user       string
 	hcfg       helperConfig
 }
 
 var _ dependency.Dependency = (*credhelperbin)(nil)
 
 func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator, l flog.Logger, helper string,
-	user string, hcfg helperConfig,
+	hcfg helperConfig,
 ) *credhelperbin {
 	return &credhelperbin{
 		// TODO: consider replacing fp with only the strings that are used instead of the entire type
@@ -43,7 +42,6 @@ func newCredHelperBinary(fp path.Finch, fs afero.Fs, cmdCreator command.Creator,
 		cmdCreator: cmdCreator,
 		l:          l,
 		helper:     helper,
-		user:       user,
 		hcfg:       hcfg,
 	}
 }
@@ -61,6 +59,7 @@ func updateConfigFile(bin *credhelperbin) error {
 		if err != nil {
 			return err
 		}
+
 		JSONstr := fmt.Sprintf("{\"credsStore\":\"%s\"}", binCfgName)
 		JSON := []byte(JSONstr)
 		_, err = file.Write(JSON)
@@ -84,7 +83,7 @@ func updateConfigFile(bin *credhelperbin) error {
 		}
 		credsStore := cfg.CredentialsStore
 		if credsStore != binCfgName {
-			file, err := bin.fs.OpenFile(cfgPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
+			file, err := bin.fs.OpenFile(cfgPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o600)
 			if err != nil {
 				return err
 			}

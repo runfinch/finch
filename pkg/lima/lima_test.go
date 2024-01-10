@@ -125,6 +125,16 @@ func TestGetVMType(t *testing.T) {
 			},
 		},
 		{
+			name:    "wsl VM",
+			want:    lima.WSL,
+			wantErr: nil,
+			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
+				cmd.EXPECT().Output().Return([]byte("wsl2"), nil)
+				logger.EXPECT().Debugf("VMType of virtual machine: %s", "wsl2")
+			},
+		},
+		{
 			name:    "nonexistent VM",
 			want:    lima.NonexistentVMType,
 			wantErr: nil,

@@ -27,8 +27,6 @@ const (
 	envKeyLimaHome   = "LIMA_HOME"
 	mockQemuBinPath  = "/lima/bin"
 	mockSystemPath   = "/usr/bin"
-	envKeyPath       = "PATH"
-	finalPath        = mockQemuBinPath + ":" + mockSystemPath
 )
 
 var mockArgs = []string{"shell", "finch"}
@@ -312,6 +310,8 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			stdout, err := os.ReadFile(stdoutFilepath)
 			require.NoError(t, err)
 			assert.Equal(t, tc.outOut, string(stdout))
+			assert.NoError(t, stdoutFile.Close())
+			assert.NoError(t, os.Remove(stdoutFilepath))
 		})
 	}
 }

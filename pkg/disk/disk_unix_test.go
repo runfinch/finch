@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build !windows
+
 package disk
 
 import (
@@ -28,7 +30,7 @@ func TestDisk_NewUserDataDiskManager(t *testing.T) {
 	finch := fpath.Finch("mock_finch")
 	homeDir := "mock_home"
 
-	NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, &config.Finch{})
+	NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, &config.Finch{}, nil)
 }
 
 func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
@@ -37,10 +39,13 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 	finch := fpath.Finch("mock_finch")
 	homeDir := "mock_home"
 
+	size, err := sizeString()
+	assert.NoError(t, err)
+
 	limaPath := path.Join(finch.LimaHomePath(), "_disks", diskName, "datadisk")
 	lockPath := path.Join(finch.LimaHomePath(), "_disks", diskName, "in_use_by")
 	mockListArgs := []string{"disk", "ls", diskName, "--json"}
-	mockCreateArgs := []string{"disk", "create", diskName, "--size", diskSize, "--format", "raw"}
+	mockCreateArgs := []string{"disk", "create", diskName, "--size", size, "--format", "raw"}
 	mockUnlockArgs := []string{"disk", "unlock", diskName}
 	mockQemuImgExePath := "mock_finch/lima/bin/qemu-img"
 	mockDiskInfoArgs := []string{
@@ -222,7 +227,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			dfs := mocks.NewMockdiskFS(ctrl)
 			cmd := mocks.NewCommand(ctrl)
 			tc.mockSvc(lcc, dfs, cmd, ecc)
-			dm := NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, tc.cfg)
+			dm := NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, tc.cfg, nil)
 			err := dm.EnsureUserDataDisk()
 			assert.Equal(t, tc.wantErr, err)
 		})

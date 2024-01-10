@@ -140,6 +140,12 @@ If the repo is already cloned, but the submodules are not pulled yet, the follow
 git submodule update --init --recursive
 ```
 
+If you are building on Windows from a fork of finch, you may need to fetch upstream tags in order to build:
+
+```shell
+git fetch <upstream finch remote name> --tags
+```
+
 After cloning the repo, run the following command to make subsequent `git pull` to also update submodules to the versions specified in the upstream branch.
 
 ```shell

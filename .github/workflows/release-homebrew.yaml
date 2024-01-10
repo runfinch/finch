@@ -13,12 +13,12 @@ jobs:
       tag: ${{ steps.latesttag.outputs.tag }}
       version: ${{ steps.latestversion.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
             fetch-depth: 0
       - name: 'Get the latest tag'
         id: latesttag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        uses: "WyriHaximus/github-action-get-previous-tag@385a2a0b6abf6c2efeb95adfac83d96d6f968e0c" # v1.3.0
       - name: 'Convert tag to version'
         id: latestversion
         run: |
@@ -53,7 +53,7 @@ jobs:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ env.FINCH_TAG }}
           fetch-depth: 0
@@ -78,7 +78,7 @@ jobs:
         shell: zsh {0}
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@40a8596d17543401e57ee60f640c2a5df7c88904 # master
       - name: Bump local cask version
         run: |
           brew update-reset 
@@ -144,7 +144,7 @@ jobs:
           brew reinstall --cask ./Casks/f/finch.rb
         shell: zsh {0}
       - name: Run e2e tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@14672906e672a08bd6eeb15720e9ed3ce869cdd4 # v2.9.0
         with:
           timeout_minutes: 180
           max_attempts: 3
@@ -176,13 +176,13 @@ jobs:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ env.FINCH_TAG }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version-file: go.mod
           cache: true
@@ -201,7 +201,7 @@ jobs:
         shell: zsh {0}
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@40a8596d17543401e57ee60f640c2a5df7c88904 # master
       - name: Bump local cask version
         run: |
           brew update-reset 
@@ -262,7 +262,7 @@ jobs:
           brew reinstall --cask ./Casks/f/finch.rb
         shell: zsh {0}
       - name: Run e2e tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@14672906e672a08bd6eeb15720e9ed3ce869cdd4 # v2.9.0
         with:
           timeout_minutes: 180
           max_attempts: 3
@@ -283,7 +283,7 @@ jobs:
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@40a8596d17543401e57ee60f640c2a5df7c88904 # master
       - name: Open a pull request to homebrwe-cask
         run: brew bump-cask-pr --version=${FINCH_VERSION} finch
         shell: zsh {0}

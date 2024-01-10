@@ -1,0 +1,251 @@
+name: Build, test and upload .msi to S3
+
+# TODO: add scheduler and tests
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+env:
+  GO111MODULE: on
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  get-tag-name:
+    name: Get tag name
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+      version: ${{ steps.check-tag.outputs.version }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ inputs.ref_name }}" ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+
+          version=${tag#v}
+          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version matches format: $version"
+          else
+            echo "Version $version doesn't match format. Using test version: 0.0.1"
+            version="0.0.1"
+          fi
+          echo "version=$version" >> ${GITHUB_OUTPUT}
+  
+  windows-msi-build:
+    needs: get-tag-name
+    runs-on: [self-hosted, windows, amd64, release]
+    timeout-minutes: 100
+    steps:
+      - name: Configure git CRLF settings
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - name: Set up Python
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: '3.x'
+      - name: Install AWS CLI
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ needs.get-tag-name.outputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        with:
+          role-to-assume: ${{ secrets.WINDOWS_ROLE }}
+          role-session-name: windows-msi
+          aws-region: ${{ secrets.WINDOWS_REGION }}
+      - name: Remove Finch VM
+        run: |
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+      - name: Clean up previous files
+        run: |
+          Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
+          make clean
+          cd deps/finch-core && make clean
+      - name: Build project
+        run: |
+          make FINCH_ROOTFS_LOCATION_ROOT=/__INSTALLFOLDER__
+      - name: generate and download signed msi
+        run: |
+          $version="${{ needs.get-tag-name.outputs.version }}"
+          $tag="${{ needs.get-tag-name.outputs.tag }}"
+          powershell .\msi-builder\BuildFinchMSI.ps1 -Version $version
+          $timestamp=[math]::truncate((Get-Date (Get-Date).ToUniversalTime() -UFormat "%s"))
+          $unsignedMSI="Finch-$tag-$timestamp.msi"
+          Write-Host "Upload unsigned MSI: $unsignedMSI"
+
+          aws s3 cp "./msi-builder/build/Finch-$version.msi" "${{ secrets.WINDOWS_UNSIGNED_BUCKET }}$unsignedMSI" --acl bucket-owner-full-control --no-progress
+          New-Item -Path "./msi-builder/build/signed/" -ItemType Directory -Force
+
+          Write-Host "Attemp to download signed MSI"
+          $retryCount = 0
+          $maxRetries = 20
+          $delay = 5
+
+          while ($retryCount -lt $maxRetries) {
+              Start-Sleep -Seconds $delay
+              $signedMSI = aws s3 ls ${{ secrets.WINDOWS_SIGNED_BUCKET }} 2>&1 | Where-Object { $_ -match "$unsignedMSI" } | Sort-Object -Descending | Select-Object -First 1 | ForEach-Object { ($_ -split '\s+')[-1] }
+              if ($signedMSI -and ($signedMSI -notlike "*An error occurred (404) when calling the HeadObject operation*")) {
+                  try {
+                      aws s3 cp "${{ secrets.WINDOWS_SIGNED_BUCKET }}$signedMSI" "./msi-builder/build/signed/Finch-$tag.msi"
+                      break
+                  } catch {
+                      Write-Host "Error during copy: $_"
+                  }
+              } else {
+                  $retryCount++
+                  Write-Host "Unable to find the signed MSI or encountered an error. Retry $retryCount/$maxRetries..."
+              }
+          }
+
+          if ($retryCount -eq $maxRetries) {
+              throw "Failed after $maxRetries attempts."
+          }
+      - name: configure aws credentials for upload signed MSI to installer bucket
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: windows-msi
+          aws-region: ${{ secrets.REGION }}
+      - name: upload signed MSI to S3
+        run: |
+          $tag="${{ needs.get-tag-name.outputs.tag }}"
+          aws s3 cp "./msi-builder/build/signed/Finch-$tag.msi" "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$tag.msi" --no-progress
+      - name: Remove Finch VM and Clean Up Previous Environment
+        if: ${{ always() }}
+        run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          make clean
+          cd deps/finch-core && make clean
+          exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
+  
+  msi-e2e-tests:
+    needs:
+      - get-tag-name
+      - windows-msi-build
+    strategy:
+      fail-fast: false
+    runs-on: [self-hosted, windows, amd64, release]
+    timeout-minutes: 180
+    steps:
+      - name: Configure git CRLF settings
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - name: Set up Python
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: '3.x'
+      - name: Install AWS CLI
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ needs.get-tag-name.outputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - name: Set output variables
+        id: vars
+        run: |
+          $has_creds="${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name }}"
+          echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: msi-test
+          aws-region: ${{ secrets.REGION }}
+      - name: Remove Finch VM
+        run: |
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+      - name: Clean up previous files
+        run: |
+          Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
+          make clean
+          cd deps/finch-core && make clean
+      - name: Uninstall Finch silently
+        run: |
+          $productCode = (Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Finch*" } | Select-Object -ExpandProperty IdentifyingNumber)
+          if ($productCode) {
+              msiexec /x $productCode /qn
+          } else {
+              Write-Output "Finch not found or it wasn't installed using MSI."
+          }
+      - name: Download MSI from S3
+        run: |
+          $tag="${{ needs.get-tag-name.outputs.tag }}"
+          aws s3 cp "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$tag.msi" ./Finch.msi
+      - name: Install MSI silently
+        run: |
+          Start-Process 'Finch.msi' -ArgumentList '/quiet' -Wait
+          echo "C:\Program Files\Finch\bin" >> $env:GITHUB_PATH
+      - name: Run e2e tests
+        run: |
+          # set path to use newer ssh version
+          $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
+          $env:Path = $newPath
+          # set networking config option to allow for VM/container -> host communication
+          echo "[experimental]`nnetworkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
+          
+          git status
+          git clean -f -d
+          $env:INSTALLED="true"
+          make test-e2e
+      - name: Uninstall Finch silently
+        if: ${{ always() }}
+        run: |
+          $productCode = (Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Finch*" } | Select-Object -ExpandProperty IdentifyingNumber)
+          if ($productCode) {
+              msiexec /x $productCode /qn
+          } else {
+              Write-Output "Finch not found or it wasn't installed using MSI."
+          }
+      - name: Remove Finch VM and Clean Up Previous Environment
+        if: ${{ always() }}
+        run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          make clean
+          cd deps/finch-core && make clean
+          exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore

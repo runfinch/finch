@@ -99,7 +99,7 @@ func (suite *Suite) BenchmarkImageBuild(b *testing.B) {
 	dockerFilePath := filepath.Join(tempDir, "Dockerfile")
 	err = os.WriteFile(dockerFilePath, []byte(fmt.Sprintf(`FROM %s
 			CMD ["echo", "finch-test-dummy-output"]
-			`, alpineImage)), 0o644)
+			`, alpineImage)), 0o600)
 	assert.NoError(b, err)
 	buildContext := filepath.Dir(dockerFilePath)
 	defer os.RemoveAll(buildContext) //nolint:errcheck // testing only

@@ -5,6 +5,7 @@ package vm
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -19,23 +20,28 @@ const (
 	networkName   = "test-network"
 )
 
-var testAdditionalDisk = func(o *option.Option) {
+var testAdditionalDisk = func(o *option.Option, installed bool) {
 	ginkgo.Describe("Additional disk", ginkgo.Serial, func() {
 		ginkgo.It("Retains container user data after the VM is deleted", func() {
+			resetVM(o, installed)
+			resetDisks(o, installed)
+			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
 			command.Run(o, "volume", "create", volumeName)
 			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", volumeName)
 			command.Run(o, "network", "create", networkName)
 			ginkgo.DeferCleanup(command.Run, o, "network", "rm", networkName)
 
 			command.Run(o, "run", "-d", "--name", containerName, "-v", fmt.Sprintf("%s:/tmp", volumeName),
-				savedImage, "sh", "-c", "sleep infinity")
+				savedImage, "sleep", "infinity")
 			command.Run(o, "exec", containerName, "sh", "-c", "echo foo > /tmp/test.txt")
 			ginkgo.DeferCleanup(command.Run, o, "rmi", savedImage)
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", containerName)
 
-			command.Run(o, "kill", containerName)
+			command.New(o, "stop", containerName).WithTimeoutInSeconds(30).Run()
 
-			command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
+			time.Sleep(20 * time.Second)
+
+			command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
 			command.Run(o, virtualMachineRootCmd, "remove")
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(240).Run()
 

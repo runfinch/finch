@@ -13,6 +13,7 @@ import (
 	"io"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -86,7 +87,7 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 		return "", err
 	}
 
-	zipPrefix := strings.TrimSuffix(zipFileName, path.Ext(zipFileName))
+	zipPrefix := strings.TrimSuffix(zipFileName, filepath.Ext(zipFileName))
 
 	writer := zip.NewWriter(zipFile)
 
@@ -139,7 +140,7 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 			continue
 		}
 		bb.logger.Debugf("Copying %s...", file)
-		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, additionalPrefix))
+		err = bb.copyFileFromVMOrLocal(writer, file, filepath.Join(zipPrefix, additionalPrefix))
 		if err != nil {
 			bb.logger.Warnf("Could not add additional file %s. Error: %s", file, err)
 		}
@@ -208,7 +209,7 @@ func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix 
 		return err
 	}
 
-	baseName := path.Base(fileName)
+	baseName := filepath.Base(fileName)
 	zipCopy, err := writer.Create(path.Join(prefix, baseName))
 	if err != nil {
 		return err
@@ -219,7 +220,6 @@ func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix 
 	if err != nil {
 		return err
 	}
-
 	return bb.copyAndRedactFile(zipCopy, buf)
 }
 
@@ -250,7 +250,7 @@ func (bb *bundleBuilder) streamFileFromVM(writer *zip.Writer, filename, prefix s
 		waitStatus <- err
 	}()
 
-	baseName := path.Base(filename)
+	baseName := filepath.Base(filename)
 	zipCopy, err := writer.Create(path.Join(prefix, baseName))
 	if err != nil {
 		return err
@@ -290,14 +290,18 @@ func (bb *bundleBuilder) getPlatformData() (*PlatformData, error) {
 }
 
 func (bb *bundleBuilder) getOSVersion() (string, error) {
-	cmd := bb.ecc.Create("sw_vers", "-productVersion")
+	var cmd command.Command
+	if runtime.GOOS == "windows" {
+		cmd = bb.ecc.Create("cmd", "/c", "ver")
+	} else {
+		cmd = bb.ecc.Create("sw_vers", "-productVersion")
+	}
 	out, err := cmd.Output()
 	if err != nil {
 		return "", err
 	}
 
 	os := strings.TrimSuffix(string(out), "\n")
-
 	return os, nil
 }
 
@@ -358,7 +362,7 @@ func fileShouldBeExcluded(filename string, exclude []string) bool {
 		if fileAbs == excludeAbs {
 			return true
 		}
-		if path.Base(realFilename) == excludeFile {
+		if filepath.Base(realFilename) == excludeFile {
 			return true
 		}
 	}

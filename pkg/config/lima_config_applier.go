@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 
+	goyaml "github.com/goccy/go-yaml"
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/xorcare/pointer"
@@ -51,6 +52,7 @@ sudo systemctl restart containerd.service
 `
 
 	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
+	wslDiskFormatScriptHeader                 = "# wsl disk format script"
 )
 
 // LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.
@@ -95,7 +97,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 	if cfgExists, err := afero.Exists(lca.fs, lca.limaConfigPath); err != nil {
 		return fmt.Errorf("error checking if file at path %s exists, error: %w", lca.limaConfigPath, err)
 	} else if !cfgExists {
-		if err := afero.WriteFile(lca.fs, lca.limaConfigPath, []byte(""), 0o644); err != nil {
+		if err := afero.WriteFile(lca.fs, lca.limaConfigPath, []byte(""), 0o600); err != nil {
 			return fmt.Errorf("failed to create the an empty lima config file: %w", err)
 		}
 	}
@@ -107,6 +109,13 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 
 	var limaCfg limayaml.LimaYAML
 	if err := yaml.Unmarshal(b, &limaCfg); err != nil {
+		return fmt.Errorf("failed to unmarshal the lima config file: %w", err)
+	}
+
+	// Unmarshall with custom unmarshaler for Disk:
+	// https://github.com/lima-vm/lima/blob/v0.17.2/pkg/limayaml/load.go#L16
+	if err := goyaml.UnmarshalWithOptions(b, &limaCfg, goyaml.DisallowDuplicateKey(),
+		goyaml.CustomUnmarshaler[limayaml.Disk](unmarshalDisk)); err != nil {
 		return fmt.Errorf("failed to unmarshal the lima config file: %w", err)
 	}
 
@@ -149,97 +158,26 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 
 	toggleSnaphotters(&limaCfg, snapshotters)
 
+	if *lca.cfg.VMType != "wsl2" && len(limaCfg.AdditionalDisks) == 0 {
+		limaCfg.AdditionalDisks = append(limaCfg.AdditionalDisks, limayaml.Disk{
+			Name: "finch",
+		})
+	}
+
+	if *lca.cfg.VMType == "wsl2" {
+		ensureWslDiskFormatScript(&limaCfg)
+	}
+
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal the lima config file: %w", err)
 	}
 
-	if err := afero.WriteFile(lca.fs, lca.limaConfigPath, limaCfgBytes, 0o644); err != nil {
+	if err := afero.WriteFile(lca.fs, lca.limaConfigPath, limaCfgBytes, 0o600); err != nil {
 		return fmt.Errorf("failed to write to the lima config file: %w", err)
 	}
 
 	return nil
-}
-
-// applyInit changes settings that will only apply to the VM after a new init.
-func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
-	hasSupport, hasSupportErr := SupportsVirtualizationFramework(lca.cmdCreator)
-	if *lca.cfg.Rosetta &&
-		lca.systemDeps.OS() == "darwin" &&
-		lca.systemDeps.Arch() == "arm64" {
-		if hasSupportErr != nil {
-			return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasSupportErr)
-		}
-		if !hasSupport {
-			return nil, fmt.Errorf(`system does not have virtualization framework support, change vmType to "qemu"`)
-		}
-
-		limaCfg.Rosetta.Enabled = pointer.Bool(true)
-		limaCfg.Rosetta.BinFmt = pointer.Bool(true)
-		limaCfg.VMType = pointer.String("vz")
-		limaCfg.MountType = pointer.String("virtiofs")
-		toggleUserModeEmulationInstallationScript(limaCfg, false)
-	} else {
-		if *lca.cfg.VMType == "vz" {
-			if hasSupportErr != nil {
-				return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasSupportErr)
-			}
-			if !hasSupport {
-				return nil, fmt.Errorf(`system does not have virtualization framework support, change vmType to "qemu"`)
-			}
-			limaCfg.MountType = pointer.String("virtiofs")
-		} else if *lca.cfg.VMType == "qemu" {
-			limaCfg.MountType = pointer.String("reverse-sshfs")
-		}
-		limaCfg.Rosetta.Enabled = pointer.Bool(false)
-		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
-		limaCfg.VMType = lca.cfg.VMType
-		toggleUserModeEmulationInstallationScript(limaCfg, true)
-	}
-
-	return limaCfg, nil
-}
-
-func toggleUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML, enabled bool) {
-	idx, hasScript := hasUserModeEmulationInstallationScript(limaCfg)
-	if !hasScript && enabled {
-		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
-			Mode: "system",
-			Script: fmt.Sprintf(`%s
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
-
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, userModeEmulationProvisioningScriptHeader),
-		})
-	} else if hasScript && !enabled {
-		if len(limaCfg.Provision) > 0 {
-			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
-		}
-	}
-}
-
-func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
-	hasCrossArchToolInstallationScript := false
-	var scriptIdx int
-	for idx, prov := range limaCfg.Provision {
-		trimmed := strings.Trim(prov.Script, " ")
-		if !hasCrossArchToolInstallationScript && strings.HasPrefix(trimmed, userModeEmulationProvisioningScriptHeader) {
-			hasCrossArchToolInstallationScript = true
-			scriptIdx = idx
-		}
-	}
-
-	return scriptIdx, hasCrossArchToolInstallationScript
 }
 
 // toggles snapshotters and sets default snapshotter.
@@ -293,4 +231,40 @@ func findSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
 	}
 
 	return scriptIdx, hasSociInstallationScript
+}
+
+func ensureWslDiskFormatScript(limaCfg *limayaml.LimaYAML) {
+	if hasScript := findWslDiskFormatScript(limaCfg); !hasScript {
+		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
+			Mode: "system",
+			Script: fmt.Sprintf(`%s
+#!/bin/bash
+mkdir -p /mnt/lima-finch
+mount "$(blkid -s TYPE -t LABEL=FinchDataDisk -o device)" /mnt/lima-finch
+`, wslDiskFormatScriptHeader),
+		})
+	}
+}
+
+func findWslDiskFormatScript(limaCfg *limayaml.LimaYAML) bool {
+	hasWslDiskFormatScript := false
+	for _, prov := range limaCfg.Provision {
+		trimmed := strings.Trim(prov.Script, " ")
+		if !hasWslDiskFormatScript && strings.HasPrefix(trimmed, wslDiskFormatScriptHeader) {
+			hasWslDiskFormatScript = true
+			break
+		}
+	}
+
+	return hasWslDiskFormatScript
+}
+
+// https://github.com/lima-vm/lima/blob/v0.17.2/pkg/limayaml/load.go#L16
+func unmarshalDisk(dst *limayaml.Disk, b []byte) error {
+	var s string
+	if err := goyaml.Unmarshal(b, &s); err == nil {
+		*dst = limayaml.Disk{Name: s}
+		return nil
+	}
+	return goyaml.Unmarshal(b, dst)
 }

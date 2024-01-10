@@ -10,8 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	dockerops "github.com/docker/docker/opts"
-	"github.com/lima-vm/lima/pkg/networks"
 	"golang.org/x/exp/slices"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -34,6 +32,10 @@ const nerdctlCmdName = "nerdctl"
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../../pkg/mocks/nerdctl_cmd_system_deps.go -package=mocks -mock_names NerdctlCommandSystemDeps=NerdctlCommandSystemDeps -source=nerdctl.go NerdctlCommandSystemDeps
 type NerdctlCommandSystemDeps interface {
 	system.EnvChecker
+	system.WorkingDirectory
+	system.FilePathJoiner
+	system.AbsFilePath
+	system.FilePathToSlash
 }
 
 type nerdctlCommandCreator struct {
@@ -44,6 +46,11 @@ type nerdctlCommandCreator struct {
 	fs         afero.Fs
 	fc         *config.Finch
 }
+
+type (
+	argHandler     func(systemDeps NerdctlCommandSystemDeps, args []string, index int) error
+	commandHandler func(systemDeps NerdctlCommandSystemDeps, args []string) error
+)
 
 func newNerdctlCommandCreator(
 	lcc command.LimaCmdCreator,
@@ -100,11 +107,53 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		return err
 	}
 	var (
-		nerdctlArgs, envs, fileEnvs []string
-		skip                        bool
+		nerdctlArgs, envs, fileEnvs       []string
+		skip, hasCmdHander, hasArgHandler bool
+		cmdHandler                        commandHandler
+		aMap                              map[string]argHandler
 	)
 
+	alias, hasAlias := aliasMap[cmdName]
+	if hasAlias {
+		cmdName = alias
+		cmdHandler, hasCmdHander = commandHandlerMap[alias]
+		aMap, hasArgHandler = argHandlerMap[alias]
+	} else {
+		// Check if the command has a handler
+		cmdHandler, hasCmdHander = commandHandlerMap[cmdName]
+		aMap, hasArgHandler = argHandlerMap[cmdName]
+
+		if !hasCmdHander && !hasArgHandler && len(args) > 0 {
+			// for commands like image build, container run
+			key := fmt.Sprintf("%s %s", cmdName, args[0])
+			cmdHandler, hasCmdHander = commandHandlerMap[key]
+			aMap, hasArgHandler = argHandlerMap[key]
+		}
+	}
+
+	// First check if the command has command handler
+	if hasCmdHander {
+		err := cmdHandler(nc.systemDeps, args)
+		if err != nil {
+			return err
+		}
+	}
+
 	for i, arg := range args {
+		// Check if command requires arg handling
+		if hasArgHandler {
+			// Check if argument for the command needs handling, sometimes it can be --file=<filename>
+			b, _, _ := strings.Cut(arg, "=")
+			h, ok := aMap[b]
+			if ok {
+				err = h(nc.systemDeps, args, i)
+				if err != nil {
+					return err
+				}
+				// This is required when the positional argument at i is mutated by argHandler, eg -v=C:\Users:/tmp:ro
+				arg = args[i]
+			}
+		}
 		// parsing environment values from the command line may pre-fetch and
 		// consume the next argument; this loop variable will skip these pre-consumed
 		// entries from the command line
@@ -132,12 +181,21 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		case strings.HasPrefix(arg, "--add-host"):
 			switch arg {
 			case "--add-host":
-				args[i+1] = resolveIP(args[i+1], nc.logger)
+				args[i+1], err = resolveIP(args[i+1], nc.logger, nc.ecc)
+				if err != nil {
+					return err
+				}
 			default:
-				resolvedIP := resolveIP(arg[11:], nc.logger)
+				resolvedIP, err := resolveIP(arg[11:], nc.logger, nc.ecc)
+				if err != nil {
+					return err
+				}
 				arg = fmt.Sprintf("%s%s", arg[0:11], resolvedIP)
 			}
 			nerdctlArgs = append(nerdctlArgs, arg)
+			if err != nil {
+				return err
+			}
 		default:
 			nerdctlArgs = append(nerdctlArgs, arg)
 		}
@@ -187,9 +245,9 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	// Add -E to sudo command in order to preserve existing environment variables, more info:
 	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
-	limaArgs := append([]string{"shell", limaInstanceName, "sudo", "-E"}, append(additionalEnv, passedEnvArgs...)...)
+	limaArgs := append(nc.GetLimaArgs(), append(additionalEnv, passedEnvArgs...)...)
 
-	limaArgs = append(limaArgs, []string{nerdctlCmdName, cmdName}...)
+	limaArgs = append(limaArgs, append([]string{nerdctlCmdName}, strings.Fields(cmdName)...)...)
 
 	var finalArgs []string
 	for key, val := range envVars {
@@ -334,19 +392,6 @@ func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 s
 		return skip, []string{}, err
 	}
 	return skip, envs, nil
-}
-
-func resolveIP(host string, logger flog.Logger) string {
-	parts := strings.SplitN(host, ":", 2)
-	// If the IP Address is a string called "host-gateway", replace this value with the IP address that can be used to
-	// access host from the containers.
-	// TODO: make the host gateway ip configurable.
-	if parts[1] == dockerops.HostGatewayName {
-		resolvedIP := networks.SlirpGateway
-		logger.Debugf(`Resolving special IP "host-gateway" to %q for host %q`, resolvedIP, parts[0])
-		return fmt.Sprintf("%s:%s", parts[0], resolvedIP)
-	}
-	return host
 }
 
 // ensureRemoteCredentials is called before any actions that may require remote resources, in order
