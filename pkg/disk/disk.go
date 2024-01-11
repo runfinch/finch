@@ -7,7 +7,6 @@
 package disk
 
 import (
-	"github.com/docker/go-units"
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -15,8 +14,6 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 	fpath "github.com/runfinch/finch/pkg/path"
 )
-
-const diskSizeStr = "50GB"
 
 // UserDataDiskManager is used to check the user data disk configuration and create it if needed.
 type UserDataDiskManager interface {
@@ -60,12 +57,4 @@ func NewUserDataDiskManager(
 		config:  config,
 		logger:  logger,
 	}
-}
-
-func diskSize() (int64, error) {
-	size, err := units.RAMInBytes(diskSizeStr)
-	if err != nil {
-		return 0, err
-	}
-	return size, nil
 }

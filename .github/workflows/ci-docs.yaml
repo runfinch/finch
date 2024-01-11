@@ -51,28 +51,17 @@ jobs:
         os: 
           [
             [self-hosted, macos, amd64, 13, test], 
-            [self-hosted, macos, amd64, 12, test], 
+            [self-hosted, macos, amd64, 14, test], 
             [self-hosted, macos, arm64, 13, test], 
-            [self-hosted, macos, arm64, 12, test]
+            [self-hosted, macos, arm64, 14, test]
           ]
     runs-on: ${{ matrix.os }} 
-    steps:
-      - run: echo "Skipping CI for docs & contrib files"
-  e2e-tests-for-docker-compat:
-    strategy:
-      matrix:
-        os:
-          [
-            [self-hosted, macos, amd64, 13, test],
-            [self-hosted, macos, arm64, 13, test],
-          ]
-    runs-on: ${{ matrix.os }}
     steps:
       - run: echo "Skipping CI for docs & contrib files"
   mdlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: avto-dev/markdown-lint@04d43ee9191307b50935a753da3b775ab695eceb # v1.5.0
         with:
           args: '**/*.md'

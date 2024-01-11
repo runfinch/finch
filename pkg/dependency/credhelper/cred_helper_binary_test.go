@@ -150,9 +150,23 @@ func TestBinaries_Installed(t *testing.T) {
 				fileData := []byte("")
 				_, err := mFs.Create("mock_prefix/cred-helpers/docker-credential-binary")
 				require.NoError(t, err)
-				err = afero.WriteFile(mFs, "mock_prefix/cred-helpers/docker-credential-binary",
-					fileData, 0o666)
+				err = afero.WriteFile(
+					mFs,
+					"mock_prefix/cred-helpers/docker-credential-binary",
+					fileData,
+					0o666,
+				)
+				require.NoError(t, err)
 
+				cfgFileData := []byte(`{"credsStore":"binary"}`)
+				_, err = mFs.Create("mock_prefix/.finch/config.json")
+				require.NoError(t, err)
+				err = afero.WriteFile(
+					mFs,
+					"mock_prefix/.finch/config.json",
+					cfgFileData,
+					0o666,
+				)
 				require.NoError(t, err)
 			},
 			want: true,
@@ -198,7 +212,8 @@ func TestBinaries_Installed(t *testing.T) {
 			tc.mockSvc(t, mFs, l)
 			hc := helperConfig{
 				"docker-credential-binary", "",
-				"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "mock_prefix/cred-helpers/",
+				"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+				"mock_prefix/cred-helpers/",
 				"mock_prefix/.finch/",
 			}
 			// hash of an empty file
@@ -209,45 +224,66 @@ func TestBinaries_Installed(t *testing.T) {
 	}
 }
 
+//nolint:paralleltest // This function manipulates a global variable to facilitate mocking.
 func TestBinaries_Install(t *testing.T) {
-	t.Parallel()
-
 	testCases := []struct {
 		name    string
 		mockSvc func(
 			l *mocks.Logger,
 			cmd *mocks.Command,
 			creator *mocks.CommandCreator,
-			mFs afero.Fs)
-		want error
+			mFs afero.Fs,
+		)
+		want         error
+		postRunCheck func(t *testing.T, mFs afero.Fs)
 	}{
 		{
 			name: "happy path",
 			mockSvc: func(l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, mFs afero.Fs) {
-				_, err := mFs.Create(filepath.Join("", "mock_prefix", "cred-helpers", "docker-credential-ecr-login"))
+				binaryInstalled = func(*credhelperbin) (bool, error) {
+					return false, nil
+				}
+				_, err := mFs.Create("mock_prefix/cred-helpers/docker-credential-ecr-login")
 				require.NoError(t, err)
-				cmd.EXPECT().Output().Times(2)
+				cmd.EXPECT().Output()
 				l.EXPECT().Infof("Installing %s credential helper", "ecr")
-				creator.EXPECT().Create("mkdir", "-p", filepath.Join("mock_prefix", "cred-helpers")).Return(cmd)
 				creator.EXPECT().Create("curl", "--retry", "5", "--retry-max-time", "30", "--url",
 					"https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
 						"/0.7.0/linux-arm64/docker-credential-ecr-login", "--output",
 					filepath.Join("mock_prefix", "cred-helpers", "docker-credential-ecr-login")).Return(cmd)
 			},
 			want: nil,
+			postRunCheck: func(t *testing.T, mFs afero.Fs) {
+				f, err := afero.ReadFile(mFs, "mock_prefix/.finch/config.json")
+				require.NoError(t, err)
+				require.Equal(t, string(f), `{"credsStore":"ecr-login"}`)
+			},
+		},
+		{
+			name: "credential helper already installed, but config file not configured",
+			mockSvc: func(l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, mFs afero.Fs) {
+				binaryInstalled = func(*credhelperbin) (bool, error) {
+					return true, nil
+				}
+			},
+			want: nil,
+			postRunCheck: func(t *testing.T, mFs afero.Fs) {
+				f, err := afero.ReadFile(mFs, "mock_prefix/.finch/config.json")
+				require.NoError(t, err)
+				require.Equal(t, string(f), `{"credsStore":"ecr-login"}`)
+			},
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			ctrl := gomock.NewController(t)
 			cmd := mocks.NewCommand(ctrl)
 			mFs := afero.NewMemMapFs()
 			l := mocks.NewLogger(ctrl)
 			creator := mocks.NewCommandCreator(ctrl)
+			origBinaryInstalled := binaryInstalled
 			tc.mockSvc(l, cmd, creator, mFs)
 
 			credHelperURL := "https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com" +
@@ -255,14 +291,15 @@ func TestBinaries_Install(t *testing.T) {
 
 			hc := helperConfig{
 				"docker-credential-ecr-login", credHelperURL,
-				"sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714",
-				filepath.Join("mock_prefix", "cred-helpers"),
+				"sha256:ec5c04babea79b08dffb0c8acb67b9e28dc05be0fe9bd4df2e234d75516061d7",
+				"mock_prefix/cred-helpers/",
 				"mock_prefix/.finch/",
 			}
 			fc := "ecr-login"
 			got := newCredHelperBinary(mockFinchPath, mFs, creator, l, fc, hc).Install()
-			// fmt.Printf("Error is %s", got.Error())
+			binaryInstalled = origBinaryInstalled
 			assert.Equal(t, tc.want, got)
+			tc.postRunCheck(t, mFs)
 		})
 	}
 }

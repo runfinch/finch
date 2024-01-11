@@ -101,7 +101,7 @@ var newApp = func(
 		fp.QEMUBinDir(),
 		system.NewStdLib(),
 	)
-
+	lima := wrapper.NewLimaWrapper()
 	supportBundleBuilder := support.NewBundleBuilder(
 		logger,
 		fs,
@@ -109,11 +109,11 @@ var newApp = func(
 		fp,
 		ecc,
 		lcc,
-		wrapper.NewLimaWrapper(),
+		lima,
 	)
 
 	// append nerdctl commands
-	allCommands := initializeNerdctlCommands(ecc, lcc, logger, fs)
+	allCommands := initializeNerdctlCommands(lcc, ecc, logger, fs, fc)
 	// append finch specific commands
 	allCommands = append(allCommands,
 		newVersionCommand(lcc, logger, stdOut),
@@ -127,8 +127,14 @@ var newApp = func(
 	return rootCmd
 }
 
-func initializeNerdctlCommands(ecc command.Creator, lcc command.LimaCmdCreator, logger flog.Logger, fs afero.Fs) []*cobra.Command {
-	nerdctlCommandCreator := newNerdctlCommandCreator(ecc, lcc, system.NewStdLib(), logger, fs)
+func initializeNerdctlCommands(
+	lcc command.LimaCmdCreator,
+	ecc *command.ExecCmdCreator,
+	logger flog.Logger,
+	fs afero.Fs,
+	fc *config.Finch,
+) []*cobra.Command {
+	nerdctlCommandCreator := newNerdctlCommandCreator(lcc, ecc, system.NewStdLib(), logger, fs, fc)
 	var allNerdctlCommands []*cobra.Command
 	for cmdName, cmdDescription := range nerdctlCmds {
 		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))

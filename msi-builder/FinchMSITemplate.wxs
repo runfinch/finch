@@ -24,7 +24,6 @@
           </Component>
           <Directory Id="bincecd86bf" Name="bin">
             <Component Id="Component_Finch" Guid="{C0CED166-84DE-4BD8-96AB-45DB96FB20CF}" Win64="yes">
-              <File Id="dpgo_exe" Source="__SOURCE__\bin\dpgo.exe" />
               <File Id="finch_exe" Source="__SOURCE__\bin\finch.exe" KeyPath="yes">
                 <Shortcut
                   Id="startMenuShortcut"

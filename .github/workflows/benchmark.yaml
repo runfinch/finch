@@ -23,13 +23,13 @@ jobs:
         os:
           [
             [self-hosted, macos, amd64, 13, test],
-            [self-hosted, macos, amd64, 12, test],
+            [self-hosted, macos, amd64, 14, test],
             [self-hosted, macos, arm64, 13, test],
-            [self-hosted, macos, arm64, 12, test]
+            [self-hosted, macos, arm64, 14, test]
           ]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0

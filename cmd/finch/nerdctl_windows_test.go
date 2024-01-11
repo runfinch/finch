@@ -19,6 +19,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/mocks"
 )
@@ -77,7 +78,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ecc, lcc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(ecc, lcc, ncsd, logger, nil).runAdapter(tc.cmd, tc.args))
+			assert.NoError(t, newNerdctlCommand(lcc, ecc, ncsd, logger, nil, &config.Finch{}).runAdapter(tc.cmd, tc.args))
 		})
 	}
 }
@@ -88,6 +89,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 	testCases := []struct {
 		name    string
 		cmdName string
+		fc      *config.Finch
 		args    []string
 		wantErr error
 		mockSvc func(*testing.T, *mocks.CommandCreator, *mocks.LimaCmdCreator, *mocks.Command, *mocks.NerdctlCommandSystemDeps,
@@ -96,6 +98,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "happy path",
 			cmdName: "build",
+			fc:      &config.Finch{},
 			args:    []string{"-t", "demo", "C:\\Users"},
 			wantErr: nil,
 			mockSvc: func(
@@ -134,6 +137,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --debug flag",
 			cmdName: "pull",
+			fc:      &config.Finch{},
 			args:    []string{"test:tag", "--debug"},
 			wantErr: nil,
 			mockSvc: func(
@@ -168,6 +172,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with environment flags parsing and env value doesn't exist",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "-e", "ARG1=val1", "--env=ARG2", "-eARG3", "alpine:latest", "env"},
 			wantErr: nil,
 			mockSvc: func(
@@ -204,6 +209,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with environment flags parsing and env value exists",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--env=ARG2", "-eARG3", "alpine:latest", "env"},
 			wantErr: nil,
 			mockSvc: func(
@@ -240,6 +246,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --env-file flag replacement",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--env-file=" + envFilePath, "alpine:latest", "env"},
 			wantErr: nil,
 			mockSvc: func(
@@ -278,6 +285,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --env-file flag replacement and existing env value",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--env-file", envFilePath, "alpine:latest", "env"},
 			wantErr: nil,
 			mockSvc: func(
@@ -316,6 +324,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --env-file flag, but the specified file does not exist",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--env-file", envFilePath, "alpine:latest", "env"},
 			wantErr: &os.PathError{Op: "open", Path: envFilePath, Err: afero.ErrFileNotFound},
 			mockSvc: func(
@@ -337,6 +346,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --add-host flag and special IP by space",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--add-host", "name:host-gateway", "alpine:latest"},
 			wantErr: nil,
 			mockSvc: func(
@@ -374,6 +384,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --add-host flag but without using special IP by space",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--add-host", "name:0.0.0.0", "alpine:latest"},
 			wantErr: nil,
 			mockSvc: func(
@@ -407,6 +418,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --add-host flag but without subsequent arg",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--add-host", "alpine:latest"},
 			wantErr: errors.New("run cmd error"),
 			mockSvc: func(
@@ -440,6 +452,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --add-host flag and special IP by equal",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--add-host=name:host-gateway", "alpine:latest"},
 			wantErr: nil,
 			mockSvc: func(
@@ -476,6 +489,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --add-host flag but without using special IP by equal",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args:    []string{"--rm", "--add-host=name:0.0.0.0", "alpine:latest"},
 			wantErr: nil,
 			mockSvc: func(
@@ -509,6 +523,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with multiple nested volumes",
 			cmdName: "run",
+			fc:      &config.Finch{},
 			args: []string{
 				"--rm", "-v", "C:\\workdir:/tmp1/tmp2:rro", "-v=C:\\workdir:/tmp1/tmp2/tmp3/tmp4:rro",
 				"-v", "volume", "alpine:latest",
@@ -546,6 +561,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --help flag",
 			cmdName: "pull",
+			fc:      &config.Finch{},
 			args:    []string{"test:tag", "--help"},
 			wantErr: nil,
 			mockSvc: func(
@@ -578,6 +594,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with --help flag but replacing returns error",
 			cmdName: "pull",
+			fc:      &config.Finch{},
 			args:    []string{"test:tag", "--help"},
 			wantErr: fmt.Errorf("failed to replace"),
 			mockSvc: func(
@@ -610,6 +627,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with COSIGN_PASSWORD env var and --sign=cosign",
 			cmdName: "push",
+			fc:      &config.Finch{},
 			args:    []string{"--sign=cosign", "test:tag"},
 			wantErr: nil,
 			mockSvc: func(
@@ -643,6 +661,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with COSIGN_PASSWORD env var and --verify=cosign",
 			cmdName: "pull",
+			fc:      &config.Finch{},
 			args:    []string{"--verify=cosign", "test:tag"},
 			wantErr: nil,
 			mockSvc: func(
@@ -676,6 +695,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		{
 			name:    "with COSIGN_PASSWORD env var without cosign arg",
 			cmdName: "pull",
+			fc:      &config.Finch{},
 			args:    []string{"test:tag"},
 			wantErr: nil,
 			mockSvc: func(
@@ -721,7 +741,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, ecc, lcc, cmd, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ecc, lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -943,7 +963,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, ecc, lcc, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ecc, lcc, ncsd, logger, fs).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ecc, ncsd, logger, fs, &config.Finch{}).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -1062,7 +1082,7 @@ func TestNerdctlCommand_run_CpCommand(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ecc, lcc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(ecc, lcc, ncsd, logger, nil).run(tc.cmdName, tc.args))
+			assert.NoError(t, newNerdctlCommand(lcc, ecc, ncsd, logger, nil, &config.Finch{}).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -1188,7 +1208,7 @@ func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ecc, lcc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(ecc, lcc, ncsd, logger, nil).run(tc.cmdName, tc.args))
+			assert.NoError(t, newNerdctlCommand(lcc, ecc, ncsd, logger, nil, &config.Finch{}).run(tc.cmdName, tc.args))
 		})
 	}
 }

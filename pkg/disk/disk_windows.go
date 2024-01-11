@@ -6,18 +6,16 @@
 package disk
 
 import (
+	"archive/zip"
 	"bytes"
-	"encoding/json"
+	_ "embed"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 
-	"github.com/spf13/afero"
-
-	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/winutil"
 )
 
@@ -70,67 +68,49 @@ func (m *userDataDiskManager) DetachUserDataDisk() error {
 	return nil
 }
 
+// min_win_disk.zip is a zip directory with a single file (disk.vhdx).
+// disk.vhdx is a 50G max size, sparse, GPT, vhdx file created by diskpart, which contains
+// a single ext4 partition. Since using diskpart requires Administrator privileges,
+// we ship a pre-created disk to be used for the persistent data volume.
+//
+//go:embed min_win_disk.zip
+var minWinDisk []byte
+
 func (m *userDataDiskManager) createDisk(diskPath string) error {
-	size, err := sizeInMB()
+	m.logger.Infof("creating persistent disk: %s", diskPath)
+	r, err := zip.NewReader(bytes.NewReader(minWinDisk), int64(len(minWinDisk)))
 	if err != nil {
-		return fmt.Errorf("failed to get disk size: %w", err)
+		return fmt.Errorf("failed to create zip reader: %w", err)
 	}
 
-	m.logger.Infof("creating disk at path: %s", diskPath)
+	for _, f := range r.File {
+		if f.Name == "disk.vhdx" {
+			compressed, err := f.Open()
+			if err != nil {
+				return fmt.Errorf("failed to open file inside zip: %w", err)
+			}
+			dest, err := os.OpenFile(filepath.Clean(diskPath), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			if err != nil {
+				return fmt.Errorf("failed to open persistent disk file: %w", err)
+			}
 
-	execPath, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("failed to get executable path: %w", err)
-	}
+			// avoid go-sec G110 by chunking
+			for {
+				_, err := io.CopyN(dest, compressed, 204800)
+				if err != nil {
+					if errors.Is(err, io.EOF) {
+						break
+					}
+					return fmt.Errorf("failed copy compressed file to disk: %w", err)
+				}
+			}
+			if err := dest.Close(); err != nil {
+				return fmt.Errorf("failed close disk file: %w", err)
+			}
 
-	tempOut, _ := afero.TempFile(m.fs, "", "finchCreateDiskOutput*")
-	// Put all paths in quotes, since they are being passed to cmd.exe.
-	dpgoPath := fmt.Sprintf(`"%s"`, filepath.Join(string(m.finch), "bin", "dpgo.exe"))
-	diskPathQuoted := fmt.Sprintf(`"%s"`, diskPath)
-	tempPathQuoted := fmt.Sprintf(`"%s"`, tempOut.Name())
-	wdPathQuoted := fmt.Sprintf(`"%s"`, filepath.Dir(execPath))
-	sizeStr := fmt.Sprint(size)
-
-	_ = tempOut.Close()
-
-	if err := winutil.RunElevated(
-		dpgoPath,
-		wdPathQuoted,
-		[]string{
-			"--json",
-			"--debug",
-			"disk",
-			"create",
-			"--path",
-			diskPathQuoted,
-			"--size",
-			sizeStr,
-			">",
-			tempPathQuoted,
-			"2>&1",
-		},
-	); err != nil {
-		return fmt.Errorf("failed to run dpgo command: %w", err)
-	}
-
-	tempOutContents, _ := afero.ReadFile(m.fs, tempOut.Name())
-	dpGoOutStr := strings.TrimSpace(string(tempOutContents))
-	m.logger.Debugf("create disk cmd stdout: %s", dpGoOutStr)
-	_ = m.fs.Remove(tempOut.Name())
-
-	lines := strings.Split(dpGoOutStr, "\n")
-	var logs []flog.Log
-	for _, l := range lines {
-		// Fix new lines
-		nl := strings.ReplaceAll(l, `\r\n`, `\n`)
-		nl = strings.ReplaceAll(nl, `\r`, `\n`)
-		var logParsed flog.Log
-		if err = json.Unmarshal([]byte(l), &logParsed); err != nil {
-			return fmt.Errorf("error parsing create disk log: %w, log string: %s", err, nl)
+			break
 		}
-		logs = append(logs, logParsed)
 	}
-	m.logger.Debugf("create disk cmd stdout parsed: %v", logs)
 
 	return nil
 }
@@ -155,13 +135,4 @@ func (m *userDataDiskManager) attachDisk(diskPath string) error {
 	}
 
 	return nil
-}
-
-func sizeInMB() (int64, error) {
-	sizeB, err := diskSize()
-	if err != nil {
-		return 0, err
-	}
-
-	return sizeB / 1048576, nil
 }

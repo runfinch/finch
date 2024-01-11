@@ -23,7 +23,7 @@ SUPPORTED_ARCH = false
 CORE_VDE_PREFIX ?= $(OUTDIR)/dependencies/vde/opt/finch
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
-GITCOMMIT := $(shell git rev-parse HEAD)$(shell if ! git diff --no-ext-diff --quiet --exit-code; then echo .m; fi)
+GITCOMMIT := $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
 
 GOOS ?= $(shell $(GO) env GOOS)
@@ -42,15 +42,15 @@ ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = aarch64
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/aarch64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.aarch64-20230918164937.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1695247723.tar.gz
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.aarch64-20231207184228.qcow2
+	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1701821611.tar.gz
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
 	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20230918164920.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1695247723.tar.gz
-	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1696963702.tar.gz
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20231207190935.qcow2
+	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1701821611.tar.gz
+	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1704738038.tar.gz
 	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
 endif
 
@@ -71,7 +71,7 @@ arch-test:
 
 .PHONY: all
 ifeq ($(GOOS),windows)
-all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml dpgo
+all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml
 else
 all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
 endif
@@ -409,6 +409,7 @@ clean:
 	-sudo rm -rf "/private/etc/sudoers.d/finch-lima"
 	-@rm -rf $(OUTDIR) 2>/dev/null || true
 	-@rm -rf ./deps/finch-core/_output || true
+	-@rm -rf ./deps/finch-core/downloads/os/$(FINCH_OS_BASENAME) || true
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true
