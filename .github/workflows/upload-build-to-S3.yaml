@@ -92,13 +92,13 @@ jobs:
           aws-region: ${{ secrets.REGION }}
 
       - name: Download macos aarch64 build
-        uses: actions/download-artifact@f44cd7b40bfd40b6aa1cc1b9b5b7bf03d3c67110 # v4.1.0
+        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
         with:
           name: finch.macos-aarch64
           path: build
 
       - name: Download macos x86_64 build
-        uses: actions/download-artifact@f44cd7b40bfd40b6aa1cc1b9b5b7bf03d3c67110 # v4.1.0
+        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
         with:
           name: finch.macos-x86_64
           path: build
