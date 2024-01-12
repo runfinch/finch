@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -47,10 +48,12 @@ var resetVM = func(o *option.Option, installed bool) string {
 		writeFile(finchConfigFilePath, origFinchCfg)
 		writeFile(limaConfigFilePath, origLimaCfg)
 		command.New(o, virtualMachineRootCmd, "stop", "-f").WithTimeoutInSeconds(180).Run()
+		time.Sleep(10 * time.Second)
 		command.New(o, virtualMachineRootCmd, "remove", "-f").WithTimeoutInSeconds(180).Run()
 		if runtime.GOOS == "windows" {
 			gomega.Expect(exec.Command("wsl", "--shutdown").Run()).Should(gomega.BeNil())
 		}
+		time.Sleep(10 * time.Second)
 		command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(600).Run()
 	})
 
