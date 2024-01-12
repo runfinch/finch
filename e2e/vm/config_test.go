@@ -43,7 +43,7 @@ func updateAndApplyConfig(o *option.Option, configBytes []byte) *gexec.Session {
 	writeFile(finchConfigFilePath, configBytes)
 
 	command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
-	time.Sleep(10 * time.Second)
+	time.Sleep(1 * time.Second)
 	return command.New(o, virtualMachineRootCmd, "start").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
 }
 
@@ -80,7 +80,7 @@ var _ = func(o *option.Option, installed bool) {
 				writeFile(limaConfigFilePath, origLimaCfg)
 
 				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
-				time.Sleep(10 * time.Second)
+				time.Sleep(1 * time.Second)
 				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
 			})
 		})

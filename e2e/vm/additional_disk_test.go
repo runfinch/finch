@@ -42,9 +42,9 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			time.Sleep(20 * time.Second)
 
 			command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
-			time.Sleep(10 * time.Second)
+			time.Sleep(1 * time.Second)
 			command.Run(o, virtualMachineRootCmd, "remove")
-			time.Sleep(10 * time.Second)
+			time.Sleep(1 * time.Second)
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(240).Run()
 
 			imageOutput := command.StdoutAsLines(o, "images", "--format", "{{.Name}}")
