@@ -32,6 +32,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			}
 
 			limaConfigFilePath := resetVM(o, installed)
+			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
 			command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
 
