@@ -35,8 +35,10 @@ var resetVM = func(o *option.Option, installed bool) string {
 	}
 	origLimaCfg := readFile(limaConfigFilePath)
 
-	command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(120).Run()
-	command.New(o, virtualMachineRootCmd, "remove").WithTimeoutInSeconds(90).Run()
+	command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+	time.Sleep(1 * time.Second)
+	command.New(o, virtualMachineRootCmd, "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(10).Run()
+	time.Sleep(1 * time.Second)
 	if runtime.GOOS == "windows" {
 		// clean up iptables
 		//nolint:lll // link to explanation

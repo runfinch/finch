@@ -35,16 +35,19 @@ func TestVM(t *testing.T) {
 
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
 		resetDisks(o, *e2e.Installed)
-		command.New(o, "vm", "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
-		command.New(o, "vm", "remove").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
 		time.Sleep(1 * time.Second)
-		command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
+		command.New(o, "vm", "remove").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "init").WithTimeoutInSeconds(60).Run()
 		return nil
 	}, func(bytes []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
-		command.New(o, "vm", "stop").WithTimeoutInSeconds(90).Run()
-		command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "stop").WithTimeoutInSeconds(30).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "remove").WithTimeoutInSeconds(20).Run()
+		time.Sleep(1 * time.Second)
 	}, func() {})
 
 	ginkgo.Describe("", func() {
