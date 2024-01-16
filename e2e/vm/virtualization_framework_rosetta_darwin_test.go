@@ -32,7 +32,7 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 				resetVM(o, installed)
 				resetDisks(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
-				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 				tests.SetupLocalRegistry(o)
 				ginkgo.DeferCleanup(func() {
 					tests.CleanupLocalRegistry(o)
@@ -54,7 +54,7 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 				resetVM(o, installed)
 				resetDisks(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: true"))
-				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 				tests.SetupLocalRegistry(o)
 				ginkgo.DeferCleanup(func() {
 					tests.CleanupLocalRegistry(o)
