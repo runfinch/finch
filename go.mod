@@ -25,7 +25,7 @@ require (
 	golang.org/x/exp v0.0.0-20230810033253-352e893a4cad
 	golang.org/x/tools v0.17.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.28.4
+	k8s.io/apimachinery v0.29.0
 )
 
 require (
@@ -94,5 +94,5 @@ require (
 	gopkg.in/src-d/go-billy.v4 v4.3.2 // indirect
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	k8s.io/klog/v2 v2.100.1 // indirect
+	k8s.io/klog/v2 v2.110.1 // indirect
 )
