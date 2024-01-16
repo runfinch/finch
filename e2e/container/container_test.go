@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"runtime"
 	"testing"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -28,14 +29,20 @@ func TestContainer(t *testing.T) {
 	}
 
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
-		command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
+		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
 		tests.SetupLocalRegistry(o)
 		return nil
 	}, func(bytes []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
-		command.New(o, "vm", "stop").WithTimeoutInSeconds(90).Run()
-		command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+		time.Sleep(1 * time.Second)
 	}, func() {})
 
 	ginkgo.Describe(description, func() {
