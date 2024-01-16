@@ -37,7 +37,7 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			ginkgo.DeferCleanup(command.Run, o, "rmi", savedImage)
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", containerName)
 
-			command.New(o, "stop", containerName).WithTimeoutInSeconds(30).Run()
+			command.New(o, "stop", containerName).WithTimeoutInSeconds(10).Run()
 
 			time.Sleep(20 * time.Second)
 
@@ -62,7 +62,9 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			gomega.Expect(networkOutput).Should(gomega.ContainElement(networkName))
 
 			command.Run(o, "start", containerName)
-			gomega.Expect(command.StdoutStr(o, "exec", containerName, "cat", "/tmp/test.txt")).
+			gomega.Eventually(command.StdoutStr(o, "exec", containerName, "cat", "/tmp/test.txt")).
+				WithTimeout(15 * time.Second).
+				WithPolling(1 * time.Second).
 				Should(gomega.Equal("foo"))
 		})
 	})
