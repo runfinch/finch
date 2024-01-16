@@ -82,6 +82,10 @@ func (l *Logrus) SetFormatter(formatter Formatter) {
 	switch formatter {
 	case Text:
 		logrus.SetFormatter(&logrus.TextFormatter{})
+	case TextWithoutTruncation:
+		logrus.SetFormatter(&logrus.TextFormatter{
+			DisableLevelTruncation: true,
+		})
 	case JSON:
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
