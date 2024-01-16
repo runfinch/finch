@@ -57,7 +57,7 @@ func CreateOption() (*option.Option, error) {
 		subject = InstalledTestSubject
 	}
 
-	o, err := option.New([]string{subject})
+	o, err := option.New([]string{subject, "--debug"})
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize a testing option: %w", err)
 	}
