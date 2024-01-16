@@ -37,9 +37,7 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			ginkgo.DeferCleanup(command.Run, o, "rmi", savedImage)
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", containerName)
 
-			command.New(o, "stop", containerName).WithTimeoutInSeconds(10).Run()
-
-			time.Sleep(20 * time.Second)
+			command.New(o, "stop", containerName).WithTimeoutInSeconds(20).Run()
 
 			command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
 			time.Sleep(1 * time.Second)
