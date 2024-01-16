@@ -119,7 +119,7 @@ jobs:
           go-version-file: go.mod
           cache: true
       - run: make check-licenses
-  mac-vm-e2e-tests:
+  e2e-tests:
     strategy:
       fail-fast: false
       matrix:
