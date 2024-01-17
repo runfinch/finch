@@ -32,7 +32,8 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 				resetVM(o, installed)
 				resetDisks(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
-				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
+				// vm init with VZ set sometimes takes 2 minutes just to convert the disk to raw
+				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
 				tests.SetupLocalRegistry(o)
 				ginkgo.DeferCleanup(func() {
 					tests.CleanupLocalRegistry(o)
@@ -54,7 +55,8 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 				resetVM(o, installed)
 				resetDisks(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: true"))
-				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
+				// vm init with VZ set sometimes takes 2 minutes just to convert the disk to raw
+				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
 				tests.SetupLocalRegistry(o)
 				ginkgo.DeferCleanup(func() {
 					tests.CleanupLocalRegistry(o)
