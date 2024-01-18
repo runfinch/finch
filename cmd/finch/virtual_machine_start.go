@@ -89,7 +89,9 @@ func (sva *startVMAction) run() error {
 	sva.logger.Info("Starting existing Finch virtual machine...")
 	logs, err := limaCmd.CombinedOutput()
 	if err != nil {
+		sva.logger.SetFormatter(flog.TextWithoutTruncation)
 		sva.logger.Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
+		sva.logger.SetFormatter(flog.Text)
 		return err
 	}
 	sva.logger.Info("Finch virtual machine started successfully")
