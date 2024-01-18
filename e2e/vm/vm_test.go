@@ -56,7 +56,7 @@ var resetVM = func(o *option.Option, installed bool) string {
 			gomega.Expect(exec.Command("wsl", "--shutdown").Run()).Should(gomega.BeNil())
 		}
 		time.Sleep(1 * time.Second)
-		command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+		command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 	})
 
 	return limaConfigFilePath

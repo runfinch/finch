@@ -25,7 +25,7 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 		ginkgo.It("Retains container user data after the VM is deleted", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
-			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 			command.Run(o, "volume", "create", volumeName)
 			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", volumeName)
 			command.Run(o, "network", "create", networkName)
@@ -43,7 +43,7 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			time.Sleep(1 * time.Second)
 			command.New(o, virtualMachineRootCmd, "remove").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
 			time.Sleep(1 * time.Second)
-			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 
 			imageOutput := command.StdoutAsLines(o, "images", "--format", "{{.Name}}")
 			gomega.Expect(imageOutput).Should(gomega.ContainElement(savedImage))

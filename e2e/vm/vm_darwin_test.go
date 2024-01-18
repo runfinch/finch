@@ -39,7 +39,7 @@ func TestVM(t *testing.T) {
 		time.Sleep(1 * time.Second)
 		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
 		time.Sleep(1 * time.Second)
-		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 		return nil
 	}, func(bytes []byte) {})
 

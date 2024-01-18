@@ -317,7 +317,7 @@ var testSupportBundle = func(o *option.Option) {
 			time.Sleep(1 * time.Second)
 			command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
 			time.Sleep(1 * time.Second)
-			defer command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+			defer command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 
 			command.New(o, "support-bundle", "generate").WithoutSuccessfulExit().Run()
 

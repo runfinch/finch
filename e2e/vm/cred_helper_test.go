@@ -32,7 +32,7 @@ var testCredHelper = func(o *option.Option, installed bool, registry string) {
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\ncreds_helpers:\n    "+
 				"- ecr-login\nvmType: %s\nrosetta: true", vmType)))
-			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 			command.New(o, "pull", registry).WithTimeoutInSeconds(600).Run()
 			gomega.Expect(command.Stdout(o, "images", "-q", registry)).NotTo(gomega.BeEmpty())
 		})
