@@ -20,6 +20,9 @@ permissions:
   id-token: write
   contents: write
 
+env:
+  DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
