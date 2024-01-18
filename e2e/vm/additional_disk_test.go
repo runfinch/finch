@@ -38,10 +38,10 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", containerName)
 
 			command.New(o, "stop", containerName).WithTimeoutInSeconds(30).Run()
-
-			command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+			time.Sleep(20 * time.Second)
+			command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
 			time.Sleep(1 * time.Second)
-			command.New(o, virtualMachineRootCmd, "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+			command.New(o, virtualMachineRootCmd, "remove").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
 			time.Sleep(1 * time.Second)
 			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(60).Run()
 
