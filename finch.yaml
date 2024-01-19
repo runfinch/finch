@@ -169,7 +169,7 @@ provision:
     
     # https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L144-L146
     # XDG_DATA_HOME & ~/.local/share: https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L51
-    mkdir ~/.local/share/containerd
+    mkdir -p ~/.local/share/containerd
     sudo mount --bind /mnt/lima-finch/containerd ~/.local/share/containerd
 
     # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#dataroot
@@ -185,13 +185,24 @@ provision:
     sudo mount --bind /mnt/lima-finch/cni-config ~/.config/cni
 
     # https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L148-L150
-    sudo mkdir -p /mnt/lima-finch/cni
+    sudo mkdir -p /mnt/lima-finch/cni /var/lib/cni
     sudo mount --bind /mnt/lima-finch/cni /var/lib/cni
     mkdir -p  ~/.local/share/cni
     sudo mount --bind /mnt/lima-finch/cni  ~/.local/share/cni
 
-    # Make sure buildkit is restarted with containerd, so it uses the correct UUID
-    sudo systemctl add-requires buildkit.service containerd.service
+    # https://github.com/containerd/stargz-snapshotter/blob/94b12086ace4119e86d2db0d6343d7c734b56671/cmd/containerd-stargz-grpc/main.go#L67C2-L67C2
+    sudo mkdir -p /mnt/lima-finch/containerd-stargz-grpc/snapshotter/snapshots
+    sudo mount --bind /mnt/lima-finch/containerd-stargz-grpc /var/lib/containerd-stargz-grpc
+    
+    # https://github.com/awslabs/soci-snapshotter/blob/335515f746f50c964ed48159257e1aeba04805b6/cmd/soci-snapshotter-grpc/main.go#L84
+    sudo mkdir -p /mnt/lima-finch/soci-snapshotter-grpc/snapshotter/snapshots /var/lib/soci-snapshotter-grpc
+    sudo mount --bind /mnt/lima-finch/soci-snapshotter-grpc /var/lib/soci-snapshotter-grpc
+
+    # Make sure stargz and buildkit are restarted with containerd
+    sudo mkdir -p /usr/local/lib/systemd/system/buildkit.service.d/
+    printf '[Unit]\nPartOf=containerd.service\n' | sudo tee /usr/local/lib/systemd/system/buildkit.service.d/finch.conf
+    sudo mkdir -p /usr/local/lib/systemd/system/stargz-snapshotter.service.d/
+    printf '[Unit]\nPartOf=containerd.service\n\n[Service]\nKillSignal=SIGTERM\n' | sudo tee /usr/local/lib/systemd/system/stargz-snapshotter.service.d/finch.conf
     sudo systemctl restart containerd.service
 
 # Probe scripts to check readiness.

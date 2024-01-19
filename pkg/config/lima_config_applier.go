@@ -39,7 +39,8 @@ if [ ! -f /usr/local/bin/soci ]; then
 	ln -s /usr/local/lib/systemd/system/soci-snapshotter.service /etc/systemd/system/multi-user.target.wants/
 	restorecon -v /usr/local/lib/systemd/system/soci-snapshotter.service
 	systemctl daemon-reload
-	sudo systemctl add-requires soci-snapshotter.service containerd.service
+	sudo mkdir -p /usr/local/lib/systemd/system/soci-snapshotter.service.d/
+	printf '[Unit]\nPartOf=containerd.service\n\n[Service]\nKillSignal=SIGTERM\n' | sudo tee /usr/local/lib/systemd/system/soci-snapshotter.service.d/finch.conf
 	systemctl enable --now soci-snapshotter
 fi
 
