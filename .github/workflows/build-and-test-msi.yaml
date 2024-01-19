@@ -8,6 +8,8 @@ on:
       ref_name:
         required: true
         type: string
+  schedule:
+    - cron: '0 9 * * *'
 env:
   GO111MODULE: on
 
