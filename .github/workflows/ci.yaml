@@ -100,7 +100,7 @@ jobs:
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
         with:
-          version: v0.9.0 
+          version: v0.9.0
         continue-on-error: true
   go-mod-tidy-check:
     runs-on: ubuntu-latest
@@ -131,13 +131,9 @@ jobs:
             [self-hosted, macos, amd64, 13, test],
             [self-hosted, macos, amd64, 14, test],
             [self-hosted, macos, arm64, 13, test],
-            [self-hosted, macos, arm64, 14, test]
+            [self-hosted, macos, arm64, 14, test],
           ]
-        test-command:
-          [
-            "test-e2e-vm-serial",
-            "test-e2e-container"
-          ]
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -187,15 +183,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          [
-            [self-hosted, windows, amd64, test],
-          ]
-        test-command:
-          [
-            "test-e2e-vm-serial",
-            "test-e2e-container"
-          ]  
+        os: [[self-hosted, windows, amd64, test]]
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     steps:
@@ -249,7 +238,7 @@ jobs:
 
           # set networking config option to allow for VM/container -> host communication
           echo "[experimental]`nnetworkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
-          
+
           git status
           git clean -f -d
           make ${{ matrix.test-command }}
