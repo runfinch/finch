@@ -8,7 +8,7 @@ require (
 	github.com/docker/docker v24.0.7+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.0
-	github.com/lima-vm/lima v0.19.0
+	github.com/lima-vm/lima v0.20.0
 	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/onsi/gomega v1.30.0
 	github.com/pelletier/go-toml v1.9.5
@@ -30,7 +30,7 @@ require (
 
 require (
 	github.com/aws/smithy-go v1.19.0 // indirect
-	github.com/containerd/containerd v1.7.11 // indirect
+	github.com/containerd/containerd v1.7.12 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/docker/docker-credential-helpers v0.7.0 // indirect
