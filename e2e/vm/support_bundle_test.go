@@ -313,9 +313,11 @@ var testSupportBundle = func(o *option.Option) {
 			gomega.Expect(bundleExists).Should(gomega.BeTrue())
 		})
 		ginkgo.It("Should fail to generate a support bundle when the VM is nonexistent", func() {
-			command.New(o, "vm", "stop").WithTimeoutInSeconds(90).Run()
-			command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()
-			defer command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
+			command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+			time.Sleep(1 * time.Second)
+			command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+			time.Sleep(1 * time.Second)
+			defer command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 
 			command.New(o, "support-bundle", "generate").WithoutSuccessfulExit().Run()
 

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/runfinch/finch/pkg/dependency"
+	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/mocks"
 
 	"github.com/golang/mock/gomock"
@@ -292,7 +293,9 @@ func TestInitVMAction_run(t *testing.T) {
 					mockBaseYamlFilePath, "--tty=false").Return(command)
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
+				logger.EXPECT().SetFormatter(flog.TextWithoutTruncation)
 				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
+				logger.EXPECT().SetFormatter(flog.Text)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 			},
 		},

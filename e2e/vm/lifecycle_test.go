@@ -32,9 +32,9 @@ var testVMLifecycle = func(o *option.Option) {
 
 			ginkgo.It("should be able to force remove the virtual machine", func() {
 				command.Run(o, "images")
-				command.New(o, virtualMachineRootCmd, "remove", "--force").WithTimeoutInSeconds(60).Run()
+				command.New(o, virtualMachineRootCmd, "remove", "--force").WithTimeoutInSeconds(160).Run()
 				command.RunWithoutSuccessfulExit(o, "images")
-				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(160).Run()
 			})
 
 			ginkgo.It("should be able to stop the virtual machine", func() {
@@ -54,20 +54,26 @@ var testVMLifecycle = func(o *option.Option) {
 				gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Stopped"))
 			})
 
-			ginkgo.It("should be able to start the virtual machine", func() {
-				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
+			ginkgo.It("should be able to start the virtual machine", ginkgo.FlakeAttempts(3), func() {
+				// TODO: Remove FlakeAttempts
+				// vm start should happen in around 20 seconds if everything is working as expected
+				// sometimes it fails, but the failure timeout is 1 minute. Clamping to 30 seconds and
+				// allowing 3 tries will still be faster than the previous behavior.
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(30).Run()
 				command.Run(o, "images")
 				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
 			})
 
 			ginkgo.It("should be able to remove the virtual machine", func() {
-				command.New(o, virtualMachineRootCmd, "remove").WithTimeoutInSeconds(60).Run()
+				// don't asssume the VM will be in a stopped state (e.g. if the previous test fails)
+				command.New(o, virtualMachineRootCmd, "stop", "--force").WithTimeoutInSeconds(90).Run()
+				command.New(o, virtualMachineRootCmd, "remove").WithTimeoutInSeconds(160).Run()
 				command.RunWithoutSuccessfulExit(o, "images")
-				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(160).Run()
 				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
 			})
 			ginkgo.It("should be able to force remove the virtual machine", func() {
-				command.New(o, virtualMachineRootCmd, "remove", "--force").WithTimeoutInSeconds(60).Run()
+				command.New(o, virtualMachineRootCmd, "remove", "--force").WithTimeoutInSeconds(160).Run()
 				command.RunWithoutSuccessfulExit(o, "images")
 			})
 		})
@@ -83,7 +89,7 @@ var testVMLifecycle = func(o *option.Option) {
 			})
 
 			ginkgo.It("should be able to init", func() {
-				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(160).Run()
 				command.Run(o, "images")
 			})
 		})

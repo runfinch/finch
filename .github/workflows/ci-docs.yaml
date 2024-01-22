@@ -48,14 +48,22 @@ jobs:
   e2e-tests:
     strategy:
       matrix:
-        os: 
+        os:
           [
-            [self-hosted, macos, amd64, 13, test], 
-            [self-hosted, macos, amd64, 14, test], 
-            [self-hosted, macos, arm64, 13, test], 
-            [self-hosted, macos, arm64, 14, test]
+            [self-hosted, macos, amd64, 13, test],
+            [self-hosted, macos, amd64, 14, test],
+            [self-hosted, macos, arm64, 13, test],
+            [self-hosted, macos, arm64, 14, test],
           ]
-    runs-on: ${{ matrix.os }} 
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: echo "Skipping CI for docs & contrib files"
+  windows-e2e-tests:
+    strategy:
+      matrix:
+        os: [[self-hosted, windows, amd64, test]]
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+    runs-on: ${{ matrix.os }}
     steps:
       - run: echo "Skipping CI for docs & contrib files"
   mdlint:
