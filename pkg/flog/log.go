@@ -44,5 +44,6 @@ type Formatter int
 //go:generate stringer -type=Formatter
 const (
 	Text Formatter = iota
+	TextWithoutTruncation
 	JSON
 )

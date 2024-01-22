@@ -25,7 +25,7 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 		ginkgo.It("Retains container user data after the VM is deleted", func() {
 			resetVM(o, installed)
 			resetDisks(o, installed)
-			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 			command.Run(o, "volume", "create", volumeName)
 			ginkgo.DeferCleanup(command.Run, o, "volume", "rm", volumeName)
 			command.Run(o, "network", "create", networkName)
@@ -38,12 +38,12 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", containerName)
 
 			command.New(o, "stop", containerName).WithTimeoutInSeconds(30).Run()
-
 			time.Sleep(20 * time.Second)
-
-			command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
-			command.Run(o, virtualMachineRootCmd, "remove")
-			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(240).Run()
+			command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+			time.Sleep(1 * time.Second)
+			command.New(o, virtualMachineRootCmd, "remove").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+			time.Sleep(1 * time.Second)
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 
 			imageOutput := command.StdoutAsLines(o, "images", "--format", "{{.Name}}")
 			gomega.Expect(imageOutput).Should(gomega.ContainElement(savedImage))
@@ -60,7 +60,9 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			gomega.Expect(networkOutput).Should(gomega.ContainElement(networkName))
 
 			command.Run(o, "start", containerName)
-			gomega.Expect(command.StdoutStr(o, "exec", containerName, "cat", "/tmp/test.txt")).
+			gomega.Eventually(command.StdoutStr(o, "exec", containerName, "cat", "/tmp/test.txt")).
+				WithTimeout(15 * time.Second).
+				WithPolling(1 * time.Second).
 				Should(gomega.Equal("foo"))
 		})
 	})

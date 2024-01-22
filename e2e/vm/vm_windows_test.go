@@ -31,7 +31,7 @@ func TestVM(t *testing.T) {
 
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
 		resetDisks(o, *e2e.Installed)
-		command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
+		command.New(o, "vm", "init").WithTimeoutInSeconds(160).Run()
 		return nil
 	}, func(bytes []byte) {})
 
