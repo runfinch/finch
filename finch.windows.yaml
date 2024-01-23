@@ -96,6 +96,15 @@ provision:
     printf '[Unit]\nPartOf=containerd.service\n' | sudo tee /usr/local/lib/systemd/system/buildkit.service.d/finch.conf
     sudo mkdir -p /usr/local/lib/systemd/system/stargz-snapshotter.service.d/
     printf '[Unit]\nPartOf=containerd.service\n\n[Service]\nKillSignal=SIGTERM\n' | sudo tee /usr/local/lib/systemd/system/stargz-snapshotter.service.d/finch.conf
+    
+    # Add a new services that syncs the filesystem before shutdown
+    printf '[Unit]\nDescription=Sync containerd on shutdown\nDefaultDependencies=no\nBefore=shutdown.target reboot.target halt.target kexec.target\n\n[Service]\nType=oneshot\nExecStart=/bin/bash -c "sync /var/lib/containerd"\n\n[Install]\nWantedBy=halt.target reboot.target shutdown.target kexec.target\n' | sudo tee /usr/local/lib/systemd/system/finch-sync-on-shutdown.service
+    sudo systemctl enable --now finch-sync-on-shutdown.service
+
+    # Add a new service that cleans up lingering CNI networks on boot
+    printf '[Unit]\nDescription=Delete hanging data on boot\nDefaultDependencies=no\nBefore=basic.target\n\n[Service]\nType=oneshot\nExecStart=/bin/bash -c "sudo rm /var/lib/cni/networks/bridge/**; sudo rm /var/lib/cni/results/bridge-finch-*"\n\n[Install]\nWantedBy=basic.target\n' | sudo tee /usr/local/lib/systemd/system/finch-cleanup-on-boot.service
+    sudo systemctl enable --now finch-cleanup-on-boot.service
+
     sudo systemctl restart containerd.service
 
 env:
