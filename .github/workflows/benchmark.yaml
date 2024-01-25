@@ -62,7 +62,7 @@ jobs:
           echo "OS_VERSION=$(sw_vers -productVersion | cut -d '.' -f 1)" >> $GITHUB_ENV
           echo "ARCH=$(uname -m)" >> $GITHUB_ENV
       - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@70405016b032d44f409e4b1b451c40215cbe2393 # v1.18.0
+        uses: benchmark-action/github-action-benchmark@a16dfc786053b0fa10c71986e0939a85fae09e76 # v1.19.0
         with:
           name: Finch Benchmark
           tool: 'go'
