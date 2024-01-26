@@ -1,0 +1,68 @@
+# - When a third-party action is added (i.e., `uses`), please also add it to `download-licenses` in Makefile.
+# - When a job is added/removed/renamed, please make corresponding changes in ci-docs.yaml.
+name: "GitHub Runners Test"
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "contrib/**"
+      - ".github/CODEOWNERS"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "contrib/**"
+      - ".github/CODEOWNERS"
+permissions:
+  id-token: write
+  contents: write
+
+env:
+  DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
+
+jobs:
+  e2e-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [[macos-latest-xlarge]]
+        test-command: ["test-e2e-vm-serial", "test-e2e-container"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - name: Set output variables
+        id: vars
+        run: |
+          has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
+          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        if: ${{ steps.vars.outputs.has_creds == true }}
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: credhelper-test
+          aws-region: ${{ secrets.REGION }}
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true
+      - run: brew install go lz4 automake autoconf libtool
+        shell: zsh {0}
+      - name: Build project
+        run: |
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+        shell: zsh {0}
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+      - run: |
+          git status
+          git clean -f -d
+          REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ matrix.test-command }}
+        shell: zsh {0}
