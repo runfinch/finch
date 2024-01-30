@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1706651916906,
+  "lastUpdate": 1706652043404,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -4288,6 +4288,114 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 546,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "889abf8d7b8fa795790e509cbc00886dedce5af6",
+          "message": "build(deps): Bump github.com/onsi/gomega from 1.30.0 to 1.31.1 (#768)\n\nBumps [github.com/onsi/gomega](https://github.com/onsi/gomega) from\r\n1.30.0 to 1.31.1.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/onsi/gomega/releases\">github.com/onsi/gomega's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v1.31.1</h2>\r\n<h2>1.31.1</h2>\r\n<h3>Fixes</h3>\r\n<ul>\r\n<li>Inverted arguments order of FailureMessage of BeComparableToMatcher\r\n[e0dd999]</li>\r\n<li>Update test in case keeping msg is desired [ad1a367]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>Show how to import the format sub package [24e958d]</li>\r\n<li>tidy up go.sum [26661b8]</li>\r\n<li>bump dependencies [bde8f7a]</li>\r\n</ul>\r\n<h2>v1.31.0</h2>\r\n<h2>1.31.0</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>Async assertions include context cancellation cause if present\r\n[121c37f]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>Bump minimum go version [dee1e3c]</li>\r\n<li>docs: fix typo in example usage &quot;occured&quot; -&gt;\r\n&quot;occurred&quot; [49005fe]</li>\r\n<li>Bump actions/setup-go from 4 to 5 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/714\">#714</a>)\r\n[f1c8757]</li>\r\n<li>Bump github/codeql-action from 2 to 3 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/715\">#715</a>)\r\n[9836e76]</li>\r\n<li>Bump github.com/onsi/ginkgo/v2 from 2.13.0 to 2.13.2 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/713\">#713</a>)\r\n[54726f0]</li>\r\n<li>Bump golang.org/x/net from 0.17.0 to 0.19.0 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/711\">#711</a>)\r\n[df97ecc]</li>\r\n<li>docs: fix <code>HaveExactElement</code> typo (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/712\">#712</a>)\r\n[a672c86]</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/onsi/gomega/blob/master/CHANGELOG.md\">github.com/onsi/gomega's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2>1.31.1</h2>\r\n<h3>Fixes</h3>\r\n<ul>\r\n<li>Inverted arguments order of FailureMessage of BeComparableToMatcher\r\n[e0dd999]</li>\r\n<li>Update test in case keeping msg is desired [ad1a367]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>Show how to import the format sub package [24e958d]</li>\r\n<li>tidy up go.sum [26661b8]</li>\r\n<li>bump dependencies [bde8f7a]</li>\r\n</ul>\r\n<h2>1.31.0</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>Async assertions include context cancellation cause if present\r\n[121c37f]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>Bump minimum go version [dee1e3c]</li>\r\n<li>docs: fix typo in example usage &quot;occured&quot; -&gt;\r\n&quot;occurred&quot; [49005fe]</li>\r\n<li>Bump actions/setup-go from 4 to 5 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/714\">#714</a>)\r\n[f1c8757]</li>\r\n<li>Bump github/codeql-action from 2 to 3 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/715\">#715</a>)\r\n[9836e76]</li>\r\n<li>Bump github.com/onsi/ginkgo/v2 from 2.13.0 to 2.13.2 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/713\">#713</a>)\r\n[54726f0]</li>\r\n<li>Bump golang.org/x/net from 0.17.0 to 0.19.0 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/711\">#711</a>)\r\n[df97ecc]</li>\r\n<li>docs: fix <code>HaveExactElement</code> typo (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/712\">#712</a>)\r\n[a672c86]</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/762b171852113d80d8fc360558cccbccdc46af70\"><code>762b171</code></a>\r\nv1.31.1</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/26661b8d34c7d8205844de07a3ec5637a595bef6\"><code>26661b8</code></a>\r\ntidy up go.sum</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/bde8f7a2c07ccfc535b2d9082e7dcaa1fbca91c5\"><code>bde8f7a</code></a>\r\nbump dependencies</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/24e958d368b1e67070bded6ddd1a108d70698b14\"><code>24e958d</code></a>\r\nShow how to import the format sub package</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/ad1a367ab5b86a7abad96a75ac25f1383fa97e69\"><code>ad1a367</code></a>\r\nUpdate test in case keeping msg is desired</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/e0dd999861372e3b7838b6719258eee5fd16276a\"><code>e0dd999</code></a>\r\nInverted arguments order of FailureMessage of BeComparableToMatcher</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/ba8bba2272bbf185a144b2681b5ed1f72d7f04f7\"><code>ba8bba2</code></a>\r\nv1.31.0</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/121c37f100b97f1d2c3f68c436f92bd7df4a120a\"><code>121c37f</code></a>\r\nAsync assertions include context cancellation cause if present</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/dee1e3cc5e375dedf8360bf3d673a433ef04b948\"><code>dee1e3c</code></a>\r\nBump minimum go version</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/49005fe1960542f223c64b1af4e7544d34746a01\"><code>49005fe</code></a>\r\ndocs: fix typo in example usage &quot;occured&quot; -&gt;\r\n&quot;occurred&quot;</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/onsi/gomega/compare/v1.30.0...v1.31.1\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/onsi/gomega&package-manager=go_modules&previous-version=1.30.0&new-version=1.31.1)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>\r\nCo-authored-by: Justin <pendo324@users.noreply.github.com>",
+          "timestamp": "2024-01-30T15:50:50-05:00",
+          "tree_id": "948fdf8d9e55a95a8353303a071ea3153ec70b04",
+          "url": "https://github.com/runfinch/finch/commit/889abf8d7b8fa795790e509cbc00886dedce5af6"
+        },
+        "date": 1706652042519,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 42767257288,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4012,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 35.71,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 42.77,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1334697984,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1928248,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 40647,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 497237031,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.8916,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 20.71,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.4972,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 32642,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 526,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
           }
