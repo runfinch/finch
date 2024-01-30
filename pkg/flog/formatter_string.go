@@ -9,12 +9,13 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[Text-0]
-	_ = x[JSON-1]
+	_ = x[TextWithoutTruncation-1]
+	_ = x[JSON-2]
 }
 
-const _Formatter_name = "TextJSON"
+const _Formatter_name = "TextTextWithoutTruncationJSON"
 
-var _Formatter_index = [...]uint8{0, 4, 8}
+var _Formatter_index = [...]uint8{0, 4, 25, 29}
 
 func (i Formatter) String() string {
 	if i < 0 || i >= Formatter(len(_Formatter_index)-1) {

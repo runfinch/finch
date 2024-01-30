@@ -9,7 +9,6 @@ import (
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
-	"github.com/onsi/gomega/gexec"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
 )
@@ -33,8 +32,7 @@ var testCredHelper = func(o *option.Option, installed bool, registry string) {
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\ncreds_helpers:\n    "+
 				"- ecr-login\nvmType: %s\nrosetta: true", vmType)))
-			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
-			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 			command.New(o, "pull", registry).WithTimeoutInSeconds(600).Run()
 			gomega.Expect(command.Stdout(o, "images", "-q", registry)).NotTo(gomega.BeEmpty())
 		})

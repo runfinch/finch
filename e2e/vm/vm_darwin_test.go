@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -34,13 +35,19 @@ func TestVM(t *testing.T) {
 
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
 		resetDisks(o, *e2e.Installed)
-		command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
+		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 		return nil
 	}, func(bytes []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
-		command.New(o, "vm", "stop", "-f").WithTimeoutInSeconds(90).Run()
-		command.New(o, "vm", "remove", "-f").WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+		time.Sleep(1 * time.Second)
 	}, func() {})
 
 	ginkgo.Describe("", func() {

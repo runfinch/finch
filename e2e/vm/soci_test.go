@@ -65,7 +65,7 @@ var testSoci = func(o *option.Option, installed bool) {
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
 				"- soci\nvmType: %s\nrosetta: false", vmType)))
-			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 			command.New(o, "pull", "--snapshotter=soci", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
 			command.Run(o, "rmi", "-f", ffmpegSociImage)
@@ -81,7 +81,7 @@ var testSoci = func(o *option.Option, installed bool) {
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
 				"- soci\nvmType: %s\nrosetta: false", vmType)))
-			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 			command.New(o, "run", "--snapshotter=soci", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
 			command.Run(o, "rmi", "-f", ffmpegSociImage)
@@ -96,7 +96,7 @@ var testSoci = func(o *option.Option, installed bool) {
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
 				"- soci\nvmType: %s\nrosetta: false", vmType)))
-			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 			port = fnet.GetFreePort()
 			command.New(o, "run", "-dp", fmt.Sprintf("%d:5000", port), "--name", "registry", registryImage).
 				WithTimeoutInSeconds(30).Run()

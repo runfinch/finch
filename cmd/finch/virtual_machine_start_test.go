@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/runfinch/finch/pkg/dependency"
+	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/mocks"
 
 	"github.com/golang/mock/gomock"
@@ -305,7 +306,9 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc.EXPECT().CreateWithoutStdio("start", limaInstanceName).Return(command)
 
 				logger.EXPECT().Info("Starting existing Finch virtual machine...")
+				logger.EXPECT().SetFormatter(flog.TextWithoutTruncation)
 				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
+				logger.EXPECT().SetFormatter(flog.Text)
 			},
 		},
 	}

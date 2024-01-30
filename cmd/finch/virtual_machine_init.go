@@ -100,7 +100,9 @@ func (iva *initVMAction) run() error {
 	iva.logger.Info("Initializing and starting Finch virtual machine...")
 	logs, err := limaCmd.CombinedOutput()
 	if err != nil {
+		iva.logger.SetFormatter(flog.TextWithoutTruncation)
 		iva.logger.Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
+		iva.logger.SetFormatter(flog.Text)
 		// ignore error, this is to ensure that the disk mount doesn't linger after the VM fails to start
 		_ = iva.diskManager.DetachUserDataDisk()
 		return err

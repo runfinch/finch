@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -34,8 +35,10 @@ var resetVM = func(o *option.Option, installed bool) string {
 	}
 	origLimaCfg := readFile(limaConfigFilePath)
 
-	command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(120).Run()
-	command.New(o, virtualMachineRootCmd, "remove").WithTimeoutInSeconds(90).Run()
+	command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+	time.Sleep(1 * time.Second)
+	command.New(o, virtualMachineRootCmd, "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(10).Run()
+	time.Sleep(1 * time.Second)
 	if runtime.GOOS == "windows" {
 		// clean up iptables
 		//nolint:lll // link to explanation
@@ -46,12 +49,14 @@ var resetVM = func(o *option.Option, installed bool) string {
 	ginkgo.DeferCleanup(func() {
 		writeFile(finchConfigFilePath, origFinchCfg)
 		writeFile(limaConfigFilePath, origLimaCfg)
-		command.New(o, virtualMachineRootCmd, "stop", "-f").WithTimeoutInSeconds(180).Run()
-		command.New(o, virtualMachineRootCmd, "remove", "-f").WithTimeoutInSeconds(180).Run()
+		command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, virtualMachineRootCmd, "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(10).Run()
 		if runtime.GOOS == "windows" {
 			gomega.Expect(exec.Command("wsl", "--shutdown").Run()).Should(gomega.BeNil())
 		}
-		command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(600).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 	})
 
 	return limaConfigFilePath
