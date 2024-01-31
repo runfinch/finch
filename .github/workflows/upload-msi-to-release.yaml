@@ -49,12 +49,12 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Download installers and dependency source code
         run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ get-version-tag.outputs.tag }}.msi Finch-${{ get-version-tag.outputs.tag }}.msi
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-version-tag.outputs.tag }}.msi Finch-${{ needs.get-version-tag.outputs.tag }}.msi
       - name: Upload installers and dependency source code to release
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
         with:
-          tag_name: ${{ get-version-tag.outputs.tag }}
+          tag_name: ${{ needs.get-version-tag.outputs.tag }}
           files: |
-            Finch-${{ get-version-tag.outputs.tag }}.msi
+            Finch-${{ needs.get-version-tag.outputs.tag }}.msi
       - name: Delete installers and dependency source code
-        run: rm -rf Finch-${{ get-version-tag.outputs.tag }}.msi
+        run: rm -rf Finch-${{ needs.get-version-tag.outputs.tag }}.msi
