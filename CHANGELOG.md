@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.1.0](https://github.com/runfinch/finch/compare/v1.0.1...v1.1.0) (2024-01-31)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.24.0 to 1.24.1 ([#749](https://github.com/runfinch/finch/issues/749)) ([c3ae967](https://github.com/runfinch/finch/commit/c3ae96794165b4ea696bb94856d40ff91767ed1b))
+* **deps:** Bump github.com/containerd/containerd from 1.7.10 to 1.7.11 ([#742](https://github.com/runfinch/finch/issues/742)) ([7d1e250](https://github.com/runfinch/finch/commit/7d1e25068a503a8b4ea7dd3f349ff4020168a6fb))
+* **deps:** Bump github.com/docker/docker from 24.0.7+incompatible to 25.0.1+incompatible ([#772](https://github.com/runfinch/finch/issues/772)) ([b16f6ae](https://github.com/runfinch/finch/commit/b16f6aeb31473ce2e49550827d7a1974fd719e0d))
+* **deps:** Bump github.com/lima-vm/lima from 0.19.0 to 0.20.0 ([#769](https://github.com/runfinch/finch/issues/769)) ([7f0c86e](https://github.com/runfinch/finch/commit/7f0c86e208a2d6faf3a93ed72887a7211fb9aa9f))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.13.2 to 2.14.0 ([#758](https://github.com/runfinch/finch/issues/758)) ([7d3a7c8](https://github.com/runfinch/finch/commit/7d3a7c84b02d70edad7947573f77dada22332f41))
+* **deps:** Bump github.com/onsi/gomega from 1.30.0 to 1.31.1 ([#768](https://github.com/runfinch/finch/issues/768)) ([889abf8](https://github.com/runfinch/finch/commit/889abf8d7b8fa795790e509cbc00886dedce5af6))
+* **deps:** Bump github.com/runfinch/common-tests from 0.7.11 to 0.7.12 ([#761](https://github.com/runfinch/finch/issues/761)) ([bb17a96](https://github.com/runfinch/finch/commit/bb17a96b58b85c42fdc6fbd093209ce1ab900707))
+* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.23.11 to 3.23.12 ([#744](https://github.com/runfinch/finch/issues/744)) ([eb55877](https://github.com/runfinch/finch/commit/eb55877a330d4c45eb210a19188f54032d7f8274))
+* **deps:** Bump golang.org/x/crypto from 0.16.0 to 0.18.0 ([#751](https://github.com/runfinch/finch/issues/751)) ([fc434ac](https://github.com/runfinch/finch/commit/fc434ac4f288bb1d2eeef3c2e2bcb186e8aa5278))
+* **deps:** Bump golang.org/x/image from 0.0.0-20210220032944-ac19c3e999fb to 0.10.0 ([#752](https://github.com/runfinch/finch/issues/752)) ([9a08b45](https://github.com/runfinch/finch/commit/9a08b45466cc58326df05d94dfe91edd07158759))
+* **deps:** Bump golang.org/x/tools from 0.16.0 to 0.16.1 ([#734](https://github.com/runfinch/finch/issues/734)) ([efecfca](https://github.com/runfinch/finch/commit/efecfcae8922f47581a4575125acbe375a706b11))
+* **deps:** Bump golang.org/x/tools from 0.16.1 to 0.17.0 ([#757](https://github.com/runfinch/finch/issues/757)) ([89623da](https://github.com/runfinch/finch/commit/89623dab53f0128c1616c66a7361a5ce3df847c3))
+* **deps:** Bump submodules and dependencies ([#733](https://github.com/runfinch/finch/issues/733)) ([8b2d8cd](https://github.com/runfinch/finch/commit/8b2d8cddc7fc63264c7f5bf1be2bd4417a92aaeb))
+
+
+### Experimental
+
+* make finch work on windows with wsl2 ([#649](https://github.com/runfinch/finch/issues/649)) ([31cdc41](https://github.com/runfinch/finch/commit/31cdc411d29758bae54a0b3fdb37be2777bd9fdc))
+
+
+### Features
+
+* upgrade Windows support to "feature" ([#778](https://github.com/runfinch/finch/issues/778)) ([63894d1](https://github.com/runfinch/finch/commit/63894d12f3ab9d2c02700779e42182d06019a85f))
+
+
+### Bug Fixes
+
+* properly reload persistent snapshotter data and restart services ([#767](https://github.com/runfinch/finch/issues/767)) ([700cb92](https://github.com/runfinch/finch/commit/700cb92da72510b47498c48f188c50806382a291))
+* temporarily switch to our own nerdctl-full bundle with patched runc and buildkit ([#783](https://github.com/runfinch/finch/issues/783)) ([f677e2e](https://github.com/runfinch/finch/commit/f677e2e03c7ee94e18ea990c1723f41bac660698))
+
 ## [1.0.1](https://github.com/runfinch/finch/compare/v1.0.0...v1.0.1) (2023-12-11)
 
 
