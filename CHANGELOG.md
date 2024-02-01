@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.1](https://github.com/runfinch/finch/compare/v1.1.0...v1.1.1) (2024-02-01)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump submodules and dependencies ([#762](https://github.com/runfinch/finch/issues/762)) ([4889527](https://github.com/runfinch/finch/commit/4889527dae6494509fce0b3fefc4ac890d113f11))
+
+
+### Bug Fixes
+
+* add force to cni cleanup on boot service ([#785](https://github.com/runfinch/finch/issues/785)) ([9b2438b](https://github.com/runfinch/finch/commit/9b2438b5827706b134bb791a78643af37854b377))
+
 ## [1.1.0](https://github.com/runfinch/finch/compare/v1.0.1...v1.1.0) (2024-01-31)
 
 
