@@ -51,10 +51,9 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-
       - name: Make macos aarch64 build
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           git status
           git clean -f -d
           make clean
@@ -92,7 +91,7 @@ jobs:
 
       - name: Make macos x86_64 build
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           git status
           git clean -f -d
           make clean
@@ -167,7 +166,7 @@ jobs:
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
@@ -279,7 +278,7 @@ jobs:
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
