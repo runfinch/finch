@@ -88,7 +88,7 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 		},
 		{
 			name: "should return an error if sshPortCmd has an error output",
-			mockSvc: func(logger *mocks.Logger, lcc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, lcc *mocks.LimaCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return(nil, errors.New("ssh port error"))
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
@@ -97,7 +97,7 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 		},
 		{
 			name: "should print info and return without error if port is 0",
-			mockSvc: func(logger *mocks.Logger, lcc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, lcc *mocks.LimaCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("0"), nil)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)

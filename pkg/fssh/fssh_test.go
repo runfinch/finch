@@ -89,7 +89,7 @@ TZ6coT6ILioXcs0kX17JAAAAI2FsdmFqdXNAODg2NjVhMGJmN2NhLmFudC5hbWF6b24uY2
 			name:           "private key file doesn't exist",
 			user:           "test",
 			privateKeyPath: pkPath,
-			mockSvc:        func(t *testing.T, fs afero.Fs) {},
+			mockSvc:        func(_ *testing.T, _ afero.Fs) {},
 			want:           nil,
 			wantErr: fmt.Errorf(
 				"failed to open private key file: %w",

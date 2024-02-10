@@ -41,7 +41,7 @@ func TestVM(t *testing.T) {
 		time.Sleep(1 * time.Second)
 		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 		return nil
-	}, func(bytes []byte) {})
+	}, func(_ []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
 		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
@@ -66,7 +66,7 @@ func TestVM(t *testing.T) {
 	ginkgo.RunSpecs(t, description)
 }
 
-var resetDisks = func(o *option.Option, installed bool) {
+var resetDisks = func(_ *option.Option, installed bool) {
 	var dataDiskDir string
 	limaDisksPath := "lima/data/_disks/"
 	if installed {

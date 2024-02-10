@@ -161,14 +161,14 @@ func TestStartVMAction_run(t *testing.T) {
 		{
 			name:    "running VM",
 			wantErr: fmt.Errorf("the instance %q is already running", limaInstanceName),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -181,14 +181,14 @@ func TestStartVMAction_run(t *testing.T) {
 			name: "nonexistent VM",
 			wantErr: fmt.Errorf("the instance %q does not exist, run `finch %s init` to create a new instance",
 				limaInstanceName, virtualMachineRootCmd),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -200,14 +200,14 @@ func TestStartVMAction_run(t *testing.T) {
 		{
 			name:    "unknown VM status",
 			wantErr: errors.New("unrecognized system status"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -219,14 +219,14 @@ func TestStartVMAction_run(t *testing.T) {
 		{
 			name:    "status command returns an error",
 			wantErr: errors.New("get status error"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
-				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.Logger,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -255,7 +255,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)

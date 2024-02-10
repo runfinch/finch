@@ -89,7 +89,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				VMType: pointer.String("qemu"),
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
+			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
@@ -112,7 +112,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				VMType: pointer.String("qemu"),
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
+			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
@@ -127,7 +127,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				VMType: pointer.String("qemu"),
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
+			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
@@ -150,7 +150,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				VMType: pointer.String("qemu"),
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
+			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
@@ -173,7 +173,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				VMType: pointer.String("qemu"),
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
+			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 

@@ -87,7 +87,7 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 		{
 			name: "get VMType returns an error",
 			args: []string{},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(_ *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
 				getVMTypeC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.VMType}}", limaInstanceName).Return(getVMTypeC)
 				getVMTypeC.EXPECT().Output().Return([]byte("unknown"), errors.New("unrecognized VMType"))
@@ -145,7 +145,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "stopped VM",
 			wantErr: fmt.Errorf("the instance %q is already stopped", limaInstanceName),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -156,7 +156,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "nonexistent VM",
 			wantErr: fmt.Errorf("the instance %q does not exist", limaInstanceName),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
@@ -167,7 +167,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "unknown VM status",
 			wantErr: errors.New("unrecognized system status"),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
@@ -178,7 +178,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "status command returns an error",
 			wantErr: errors.New("get status error"),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(_ *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))

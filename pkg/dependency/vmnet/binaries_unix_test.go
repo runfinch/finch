@@ -73,7 +73,7 @@ func TestBinaries_Installed(t *testing.T) {
 	}{
 		{
 			name: "happy path",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, mFs afero.Fs, _ *mocks.Logger) {
 				fileData := []byte("test data")
 				err := afero.WriteFile(mFs, "mock_prefix/dependencies/lima-socket_vmnet/opt/finch/bin/socket_vmnet", fileData, 0o666)
 				require.NoError(t, err)
@@ -134,7 +134,7 @@ func TestBinaries_Installed(t *testing.T) {
 		},
 		{
 			name: "paths exist, but their contents don't match",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, mFs afero.Fs, _ *mocks.Logger) {
 				fileData1 := []byte("test data")
 				fileData2 := []byte("different test data")
 				err := afero.WriteFile(mFs, "mock_prefix/dependencies/lima-socket_vmnet/opt/finch/bin/socket_vmnet", fileData1, 0o666)

@@ -62,10 +62,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				lcc *mocks.LimaCmdCreator,
+				_ *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -108,10 +108,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				lcc *mocks.LimaCmdCreator,
+				_ *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -151,10 +151,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				lcc *mocks.LimaCmdCreator,
+				_ *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -193,10 +193,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				lcc *mocks.LimaCmdCreator,
+				_ *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -235,10 +235,10 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				lcc *mocks.LimaCmdCreator,
+				_ *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
@@ -281,7 +281,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")

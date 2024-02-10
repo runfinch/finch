@@ -35,7 +35,7 @@ func TestOverrideLimaConfig_verifyConfigHasNetworkSection(t *testing.T) {
 		{
 			name:     "happy path",
 			filePath: "mock_config_file",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, mFs afero.Fs, _ *mocks.Logger) {
 				require.NoError(t, afero.WriteFile(mFs, "mock_config_file", []byte(networkConfigString), 0o644))
 			},
 			want: true,
@@ -43,7 +43,7 @@ func TestOverrideLimaConfig_verifyConfigHasNetworkSection(t *testing.T) {
 		{
 			name:     "config file doesn't exist",
 			filePath: "mock_config_file",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(_ *testing.T, _ afero.Fs, l *mocks.Logger) {
 				var pathErr fs.PathError
 				pathErr.Op = "open"
 				pathErr.Path = "mock_config_file"
@@ -83,7 +83,7 @@ func TestOverrideLimaConfig_verifyConfigHasNetworkSection(t *testing.T) {
 		{
 			name:     "config file contains invalid network section",
 			filePath: "mock_config_file",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, mFs afero.Fs, _ *mocks.Logger) {
 				data := strings.ReplaceAll(networkConfigString, "finch-shared", "not-finch-shared")
 				require.NoError(t, afero.WriteFile(mFs, "mock_config_file", []byte(data), 0o644))
 			},
@@ -120,7 +120,7 @@ func TestOverrideLimaConfig_appendNetworkConfiguration(t *testing.T) {
 		{
 			name:     "happy path",
 			filePath: "mock_config_file",
-			mockSvc:  func(mFs afero.Fs) {},
+			mockSvc:  func(_ afero.Fs) {},
 			want:     nil,
 			postRunCheck: func(t *testing.T, mFs afero.Fs) {
 				fileBytes, err := afero.ReadFile(mFs, "mock_config_file")
@@ -163,7 +163,7 @@ func TestOverrideLimaConfig_shouldAddNetworksConfig(t *testing.T) {
 		},
 		{
 			name: "binaries are not installed",
-			mockSvc: func(b *mocks.Dependency, s *mocks.Dependency) {
+			mockSvc: func(b *mocks.Dependency, _ *mocks.Dependency) {
 				b.EXPECT().Installed().Return(false)
 			},
 			want: false,
@@ -250,7 +250,7 @@ func TestOverrideLimaConfig_Install(t *testing.T) {
 		},
 		{
 			name: "shouldAddNetwork is false",
-			mockSvc: func(t *testing.T, b *mocks.Dependency, s *mocks.Dependency, mFs afero.Fs, fp path.Finch) {
+			mockSvc: func(_ *testing.T, b *mocks.Dependency, _ *mocks.Dependency, _ afero.Fs, _ path.Finch) {
 				b.EXPECT().Installed().Return(false)
 			},
 			want: fmt.Errorf("skipping installation of network configuration because pre-requisites are missing"),

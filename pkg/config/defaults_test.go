@@ -49,7 +49,7 @@ func Test_applyDefaults(t *testing.T) {
 			cfg: &Finch{
 				Memory: pointer.String("4GiB"),
 			},
-			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+			mockSvc: func(deps *mocks.LoadSystemDeps, _ *mocks.Memory) {
 				deps.EXPECT().NumCPU().Return(8)
 			},
 			want: &Finch{
@@ -64,7 +64,7 @@ func Test_applyDefaults(t *testing.T) {
 			cfg: &Finch{
 				CPUs: pointer.Int(6),
 			},
-			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+			mockSvc: func(_ *mocks.LoadSystemDeps, mem *mocks.Memory) {
 				// 12,884,901,888 == 12GiB
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
 			},
@@ -101,7 +101,7 @@ func Test_applyDefaults(t *testing.T) {
 		{
 			name: "happy path",
 			cfg:  &Finch{},
-			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+			mockSvc: func(_ *mocks.LoadSystemDeps, _ *mocks.Memory) {
 			},
 			want: &Finch{
 				VMType: pointer.String("wsl2"),
@@ -112,7 +112,7 @@ func Test_applyDefaults(t *testing.T) {
 			cfg: &Finch{
 				VMType: pointer.String("wsl"),
 			},
-			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+			mockSvc: func(_ *mocks.LoadSystemDeps, _ *mocks.Memory) {
 			},
 			want: &Finch{
 				VMType: pointer.String("wsl"),

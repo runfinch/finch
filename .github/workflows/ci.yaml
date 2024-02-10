@@ -79,7 +79,7 @@ jobs:
           # Pin the version in case all the builds start to fail at the same time.
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
-          version: v1.53.3
+          version: v1.56.1
           args: --fix=false --timeout=5m
       - name: set GOOS env to darwin
         run: |
@@ -90,7 +90,7 @@ jobs:
           # Pin the version in case all the builds start to fail at the same time.
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
-          version: v1.53.3
+          version: v1.56.1
           args: --fix=false --timeout=5m --skip-dirs="(^|/)deps($|/)"
   shellcheck:
     name: ShellCheck

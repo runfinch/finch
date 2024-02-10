@@ -113,13 +113,13 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			wantErr: fmt.Errorf("instance %q is stopped, run `finch %s start` to start the instance",
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
-				t *testing.T,
+				_ *testing.T,
 				lcc *mocks.LimaCmdCreator,
-				ecc *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
+				_ *mocks.CommandCreator,
+				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
@@ -136,13 +136,13 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				"instance %q does not exist, run `finch %s init` to create a new instance",
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
-				t *testing.T,
+				_ *testing.T,
 				lcc *mocks.LimaCmdCreator,
-				ecc *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
+				_ *mocks.CommandCreator,
+				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
@@ -157,13 +157,13 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			args:    []string{"-t", "demo", "."},
 			wantErr: errors.New("unrecognized system status"),
 			mockSvc: func(
-				t *testing.T,
+				_ *testing.T,
 				lcc *mocks.LimaCmdCreator,
-				ecc *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
+				_ *mocks.CommandCreator,
+				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
@@ -178,13 +178,13 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			args:    []string{"-t", "demo", "."},
 			wantErr: errors.New("get status error"),
 			mockSvc: func(
-				t *testing.T,
+				_ *testing.T,
 				lcc *mocks.LimaCmdCreator,
-				ecc *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
-				logger *mocks.Logger,
+				_ *mocks.CommandCreator,
+				_ *mocks.NerdctlCommandSystemDeps,
+				_ *mocks.Logger,
 				ctrl *gomock.Controller,
-				fs afero.Fs,
+				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
