@@ -69,7 +69,7 @@ func TestXmain(t *testing.T) {
 			name:    "happy path",
 			wantErr: nil,
 			mockSvc: func(
-				logger *mocks.Logger,
+				_ *mocks.Logger,
 				ffd *mocks.FinchFinderDeps,
 				fs afero.Fs,
 				loadCfgDeps *mocks.LoadSystemDeps,
@@ -121,11 +121,11 @@ func TestXmain(t *testing.T) {
 			name:    "happy path",
 			wantErr: nil,
 			mockSvc: func(
-				logger *mocks.Logger,
+				_ *mocks.Logger,
 				ffd *mocks.FinchFinderDeps,
 				fs afero.Fs,
-				loadCfgDeps *mocks.LoadSystemDeps,
-				mem *mocks.Memory,
+				_ *mocks.LoadSystemDeps,
+				_ *mocks.Memory,
 			) {
 				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
 

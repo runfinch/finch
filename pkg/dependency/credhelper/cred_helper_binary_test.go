@@ -56,7 +56,7 @@ func Test_updateConfigFile(t *testing.T) {
 	}{
 		{
 			name: "happy path",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, mFs afero.Fs, _ *mocks.Logger) {
 				require.NoError(t, mFs.MkdirAll("/mock_prefix/.finch/", fs.ModeDir))
 				JSONstr := fmt.Sprintf("{\"credsStore\":\"%s\"}", "ecr-login")
 				fileData := []byte(JSONstr)
@@ -67,12 +67,12 @@ func Test_updateConfigFile(t *testing.T) {
 
 				require.NoError(t, err)
 			},
-			postRunCheck: func(t *testing.T, fs afero.Fs) {},
+			postRunCheck: func(_ *testing.T, _ afero.Fs) {},
 			want:         nil,
 		},
 		{
 			name: "file doesn't exist",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, mFs afero.Fs, _ *mocks.Logger) {
 				require.NoError(t, mFs.MkdirAll("/mock_prefix/.finch/", fs.ModeDir))
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
@@ -88,7 +88,7 @@ func Test_updateConfigFile(t *testing.T) {
 		},
 		{
 			name: "file exists incorrect content",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, mFs afero.Fs, _ *mocks.Logger) {
 				require.NoError(t, mFs.MkdirAll("/mock_prefix/.finch/", fs.ModeDir))
 				JSONstr := fmt.Sprintf("{\"credsStore\":\"%s\"}", "abcd")
 				fileData := []byte(JSONstr)
@@ -145,7 +145,7 @@ func TestBinaries_Installed(t *testing.T) {
 	}{
 		{
 			name: "happy path",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, mFs afero.Fs, _ *mocks.Logger) {
 				require.NoError(t, mFs.MkdirAll("/mock_prefix/cred-helpers/", fs.ModeDir))
 				fileData := []byte("")
 				_, err := mFs.Create("mock_prefix/cred-helpers/docker-credential-binary")
@@ -173,13 +173,13 @@ func TestBinaries_Installed(t *testing.T) {
 		},
 		{
 			name: "installation folder doesn't exist",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(_ *testing.T, _ afero.Fs, _ *mocks.Logger) {
 			},
 			want: false,
 		},
 		{
 			name: "folder exists file doesn't exist",
-			mockSvc: func(t *testing.T, mFs afero.Fs, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, mFs afero.Fs, _ *mocks.Logger) {
 				require.NoError(t, mFs.MkdirAll("/mock_prefix/cred-helpers/", fs.ModeDir))
 			},
 			want: false,
@@ -261,7 +261,7 @@ func TestBinaries_Install(t *testing.T) {
 		},
 		{
 			name: "credential helper already installed, but config file not configured",
-			mockSvc: func(l *mocks.Logger, cmd *mocks.Command, creator *mocks.CommandCreator, mFs afero.Fs) {
+			mockSvc: func(_ *mocks.Logger, _ *mocks.Command, _ *mocks.CommandCreator, _ afero.Fs) {
 				binaryInstalled = func(*credhelperbin) (bool, error) {
 					return true, nil
 				}

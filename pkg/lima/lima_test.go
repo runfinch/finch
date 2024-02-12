@@ -69,7 +69,7 @@ func TestGetVMStatus(t *testing.T) {
 			name:    "status command returns an error",
 			want:    lima.Unknown,
 			wantErr: errors.New("get status error"),
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.LimaCmdCreator, _ *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("Broken "), errors.New("get status error"))
 			},
@@ -158,7 +158,7 @@ func TestGetVMType(t *testing.T) {
 			name:    "type command returns an error",
 			want:    lima.UnknownVMType,
 			wantErr: errors.New("get VMType error"),
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.LimaCmdCreator, _ *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("Broken "), errors.New("get VMType error"))
 			},

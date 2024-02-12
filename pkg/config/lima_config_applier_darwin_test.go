@@ -51,10 +51,10 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
@@ -103,10 +103,10 @@ fi
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
@@ -167,10 +167,10 @@ fi
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
@@ -221,10 +221,10 @@ fi
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
@@ -275,10 +275,10 @@ fi
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
@@ -339,10 +339,10 @@ fi
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
@@ -402,7 +402,7 @@ fi
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
 				deps *mocks.LimaConfigApplierSystemDeps,
@@ -462,10 +462,10 @@ provision:
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
 cpus: 8
@@ -522,10 +522,10 @@ fi
 			isInit: false,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
-				cmd *mocks.Command,
-				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.Logger,
+				_ *mocks.Command,
+				_ *mocks.CommandCreator,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
 cpus: 8
@@ -593,10 +593,10 @@ fi
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
@@ -639,10 +639,10 @@ fi
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
-				cmd *mocks.Command,
-				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.Logger,
+				_ *mocks.Command,
+				_ *mocks.CommandCreator,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("this isn't YAML"), 0o600)
 				require.NoError(t, err)
@@ -671,10 +671,10 @@ fi
 			isInit: true,
 			mockSvc: func(
 				fs afero.Fs,
-				l *mocks.Logger,
+				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				deps *mocks.LimaConfigApplierSystemDeps,
+				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)

@@ -122,7 +122,7 @@ func TestInitVMAction_run(t *testing.T) {
 		{
 			name:    "should init instance with correct BaseYamlFilePath",
 			wantErr: nil,
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
@@ -153,14 +153,14 @@ func TestInitVMAction_run(t *testing.T) {
 		{
 			name:    "running VM",
 			wantErr: fmt.Errorf("the instance %q is already running", limaInstanceName),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -174,14 +174,14 @@ func TestInitVMAction_run(t *testing.T) {
 			wantErr: fmt.Errorf(
 				"the instance %q already exists but is stopped, run `finch %s start` to start the existing instance",
 				limaInstanceName, virtualMachineRootCmd),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -193,14 +193,14 @@ func TestInitVMAction_run(t *testing.T) {
 		{
 			name:    "unknown VM status",
 			wantErr: errors.New("unrecognized system status"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -212,14 +212,14 @@ func TestInitVMAction_run(t *testing.T) {
 		{
 			name:    "status command returns an error",
 			wantErr: errors.New("get status error"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
-				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.Logger,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -248,7 +248,7 @@ func TestInitVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.UserDataDiskManager,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -267,7 +267,7 @@ func TestInitVMAction_run(t *testing.T) {
 		{
 			name:    "should print error if instance fails to initialize",
 			wantErr: errors.New("failed to init instance"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(

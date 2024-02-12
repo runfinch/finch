@@ -25,10 +25,9 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-
       - name: Make macos aarch64 build
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
@@ -55,10 +54,9 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-
       - name: Make macos x86_64 build
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           make clean
           make download-licenses 
           make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch

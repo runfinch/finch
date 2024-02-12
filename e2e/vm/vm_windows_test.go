@@ -33,7 +33,7 @@ func TestVM(t *testing.T) {
 		resetDisks(o, *e2e.Installed)
 		command.New(o, "vm", "init").WithTimeoutInSeconds(160).Run()
 		return nil
-	}, func(bytes []byte) {})
+	}, func(_ []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
 		command.New(o, "vm", "stop").WithTimeoutInSeconds(90).Run()
@@ -54,7 +54,7 @@ func TestVM(t *testing.T) {
 	ginkgo.RunSpecs(t, description)
 }
 
-var resetDisks = func(o *option.Option, installed bool) {
+var resetDisks = func(_ *option.Option, _ bool) {
 	finchRootDir := os.Getenv("LOCALAPPDATA")
 	dataDiskDir := filepath.Join(finchRootDir, ".finch", ".disks")
 	gomega.Expect(os.RemoveAll(dataDiskDir)).ShouldNot(gomega.HaveOccurred())

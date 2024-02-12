@@ -99,7 +99,7 @@ jobs:
         run: echo "A" | softwareupdate --install-rosetta || true
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
@@ -220,7 +220,7 @@ jobs:
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}

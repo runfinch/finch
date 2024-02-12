@@ -45,7 +45,7 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
+				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -95,7 +95,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
+				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -111,7 +111,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
+				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -127,7 +127,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
+				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -143,7 +143,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
+				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -158,8 +158,8 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantStatusOutput: "",
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
-				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
+				_ *mocks.Logger,
+				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)

@@ -36,7 +36,7 @@ func TestContainer(t *testing.T) {
 		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 		tests.SetupLocalRegistry(o)
 		return nil
-	}, func(bytes []byte) {})
+	}, func(_ []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
 		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
