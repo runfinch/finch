@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1707760411689,
+  "lastUpdate": 1707761281562,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -30340,6 +30340,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 282,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cb3d76fb8ee2743a3ca4ead52eddd9dc075ec07f",
+          "message": "ci(deps): Bump peter-evans/create-pull-request from 5.0.2 to 6.0.0 (#781)\n\nBumps\r\n[peter-evans/create-pull-request](https://github.com/peter-evans/create-pull-request)\r\nfrom 5.0.2 to 6.0.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/peter-evans/create-pull-request/releases\">peter-evans/create-pull-request's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>Create Pull Request v6.0.0</h2>\r\n<h2>Behaviour changes</h2>\r\n<ul>\r\n<li>The default values for <code>author</code> and\r\n<code>committer</code> have changed. See &quot;What's new&quot; below\r\nfor details. If you are overriding the default values you will not be\r\naffected by this change.</li>\r\n<li>On completion, the action now removes the temporary git remote\r\nconfiguration it adds when using <code>push-to-fork</code>. This should\r\nnot affect you unless you were using the temporary configuration for\r\nsome other purpose after the action completes.</li>\r\n</ul>\r\n<h2>What's new</h2>\r\n<ul>\r\n<li>Updated runtime to Node.js 20\r\n<ul>\r\n<li>The action now requires a minimum version of <a\r\nhref=\"https://github.com/actions/runner/releases/tag/v2.308.0\">v2.308.0</a>\r\nfor the Actions runner. Update self-hosted runners to v2.308.0 or later\r\nto ensure compatibility.</li>\r\n</ul>\r\n</li>\r\n<li>The default value for <code>author</code> has been changed to\r\n<code>${{ github.actor }} &lt;${{ github.actor_id }}+${{ github.actor\r\n}}@users.noreply.github.com&gt;</code>. The change adds the <code>${{\r\ngithub.actor_id }}+</code> prefix to the email address to align with\r\nGitHub's standard format for the author email address.</li>\r\n<li>The default value for <code>committer</code> has been changed to\r\n<code>github-actions[bot]\r\n&lt;41898282+github-actions[bot]@users.noreply.github.com&gt;</code>.\r\nThis is to align with the default GitHub Actions bot user account.</li>\r\n<li>Adds input <code>git-token</code>, the <a\r\nhref=\"https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token\">Personal\r\nAccess Token (PAT)</a> that the action will use for git operations. This\r\ninput defaults to the value of <code>token</code>. Use this input if you\r\nwould like the action to use a different token for git operations than\r\nthe one used for the GitHub API.</li>\r\n<li><code>push-to-fork</code> now supports pushing to sibling\r\nrepositories in the same network.</li>\r\n<li>Previously, when using <code>push-to-fork</code>, the action did not\r\nremove temporary git remote configuration it adds during execution. This\r\nhas been fixed and the configuration is now removed when the action\r\ncompletes.</li>\r\n<li>If the pull request body is truncated due to exceeding the maximum\r\nlength, the action will now suffix the body with the message\r\n&quot;...<em>[Pull request body truncated]</em>&quot; to indicate that\r\nthe body has been truncated.</li>\r\n<li>The action now uses <code>--unshallow</code> only when necessary,\r\nrather than as a default argument of <code>git fetch</code>. This should\r\nimprove performance, particularly for large git repositories with\r\nextensive commit history.</li>\r\n<li>The action can now be executed on one GitHub server and create pull\r\nrequests on a <em>different</em> GitHub server. Server products include\r\nGitHub hosted (github.com), GitHub Enterprise Server (GHES), and GitHub\r\nEnterprise Cloud (GHEC). For example, the action can be executed on\r\nGitHub hosted and create pull requests on a GHES or GHEC instance.</li>\r\n</ul>\r\n<h2>What's Changed</h2>\r\n<ul>\r\n<li>Update distribution by <a\r\nhref=\"https://github.com/actions-bot\"><code>@​actions-bot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2086\">peter-evans/create-pull-request#2086</a></li>\r\n<li>fix crazy-max/ghaction-import-gp parameters by <a\r\nhref=\"https://github.com/fharper\"><code>@​fharper</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2177\">peter-evans/create-pull-request#2177</a></li>\r\n<li>Update distribution by <a\r\nhref=\"https://github.com/actions-bot\"><code>@​actions-bot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2364\">peter-evans/create-pull-request#2364</a></li>\r\n<li>Use checkout v4 by <a\r\nhref=\"https://github.com/okuramasafumi\"><code>@​okuramasafumi</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2521\">peter-evans/create-pull-request#2521</a></li>\r\n<li>Note about <code>delete-branch</code> by <a\r\nhref=\"https://github.com/dezren39\"><code>@​dezren39</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2631\">peter-evans/create-pull-request#2631</a></li>\r\n<li>98 dependency updates by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a href=\"https://github.com/fharper\"><code>@​fharper</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2177\">peter-evans/create-pull-request#2177</a></li>\r\n<li><a\r\nhref=\"https://github.com/okuramasafumi\"><code>@​okuramasafumi</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2521\">peter-evans/create-pull-request#2521</a></li>\r\n<li><a href=\"https://github.com/dezren39\"><code>@​dezren39</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2631\">peter-evans/create-pull-request#2631</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/peter-evans/create-pull-request/compare/v5.0.2...v6.0.0\">https://github.com/peter-evans/create-pull-request/compare/v5.0.2...v6.0.0</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/b1ddad2c994a25fbc81a28b3ec0e368bb2021c50\"><code>b1ddad2</code></a>\r\nfeat: v6 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2717\">#2717</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/bb809027fda03cc267431a7d36a88148eb9f3846\"><code>bb80902</code></a>\r\nbuild(deps-dev): bump <code>@​types/node</code> from 18.19.8 to 18.19.10\r\n(<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2712\">#2712</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/e0037d470cdeb1c8133acfba89af08639bb69eb3\"><code>e0037d4</code></a>\r\nbuild(deps): bump peter-evans/create-or-update-comment from 3 to 4 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2702\">#2702</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/94b1f99e3a73880074d0e669c3b69d376cc8ceae\"><code>94b1f99</code></a>\r\nbuild(deps): bump peter-evans/find-comment from 2 to 3 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2703\">#2703</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/69c27eaf4a14a67b5362a51e681f83d3d5e0f96b\"><code>69c27ea</code></a>\r\nbuild(deps-dev): bump ts-jest from 29.1.1 to 29.1.2 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2685\">#2685</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/7ea722a0f6286a45eb3005280d83575a74bc8fef\"><code>7ea722a</code></a>\r\nbuild(deps-dev): bump prettier from 3.2.2 to 3.2.4 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2684\">#2684</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/5ee839affd4c87811108724370a2819a40e2e5d3\"><code>5ee839a</code></a>\r\nbuild(deps-dev): bump <code>@​types/node</code> from 18.19.7 to 18.19.8\r\n(<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2683\">#2683</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/60fc256c678e6ed78d0d42e09675c9beba09cb94\"><code>60fc256</code></a>\r\nbuild(deps-dev): bump eslint-plugin-prettier from 5.1.2 to 5.1.3 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2660\">#2660</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/0c677233614c017442253060c74fd2cb7ff349fc\"><code>0c67723</code></a>\r\nbuild(deps-dev): bump <code>@​types/node</code> from 18.19.5 to 18.19.7\r\n(<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2661\">#2661</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/4e288e851b95bd1362e281a255094fcc47ada675\"><code>4e288e8</code></a>\r\nbuild(deps-dev): bump prettier from 3.1.1 to 3.2.2 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2659\">#2659</a>)</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/peter-evans/create-pull-request/compare/153407881ec5c347639a548ade7d8ad1d6740e38...b1ddad2c994a25fbc81a28b3ec0e368bb2021c50\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=peter-evans/create-pull-request&package-manager=github_actions&previous-version=5.0.2&new-version=6.0.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-02-12T12:48:41-05:00",
+          "tree_id": "a84db02298f05f5c276da5a18eb0af5aae740b5d",
+          "url": "https://github.com/runfinch/finch/commit/cb3d76fb8ee2743a3ca4ead52eddd9dc075ec07f"
+        },
+        "date": 1707761280468,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 33242206709,
+            "unit": "ns/op\t         0.5643 %cpu_avg/op\t        62.50 %cpu_peak/op\t        33.24 cpu_seconds/op\t1143607296 disk_bytes/op\t 1482584 B/op\t   31483 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 33242206709,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.5643,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 62.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 33.24,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1143607296,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1482584,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 31483,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24183114458,
+            "unit": "ns/op\t         0.5393 %cpu_avg/op\t        55.56 %cpu_peak/op\t        24.18 cpu_seconds/op\t  73711616 disk_bytes/op\t 1076488 B/op\t   22898 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24183114458,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.5393,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 55.56,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.18,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 73711616,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1076488,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22898,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 256236313,
+            "unit": "ns/op\t         2.395 %cpu_avg/op\t        21.11 %cpu_peak/op\t         0.2562 cpu_seconds/op\t   4284416 disk_bytes/op\t   21314 B/op\t     288 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 256236313,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 2.395,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 21.11,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2562,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4284416,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21314,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 288,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
