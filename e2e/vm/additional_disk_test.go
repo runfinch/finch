@@ -23,7 +23,7 @@ const (
 var testAdditionalDisk = func(o *option.Option, installed bool) {
 	ginkgo.Describe("Additional disk", ginkgo.Serial, func() {
 		ginkgo.It("Retains container user data after the VM is deleted", func() {
-			resetVM(o, installed)
+			resetVM(o)
 			resetDisks(o, installed)
 			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 			command.Run(o, "volume", "create", volumeName)

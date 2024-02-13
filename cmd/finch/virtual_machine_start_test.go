@@ -71,7 +71,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 
-				lca.EXPECT().Apply(false).Return(nil)
+				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
@@ -146,7 +146,7 @@ func TestStartVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 
-				lca.EXPECT().Apply(false).Return(nil)
+				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
@@ -238,8 +238,31 @@ func TestStartVMAction_run(t *testing.T) {
 			// TODO: split this test case up:
 			// should succeed even if some optional dependencies fail to be installed
 			// return an error if Lima config fails to be applied
-			name:    "should print out error if InstallOptionalDeps fails and return error if LoadAndApplyLimaConfig fails",
+			name:    "should return error if LoadAndApplyLimaConfig fails",
 			wantErr: errors.New("load config fails"),
+			groups: func(_ *gomock.Controller) []*dependency.Group {
+				return nil
+			},
+			mockSvc: func(
+				lcc *mocks.LimaCmdCreator,
+				logger *mocks.Logger,
+				lca *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
+				ctrl *gomock.Controller,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+
+				lca.EXPECT().ConfigureOverrideLimaYaml().Return(errors.New("load config fails"))
+			},
+		},
+		{
+			// should succeed even if some optional dependencies fail to be installed
+			// return an error if Lima config fails to be applied
+			name:    "should print out error if InstallOptionalDeps fails",
+			wantErr: nil,
 			groups: func(ctrl *gomock.Controller) []*dependency.Group {
 				dep := mocks.NewDependency(ctrl)
 				deps := dependency.NewGroup([]dependency.Dependency{dep}, "", "mock_error_msg")
@@ -255,7 +278,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				_ *mocks.UserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -263,7 +286,16 @@ func TestStartVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 
-				lca.EXPECT().Apply(false).Return(errors.New("load config fails"))
+				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
+
+				dm.EXPECT().EnsureUserDataDisk().Return(nil)
+
+				command := mocks.NewCommand(ctrl)
+				command.EXPECT().CombinedOutput()
+				lcc.EXPECT().CreateWithoutStdio("start", limaInstanceName).Return(command)
+
+				logger.EXPECT().Info("Starting existing Finch virtual machine...")
+				logger.EXPECT().Info("Finch virtual machine started successfully")
 
 				logger.EXPECT().Errorf("Dependency error: %v",
 					fmt.Errorf("failed to install dependencies: %w",
@@ -296,7 +328,7 @@ func TestStartVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 
-				lca.EXPECT().Apply(false).Return(nil)
+				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 

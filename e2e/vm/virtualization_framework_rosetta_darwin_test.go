@@ -29,7 +29,7 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 					ginkgo.Skip("Skipping because system does not support Virtualization.framework")
 				}
 
-				resetVM(o, installed)
+				resetVM(o)
 				resetDisks(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
 				// vm init with VZ set sometimes takes 2 minutes just to convert the disk to raw
@@ -52,7 +52,7 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 					ginkgo.Skip("Skipping because system does not support Rosetta")
 				}
 
-				resetVM(o, installed)
+				resetVM(o)
 				resetDisks(o, installed)
 				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: true"))
 				// vm init with VZ set sometimes takes 2 minutes just to convert the disk to raw

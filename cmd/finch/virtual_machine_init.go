@@ -76,14 +76,19 @@ func (iva *initVMAction) run() error {
 		return err
 	}
 
+	err = iva.limaConfigApplier.ConfigureDefaultLimaYaml()
+	if err != nil {
+		return err
+	}
+
+	err = iva.limaConfigApplier.ConfigureOverrideLimaYaml()
+	if err != nil {
+		return err
+	}
+
 	err = dependency.InstallOptionalDeps(iva.optionalDepGroups, iva.logger)
 	if err != nil {
 		iva.logger.Errorf("Dependency error: %v", err)
-	}
-
-	err = iva.limaConfigApplier.Apply(true)
-	if err != nil {
-		return err
 	}
 
 	// ignore error, this is to ensure that the disk is only mounted once

@@ -75,7 +75,8 @@ type Nerdctl struct {
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_lima_config_applier.go -package=mocks -mock_names LimaConfigApplier=LimaConfigApplier . LimaConfigApplier
 type LimaConfigApplier interface {
-	Apply(isInit bool) error
+	ConfigureOverrideLimaYaml() error
+	ConfigureDefaultLimaYaml() error
 }
 
 // NerdctlConfigApplier applies nerdctl configuration changes.

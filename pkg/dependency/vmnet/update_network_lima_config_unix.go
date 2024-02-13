@@ -19,8 +19,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// overrideLimaConfig updates the lima configuration after other network dependencies are installed.
-type overrideLimaConfig struct {
+// defaultLimaConfig updates the lima configuration after other network dependencies are installed.
+type defaultLimaConfig struct {
 	fp          path.Finch
 	binaries    dependency.Dependency
 	sudoersFile dependency.Dependency
@@ -28,16 +28,16 @@ type overrideLimaConfig struct {
 	l           flog.Logger
 }
 
-var _ dependency.Dependency = (*overrideLimaConfig)(nil)
+var _ dependency.Dependency = (*defaultLimaConfig)(nil)
 
-func newOverrideLimaConfig(
+func newDefaultLimaConfig(
 	fp path.Finch,
 	binaries dependency.Dependency,
 	sudoersFile dependency.Dependency,
 	fs afero.Fs,
 	l flog.Logger,
-) *overrideLimaConfig {
-	return &overrideLimaConfig{
+) *defaultLimaConfig {
+	return &defaultLimaConfig{
 		// TODO: consider replacing fp with only the strings that are used instead of the entire type
 		fp:          fp,
 		binaries:    binaries,
@@ -60,7 +60,7 @@ type NetworkConfig struct {
 }
 
 // verifyConfigHasNetworkSection deserializes a yaml file at filePath and verifies that it has the expected value.
-func (overConf *overrideLimaConfig) verifyConfigHasNetworkSection(filePath string) bool {
+func (overConf *defaultLimaConfig) verifyConfigHasNetworkSection(filePath string) bool {
 	yamlFile, err := afero.ReadFile(overConf.fs, filePath)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
@@ -73,13 +73,15 @@ func (overConf *overrideLimaConfig) verifyConfigHasNetworkSection(filePath strin
 	var cfg NetworkConfig
 	err = yaml.Unmarshal(yamlFile, &cfg)
 	if err != nil {
-		overConf.l.Errorf("failed to unmarshal YAML from override config file: %v", err)
+		overConf.l.Errorf("failed to unmarshal YAML from default config file: %v", err)
 		return false
 	}
 
 	networksLen := len(cfg.Networks)
-	if networksLen != 1 {
-		overConf.l.Errorf("override config file has incorrect number of Networks defined (%d)", networksLen)
+	if networksLen > 1 {
+		overConf.l.Errorf("default config file has incorrect number of Networks defined (%d)", networksLen)
+		return false
+	} else if networksLen == 0 {
 		return false
 	}
 
@@ -87,7 +89,7 @@ func (overConf *overrideLimaConfig) verifyConfigHasNetworkSection(filePath strin
 }
 
 // appendNetworkConfiguration adds a new network config section to a file at filePath.
-func (overConf *overrideLimaConfig) appendNetworkConfiguration(filePath string) error {
+func (overConf *defaultLimaConfig) appendNetworkConfiguration(filePath string) error {
 	f, err := overConf.fs.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
 	if err != nil {
 		return fmt.Errorf("error opening file at path %s, error: %w", filePath, err)
@@ -106,24 +108,24 @@ func (overConf *overrideLimaConfig) appendNetworkConfiguration(filePath string) 
 
 // shouldAddNetworksConfig returns true iff binaries and sudoers are installed as
 // updating the network config without those dependencies leads to a broken user experience.
-func (overConf *overrideLimaConfig) shouldAddNetworksConfig() bool {
+func (overConf *defaultLimaConfig) shouldAddNetworksConfig() bool {
 	return overConf.binaries.Installed() && overConf.sudoersFile.Installed()
 }
 
 // Installed returns true iff lima config has been updated.
-func (overConf *overrideLimaConfig) Installed() bool {
-	return overConf.verifyConfigHasNetworkSection(overConf.fp.LimaOverrideConfigPath())
+func (overConf *defaultLimaConfig) Installed() bool {
+	return overConf.verifyConfigHasNetworkSection(overConf.fp.LimaDefaultConfigPath())
 }
 
-// Install adds the networks config block to liam's override config yaml file.
+// Install adds the networks config block to lima's default config yaml file.
 // Only adds if the shouldAddNetworksConfig() helper function is true.
-func (overConf *overrideLimaConfig) Install() error {
+func (overConf *defaultLimaConfig) Install() error {
 	if !overConf.shouldAddNetworksConfig() {
 		return fmt.Errorf("skipping installation of network configuration because pre-requisites are missing")
 	}
-	return overConf.appendNetworkConfiguration(overConf.fp.LimaOverrideConfigPath())
+	return overConf.appendNetworkConfiguration(overConf.fp.LimaDefaultConfigPath())
 }
 
-func (overConf *overrideLimaConfig) RequiresRoot() bool {
+func (overConf *defaultLimaConfig) RequiresRoot() bool {
 	return false
 }

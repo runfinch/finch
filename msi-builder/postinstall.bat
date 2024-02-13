@@ -11,6 +11,7 @@ icacls "%InstallDir%\lima\data" /grant Users:(OI)(CI)M
 :: Delete files and directories if they exist
 if exist "%InstallDir%\lima\data\finch\" rmdir /s /q "%InstallDir%\lima\data\finch\"
 if exist "%InstallDir%\lima\data\_config\override.yaml" del /f /q "%InstallDir%\lima\data\_config\override.yaml"
+if exist "%InstallDir%\lima\data\_config\default.yaml" del /f /q "%InstallDir%\lima\data\_config\default.yaml"
 if exist "%InstallDir%\lima\data\_config\user" del /f /q "%InstallDir%\lima\data\_config\user"
 if exist "%InstallDir%\lima\data\_config\user.pub" del /f /q "%InstallDir%\lima\data\_config\user.pub"
 if exist "%InstallDir%\lima\data\_networks\" rmdir /s /q "%InstallDir%\lima\data\_networks\"

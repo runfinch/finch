@@ -12,7 +12,7 @@ import (
 	"github.com/xorcare/pointer"
 )
 
-func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
+func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
 	// Check if system supports wsl2
 
 	if err := SupportsWSL2(lca.cmdCreator); err != nil {

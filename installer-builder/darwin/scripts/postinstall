@@ -17,6 +17,7 @@ chmod -R 755 /Applications/Finch/dependencies/lima-socket_vmnet/opt/finch
 sudo ln -sf /Applications/Finch/bin/finch /usr/local/bin/finch
 sudo rm -rf "/Applications/Finch/lima/data/finch/"
 sudo rm -rf "/Applications/Finch/lima/data/_config/override.yaml"
+sudo rm -rf "/Applications/Finch/lima/data/_config/default.yaml"
 sudo rm -rf "/Applications/Finch/lima/data/_config/user"
 sudo rm -rf "/Applications/Finch/lima/data/_config/user.pub"
 sudo rm -rf "/Applications/Finch/lima/data/_networks/"
