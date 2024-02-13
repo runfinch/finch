@@ -117,22 +117,22 @@ ssh:
 # ADVANCED CONFIGURATION
 # ===================================================================== #
 
-# containerd:
-#   # Enable system-wide (aka rootful)  containerd and its dependencies (BuildKit, Stargz Snapshotter)
-#   # 🟢 Builtin default: false
-#   system: true
-#   # Enable user-scoped (aka rootless) containerd and its dependencies
-#   # 🟢 Builtin default: true
-#   user: false
-#   # Override containerd archive
-#   # 🟢 Builtin default: hard-coded URL with hard-coded digest (see the output of `limactl info | jq .defaultTemplate.containerd.archives`)
-#   archives:
-#   - location: "https://deps.runfinch.com/x86-64/nerdctl-full-1.7.2-1-linux-amd64.tar.gz"
-#     arch: "x86_64"
-#     digest: "sha256:90851068e58417551384dafb3fced8165cbfa2799b51849f85f44c0ebef2c37a"
-#   - location: "https://deps.runfinch.com/aarch64/nerdctl-full-1.7.2-1-linux-arm64.tar.gz"
-#     arch: "aarch64"
-#     digest: "sha256:f354541e6234235f2ea32d6ed64e9d59a7cc4e0b7f15e63deef9cd5e90a298ef"
+containerd:
+  # Enable system-wide (aka rootful)  containerd and its dependencies (BuildKit, Stargz Snapshotter)
+  # 🟢 Builtin default: false
+  system: true
+  # Enable user-scoped (aka rootless) containerd and its dependencies
+  # 🟢 Builtin default: true
+  user: false
+  # Override containerd archive
+  # 🟢 Builtin default: hard-coded URL with hard-coded digest (see the output of `limactl info | jq .defaultTemplate.containerd.archives`)
+  #   archives:
+  #   - location: "https://deps.runfinch.com/x86-64/nerdctl-full-1.7.2-1-linux-amd64.tar.gz"
+  #     arch: "x86_64"
+  #     digest: "sha256:90851068e58417551384dafb3fced8165cbfa2799b51849f85f44c0ebef2c37a"
+  #   - location: "https://deps.runfinch.com/aarch64/nerdctl-full-1.7.2-1-linux-arm64.tar.gz"
+  #     arch: "aarch64"
+  #     digest: "sha256:f354541e6234235f2ea32d6ed64e9d59a7cc4e0b7f15e63deef9cd5e90a298ef"
 
 # Provisioning scripts need to be idempotent because they might be called
 # multiple times, e.g. when the host VM is being restarted.
