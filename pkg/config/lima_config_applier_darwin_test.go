@@ -188,7 +188,9 @@ fi
 				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				val, ok := limaCfg.Env["CONTAINERD_SNAPSHOTTER"]
+				require.Equal(t, "", val)
+				require.False(t, ok)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
@@ -242,7 +244,7 @@ fi
 				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, "overlayfs", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools
 #!/bin/bash
@@ -305,7 +307,7 @@ fi
 				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, "overlayfs", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
 				require.Equal(t, sociInstallationScript, limaCfg.Provision[1].Script)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, `# cross-arch tools

@@ -20,7 +20,8 @@ import (
 
 const (
 	sociVersion                              = "0.4.0"
-	sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
+	snapshotterProvisioningScriptHeader      = "# snapshotter provisioning script"
+	sociInstallationProvisioningScriptHeader = snapshotterProvisioningScriptHeader + ": soci"
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
 	sociDownloadURLFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
 	sociServiceDownloadURLFormat             = "https://raw.githubusercontent.com/awslabs/soci-snapshotter/v%s/soci-snapshotter.service"
@@ -141,28 +142,20 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		limaCfg = *cfgAfterInit
 	}
 
-	supportedSnapshotters := []string{"overlayfs", "soci"}
-	snapshotters := make(map[string][2]bool)
-	for i, snapshotter := range lca.cfg.Snapshotters {
-		if !slices.Contains(supportedSnapshotters, snapshotter) {
-			return fmt.Errorf("invalid snapshotter config value: %s", snapshotter)
-		}
-
-		isDefaultSnapshotter := false
-		if i == 0 {
-			isDefaultSnapshotter = true
-		}
-
-		isEnabled := true
-		snapshotters[snapshotter] = [2]bool{isEnabled, isDefaultSnapshotter}
-	}
-
-	toggleSnaphotters(&limaCfg, snapshotters)
-
 	if *lca.cfg.VMType != "wsl2" && len(limaCfg.AdditionalDisks) == 0 {
 		limaCfg.AdditionalDisks = append(limaCfg.AdditionalDisks, limayaml.Disk{
 			Name: "finch",
 		})
+	}
+
+	err = provisionSnapshotters(lca, &limaCfg)
+	if err != nil {
+		return fmt.Errorf("failed to provision snapshotters: %w", err)
+	}
+
+	err = configureDefaultSnapshotter(lca, &limaCfg)
+	if err != nil {
+		return fmt.Errorf("failed to configure default snapshotter: %w", err)
 	}
 
 	if *lca.cfg.VMType == "wsl2" {
@@ -181,57 +174,57 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 	return nil
 }
 
-// toggles snapshotters and sets default snapshotter.
-func toggleSnaphotters(limaCfg *limayaml.LimaYAML, snapshotters map[string][2]bool) {
-	toggleOverlayFs(limaCfg, snapshotters["overlayfs"][1])
-	toggleSoci(limaCfg, snapshotters["soci"][0], snapshotters["soci"][1], sociVersion)
-}
-
-// sets overlayfs as the default snapshotter.
-func toggleOverlayFs(limaCfg *limayaml.LimaYAML, isDefault bool) {
-	if isDefault {
-		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
+func validateSnapshotter(snapshotter string) error {
+	supportedSnapshotters := []string{"overlayfs", "soci"}
+	if !slices.Contains(supportedSnapshotters, snapshotter) {
+		return fmt.Errorf("snapshotter %s is not supported", snapshotter)
 	}
+	return nil
 }
 
-func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, isDefault bool, sociVersion string) {
-	idx, hasScript := findSociInstallationScript(limaCfg)
+func configureDefaultSnapshotter(lca *limaConfigApplier, limaCfg *limayaml.LimaYAML) error {
+	if len(lca.cfg.Snapshotters) == 0 {
+		limaCfg.Env = map[string]string{}
+		return nil
+	}
+
+	snapshotter := lca.cfg.Snapshotters[0]
+	err := validateSnapshotter(snapshotter)
+	if err != nil {
+		return err
+	}
+
+	limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": snapshotter}
+
+	return nil
+}
+
+func provisionSnapshotters(lca *limaConfigApplier, limaCfg *limayaml.LimaYAML) error {
+	removeSnapshotterProvisioningScripts(limaCfg)
+	for _, snapshotter := range lca.cfg.Snapshotters {
+		switch snapshotter {
+		case "soci":
+			provisionSociSnapshotter(limaCfg)
+		case "overlayfs":
+			continue
+		default:
+			return fmt.Errorf("snapshotter %s is not supported", snapshotter)
+		}
+	}
+
+	return nil
+}
+
+func provisionSociSnapshotter(limaCfg *limayaml.LimaYAML) {
 	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
 	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
 	sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader,
 		sociDownloadURL, sociFileName, sociServiceDownloadURL)
-	if !hasScript && enabled {
-		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
-			Mode:   "system",
-			Script: sociInstallationScript,
-		})
-	} else if hasScript && !enabled {
-		if len(limaCfg.Provision) > 0 {
-			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
-		}
-	}
-
-	if isDefault {
-		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": "soci"}
-	} else {
-		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
-	}
-}
-
-func findSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
-	hasSociInstallationScript := false
-	var scriptIdx int
-	for idx, prov := range limaCfg.Provision {
-		trimmed := strings.Trim(prov.Script, " ")
-		if !hasSociInstallationScript && strings.HasPrefix(trimmed, sociInstallationProvisioningScriptHeader) {
-			hasSociInstallationScript = true
-			scriptIdx = idx
-			break
-		}
-	}
-
-	return scriptIdx, hasSociInstallationScript
+	limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
+		Mode:   "system",
+		Script: sociInstallationScript,
+	})
 }
 
 func ensureWslDiskFormatScript(limaCfg *limayaml.LimaYAML) {
@@ -268,4 +261,15 @@ func unmarshalDisk(dst *limayaml.Disk, b []byte) error {
 		return nil
 	}
 	return goyaml.Unmarshal(b, dst)
+}
+
+func removeSnapshotterProvisioningScripts(limaCfg *limayaml.LimaYAML) {
+	var provisionScripts []limayaml.Provision
+	for _, prov := range limaCfg.Provision {
+		trimmed := strings.Trim(prov.Script, " ")
+		if !strings.HasPrefix(trimmed, snapshotterProvisioningScriptHeader) {
+			provisionScripts = append(provisionScripts, prov)
+		}
+	}
+	limaCfg.Provision = provisionScripts
 }
