@@ -216,7 +216,17 @@ jobs:
           command: |
             git status
             git clean -f -d
-            INSTALLED=true make test-e2e
+            INSTALLED=true make test-e2e-vm
+            make test-e2e-container
+      - name: Run e2e tests
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            git status
+            git clean -f -d
+            make test-e2e-container    
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
@@ -317,7 +327,7 @@ jobs:
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
           sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg -target /
-      - name: Run e2e tests
+      - name: Run VM e2e tests
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 180
@@ -325,7 +335,17 @@ jobs:
           command: |
             git status
             git clean -f -d
-            INSTALLED=true make test-e2e
+            INSTALLED=true make test-e2e-vm
+            make test-e2e-container
+      - name: Run VM e2e tests
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            git status
+            git clean -f -d
+            make test-e2e-container
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
