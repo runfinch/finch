@@ -92,7 +92,7 @@ func TestFromUTF16leToString(t *testing.T) {
 		{
 			name:         "error reading buffer",
 			r:            newErrorReader("read error"),
-			postRunCheck: func(t *testing.T, str string) {},
+			postRunCheck: func(_ *testing.T, _ string) {},
 			wantErr:      errors.New("read error"),
 		},
 	}

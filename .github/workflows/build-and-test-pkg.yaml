@@ -51,10 +51,9 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-
       - name: Make macos aarch64 build
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           git status
           git clean -f -d
           make clean
@@ -92,7 +91,7 @@ jobs:
 
       - name: Make macos x86_64 build
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           git status
           git clean -f -d
           make clean
@@ -167,7 +166,7 @@ jobs:
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
@@ -210,14 +209,24 @@ jobs:
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
           sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg -target /
       - name: Run e2e tests
-        uses: nick-fields/retry@14672906e672a08bd6eeb15720e9ed3ce869cdd4 # v2.9.0
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 180
           max_attempts: 3
           command: |
             git status
             git clean -f -d
-            INSTALLED=true make test-e2e
+            INSTALLED=true make test-e2e-vm
+            make test-e2e-container
+      - name: Run e2e tests
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            git status
+            git clean -f -d
+            make test-e2e-container    
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
@@ -279,7 +288,7 @@ jobs:
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
@@ -318,15 +327,25 @@ jobs:
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
           sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg -target /
-      - name: Run e2e tests
-        uses: nick-fields/retry@14672906e672a08bd6eeb15720e9ed3ce869cdd4 # v2.9.0
+      - name: Run VM e2e tests
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 180
           max_attempts: 3
           command: |
             git status
             git clean -f -d
-            INSTALLED=true make test-e2e
+            INSTALLED=true make test-e2e-vm
+            make test-e2e-container
+      - name: Run VM e2e tests
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            git status
+            git clean -f -d
+            make test-e2e-container
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer

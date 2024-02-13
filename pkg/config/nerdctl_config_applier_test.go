@@ -111,8 +111,8 @@ export DOCKER_CONFIG="$FINCH_DIR"
 			finchDir:      "/finch/dir",
 			homeDir:       "/home/dir",
 			limaVMHomeDir: "/home/mock_user.linux",
-			mockSvc:       func(t *testing.T, fs afero.Fs) {},
-			postRunCheck:  func(t *testing.T, fs afero.Fs) {},
+			mockSvc:       func(_ *testing.T, _ afero.Fs) {},
+			postRunCheck:  func(_ *testing.T, _ afero.Fs) {},
 			want: fmt.Errorf(
 				"failed to read config file %q: %w",
 				filepath.ToSlash(filepath.Join(string(filepath.Separator), "home", "mock_user.linux", ".bashrc")),
@@ -156,7 +156,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 			name:     "happy path, rootless",
 			homeDir:  "/home/mock_user.linux",
 			rootless: true,
-			mockSvc:  func(t *testing.T, fs afero.Fs) {},
+			mockSvc:  func(_ *testing.T, _ afero.Fs) {},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.config/nerdctl/nerdctl.toml")
 				require.NoError(t, err)
@@ -168,7 +168,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 			name:     "happy path, rootful",
 			homeDir:  "/home/mock_user.linux",
 			rootless: false,
-			mockSvc:  func(t *testing.T, fs afero.Fs) {},
+			mockSvc:  func(_ *testing.T, _ afero.Fs) {},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/etc/nerdctl/nerdctl.toml")
 				require.NoError(t, err)
@@ -200,7 +200,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 				err := afero.WriteFile(fs, "/home/mock_user.linux/.config/nerdctl/nerdctl.toml", []byte("{not toml}"), 0o644)
 				require.NoError(t, err)
 			},
-			postRunCheck: func(t *testing.T, fs afero.Fs) {},
+			postRunCheck: func(_ *testing.T, _ afero.Fs) {},
 			want: fmt.Errorf(
 				"failed to unmarshal config file %q: %w",
 				"/home/mock_user.linux/.config/nerdctl/nerdctl.toml",
@@ -242,7 +242,7 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			name:       "private key path doesn't exist",
 			path:       privateKeyPath,
 			remoteAddr: "",
-			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer) {
+			mockSvc: func(_ *testing.T, _ afero.Fs, _ *mocks.Dialer) {
 			},
 			want: fmt.Errorf(
 				"failed to create ssh client config: %w",

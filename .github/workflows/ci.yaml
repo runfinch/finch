@@ -79,7 +79,7 @@ jobs:
           # Pin the version in case all the builds start to fail at the same time.
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
-          version: v1.53.3
+          version: v1.56.1
           args: --fix=false --timeout=5m
       - name: set GOOS env to darwin
         run: |
@@ -90,7 +90,7 @@ jobs:
           # Pin the version in case all the builds start to fail at the same time.
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
-          version: v1.53.3
+          version: v1.56.1
           args: --fix=false --timeout=5m --skip-dirs="(^|/)deps($|/)"
   shellcheck:
     name: ShellCheck
@@ -142,6 +142,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: recursive
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+        with:
+          go-version-file: go.mod
+          cache: true  
       - name: Set output variables
         id: vars
         run: |
@@ -167,7 +171,7 @@ jobs:
           fi
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true
-      - run: brew install go lz4 automake autoconf libtool
+      - run: brew install lz4 automake autoconf libtool
         shell: zsh {0}
       - name: Build project
         run: |

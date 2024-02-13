@@ -71,12 +71,12 @@ func TestGenDocsAction_runAdapter(t *testing.T) {
 				return c
 			},
 			mockSvc: func(
-				ctrl *gomock.Controller,
+				_ *gomock.Controller,
 				t *testing.T,
 				logger *mocks.Logger,
 				mFs afero.Fs,
 				deps *mocks.GenDocsSystemDeps,
-				stdout *os.File,
+				_ *os.File,
 			) {
 				require.NoError(t, mFs.Mkdir("outDir", 0o666))
 				logger.EXPECT().Infof("Creating doc for command: %s", "test-command")
@@ -114,12 +114,12 @@ func TestGenDocsAction_runAdapter(t *testing.T) {
 				return c
 			},
 			mockSvc: func(
-				ctrl *gomock.Controller,
+				_ *gomock.Controller,
 				t *testing.T,
 				logger *mocks.Logger,
 				mFs afero.Fs,
 				deps *mocks.GenDocsSystemDeps,
-				stdout *os.File,
+				_ *os.File,
 			) {
 				require.NoError(t, mFs.Mkdir("outDir", 0o666))
 				logger.EXPECT().Infof("Creating doc for command: %s", "test-command")
@@ -147,16 +147,16 @@ func TestGenDocsAction_runAdapter(t *testing.T) {
 				return c
 			},
 			mockSvc: func(
-				ctrl *gomock.Controller,
-				t *testing.T,
-				logger *mocks.Logger,
-				mFs afero.Fs,
-				deps *mocks.GenDocsSystemDeps,
-				stdout *os.File,
+				_ *gomock.Controller,
+				_ *testing.T,
+				_ *mocks.Logger,
+				_ afero.Fs,
+				_ *mocks.GenDocsSystemDeps,
+				_ *os.File,
 			) {
 			},
 			want: nil,
-			postRunCheck: func(t *testing.T, fs afero.Fs) {
+			postRunCheck: func(_ *testing.T, _ afero.Fs) {
 			},
 		},
 	}

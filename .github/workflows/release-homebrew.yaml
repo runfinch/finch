@@ -99,7 +99,7 @@ jobs:
         run: echo "A" | softwareupdate --install-rosetta || true
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
@@ -144,7 +144,7 @@ jobs:
           brew reinstall --cask ./Casks/f/finch.rb
         shell: zsh {0}
       - name: Run e2e tests
-        uses: nick-fields/retry@14672906e672a08bd6eeb15720e9ed3ce869cdd4 # v2.9.0
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 180
           max_attempts: 3
@@ -220,7 +220,7 @@ jobs:
         run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
@@ -262,7 +262,7 @@ jobs:
           brew reinstall --cask ./Casks/f/finch.rb
         shell: zsh {0}
       - name: Run e2e tests
-        uses: nick-fields/retry@14672906e672a08bd6eeb15720e9ed3ce869cdd4 # v2.9.0
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 180
           max_attempts: 3

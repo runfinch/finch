@@ -49,7 +49,7 @@ func TestSudoers_Installed(t *testing.T) {
 	}{
 		{
 			name: "happy path",
-			mockSvc: func(t *testing.T, cmd *mocks.Command, mFs afero.Fs, lc *mocks.LimaCmdCreator, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, cmd *mocks.Command, mFs afero.Fs, lc *mocks.LimaCmdCreator, _ *mocks.Logger) {
 				sudoersData := []byte("test data")
 
 				err := afero.WriteFile(mFs, "/etc/sudoers.d/finch-lima", sudoersData, 0o666)
@@ -62,7 +62,7 @@ func TestSudoers_Installed(t *testing.T) {
 		},
 		{
 			name: "sudoers path doesn't exist",
-			mockSvc: func(t *testing.T, cmd *mocks.Command, mFs afero.Fs, lc *mocks.LimaCmdCreator, l *mocks.Logger) {
+			mockSvc: func(_ *testing.T, _ *mocks.Command, _ afero.Fs, _ *mocks.LimaCmdCreator, l *mocks.Logger) {
 				var pathErr fs.PathError
 				pathErr.Op = "open"
 				pathErr.Path = "/etc/sudoers.d/finch-lima"
@@ -89,7 +89,7 @@ func TestSudoers_Installed(t *testing.T) {
 		},
 		{
 			name: "paths exist, but contents don't match",
-			mockSvc: func(t *testing.T, cmd *mocks.Command, mFs afero.Fs, lc *mocks.LimaCmdCreator, l *mocks.Logger) {
+			mockSvc: func(t *testing.T, cmd *mocks.Command, mFs afero.Fs, lc *mocks.LimaCmdCreator, _ *mocks.Logger) {
 				sudoersData1 := []byte("test data")
 				sudoersData2 := []byte("different test data")
 
@@ -153,7 +153,7 @@ func TestSudoers_Install(t *testing.T) {
 		},
 		{
 			name: "lima sudoers command throws err",
-			mockSvc: func(t *testing.T, cmd *mocks.Command, mFs afero.Fs, ec *mocks.CommandCreator, lc *mocks.LimaCmdCreator) {
+			mockSvc: func(t *testing.T, cmd *mocks.Command, mFs afero.Fs, _ *mocks.CommandCreator, lc *mocks.LimaCmdCreator) {
 				sudoersData := []byte("test data")
 
 				err := afero.WriteFile(mFs, "/etc/sudoers.d/finch-lima", sudoersData, 0o666)

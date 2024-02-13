@@ -217,18 +217,40 @@ jobs:
         run: |
           Start-Process 'Finch.msi' -ArgumentList '/quiet' -Wait
           echo "C:\Program Files\Finch\bin" >> $env:GITHUB_PATH
-      - name: Run e2e tests
+      - name: Run VM e2e tests
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            # set path to use newer ssh version
+            $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
+            $env:Path = $newPath
+            
+            git status
+            git clean -f -d
+            $env:INSTALLED="true"
+            make test-e2e-vm
+      - name: Remove Finch VM
         run: |
-          # set path to use newer ssh version
-          $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
-          $env:Path = $newPath
-          # set networking config option to allow for VM/container -> host communication
-          echo "[experimental]`nnetworkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
-          
-          git status
-          git clean -f -d
-          $env:INSTALLED="true"
-          make test-e2e
+          wsl --list --verbose
+          wsl --shutdown
+          timeout 10
+          wsl --unregister lima-finch
+          wsl --list --verbose    
+      - name: Run container e2e tests
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            # set path to use newer ssh version
+            $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
+            $env:Path = $newPath
+            
+            git status
+            git clean -f -d
+            make test-e2e-container
       - name: Uninstall Finch silently
         if: ${{ always() }}
         run: |

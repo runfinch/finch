@@ -61,7 +61,7 @@ func TestGroup_instalOptional(t *testing.T) {
 
 				return group
 			},
-			mockSvc: func(l *mocks.Logger) {
+			mockSvc: func(_ *mocks.Logger) {
 			},
 			want: nil,
 		},
@@ -157,7 +157,7 @@ func TestInstallOptionalDeps(t *testing.T) {
 
 				return groups
 			},
-			mockSvc: func(l *mocks.Logger) {
+			mockSvc: func(_ *mocks.Logger) {
 			},
 			want: nil,
 		},
