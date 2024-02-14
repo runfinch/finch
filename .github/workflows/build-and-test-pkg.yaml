@@ -208,7 +208,7 @@ jobs:
           # that caused the VM initialization failure in the e2e test. 
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
           sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg -target /
-      - name: Run e2e tests
+      - name: Run VM e2e tests
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 180
@@ -217,8 +217,7 @@ jobs:
             git status
             git clean -f -d
             INSTALLED=true make test-e2e-vm
-            make test-e2e-container
-      - name: Run e2e tests
+      - name: Run container e2e tests
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 180
@@ -226,7 +225,7 @@ jobs:
           command: |
             git status
             git clean -f -d
-            make test-e2e-container    
+            INSTALLED=true make test-e2e-container    
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
@@ -336,8 +335,7 @@ jobs:
             git status
             git clean -f -d
             INSTALLED=true make test-e2e-vm
-            make test-e2e-container
-      - name: Run VM e2e tests
+      - name: Run container e2e tests
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 180
@@ -345,7 +343,7 @@ jobs:
           command: |
             git status
             git clean -f -d
-            make test-e2e-container
+            INSTALLED=true make test-e2e-container
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
