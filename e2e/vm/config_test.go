@@ -23,7 +23,10 @@ import (
 	"github.com/runfinch/finch/e2e"
 )
 
-const defaultLimaConfigFilePath = "../../_output/lima/data/_config/override.yaml"
+var (
+	defaultLimaDataDirPath    = filepath.Join("..", "..", "_output/lima/data")
+	defaultLimaConfigFilePath = filepath.Join(defaultLimaDataDirPath, "_config/override.yaml")
+)
 
 func readFile(filePath string) []byte {
 	out, err := os.ReadFile(filepath.Clean(filePath))

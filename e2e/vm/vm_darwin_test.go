@@ -50,6 +50,15 @@ func TestVM(t *testing.T) {
 		time.Sleep(1 * time.Second)
 	}, func() {})
 
+	ginkgo.AfterEach(func() {
+		if ginkgo.CurrentSpecReport().Failed() {
+			stderrLogPath := filepath.Join(limaDataDirPath(*e2e.Installed), "finch", "ha.stderr.log")
+			stdoutLogPath := filepath.Join(limaDataDirPath(*e2e.Installed), "finch", "ha.stdout.log")
+			ginkgo.AddReportEntry("ha.stderr.log", string(readFile(stderrLogPath)))
+			ginkgo.AddReportEntry("ha.stdout.log", string(readFile(stdoutLogPath)))
+		}
+	})
+
 	ginkgo.Describe("", func() {
 		testVMLifecycle(o)
 		testAdditionalDisk(o, *e2e.Installed)
