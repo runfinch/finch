@@ -250,6 +250,7 @@ jobs:
             
             git status
             git clean -f -d
+            $env:INSTALLED="true"
             make test-e2e-container
       - name: Uninstall Finch silently
         if: ${{ always() }}
