@@ -34,11 +34,6 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 			name: "should stop the instance",
 			args: []string{},
 			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
-				getVMTypeC := mocks.NewCommand(ctrl)
-				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.VMType}}", limaInstanceName).Return(getVMTypeC)
-				getVMTypeC.EXPECT().Output().Return([]byte("qemu"), nil)
-				logger.EXPECT().Debugf("VMType of virtual machine: %s", "qemu")
-
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -66,33 +61,6 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 				logger.EXPECT().Info(gomock.Any()).AnyTimes()
 			},
 			wantErr: nil,
-		},
-		{
-			name: "should stop the instance and use --force even when not specified if VMType == vz",
-			args: []string{},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
-				getVMTypeC := mocks.NewCommand(ctrl)
-				dm.EXPECT().DetachUserDataDisk().Return(nil)
-				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.VMType}}", limaInstanceName).Return(getVMTypeC)
-				getVMTypeC.EXPECT().Output().Return([]byte("vz"), nil)
-				logger.EXPECT().Debugf("VMType of virtual machine: %s", "vz")
-
-				command := mocks.NewCommand(ctrl)
-				creator.EXPECT().CreateWithoutStdio("stop", "--force", limaInstanceName).Return(command)
-				command.EXPECT().CombinedOutput()
-				logger.EXPECT().Info(gomock.Any()).AnyTimes()
-			},
-			wantErr: nil,
-		},
-		{
-			name: "get VMType returns an error",
-			args: []string{},
-			mockSvc: func(_ *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
-				getVMTypeC := mocks.NewCommand(ctrl)
-				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.VMType}}", limaInstanceName).Return(getVMTypeC)
-				getVMTypeC.EXPECT().Output().Return([]byte("unknown"), errors.New("unrecognized VMType"))
-			},
-			wantErr: errors.New("unrecognized VMType"),
 		},
 	}
 

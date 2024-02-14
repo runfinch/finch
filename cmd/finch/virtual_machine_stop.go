@@ -41,17 +41,6 @@ func (sva *stopVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
-
-	if !force {
-		if vmType, err := lima.GetVMType(sva.creator, sva.logger, limaInstanceName); err == nil {
-			if vmType == lima.VZ {
-				force = true
-			}
-		} else {
-			return err
-		}
-	}
-
 	return sva.run(force)
 }
 
