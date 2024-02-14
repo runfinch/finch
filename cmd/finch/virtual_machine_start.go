@@ -60,7 +60,7 @@ func newStartVMAction(
 	}
 }
 
-func (sva *startVMAction) runAdapter(cmd *cobra.Command, args []string) error {
+func (sva *startVMAction) runAdapter(_ *cobra.Command, _ []string) error {
 	return sva.run()
 }
 
@@ -79,6 +79,7 @@ func (sva *startVMAction) run() error {
 		return err
 	}
 
+	// TODO: don't run this on Windows
 	err = sva.userDataDiskManager.EnsureUserDataDisk()
 	if err != nil {
 		return err
@@ -88,7 +89,9 @@ func (sva *startVMAction) run() error {
 	sva.logger.Info("Starting existing Finch virtual machine...")
 	logs, err := limaCmd.CombinedOutput()
 	if err != nil {
+		sva.logger.SetFormatter(flog.TextWithoutTruncation)
 		sva.logger.Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
+		sva.logger.SetFormatter(flog.Text)
 		return err
 	}
 	sva.logger.Info("Finch virtual machine started successfully")

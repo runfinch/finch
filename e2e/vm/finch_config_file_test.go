@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/onsi/ginkgo/v2"
@@ -44,17 +45,25 @@ var testFinchConfigFile = func(o *option.Option) {
 				"-e", "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm",
 				"-e", fmt.Sprintf("REGISTRY_AUTH_HTPASSWD_PATH=/auth/%s", filename),
 				registryImage)
-			ginkgo.DeferCleanup(command.Run, o, "rmi", registryImage)
+			ginkgo.DeferCleanup(command.Run, o, "rmi", "-f", registryImage)
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", registryContainer)
 			for command.StdoutStr(o, "inspect", "-f", "{{.State.Running}}", containerID) != "true" {
 				time.Sleep(1 * time.Second)
 			}
+			time.Sleep(10 * time.Second)
 			registry := fmt.Sprintf(`localhost:%d`, port)
 			command.Run(o, "login", registry, "-u", "testUser", "-p", "testPassword")
 
-			homeDir, err := os.UserHomeDir()
-			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			configPath := fmt.Sprintf("%s/.finch/config.json", homeDir)
+			var finchRootDir string
+			var err error
+			if runtime.GOOS == "windows" {
+				finchRootDir = os.Getenv("LOCALAPPDATA")
+			} else {
+				finchRootDir, err = os.UserHomeDir()
+				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			}
+
+			configPath := filepath.Join(finchRootDir, ".finch", "config.json")
 			configContent, err := os.ReadFile(filepath.Clean(configPath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 

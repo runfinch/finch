@@ -3,6 +3,7 @@
 name: Release Homebrew
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   get-latest-tag:
@@ -12,12 +13,12 @@ jobs:
       tag: ${{ steps.latesttag.outputs.tag }}
       version: ${{ steps.latestversion.outputs.version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
             fetch-depth: 0
       - name: 'Get the latest tag'
         id: latesttag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
       - name: 'Convert tag to version'
         id: latestversion
         run: |
@@ -42,23 +43,23 @@ jobs:
       matrix:
         os:
           [
-            [self-hosted, macos, arm64, 11.7, release],
-            [self-hosted, macos, arm64, 12.6, release],
-            [self-hosted, macos, arm64, 13.0, release],
+            [self-hosted, macos, arm64, 11, release],
+            [self-hosted, macos, arm64, 14, release],
+            [self-hosted, macos, arm64, 13, release],
           ]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 180
     env:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ env.FINCH_TAG }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version-file: go.mod
           cache: true
@@ -73,10 +74,11 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
           cd $(brew --repo homebrew/cask) 
-          brew uninstall --cask ./Casks/finch.rb || true
+          brew uninstall --cask ./Casks/f/finch.rb || true
+        shell: zsh {0}
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@40a8596d17543401e57ee60f640c2a5df7c88904 # master
       - name: Bump local cask version
         run: |
           brew update-reset 
@@ -86,16 +88,21 @@ jobs:
           cd $(brew --repo homebrew/cask)
           echo "Update the local Finch cask with version $FINCH_VERSION"
           brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
+        shell: zsh {0}
       - name: Silently install
         run: |
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          brew install --cask ./Casks/finch.rb
+          brew install --cask ./Casks/f/finch.rb
+        shell: zsh {0}
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
+        shell: zsh {0}
       - name: Multiple instances of Finch test
         run: |
           # start two Finch VM instances
@@ -134,19 +141,24 @@ jobs:
           # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
           # that caused the VM initialization failure in the e2e test. 
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
-          brew reinstall --cask ./Casks/finch.rb
+          brew reinstall --cask ./Casks/f/finch.rb
+        shell: zsh {0}
       - name: Run e2e tests
-        run: INSTALLED=true make test-e2e
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: INSTALLED=true make test-e2e
       - name: Silently uninstall
         if: ${{ always() }}
         run: |
           cd $(brew --repo homebrew/cask)
-          brew uninstall --zap --cask ./Casks/finch.rb
+          brew uninstall --zap --cask ./Casks/f/finch.rb
           if [ -d "/Applications/Finch" ]; then
             echo ERROR: Finch is not uninstalled
             exit 1
           fi
-
+        shell: zsh {0}
   macos-amd64-test-installer:
     needs: get-latest-tag
     strategy:
@@ -154,23 +166,23 @@ jobs:
       matrix:
         os:
           [
-            [self-hosted, macos, amd64, 11.7, release],
-            [self-hosted, macos, amd64, 12.6, release],
-            [self-hosted, macos, amd64, 13.0, release],
+            [self-hosted, macos, amd64, 11, release],
+            [self-hosted, macos, amd64, 14, release],
+            [self-hosted, macos, amd64, 13, release],
           ]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 180
     env:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ env.FINCH_TAG }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version-file: go.mod
           cache: true
@@ -185,10 +197,11 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
           cd $(brew --repo homebrew/cask) 
-          brew uninstall --cask ./Casks/finch.rb || true
+          brew uninstall --cask ./Casks/f/finch.rb || true
+        shell: zsh {0}
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@40a8596d17543401e57ee60f640c2a5df7c88904 # master
       - name: Bump local cask version
         run: |
           brew update-reset 
@@ -196,16 +209,21 @@ jobs:
           cd $(brew --repo homebrew/cask)
           echo "Update the local Finch cask with version $FINCH_VERSION"
           brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
+        shell: zsh {0}
       - name: Silently install
         run: |
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          brew install --cask ./Casks/finch.rb
+          brew install --cask ./Casks/f/finch.rb
+        shell: zsh {0}
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true 
       - name: Build project
         run: |
-          brew install go lz4 automake autoconf libtool
+          brew install lz4 automake autoconf libtool
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
+        shell: zsh {0}
       - name: Multiple instances of Finch test
         run: |
           # start two Finch VM instances
@@ -241,28 +259,34 @@ jobs:
           sudo rm -rf ./_output
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
-          brew reinstall --cask ./Casks/finch.rb
+          brew reinstall --cask ./Casks/f/finch.rb
+        shell: zsh {0}
       - name: Run e2e tests
-        run: INSTALLED=true make test-e2e
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: INSTALLED=true make test-e2e
       - name: Silently uninstall
         if: ${{ always() }}
         run: |
           cd $(brew --repo homebrew/cask)
-          brew uninstall --zap --cask ./Casks/finch.rb
+          brew uninstall --zap --cask ./Casks/f/finch.rb
           if [ -d "/Applications/Finch" ]; then
             echo ERROR: Finch is not uninstalled
             exit 1
           fi
-          
+        shell: zsh {0}
   pr-to-homebrew:
     needs: [get-latest-tag, macos-arm64-test-installer, macos-amd64-test-installer]
     runs-on: macos-latest
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@40a8596d17543401e57ee60f640c2a5df7c88904 # master
       - name: Open a pull request to homebrwe-cask
         run: brew bump-cask-pr --version=${FINCH_VERSION} finch
+        shell: zsh {0}
         env:
           FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}

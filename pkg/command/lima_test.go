@@ -27,8 +27,6 @@ const (
 	envKeyLimaHome   = "LIMA_HOME"
 	mockQemuBinPath  = "/lima/bin"
 	mockSystemPath   = "/usr/bin"
-	envKeyPath       = "PATH"
-	finalPath        = mockQemuBinPath + ":" + mockSystemPath
 )
 
 var mockArgs = []string{"shell", "finch"}
@@ -238,7 +236,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			inOut:    "source-out",
 			outOut:   "",
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
-				lcd *mocks.LimaCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
+				lcd *mocks.LimaCmdCreatorSystemDeps, ctrl *gomock.Controller, _ string, _ *os.File,
 			) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
@@ -264,7 +262,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			inOut:    "source-out",
 			outOut:   "",
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
-				lcd *mocks.LimaCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
+				lcd *mocks.LimaCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, _ *os.File,
 			) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
@@ -312,6 +310,8 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			stdout, err := os.ReadFile(stdoutFilepath)
 			require.NoError(t, err)
 			assert.Equal(t, tc.outOut, string(stdout))
+			assert.NoError(t, stdoutFile.Close())
+			assert.NoError(t, os.Remove(stdoutFilepath))
 		})
 	}
 }

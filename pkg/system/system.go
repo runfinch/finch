@@ -52,6 +52,11 @@ type EnvChecker interface {
 	LookupEnv(key string) (string, bool)
 }
 
+// PipeGetter mocks out os.Pipe.
+type PipeGetter interface {
+	Pipe() (*os.File, *os.File, error)
+}
+
 // StdinGetter mocks out os.Stdin.
 type StdinGetter interface {
 	Stdin() *os.File
@@ -60,6 +65,11 @@ type StdinGetter interface {
 // StdoutGetter mocks out os.Stdout.
 type StdoutGetter interface {
 	Stdout() *os.File
+}
+
+// StdoutSetter mocks out redirecting os.Stdout.
+type StdoutSetter interface {
+	SetStdout(*os.File)
 }
 
 // StderrGetter mocks out os.Stderr.
@@ -80,4 +90,24 @@ type RuntimeArchGetter interface {
 // RuntimeOSGetter mocks out runtime.GOOS.
 type RuntimeOSGetter interface {
 	OS() string
+}
+
+// UserHomeDir mocks out os.UserHomeDir.
+type UserHomeDir interface {
+	GetUserHome() (string, error)
+}
+
+// WorkingDirectory mocks out os.GetWd.
+type WorkingDirectory interface {
+	GetWd() (string, error)
+}
+
+// AbsFilePath mocks out filepath.Abs.
+type AbsFilePath interface {
+	FilePathAbs(elem string) (string, error)
+}
+
+// FilePathToSlash mocks out filepath.ToSlash.
+type FilePathToSlash interface {
+	FilePathToSlash(elem string) string
 }

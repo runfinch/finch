@@ -12,5 +12,6 @@ package pkg
 import (
 	_ "github.com/golang/mock/mockgen"
 	_ "github.com/google/go-licenses"
+	_ "github.com/tc-hib/go-winres"
 	_ "golang.org/x/tools/cmd/stringer"
 )

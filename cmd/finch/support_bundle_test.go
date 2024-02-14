@@ -277,10 +277,10 @@ func TestGenerateSupportBundleAction_run(t *testing.T) {
 			mockSvc: func(
 				ctrl *gomock.Controller,
 				logger *mocks.Logger,
-				builder *mocks.BundleBuilder,
+				_ *mocks.BundleBuilder,
 				lcc *mocks.LimaCmdCreator,
-				include []string,
-				exclude []string,
+				_ []string,
+				_ []string,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)

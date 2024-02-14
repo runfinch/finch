@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/runfinch/finch/pkg/dependency"
+	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/mocks"
 
 	"github.com/golang/mock/gomock"
@@ -36,7 +37,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
-			*mocks.MockUserDataDiskManager,
+			*mocks.UserDataDiskManager,
 			*gomock.Controller,
 		)
 	}{
@@ -62,7 +63,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -93,7 +94,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
-			dm := mocks.NewMockUserDataDiskManager(ctrl)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
 			tc.mockSvc(lcc, logger, lca, dm, ctrl)
@@ -115,7 +116,7 @@ func TestStartVMAction_run(t *testing.T) {
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
-			*mocks.MockUserDataDiskManager,
+			*mocks.UserDataDiskManager,
 			*gomock.Controller,
 		)
 	}{
@@ -137,7 +138,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -160,14 +161,14 @@ func TestStartVMAction_run(t *testing.T) {
 		{
 			name:    "running VM",
 			wantErr: fmt.Errorf("the instance %q is already running", limaInstanceName),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -180,14 +181,14 @@ func TestStartVMAction_run(t *testing.T) {
 			name: "nonexistent VM",
 			wantErr: fmt.Errorf("the instance %q does not exist, run `finch %s init` to create a new instance",
 				limaInstanceName, virtualMachineRootCmd),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -199,14 +200,14 @@ func TestStartVMAction_run(t *testing.T) {
 		{
 			name:    "unknown VM status",
 			wantErr: errors.New("unrecognized system status"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -218,14 +219,14 @@ func TestStartVMAction_run(t *testing.T) {
 		{
 			name:    "status command returns an error",
 			wantErr: errors.New("get status error"),
-			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
 			mockSvc: func(
 				lcc *mocks.LimaCmdCreator,
-				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				_ *mocks.Logger,
+				_ *mocks.LimaConfigApplier,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -254,7 +255,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -287,7 +288,7 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
-				dm *mocks.MockUserDataDiskManager,
+				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -305,7 +306,9 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc.EXPECT().CreateWithoutStdio("start", limaInstanceName).Return(command)
 
 				logger.EXPECT().Info("Starting existing Finch virtual machine...")
+				logger.EXPECT().SetFormatter(flog.TextWithoutTruncation)
 				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
+				logger.EXPECT().SetFormatter(flog.Text)
 			},
 		},
 	}
@@ -319,7 +322,7 @@ func TestStartVMAction_run(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
-			dm := mocks.NewMockUserDataDiskManager(ctrl)
+			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
 			tc.mockSvc(lcc, logger, lca, dm, ctrl)

@@ -4,7 +4,8 @@
 package support
 
 import (
-	"path"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -23,23 +24,38 @@ func TestNewBundleConfig(t *testing.T) {
 func TestBundleConfig_LogFiles(t *testing.T) {
 	t.Parallel()
 
-	finch := fpath.Finch("/mockfinch")
-	homeDir := "/mockhome"
+	var homeDir string
+	var finch fpath.Finch
+	if runtime.GOOS == "windows" {
+		finch = fpath.Finch("C:\\mockfinch")
+		homeDir = "C:\\mockhome"
+	} else {
+		finch = fpath.Finch("/mockfinch")
+		homeDir = "/mockhome"
+	}
+
 	config := NewBundleConfig(finch, homeDir)
 
 	for _, fileName := range config.LogFiles() {
-		assert.True(t, path.IsAbs(fileName))
+		assert.True(t, filepath.IsAbs(fileName))
 	}
 }
 
 func TestBundleConfig_ConfigFiles(t *testing.T) {
 	t.Parallel()
 
-	finch := fpath.Finch("/mockfinch")
-	homeDir := "/mockhome"
+	var homeDir string
+	var finch fpath.Finch
+	if runtime.GOOS == "windows" {
+		finch = fpath.Finch("C:\\mockfinch")
+		homeDir = "C:\\mockhome"
+	} else {
+		finch = fpath.Finch("/mockfinch")
+		homeDir = "/mockhome"
+	}
 	config := NewBundleConfig(finch, homeDir)
 
 	for _, fileName := range config.ConfigFiles() {
-		assert.True(t, path.IsAbs(fileName))
+		assert.True(t, filepath.IsAbs(fileName))
 	}
 }

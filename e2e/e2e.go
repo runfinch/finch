@@ -38,8 +38,12 @@ import (
 // InstalledTestSubject is the test subject when Finch is installed.
 const InstalledTestSubject = "finch"
 
-// Installed indicates whether the tests are run against installed application.
-var Installed = flag.Bool("installed", false, "the flag to show whether the tests are run against installed application")
+var (
+	// Installed indicates whether the tests are run against installed application.
+	Installed = flag.Bool("installed", false, "the flag to show whether the tests are run against installed application")
+	// Registry indicates which container registry to pull from.
+	Registry = flag.String("registry", "", "used when pulling from registry to test credential helper")
+)
 
 // CreateOption creates an option for running e2e tests.
 func CreateOption() (*option.Option, error) {
@@ -48,12 +52,18 @@ func CreateOption() (*option.Option, error) {
 		return nil, fmt.Errorf("failed to get the current working directory: %w", err)
 	}
 
-	subject := filepath.Join(wd, "../../_output/bin/finch")
+	subject := filepath.Join(wd, "..", "..", "_output", "bin", "finch")
 	if *Installed {
 		subject = InstalledTestSubject
 	}
 
-	o, err := option.New([]string{subject})
+	args := []string{subject}
+	debug := os.Getenv("DEBUG")
+	if len(debug) != 0 {
+		args = append(args, "--debug")
+	}
+
+	o, err := option.New(args)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize a testing option: %w", err)
 	}

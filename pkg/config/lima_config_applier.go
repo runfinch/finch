@@ -7,16 +7,54 @@ import (
 	"fmt"
 	"strings"
 
+	goyaml "github.com/goccy/go-yaml"
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/xorcare/pointer"
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/system"
 )
 
-const userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
+const (
+	sociVersion                              = "0.4.0"
+	sociInstallationProvisioningScriptHeader = "# soci installation and configuring"
+	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
+	sociDownloadURLFormat                    = "https://github.com/awslabs/soci-snapshotter/releases/download/v%s/%s"
+	sociServiceDownloadURLFormat             = "https://raw.githubusercontent.com/awslabs/soci-snapshotter/v%s/soci-snapshotter.service"
+	//nolint:lll // command string
+	sociInstallationScriptFormat = `%s
+if [ ! -f /usr/local/bin/soci ]; then
+	# download soci
+	set -e
+	curl --retry 2 --retry-max-time 120 -OL "%s"
+	# move to usr/local/bin
+	tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
+
+	# install as a systemd service
+	curl --retry 2 --retry-max-time 120 -OL "%s"
+	mv soci-snapshotter.service /usr/local/lib/systemd/system/
+	ln -s /usr/local/lib/systemd/system/soci-snapshotter.service /etc/systemd/system/multi-user.target.wants/
+	restorecon -v /usr/local/lib/systemd/system/soci-snapshotter.service
+	systemctl daemon-reload
+	sudo mkdir -p /usr/local/lib/systemd/system/soci-snapshotter.service.d/
+	printf '[Unit]\nPartOf=containerd.service\n\n[Service]\nKillSignal=SIGTERM\n' | sudo tee /usr/local/lib/systemd/system/soci-snapshotter.service.d/finch.conf
+	systemctl enable --now soci-snapshotter
+fi
+
+# changing containerd config, this seems to get reset on every VM stop/start
+if ! grep -q soci /etc/containerd/config.toml; then
+	printf '    [proxy_plugins.soci]\n      type = "snapshot"\n      address = "/run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock"\n' >> /etc/containerd/config.toml
+fi
+
+sudo systemctl restart containerd.service
+`
+
+	userModeEmulationProvisioningScriptHeader = "# cross-arch tools"
+	wslDiskFormatScriptHeader                 = "# wsl disk format script"
+)
 
 // LimaConfigApplierSystemDeps contains the system dependencies for LimaConfigApplier.
 //
@@ -60,7 +98,7 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 	if cfgExists, err := afero.Exists(lca.fs, lca.limaConfigPath); err != nil {
 		return fmt.Errorf("error checking if file at path %s exists, error: %w", lca.limaConfigPath, err)
 	} else if !cfgExists {
-		if err := afero.WriteFile(lca.fs, lca.limaConfigPath, []byte(""), 0o644); err != nil {
+		if err := afero.WriteFile(lca.fs, lca.limaConfigPath, []byte(""), 0o600); err != nil {
 			return fmt.Errorf("failed to create the an empty lima config file: %w", err)
 		}
 	}
@@ -75,6 +113,13 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		return fmt.Errorf("failed to unmarshal the lima config file: %w", err)
 	}
 
+	// Unmarshall with custom unmarshaler for Disk:
+	// https://github.com/lima-vm/lima/blob/v0.17.2/pkg/limayaml/load.go#L16
+	if err := goyaml.UnmarshalWithOptions(b, &limaCfg, goyaml.DisallowDuplicateKey(),
+		goyaml.CustomUnmarshaler[limayaml.Disk](unmarshalDisk)); err != nil {
+		return fmt.Errorf("failed to unmarshal the lima config file: %w", err)
+	}
+
 	limaCfg.CPUs = lca.cfg.CPUs
 	limaCfg.Memory = lca.cfg.Memory
 	limaCfg.Mounts = []limayaml.Mount{}
@@ -82,6 +127,10 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		limaCfg.Mounts = append(limaCfg.Mounts, limayaml.Mount{
 			Location: *ad.Path, Writable: pointer.Bool(true),
 		})
+	}
+	if limaCfg.Rosetta.Enabled == nil {
+		limaCfg.Rosetta.Enabled = pointer.Bool(false)
+		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
 	}
 
 	if isInit {
@@ -92,83 +141,131 @@ func (lca *limaConfigApplier) Apply(isInit bool) error {
 		limaCfg = *cfgAfterInit
 	}
 
+	supportedSnapshotters := []string{"overlayfs", "soci"}
+	snapshotters := make(map[string][2]bool)
+	for i, snapshotter := range lca.cfg.Snapshotters {
+		if !slices.Contains(supportedSnapshotters, snapshotter) {
+			return fmt.Errorf("invalid snapshotter config value: %s", snapshotter)
+		}
+
+		isDefaultSnapshotter := false
+		if i == 0 {
+			isDefaultSnapshotter = true
+		}
+
+		isEnabled := true
+		snapshotters[snapshotter] = [2]bool{isEnabled, isDefaultSnapshotter}
+	}
+
+	toggleSnaphotters(&limaCfg, snapshotters)
+
+	if *lca.cfg.VMType != "wsl2" && len(limaCfg.AdditionalDisks) == 0 {
+		limaCfg.AdditionalDisks = append(limaCfg.AdditionalDisks, limayaml.Disk{
+			Name: "finch",
+		})
+	}
+
+	if *lca.cfg.VMType == "wsl2" {
+		ensureWslDiskFormatScript(&limaCfg)
+	}
+
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal the lima config file: %w", err)
 	}
 
-	if err := afero.WriteFile(lca.fs, lca.limaConfigPath, limaCfgBytes, 0o644); err != nil {
+	if err := afero.WriteFile(lca.fs, lca.limaConfigPath, limaCfgBytes, 0o600); err != nil {
 		return fmt.Errorf("failed to write to the lima config file: %w", err)
 	}
 
 	return nil
 }
 
-// applyInit changes settings that will only apply to the VM after a new init.
-func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
-	hasSupport, hasSupportErr := SupportsVirtualizationFramework(lca.cmdCreator)
-	if *lca.cfg.Rosetta &&
-		lca.systemDeps.OS() == "darwin" &&
-		lca.systemDeps.Arch() == "arm64" {
-		if hasSupportErr != nil {
-			return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasSupportErr)
-		}
-		if !hasSupport {
-			return nil, fmt.Errorf(`system does not have virtualization framework support, change vmType to "qemu"`)
-		}
-
-		limaCfg.Rosetta.Enabled = true
-		limaCfg.Rosetta.BinFmt = true
-		limaCfg.VMType = pointer.String("vz")
-		limaCfg.MountType = pointer.String("virtiofs")
-		toggleUserModeEmulationInstallationScript(limaCfg, false)
-	} else {
-		if *lca.cfg.VMType == "vz" {
-			if hasSupportErr != nil {
-				return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasSupportErr)
-			}
-			if !hasSupport {
-				return nil, fmt.Errorf(`system does not have virtualization framework support, change vmType to "qemu"`)
-			}
-			limaCfg.MountType = pointer.String("virtiofs")
-		} else if *lca.cfg.VMType == "qemu" {
-			limaCfg.MountType = pointer.String("reverse-sshfs")
-		}
-		limaCfg.Rosetta = limayaml.Rosetta{}
-		limaCfg.VMType = lca.cfg.VMType
-		toggleUserModeEmulationInstallationScript(limaCfg, true)
-	}
-
-	return limaCfg, nil
+// toggles snapshotters and sets default snapshotter.
+func toggleSnaphotters(limaCfg *limayaml.LimaYAML, snapshotters map[string][2]bool) {
+	toggleOverlayFs(limaCfg, snapshotters["overlayfs"][1])
+	toggleSoci(limaCfg, snapshotters["soci"][0], snapshotters["soci"][1], sociVersion)
 }
 
-func toggleUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML, enabled bool) {
-	idx, hasScript := hasUserModeEmulationInstallationScript(limaCfg)
+// sets overlayfs as the default snapshotter.
+func toggleOverlayFs(limaCfg *limayaml.LimaYAML, isDefault bool) {
+	if isDefault {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
+	}
+}
+
+func toggleSoci(limaCfg *limayaml.LimaYAML, enabled bool, isDefault bool, sociVersion string) {
+	idx, hasScript := findSociInstallationScript(limaCfg)
+	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
+	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+	sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader,
+		sociDownloadURL, sociFileName, sociServiceDownloadURL)
 	if !hasScript && enabled {
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
-			Mode: "system",
-			Script: fmt.Sprintf(`%s
-#!/bin/bash
-dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
-`, userModeEmulationProvisioningScriptHeader),
+			Mode:   "system",
+			Script: sociInstallationScript,
 		})
 	} else if hasScript && !enabled {
 		if len(limaCfg.Provision) > 0 {
 			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
 		}
 	}
+
+	if isDefault {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": "soci"}
+	} else {
+		limaCfg.Env = map[string]string{"CONTAINERD_SNAPSHOTTER": ""}
+	}
 }
 
-func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
-	hasCrossArchToolInstallationScript := false
+func findSociInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
+	hasSociInstallationScript := false
 	var scriptIdx int
 	for idx, prov := range limaCfg.Provision {
 		trimmed := strings.Trim(prov.Script, " ")
-		if !hasCrossArchToolInstallationScript && strings.HasPrefix(trimmed, userModeEmulationProvisioningScriptHeader) {
-			hasCrossArchToolInstallationScript = true
+		if !hasSociInstallationScript && strings.HasPrefix(trimmed, sociInstallationProvisioningScriptHeader) {
+			hasSociInstallationScript = true
 			scriptIdx = idx
+			break
 		}
 	}
 
-	return scriptIdx, hasCrossArchToolInstallationScript
+	return scriptIdx, hasSociInstallationScript
+}
+
+func ensureWslDiskFormatScript(limaCfg *limayaml.LimaYAML) {
+	if hasScript := findWslDiskFormatScript(limaCfg); !hasScript {
+		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
+			Mode: "system",
+			Script: fmt.Sprintf(`%s
+#!/bin/bash
+mkdir -p /mnt/lima-finch
+mount "$(blkid -s TYPE -t LABEL=FinchDataDisk -o device)" /mnt/lima-finch
+`, wslDiskFormatScriptHeader),
+		})
+	}
+}
+
+func findWslDiskFormatScript(limaCfg *limayaml.LimaYAML) bool {
+	hasWslDiskFormatScript := false
+	for _, prov := range limaCfg.Provision {
+		trimmed := strings.Trim(prov.Script, " ")
+		if !hasWslDiskFormatScript && strings.HasPrefix(trimmed, wslDiskFormatScriptHeader) {
+			hasWslDiskFormatScript = true
+			break
+		}
+	}
+
+	return hasWslDiskFormatScript
+}
+
+// https://github.com/lima-vm/lima/blob/v0.17.2/pkg/limayaml/load.go#L16
+func unmarshalDisk(dst *limayaml.Disk, b []byte) error {
+	var s string
+	if err := goyaml.Unmarshal(b, &s); err == nil {
+		*dst = limayaml.Disk{Name: s}
+		return nil
+	}
+	return goyaml.Unmarshal(b, dst)
 }

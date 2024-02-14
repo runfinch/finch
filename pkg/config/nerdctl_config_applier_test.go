@@ -7,12 +7,14 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"path/filepath"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/xorcare/pointer"
 
 	"github.com/runfinch/finch/pkg/mocks"
 )
@@ -30,37 +32,61 @@ TZ6coT6ILioXcs0kX17JAAAAI2FsdmFqdXNAODg2NjVhMGJmN2NhLmFudC5hbWF6b24uY2
 
 func Test_updateEnvironment(t *testing.T) {
 	t.Parallel()
-
 	testCases := []struct {
-		name         string
-		user         string
-		mockSvc      func(t *testing.T, fs afero.Fs)
-		postRunCheck func(t *testing.T, fs afero.Fs)
-		want         error
+		name          string
+		cfg           *Finch
+		finchDir      string
+		homeDir       string
+		limaVMHomeDir string
+		mockSvc       func(t *testing.T, fs afero.Fs)
+		postRunCheck  func(t *testing.T, fs afero.Fs)
+		want          error
 	}{
 		{
 			name: "happy path",
-			user: "mock_user",
+			cfg: &Finch{
+				VMType: pointer.String("qemu"),
+			},
+			finchDir:      "/finch/dir",
+			homeDir:       "/home/dir",
+			limaVMHomeDir: "/home/mock_user.linux/",
 			mockSvc: func(t *testing.T, fs afero.Fs) {
 				require.NoError(t, afero.WriteFile(fs, "/home/mock_user.linux/.bashrc", []byte(""), 0o644))
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
 				require.NoError(t, err)
-				assert.Equal(t, []byte("\n"+`export DOCKER_CONFIG="/Users/mock_user/.finch"`+"\n"), fileBytes)
+				assert.Equal(t,
+					string(`
+FINCH_DIR=/finch/dir
+AWS_DIR=/home/dir/.aws
+export DOCKER_CONFIG="$FINCH_DIR"
+[ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-ecr-login /usr/local/bin/
+[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws`), string(fileBytes))
 			},
 			want: nil,
 		},
 		{
 			name: "happy path, file already exists and already contains expected variables",
-			user: "mock_user",
+			cfg: &Finch{
+				VMType: pointer.String("qemu"),
+			},
+			finchDir:      "/finch/dir",
+			homeDir:       "/home/dir",
+			limaVMHomeDir: "/home/mock_user.linux/",
 			mockSvc: func(t *testing.T, fs afero.Fs) {
 				require.NoError(
 					t,
 					afero.WriteFile(
 						fs,
 						"/home/mock_user.linux/.bashrc",
-						[]byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`),
+						[]byte(`
+FINCH_DIR=/finch/dir
+AWS_DIR=/home/dir/.aws
+export DOCKER_CONFIG="$FINCH_DIR"
+[ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-ecr-login /usr/local/bin/
+[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws)`,
+						),
 						0o644,
 					),
 				)
@@ -68,18 +94,33 @@ func Test_updateEnvironment(t *testing.T) {
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
 				require.NoError(t, err)
-				assert.Equal(t, []byte(`export DOCKER_CONFIG="/Users/mock_user/.finch"`), fileBytes)
+				assert.Equal(t, string(`
+FINCH_DIR=/finch/dir
+AWS_DIR=/home/dir/.aws
+export DOCKER_CONFIG="$FINCH_DIR"
+[ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-ecr-login /usr/local/bin/
+[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws)`), string(fileBytes))
 			},
 			want: nil,
 		},
 		{
-			name:         ".bashrc file doesn't exist",
-			user:         "mock_user",
-			mockSvc:      func(t *testing.T, fs afero.Fs) {},
-			postRunCheck: func(t *testing.T, fs afero.Fs) {},
+			name: ".bashrc file doesn't exist",
+			cfg: &Finch{
+				VMType: pointer.String("qemu"),
+			},
+			finchDir:      "/finch/dir",
+			homeDir:       "/home/dir",
+			limaVMHomeDir: "/home/mock_user.linux",
+			mockSvc:       func(_ *testing.T, _ afero.Fs) {},
+			postRunCheck:  func(_ *testing.T, _ afero.Fs) {},
 			want: fmt.Errorf(
-				"failed to read config file: %w",
-				&fs.PathError{Op: "open", Path: "/home/mock_user.linux/.bashrc", Err: errors.New("file does not exist")},
+				"failed to read config file %q: %w",
+				filepath.ToSlash(filepath.Join(string(filepath.Separator), "home", "mock_user.linux", ".bashrc")),
+				&fs.PathError{
+					Op:   "open",
+					Path: filepath.Join(string(filepath.Separator), "home", "mock_user.linux", ".bashrc"),
+					Err:  errors.New("file does not exist"),
+				},
 			),
 		},
 	}
@@ -92,7 +133,7 @@ func Test_updateEnvironment(t *testing.T) {
 			fs := afero.NewMemMapFs()
 
 			tc.mockSvc(t, fs)
-			got := updateEnvironment(fs, tc.user)
+			got := updateEnvironment(fs, tc.cfg, tc.finchDir, tc.homeDir, tc.limaVMHomeDir)
 			require.Equal(t, tc.want, got)
 
 			tc.postRunCheck(t, fs)
@@ -105,7 +146,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 
 	testCases := []struct {
 		name         string
-		user         string
+		homeDir      string
 		rootless     bool
 		mockSvc      func(t *testing.T, fs afero.Fs)
 		postRunCheck func(t *testing.T, fs afero.Fs)
@@ -113,9 +154,9 @@ func Test_updateNerdctlConfig(t *testing.T) {
 	}{
 		{
 			name:     "happy path, rootless",
-			user:     "mock_user",
+			homeDir:  "/home/mock_user.linux",
 			rootless: true,
-			mockSvc:  func(t *testing.T, fs afero.Fs) {},
+			mockSvc:  func(_ *testing.T, _ afero.Fs) {},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.config/nerdctl/nerdctl.toml")
 				require.NoError(t, err)
@@ -125,9 +166,9 @@ func Test_updateNerdctlConfig(t *testing.T) {
 		},
 		{
 			name:     "happy path, rootful",
-			user:     "mock_user",
+			homeDir:  "/home/mock_user.linux",
 			rootless: false,
-			mockSvc:  func(t *testing.T, fs afero.Fs) {},
+			mockSvc:  func(_ *testing.T, _ afero.Fs) {},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/etc/nerdctl/nerdctl.toml")
 				require.NoError(t, err)
@@ -137,7 +178,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 		},
 		{
 			name:     "happy path, config already exists",
-			user:     "mock_user",
+			homeDir:  "/home/mock_user.linux",
 			rootless: true,
 			mockSvc: func(t *testing.T, fs afero.Fs) {
 				err := afero.WriteFile(fs, "/home/mock_user.linux/.config/nerdctl/nerdctl.toml",
@@ -153,15 +194,15 @@ func Test_updateNerdctlConfig(t *testing.T) {
 		},
 		{
 			name:     "config contains invalid TOML",
-			user:     "mock_user",
+			homeDir:  "/home/mock_user.linux",
 			rootless: true,
 			mockSvc: func(t *testing.T, fs afero.Fs) {
 				err := afero.WriteFile(fs, "/home/mock_user.linux/.config/nerdctl/nerdctl.toml", []byte("{not toml}"), 0o644)
 				require.NoError(t, err)
 			},
-			postRunCheck: func(t *testing.T, fs afero.Fs) {},
+			postRunCheck: func(_ *testing.T, _ afero.Fs) {},
 			want: fmt.Errorf(
-				"failed to unmarshal config file %s: %w",
+				"failed to unmarshal config file %q: %w",
 				"/home/mock_user.linux/.config/nerdctl/nerdctl.toml",
 				errors.New("(1, 1): parsing error: keys cannot contain { character"),
 			),
@@ -176,7 +217,7 @@ func Test_updateNerdctlConfig(t *testing.T) {
 			fs := afero.NewMemMapFs()
 
 			tc.mockSvc(t, fs)
-			got := updateNerdctlConfig(fs, tc.user, tc.rootless)
+			got := updateNerdctlConfig(fs, tc.homeDir, tc.rootless)
 			require.Equal(t, tc.want, got)
 
 			tc.postRunCheck(t, fs)
@@ -185,37 +226,38 @@ func Test_updateNerdctlConfig(t *testing.T) {
 }
 
 func TestNerdctlConfigApplier_Apply(t *testing.T) {
+	privateKeyPath := filepath.Join(string(filepath.Separator), "private-key")
 	t.Parallel()
 
 	testCases := []struct {
-		name       string
-		path       string
-		hostUser   string
-		remoteAddr string
-		mockSvc    func(t *testing.T, fs afero.Fs, d *mocks.Dialer)
-		want       error
+		name            string
+		path            string
+		remoteAddr      string
+		limaInstanceDir string
+		cfg             *Finch
+		mockSvc         func(t *testing.T, fs afero.Fs, d *mocks.Dialer)
+		want            error
 	}{
 		{
 			name:       "private key path doesn't exist",
-			path:       "/private-key",
+			path:       privateKeyPath,
 			remoteAddr: "",
-			hostUser:   "mock-host-user",
-			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer) {
+			mockSvc: func(_ *testing.T, _ afero.Fs, _ *mocks.Dialer) {
 			},
 			want: fmt.Errorf(
 				"failed to create ssh client config: %w",
 				fmt.Errorf(
 					"failed to open private key file: %w",
-					&fs.PathError{Op: "open", Path: "/private-key", Err: errors.New("file does not exist")},
+					&fs.PathError{Op: "open", Path: privateKeyPath, Err: errors.New("file does not exist")},
 				),
 			),
 		},
 		{
 			name:       "dialer fails to create the ssh connection",
-			path:       "/private-key",
+			path:       privateKeyPath,
 			remoteAddr: "deadbeef",
 			mockSvc: func(t *testing.T, fs afero.Fs, d *mocks.Dialer) {
-				err := afero.WriteFile(fs, "/private-key", []byte(fakeSSHKey), 0o600)
+				err := afero.WriteFile(fs, privateKeyPath, []byte(fakeSSHKey), 0o600)
 				require.NoError(t, err)
 
 				d.EXPECT().Dial("tcp", "deadbeef", gomock.Any()).Return(nil, fmt.Errorf("some error"))
@@ -234,7 +276,7 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			d := mocks.NewDialer(ctrl)
 
 			tc.mockSvc(t, fs, d)
-			got := NewNerdctlApplier(d, fs, tc.path, tc.hostUser).Apply(tc.remoteAddr)
+			got := NewNerdctlApplier(d, fs, tc.path, "", "", "", &Finch{}).Apply(tc.remoteAddr)
 
 			assert.Equal(t, tc.want, got)
 		})

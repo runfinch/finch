@@ -5,17 +5,19 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"strings"
 
-	dockerops "github.com/docker/docker/opts"
-	"github.com/lima-vm/lima/pkg/networks"
+	"golang.org/x/exp/slices"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
 	"github.com/runfinch/finch/pkg/system"
@@ -30,22 +32,35 @@ const nerdctlCmdName = "nerdctl"
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../../pkg/mocks/nerdctl_cmd_system_deps.go -package=mocks -mock_names NerdctlCommandSystemDeps=NerdctlCommandSystemDeps -source=nerdctl.go NerdctlCommandSystemDeps
 type NerdctlCommandSystemDeps interface {
 	system.EnvChecker
+	system.WorkingDirectory
+	system.FilePathJoiner
+	system.AbsFilePath
+	system.FilePathToSlash
 }
 
 type nerdctlCommandCreator struct {
-	creator    command.LimaCmdCreator
+	lcc        command.LimaCmdCreator
+	ecc        command.Creator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
 	fs         afero.Fs
+	fc         *config.Finch
 }
 
+type (
+	argHandler     func(systemDeps NerdctlCommandSystemDeps, args []string, index int) error
+	commandHandler func(systemDeps NerdctlCommandSystemDeps, args []string) error
+)
+
 func newNerdctlCommandCreator(
-	creator command.LimaCmdCreator,
+	lcc command.LimaCmdCreator,
+	ecc command.Creator,
 	systemDeps NerdctlCommandSystemDeps,
 	logger flog.Logger,
 	fs afero.Fs,
+	fc *config.Finch,
 ) *nerdctlCommandCreator {
-	return &nerdctlCommandCreator{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
+	return &nerdctlCommandCreator{lcc: lcc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
 }
 
 func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.Command {
@@ -56,21 +71,30 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 		// the args passed to nerdctlCommand.run will be empty because
 		// cobra will try to parse `-d alpine` as if alpine is the value of the `-d` flag.
 		DisableFlagParsing: true,
-		RunE:               newNerdctlCommand(ncc.creator, ncc.systemDeps, ncc.logger, ncc.fs).runAdapter,
+		RunE:               newNerdctlCommand(ncc.lcc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter,
 	}
 
 	return command
 }
 
 type nerdctlCommand struct {
-	creator    command.LimaCmdCreator
+	lcc        command.LimaCmdCreator
+	ecc        command.Creator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
 	fs         afero.Fs
+	fc         *config.Finch
 }
 
-func newNerdctlCommand(creator command.LimaCmdCreator, systemDeps NerdctlCommandSystemDeps, logger flog.Logger, fs afero.Fs) *nerdctlCommand {
-	return &nerdctlCommand{creator: creator, systemDeps: systemDeps, logger: logger, fs: fs}
+func newNerdctlCommand(
+	lcc command.LimaCmdCreator,
+	ecc command.Creator,
+	systemDeps NerdctlCommandSystemDeps,
+	logger flog.Logger,
+	fs afero.Fs,
+	fc *config.Finch,
+) *nerdctlCommand {
+	return &nerdctlCommand{lcc: lcc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
 }
 
 func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
@@ -78,16 +102,58 @@ func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
 }
 
 func (nc *nerdctlCommand) run(cmdName string, args []string) error {
-	err := nc.assertVMIsRunning(nc.creator, nc.logger)
+	err := nc.assertVMIsRunning(nc.lcc, nc.logger)
 	if err != nil {
 		return err
 	}
 	var (
-		nerdctlArgs, envs, fileEnvs []string
-		skip                        bool
+		nerdctlArgs, envs, fileEnvs       []string
+		skip, hasCmdHander, hasArgHandler bool
+		cmdHandler                        commandHandler
+		aMap                              map[string]argHandler
 	)
 
+	alias, hasAlias := aliasMap[cmdName]
+	if hasAlias {
+		cmdName = alias
+		cmdHandler, hasCmdHander = commandHandlerMap[alias]
+		aMap, hasArgHandler = argHandlerMap[alias]
+	} else {
+		// Check if the command has a handler
+		cmdHandler, hasCmdHander = commandHandlerMap[cmdName]
+		aMap, hasArgHandler = argHandlerMap[cmdName]
+
+		if !hasCmdHander && !hasArgHandler && len(args) > 0 {
+			// for commands like image build, container run
+			key := fmt.Sprintf("%s %s", cmdName, args[0])
+			cmdHandler, hasCmdHander = commandHandlerMap[key]
+			aMap, hasArgHandler = argHandlerMap[key]
+		}
+	}
+
+	// First check if the command has command handler
+	if hasCmdHander {
+		err := cmdHandler(nc.systemDeps, args)
+		if err != nil {
+			return err
+		}
+	}
+
 	for i, arg := range args {
+		// Check if command requires arg handling
+		if hasArgHandler {
+			// Check if argument for the command needs handling, sometimes it can be --file=<filename>
+			b, _, _ := strings.Cut(arg, "=")
+			h, ok := aMap[b]
+			if ok {
+				err = h(nc.systemDeps, args, i)
+				if err != nil {
+					return err
+				}
+				// This is required when the positional argument at i is mutated by argHandler, eg -v=C:\Users:/tmp:ro
+				arg = args[i]
+			}
+		}
 		// parsing environment values from the command line may pre-fetch and
 		// consume the next argument; this loop variable will skip these pre-consumed
 		// entries from the command line
@@ -115,16 +181,26 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		case strings.HasPrefix(arg, "--add-host"):
 			switch arg {
 			case "--add-host":
-				args[i+1] = resolveIP(args[i+1], nc.logger)
+				args[i+1], err = resolveIP(args[i+1], nc.logger, nc.ecc)
+				if err != nil {
+					return err
+				}
 			default:
-				resolvedIP := resolveIP(arg[11:], nc.logger)
+				resolvedIP, err := resolveIP(arg[11:], nc.logger, nc.ecc)
+				if err != nil {
+					return err
+				}
 				arg = fmt.Sprintf("%s%s", arg[0:11], resolvedIP)
 			}
 			nerdctlArgs = append(nerdctlArgs, arg)
+			if err != nil {
+				return err
+			}
 		default:
 			nerdctlArgs = append(nerdctlArgs, arg)
 		}
 	}
+
 	// to handle environment variables properly, we add all entries found via
 	// env-file includes to the map first and then all command line environment
 	// flags, making sure that command line overrides environment file options,
@@ -140,7 +216,11 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		envVars[evar] = eval
 	}
 
-	passedEnvs := []string{"COSIGN_PASSWORD"}
+	passedEnvs := []string{
+		"COSIGN_PASSWORD", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY",
+		"AWS_SESSION_TOKEN",
+	}
+
 	var passedEnvArgs []string
 	for _, e := range passedEnvs {
 		v, b := nc.systemDeps.LookupEnv(e)
@@ -149,11 +229,25 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		}
 	}
 
+	var additionalEnv []string
+	switch cmdName {
+	case "image":
+		if slices.Contains(args, "build") || slices.Contains(args, "pull") || slices.Contains(args, "push") {
+			ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+		}
+	case "container":
+		if slices.Contains(args, "run") {
+			ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+		}
+	case "build", "pull", "push", "run":
+		ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+	}
+
 	// Add -E to sudo command in order to preserve existing environment variables, more info:
 	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
-	limaArgs := append([]string{"shell", limaInstanceName, "sudo", "-E"}, passedEnvArgs...)
+	limaArgs := append(nc.GetLimaArgs(), append(additionalEnv, passedEnvArgs...)...)
 
-	limaArgs = append(limaArgs, []string{nerdctlCmdName, cmdName}...)
+	limaArgs = append(limaArgs, append([]string{nerdctlCmdName}, strings.Fields(cmdName)...)...)
 
 	var finalArgs []string
 	for key, val := range envVars {
@@ -165,10 +259,10 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	limaArgs = append(limaArgs, finalArgs...)
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
-		return nc.creator.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
+		return nc.lcc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
 	}
 
-	return nc.creator.Create(limaArgs...).Run()
+	return nc.lcc.Create(limaArgs...).Run()
 }
 
 func (nc *nerdctlCommand) assertVMIsRunning(creator command.LimaCmdCreator, logger flog.Logger) error {
@@ -300,17 +394,42 @@ func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 s
 	return skip, envs, nil
 }
 
-func resolveIP(host string, logger flog.Logger) string {
-	parts := strings.SplitN(host, ":", 2)
-	// If the IP Address is a string called "host-gateway", replace this value with the IP address that can be used to
-	// access host from the containers.
-	// TODO: make the host gateway ip configurable.
-	if parts[1] == dockerops.HostGatewayName {
-		resolvedIP := networks.SlirpGateway
-		logger.Debugf(`Resolving special IP "host-gateway" to %q for host %q`, resolvedIP, parts[0])
-		return fmt.Sprintf("%s:%s", parts[0], resolvedIP)
+// ensureRemoteCredentials is called before any actions that may require remote resources, in order
+// to ensure that fresh credentials are available inside the VM.
+// For more details on how `aws configure export-credentials` works, checks the docs.
+//
+// [the docs]: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/configure/export-credentials.html
+func ensureRemoteCredentials(
+	fc *config.Finch,
+	ecc command.Creator,
+	outEnv *[]string,
+	logger flog.Logger,
+) {
+	if slices.Contains(fc.CredsHelpers, "ecr-login") {
+		out, err := ecc.Create(
+			"aws",
+			"configure",
+			"export-credentials",
+			"--format",
+			"process",
+		).CombinedOutput()
+		if err != nil {
+			logger.Debugln("failed to run `aws configure` command")
+			return
+		}
+
+		var exportCredsOut aws.Credentials
+		err = json.Unmarshal(out, &exportCredsOut)
+		if err != nil {
+			logger.Debugln("`aws configure export-credentials` output is unexpected, is command available? " +
+				"This may result in a broken ecr-credential helper experience.")
+			return
+		}
+
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", exportCredsOut.AccessKeyID))
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", exportCredsOut.SecretAccessKey))
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SESSION_TOKEN=%s", exportCredsOut.SessionToken))
 	}
-	return host
 }
 
 var nerdctlCmds = map[string]string{

@@ -4,13 +4,14 @@
 package support
 
 import (
+	"path/filepath"
 	"regexp"
 
 	"github.com/runfinch/finch/pkg/path"
 )
 
 func redactFinchInstall(content []byte, finch path.Finch) (redacted []byte, err error) {
-	finchInstallMatcher, err := regexp.Compile(string(finch))
+	finchInstallMatcher, err := regexp.Compile(filepath.ToSlash(string(finch)))
 	if err != nil {
 		return nil, err
 	}

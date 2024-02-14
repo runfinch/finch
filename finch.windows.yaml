@@ -1,0 +1,114 @@
+# ===================================================================== #
+# BASIC CONFIGURATION
+# ===================================================================== #
+
+# Default values in this YAML file are specified by `null` instead of Lima's "builtin default" values,
+# so they can be overridden by the $LIMA_HOME/_config/default.yaml mechanism documented at the end of this file.
+
+# VM type: "qemu" or "vz" (on macOS 13 and later).
+# The vmType can be specified only on creating the instance.
+# The vmType of existing instances cannot be changed.
+# 🟢 Builtin default: "qemu"
+vmType: wsl2
+
+# OpenStack-compatible disk image.
+# 🟢 Builtin default: null (must be specified)
+# 🔵 This file: Ubuntu 23.04 Lunar Lobster images
+images:
+# Try to use release-yyyyMMdd image if available. Note that release-yyyyMMdd will be removed after several months.
+- location: "<finch_image_location>"
+  arch: "<finch_image_arch>"
+  digest: "<finch_image_digest>"
+
+mountType: wsl2
+
+containerd:
+  system: true
+  user: false
+
+provision:
+- mode: system
+  script: |
+    modprobe br_netfilter
+    cat <<EOF > /etc/sysctl.d/99-finch.conf
+    net.bridge.bridge-nf-call-iptables = 1
+    net.bridge.bridge-nf-call-ip6tables = 1
+    net.ipv4.ip_forward = 1
+    EOF
+    sysctl --system
+- mode: system
+  script: |
+    # systemd services stays running between lima VM reboots.
+    # Because the vsock port is randomized on vm start, the hostagent
+    # waits for the guestagent to be listening at a new port, while the
+    # guestagent just stays running at the original port. This causes
+    # vm stop => vm start to timeout.
+    # TODO: fix this in a Lima PR
+    systemctl restart lima-guestagent
+# # `user` is executed without the root privilege
+- mode: user
+  script: |
+    #!/bin/bash
+
+    # Enable SSHing into the VM as root (e.g., in `nerdctlConfigApplier.Apply`).
+    sudo cp ~/.ssh/authorized_keys /root/.ssh/
+    sudo chown $USER /mnt/lima-finch
+    
+    # This block of configuration facilitates the startup of rootless containers created prior to this change within the rootful vm configuration by mounting /mnt/lima-finch to both rootless and rootful dataroots.   
+    
+    # https://github.com/containerd/containerd/blob/main/docs/ops.md#base-configuration
+    sudo mkdir -p /mnt/lima-finch/containerd /var/lib/containerd
+    sudo mount --bind /mnt/lima-finch/containerd /var/lib/containerd
+    
+    # https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L144-L146
+    # XDG_DATA_HOME & ~/.local/share: https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L51
+    mkdir -p ~/.local/share/containerd
+    sudo mount --bind /mnt/lima-finch/containerd ~/.local/share/containerd
+
+    # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#dataroot
+    sudo mkdir -p /mnt/lima-finch/nerdctl /var/lib/nerdctl
+    sudo mount --bind /mnt/lima-finch/nerdctl /var/lib/nerdctl
+    mkdir -p ~/.local/share/nerdctl
+    sudo mount --bind /mnt/lima-finch/nerdctl ~/.local/share/nerdctl
+
+    # https://github.com/containerd/nerdctl/blob/main/docs/dir.md#netconfpath
+    sudo mkdir -p /mnt/lima-finch/cni-config /etc/cni/
+    sudo mount --bind /mnt/lima-finch/cni-config /etc/cni/
+    mkdir -p ~/.config/cni
+    sudo mount --bind /mnt/lima-finch/cni-config ~/.config/cni
+
+    # https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L148-L150
+    sudo mkdir -p /mnt/lima-finch/cni /var/lib/cni
+    sudo mount --bind /mnt/lima-finch/cni /var/lib/cni
+    mkdir -p  ~/.local/share/cni
+    sudo mount --bind /mnt/lima-finch/cni  ~/.local/share/cni
+
+    # https://github.com/containerd/stargz-snapshotter/blob/94b12086ace4119e86d2db0d6343d7c734b56671/cmd/containerd-stargz-grpc/main.go#L67C2-L67C2
+    sudo mkdir -p /mnt/lima-finch/containerd-stargz-grpc/snapshotter/snapshots
+    sudo mount --bind /mnt/lima-finch/containerd-stargz-grpc /var/lib/containerd-stargz-grpc
+    
+    # https://github.com/awslabs/soci-snapshotter/blob/335515f746f50c964ed48159257e1aeba04805b6/cmd/soci-snapshotter-grpc/main.go#L84
+    sudo mkdir -p /mnt/lima-finch/soci-snapshotter-grpc/snapshotter/snapshots /var/lib/soci-snapshotter-grpc
+    sudo mount --bind /mnt/lima-finch/soci-snapshotter-grpc /var/lib/soci-snapshotter-grpc
+
+    # Make sure stargz and buildkit are restarted with containerd
+    sudo mkdir -p /usr/local/lib/systemd/system/buildkit.service.d/
+    printf '[Unit]\nPartOf=containerd.service\n' | sudo tee /usr/local/lib/systemd/system/buildkit.service.d/finch.conf
+    sudo mkdir -p /usr/local/lib/systemd/system/stargz-snapshotter.service.d/
+    printf '[Unit]\nPartOf=containerd.service\n\n[Service]\nKillSignal=SIGTERM\n' | sudo tee /usr/local/lib/systemd/system/stargz-snapshotter.service.d/finch.conf
+    
+    # Add a new services that syncs the filesystem before shutdown
+    printf '[Unit]\nDescription=Sync containerd on shutdown\nDefaultDependencies=no\nBefore=shutdown.target reboot.target halt.target kexec.target\n\n[Service]\nType=oneshot\nExecStart=/bin/bash -c "sync /var/lib/containerd"\n\n[Install]\nWantedBy=halt.target reboot.target shutdown.target kexec.target\n' | sudo tee /usr/local/lib/systemd/system/finch-sync-on-shutdown.service
+    sudo systemctl enable --now finch-sync-on-shutdown.service
+
+    # Add a new service that cleans up lingering CNI networks on boot
+    printf '[Unit]\nDescription=Delete hanging data on boot\nDefaultDependencies=no\nBefore=basic.target\n\n[Service]\nType=oneshot\nExecStart=/bin/bash -c "sudo rm -rf /var/lib/cni/networks/bridge/**; sudo rm -rf /var/lib/cni/results/bridge-finch-*"\n\n[Install]\nWantedBy=basic.target\n' | sudo tee /usr/local/lib/systemd/system/finch-cleanup-on-boot.service
+    sudo systemctl enable --now finch-cleanup-on-boot.service
+
+    sudo systemctl restart containerd.service
+
+env:
+  # Containerd namespace is used by the lima cidata script
+  # 40-install-containerd.sh. Specifically this variable is defining the
+  # Buildkit Workers Containerd namespace. 
+  CONTAINERD_NAMESPACE: finch

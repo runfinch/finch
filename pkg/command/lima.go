@@ -7,6 +7,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"runtime"
+	"strings"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/system"
@@ -14,7 +18,8 @@ import (
 
 const (
 	envKeyLimaHome = "LIMA_HOME"
-	envKeyPath     = "PATH"
+	envKeyUnixPath = "PATH"
+	envKeyWinPath  = "Path"
 )
 
 // LimaCmdCreator creates a limactl command.
@@ -50,7 +55,7 @@ type limaCmdCreator struct {
 	systemDeps   LimaCmdCreatorSystemDeps
 	limaHomePath string
 	limactlPath  string
-	qemuBinPath  string
+	binPath      string
 }
 
 var _ LimaCmdCreator = (*limaCmdCreator)(nil)
@@ -70,7 +75,7 @@ type LimaCmdCreatorSystemDeps interface {
 func NewLimaCmdCreator(
 	cmdCreator Creator,
 	logger flog.Logger,
-	limaHomePath, limactlPath string, qemuBinPath string,
+	limaHomePath, limactlPath string, binPath string,
 	systemDeps LimaCmdCreatorSystemDeps,
 ) LimaCmdCreator {
 	return &limaCmdCreator{
@@ -78,7 +83,7 @@ func NewLimaCmdCreator(
 		logger:       logger,
 		limaHomePath: limaHomePath,
 		limactlPath:  limactlPath,
-		qemuBinPath:  qemuBinPath,
+		binPath:      binPath,
 		systemDeps:   systemDeps,
 	}
 }
@@ -122,13 +127,38 @@ func (lcc *limaCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, arg
 	lcc.logger.Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", args, envKeyLimaHome, lcc.limaHomePath)
 	cmd := lcc.cmdCreator.Create(lcc.limactlPath, args...)
 	limaHomeEnv := fmt.Sprintf("%s=%s", envKeyLimaHome, lcc.limaHomePath)
-	path := lcc.systemDeps.Env(envKeyPath)
-	path = fmt.Sprintf("%s:%s", lcc.qemuBinPath, path)
-	pathEnv := fmt.Sprintf("%s=%s", envKeyPath, path)
-	env := append(lcc.systemDeps.Environ(), limaHomeEnv, pathEnv)
-	cmd.SetEnv(env)
+	var pathEnv string
+	var envKeyPath string
+	var path string
+	if runtime.GOOS == "windows" {
+		envKeyPath = envKeyWinPath
+		path = lcc.systemDeps.Env(envKeyPath)
+		path = fmt.Sprintf(`%s\;%s`, lcc.binPath, path)
+		pathEnv = fmt.Sprintf("%s=%s", envKeyPath, path)
+	} else {
+		envKeyPath = envKeyUnixPath
+		path = lcc.systemDeps.Env(envKeyPath)
+		path = fmt.Sprintf("%s:%s", lcc.binPath, path)
+		pathEnv = fmt.Sprintf("%s=%s", envKeyPath, path)
+	}
+
+	newPathEnv := replaceOrAppend(lcc.systemDeps.Environ(), envKeyLimaHome, limaHomeEnv)
+	newPathEnv = replaceOrAppend(newPathEnv, envKeyPath, pathEnv)
+
+	cmd.SetEnv(newPathEnv)
 	cmd.SetStdin(stdin)
 	cmd.SetStdout(stdout)
 	cmd.SetStderr(stderr)
 	return cmd
+}
+
+func replaceOrAppend(orig []string, varName, newVar string) []string {
+	envIdx := slices.IndexFunc(orig, func(envVar string) bool {
+		return strings.HasPrefix(envVar, fmt.Sprintf("%s=", varName))
+	})
+
+	if envIdx != -1 {
+		return slices.Replace(orig, envIdx, envIdx+1, newVar)
+	}
+	return append(orig, newVar)
 }

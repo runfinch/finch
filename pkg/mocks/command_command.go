@@ -128,3 +128,46 @@ func (mr *CommandMockRecorder) SetStdout(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetStdout", reflect.TypeOf((*Command)(nil).SetStdout), arg0)
 }
+
+// Start mocks base method.
+func (m *Command) Start() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Start")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Start indicates an expected call of Start.
+func (mr *CommandMockRecorder) Start() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Start", reflect.TypeOf((*Command)(nil).Start))
+}
+
+// StdinPipe mocks base method.
+func (m *Command) StdinPipe() (io.WriteCloser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StdinPipe")
+	ret0, _ := ret[0].(io.WriteCloser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// StdinPipe indicates an expected call of StdinPipe.
+func (mr *CommandMockRecorder) StdinPipe() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StdinPipe", reflect.TypeOf((*Command)(nil).StdinPipe))
+}
+
+// Wait mocks base method.
+func (m *Command) Wait() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Wait")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Wait indicates an expected call of Wait.
+func (mr *CommandMockRecorder) Wait() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*Command)(nil).Wait))
+}

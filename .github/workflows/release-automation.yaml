@@ -1,0 +1,57 @@
+name: Release Finch latest version
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  get-latest-tag:
+    name: Get the latest release tag
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.latest-tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+            fetch-depth: 0
+      - name: 'Get the latest tag'
+        id: latest-tag
+        uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
+    
+  build-and-test-finch-pkg:
+    needs: get-latest-tag
+    uses: ./.github/workflows/build-and-test-pkg.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+
+  upload-pkg-and-dependency-source-code-to-release:
+    needs:
+      - get-latest-tag
+      - build-and-test-finch-pkg
+    uses: ./.github/workflows/upload-installer-to-release.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+  
+  release-homebrew:
+    needs: upload-pkg-and-dependency-source-code-to-release
+    secrets: inherit
+    uses: ./.github/workflows/release-homebrew.yaml
+
+  build-and-test-finch-msi:
+    needs: get-latest-tag
+    uses: ./.github/workflows/build-and-test-msi.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+  
+  upload-msi-to-release:
+    needs:
+      - get-latest-tag
+      - build-and-test-finch-msi
+    uses: ./.github/workflows/upload-msi-to-release.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}

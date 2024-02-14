@@ -188,7 +188,7 @@ func TestVersionAction_run(t *testing.T) {
 			cmd: &cobra.Command{
 				Use: "version",
 			},
-			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(lcc *mocks.LimaCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))

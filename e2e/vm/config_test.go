@@ -9,7 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
+	"time"
 
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/onsi/ginkgo/v2"
@@ -21,13 +21,12 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/e2e"
-	finch_cmd "github.com/runfinch/finch/pkg/command"
-	"github.com/runfinch/finch/pkg/config"
 )
 
-var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
-
-const defaultLimaConfigFilePath = "../../_output/lima/data/_config/override.yaml"
+var (
+	defaultLimaDataDirPath    = filepath.Join("..", "..", "_output/lima/data")
+	defaultLimaConfigFilePath = filepath.Join(defaultLimaDataDirPath, "_config/override.yaml")
+)
 
 func readFile(filePath string) []byte {
 	out, err := os.ReadFile(filepath.Clean(filePath))
@@ -47,6 +46,7 @@ func updateAndApplyConfig(o *option.Option, configBytes []byte) *gexec.Session {
 	writeFile(finchConfigFilePath, configBytes)
 
 	command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
+	time.Sleep(1 * time.Second)
 	return command.New(o, virtualMachineRootCmd, "start").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
 }
 
@@ -62,7 +62,7 @@ func updateAndApplyConfig(o *option.Option, configBytes []byte) *gexec.Session {
 // empty and a non-existent Finch config.yaml. Meaning, if you run this without an existing config.yaml,
 // an empty config.yaml will be created after all test cases are run. This currently does not change the behavior
 // of Finch, but may need to be revisited later.
-var testConfig = func(o *option.Option, installed bool) {
+var _ = func(o *option.Option, installed bool) {
 	// These tests are run in serial because we only define one virtual machine instance, and it requires disk I/O.
 	ginkgo.Describe("Config", ginkgo.Serial, func() {
 		var limaConfigFilePath string
@@ -83,6 +83,7 @@ var testConfig = func(o *option.Option, installed bool) {
 				writeFile(limaConfigFilePath, origLimaCfg)
 
 				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
+				time.Sleep(1 * time.Second)
 				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
 			})
 		})
@@ -184,36 +185,8 @@ additional_directories:
 			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
 			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
 			gomega.Expect(*limaCfg.VMType).Should(gomega.Equal("qemu"))
-			gomega.Expect(limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
-			gomega.Expect(limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))
-		})
-	})
-
-	ginkgo.Describe("Config (after init)", ginkgo.Serial, func() {
-		ginkgo.It("updates init-only config values when values are changed after init", func() {
-			supportsVz, supportsVzErr := config.SupportsVirtualizationFramework(finch_cmd.NewExecCmdCreator())
-			gomega.Expect(supportsVzErr).ShouldNot(gomega.HaveOccurred())
-			if !supportsVz || runtime.GOOS != "darwin" {
-				ginkgo.Skip("Skipping because existing init only configuration options require Virtualization.framework support to test")
-			}
-
-			limaConfigFilePath := resetVM(o, installed)
-			writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
-			initCmdSession := command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(600).Run()
-			gomega.Expect(initCmdSession).Should(gexec.Exit(0))
-
-			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
-			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
-			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-
-			var limaCfg limayaml.LimaYAML
-			err = yaml.Unmarshal(cfgBuf, &limaCfg)
-			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
-			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
-			gomega.Expect(*limaCfg.VMType).Should(gomega.Equal("vz"))
-			gomega.Expect(limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
-			gomega.Expect(limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))
+			gomega.Expect(*limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
+			gomega.Expect(*limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))
 		})
 	})
 }

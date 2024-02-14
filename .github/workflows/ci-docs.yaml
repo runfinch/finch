@@ -15,12 +15,14 @@ on:
     paths:
       - '**.md'
       - 'contrib/**'
+      - '.github/CODEOWNERS'
   pull_request:
     branches:
       - main
     paths:
       - '**.md'
       - 'contrib/**'
+      - '.github/CODEOWNERS'
 
 jobs:
   gen-code-no-diff:
@@ -46,15 +48,29 @@ jobs:
   e2e-tests:
     strategy:
       matrix:
-        os: [[self-hosted, macos, amd64, 13], [self-hosted, macos, amd64, 12.6], [self-hosted, macos, arm64, 13], [self-hosted, macos, arm64, 12.6]]
-    runs-on: ${{ matrix.os }} 
+        os:
+          [
+            [self-hosted, macos, amd64, 13, test],
+            [self-hosted, macos, amd64, 14, test],
+            [self-hosted, macos, arm64, 13, test],
+            [self-hosted, macos, arm64, 14, test],
+          ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: echo "Skipping CI for docs & contrib files"
+  windows-e2e-tests:
+    strategy:
+      matrix:
+        os: [[self-hosted, windows, amd64, test]]
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+    runs-on: ${{ matrix.os }}
     steps:
       - run: echo "Skipping CI for docs & contrib files"
   mdlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: avto-dev/markdown-lint@v1
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: avto-dev/markdown-lint@04d43ee9191307b50935a753da3b775ab695eceb # v1.5.0
         with:
           args: '**/*.md'
           # CHANGELOG.md is only updated by release-please bot.

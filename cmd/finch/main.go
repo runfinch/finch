@@ -9,21 +9,18 @@ import (
 	"io"
 	"os"
 
+	"github.com/spf13/afero"
+	"github.com/spf13/cobra"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
-	"github.com/runfinch/finch/pkg/dependency"
-	"github.com/runfinch/finch/pkg/dependency/vmnet"
-	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
-	"github.com/runfinch/finch/pkg/fssh"
+	"github.com/runfinch/finch/pkg/lima/wrapper"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/support"
 	"github.com/runfinch/finch/pkg/system"
 	"github.com/runfinch/finch/pkg/version"
-
-	"github.com/spf13/afero"
-	"github.com/spf13/cobra"
 )
 
 const finchRootCmd = "finch"
@@ -51,15 +48,31 @@ func xmain(logger flog.Logger,
 		return fmt.Errorf("failed to find the installation path of Finch: %w", err)
 	}
 
-	fc, err := config.Load(fs, fp.ConfigFilePath(ffd.Env("HOME")), logger, loadCfgDeps, mem)
+	home, err := ffd.GetUserHome()
+	if err != nil {
+		return fmt.Errorf("failed to get user home directory: %w", err)
+	}
+	finchRootPath, err := fp.FinchRootDir(ffd)
+	if err != nil {
+		return fmt.Errorf("failed to get finch root path: %w", err)
+	}
+	fc, err := config.Load(fs, fp.ConfigFilePath(finchRootPath), logger, loadCfgDeps, mem)
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	return newApp(logger, fp, fs, fc, stdOut).Execute()
+	return newApp(logger, fp, fs, fc, stdOut, home, finchRootPath).Execute()
 }
 
-var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Finch, stdOut io.Writer) *cobra.Command {
+var newApp = func(
+	logger flog.Logger,
+	fp path.Finch,
+	fs afero.Fs,
+	fc *config.Finch,
+	stdOut io.Writer,
+	home,
+	finchRootPath string,
+) *cobra.Command {
 	usage := fmt.Sprintf("%v <command>", finchRootCmd)
 	rootCmd := &cobra.Command{
 		Use:           usage,
@@ -71,7 +84,7 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 	// TODO: Decide when to forward --debug to the dependencies
 	// (e.g. nerdctl for container commands and limactl for VM commands).
 	rootCmd.PersistentFlags().Bool("debug", false, "running under debug mode")
-	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
 		// running commands under debug mode will print out debug logs
 		debugMode, _ := cmd.Flags().GetBool("debug")
 		if debugMode {
@@ -88,21 +101,25 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 		fp.QEMUBinDir(),
 		system.NewStdLib(),
 	)
+	lima := wrapper.NewLimaWrapper()
 	supportBundleBuilder := support.NewBundleBuilder(
 		logger,
 		fs,
-		support.NewBundleConfig(fp, system.NewStdLib().Env("HOME")),
+		support.NewBundleConfig(fp, finchRootPath),
 		fp,
 		ecc,
+		lcc,
+		lima,
 	)
 
 	// append nerdctl commands
-	allCommands := initializeNerdctlCommands(lcc, logger, fs)
+	allCommands := initializeNerdctlCommands(lcc, ecc, logger, fs, fc)
 	// append finch specific commands
 	allCommands = append(allCommands,
 		newVersionCommand(lcc, logger, stdOut),
-		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc),
+		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc, home, finchRootPath),
 		newSupportBundleCommand(logger, supportBundleBuilder, lcc),
+		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
 	)
 
 	rootCmd.AddCommand(allCommands...)
@@ -110,29 +127,14 @@ var newApp = func(logger flog.Logger, fp path.Finch, fs afero.Fs, fc *config.Fin
 	return rootCmd
 }
 
-func virtualMachineCommands(
-	logger flog.Logger,
-	fp path.Finch,
+func initializeNerdctlCommands(
 	lcc command.LimaCmdCreator,
 	ecc *command.ExecCmdCreator,
+	logger flog.Logger,
 	fs afero.Fs,
 	fc *config.Finch,
-) *cobra.Command {
-	optionalDepGroups := []*dependency.Group{vmnet.NewDependencyGroup(ecc, lcc, fs, fp, logger)}
-	return newVirtualMachineCommand(
-		lcc,
-		logger,
-		optionalDepGroups,
-		config.NewLimaApplier(fc, ecc, fs, fp.LimaOverrideConfigPath(), system.NewStdLib()),
-		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), system.NewStdLib().Env("USER")),
-		fp,
-		fs,
-		disk.NewUserDataDiskManager(lcc, ecc, &afero.OsFs{}, fp, system.NewStdLib().Env("HOME"), fc),
-	)
-}
-
-func initializeNerdctlCommands(lcc command.LimaCmdCreator, logger flog.Logger, fs afero.Fs) []*cobra.Command {
-	nerdctlCommandCreator := newNerdctlCommandCreator(lcc, system.NewStdLib(), logger, fs)
+) []*cobra.Command {
+	nerdctlCommandCreator := newNerdctlCommandCreator(lcc, ecc, system.NewStdLib(), logger, fs, fc)
 	var allNerdctlCommands []*cobra.Command
 	for cmdName, cmdDescription := range nerdctlCmds {
 		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))

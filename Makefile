@@ -23,52 +23,83 @@ SUPPORTED_ARCH = false
 CORE_VDE_PREFIX ?= $(OUTDIR)/dependencies/vde/opt/finch
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
-GITCOMMIT := $(shell git rev-parse HEAD)$(shell if ! git diff --no-ext-diff --quiet --exit-code; then echo .m; fi)
+GITCOMMIT := $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
+
+GOOS ?= $(shell $(GO) env GOOS)
+ifeq ($(GOOS),windows)
+BINARYNAME := $(addsuffix .exe, $(BINARYNAME))
+sha = sha256sum
+else
+sha = shasum -a 256
+endif
 
 .DEFAULT_GOAL := all
 
 INSTALLED ?= false
-
+REGISTRY ?= ""
 ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = aarch64
-	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/aarch64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-37-1.7.aarch64-20230330181518.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1681495788.tar.gz
+	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/aarch64/images/
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.aarch64-20240109005854.qcow2
+	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1707333145.tar.gz
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
-	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-37-1.7.x86_64-20230329185717.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1681496226.tar.gz
+	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-38-1.6.x86_64-20240108234744.qcow2
+	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1707333145.tar.gz
+	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1704738038.tar.gz
+	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
 endif
 
-FINCH_OS_HASH := `shasum -a 256 $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
+FINCH_OS_HASH := `$(sha) $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
 FINCH_OS_DIGEST := "sha256:$(FINCH_OS_HASH)"
 FINCH_OS_IMAGE_LOCATION_ROOT ?= $(DEST)
 FINCH_OS_IMAGE_LOCATION ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_OS_BASENAME)
+
+# TODO: Windows PoC extracting rootfs...
+FINCH_ROOTFS_HASH := `$(sha) $(OUTDIR)/os/$(FINCH_ROOTFS_BASENAME) | cut -d ' ' -f 1`
+FINCH_ROOTFS_DIGEST := "sha256:$(FINCH_ROOTFS_HASH)"
+FINCH_ROOTFS_LOCATION_ROOT ?= $(DEST)/
+FINCH_ROOTFS_LOCATION ?= $(FINCH_ROOTFS_LOCATION_ROOT)os/$(FINCH_ROOTFS_BASENAME)
 
 .PHONY: arch-test
 arch-test:
 	@if [ $(SUPPORTED_ARCH) != "true" ]; then echo "Unsupported architecture: $(ARCH)"; exit "1"; fi
 
 .PHONY: all
+ifeq ($(GOOS),windows)
+all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml
+else
 all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
+endif
 
 .PHONY: all-local
-all-local: arch-test finch networks.yaml config.yaml lima-and-qemu local-core finch.yaml
+all-local: arch-test networks.yaml config.yaml lima-and-qemu local-core finch.yaml
 
 .PHONY: finch-core
 finch-core:
 	cd deps/finch-core && \
+		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
+		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
+		"$(MAKE)"
+
+	mkdir -p _output
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
+	rm -rf $(OUTDIR)/lima-template
+
+.PHONY: finch-core-local
+finch-core-local:
+	cd deps/finch-core && \
 		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		$(MAKE)
+		"$(MAKE)" all lima
 
 	mkdir -p _output
-	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: local-core
@@ -77,11 +108,13 @@ local-core:
 		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
 		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
 		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		$(MAKE) lima lima-socket-vmnet
+		"$(MAKE)" lima lima-socket-vmnet
 
 	mkdir -p _output
-	cd deps/finch-core/_output && tar c * | tar Cvx  $(OUTDIR)
-	cd deps/finch-core/src/lima/_output && tar c * | tar Cvx  $(OUTDIR)/lima
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
+	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C  $(OUTDIR)/lima
+	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
+	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)/lima
 	rm -rf $(OUTDIR)/lima-template
 
 .PHONY: lima-and-qemu
@@ -97,16 +130,36 @@ lima-and-qemu: networks.yaml
 	rm -rf $(OUTDIR)/downloads
 
 
+FINCH_IMAGE_LOCATION ?=
+FINCH_IMAGE_DIGEST ?=
+ifeq ($(GOOS),windows)
+    # Because the path in windows /C:/<some-path> is not an Absolute path, prefix with file:/ which is handled by lima https://github.com/lima-vm/lima/blob/da1260dc87fb30345c3ee7bfb131c29646e26d10/pkg/downloader/downloader.go#L266
+	FINCH_IMAGE_LOCATION := "file:/$(FINCH_ROOTFS_LOCATION)"
+	FINCH_IMAGE_DIGEST := $(FINCH_ROOTFS_DIGEST)
+else
+	FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION)
+	FINCH_IMAGE_DIGEST := $(FINCH_OS_DIGEST)
+endif
 .PHONY: finch.yaml
 finch.yaml: finch-core
 	mkdir -p $(OUTDIR)/os
 	cp finch.yaml $(OUTDIR)/os
 	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
 	# this sed command uses the alternative separator of "|" because the image location uses "/"
-	sed -i.bak -e "s|<finch_image_location>|$(FINCH_OS_IMAGE_LOCATION)|g" $(OUTDIR)/os/finch.yaml
+	sed -i.bak -e "s|<finch_image_location>|$(FINCH_IMAGE_LOCATION)|g" $(OUTDIR)/os/finch.yaml
 	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" $(OUTDIR)/os/finch.yaml
-	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_OS_DIGEST)/g" $(OUTDIR)/os/finch.yaml
-	rm $(OUTDIR)/os/*.yaml.bak
+	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" $(OUTDIR)/os/finch.yaml
+
+# TODO: Windows PoC - clean this up / consolidate
+.PHONY: finch.yaml
+finch.windows.yaml: finch-core-local
+	mkdir -p $(OUTDIR)/os
+	cp finch.windows.yaml $(OUTDIR)/os/finch.yaml
+	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
+	# this sed command uses the alternative separator of "|" because the image location uses "/"
+	sed -i.bak -e "s|<finch_image_location>|$(FINCH_IMAGE_LOCATION)|g" $(OUTDIR)/os/finch.yaml
+	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" $(OUTDIR)/os/finch.yaml
+	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" $(OUTDIR)/os/finch.yaml
 
 .PHONY: networks.yaml
 networks.yaml:
@@ -121,7 +174,7 @@ config.yaml:
 .PHONY: copy
 copy:
 	mkdir -p $(DEST)
-	(cd _output && tar c * | tar Cvx  $(DEST) )
+	(cd _output && tar -cf - * | tar -xvf - -C $(DEST) )
 
 .PHONY: install
 install: copy
@@ -144,7 +197,19 @@ uninstall.vde:
 uninstall: uninstall.finch
 
 .PHONY: finch
-finch:
+ifeq ($(GOOS),windows)
+finch: finch-windows finch-general
+else
+finch: finch-unix
+endif
+
+finch-windows:
+	GOBIN=$(GOBIN) go install github.com/tc-hib/go-winres
+	$(GO) generate cmd/finch/main_windows.go
+
+finch-unix: finch-general
+
+finch-general:
 	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
 
 .PHONY: release
@@ -187,6 +252,13 @@ download-licenses:
 
     ### dependencies in tools.go - end ###
 
+    ### dependencies in benchmark.yaml - start ###
+
+	mkdir -p "$(LICENSEDIR)/github.com/benchmark-action/github-action-benchmark"
+	curl https://raw.githubusercontent.com/benchmark-action/github-action-benchmark/master/LICENSE.txt --output "$(LICENSEDIR)/github.com/benchmark-action/github-action-benchmark/LICENSE.txt"
+
+    ### dependencies in benchmark.yaml - end ###
+
     ### dependencies in ci.yaml - start ###
 
 	mkdir -p "$(LICENSEDIR)/github.com/actions/checkout"
@@ -197,6 +269,8 @@ download-licenses:
 	curl https://raw.githubusercontent.com/golangci/golangci-lint-action/master/LICENSE --output "$(LICENSEDIR)/github.com/golangci/golangci-lint-action/LICENSE"
 	mkdir -p "$(LICENSEDIR)/github.com/avto-dev/markdown-lint"
 	curl https://raw.githubusercontent.com/avto-dev/markdown-lint/master/LICENSE --output "$(LICENSEDIR)/github.com/avto-dev/markdown-lint/LICENSE"
+	mkdir -p "$(LICENSEDIR)"/github.com/ludeeus/action-shellcheck"
+	curl https://raw.githubusercontent.com/ludeeus/action-shellcheck/blob/2.0.0/LICENSE --output "$(LICENSEDIR)/github.com/ludeeus/action-shellcheck/LICENSE"
 
     ### dependencies in ci.yaml - end ###
 
@@ -247,26 +321,30 @@ check-licenses:
 
 .PHONY: test-unit
 test-unit:
-	go test $(shell go list ./... | grep -v e2e) -shuffle on -race
+	go test $(shell go list ./... | grep -v e2e) -shuffle on
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
 #
 # Container tests and VM tests can be run in any order, but they must be run sequentially.
 # For more details, see the package-level comment of the e2e package.
 .PHONY: test-e2e
-test-e2e: test-e2e-vm-serial
+test-e2e: test-e2e-vm-serial test-e2e-container
 
 .PHONY: test-e2e-vm-serial
-test-e2e-vm-serial: test-e2e-container
-	go test -ldflags $(LDFLAGS) -timeout 45m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
+test-e2e-vm-serial: 
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
 test-e2e-container:
-	go test -ldflags $(LDFLAGS) -timeout 30m ./e2e/container -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
 test-e2e-vm:
-	go test -ldflags $(LDFLAGS) -timeout 45m ./e2e/vm -test.v -ginkgo.v --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+
+.PHONY: test-benchmark
+test-benchmark:
+	cd benchmark/all && go test -ldflags $(LDFLAGS) -bench=. -benchmem --installed="$(INSTALLED)"
 
 .PHONY: test-benchmark-vm
 test-benchmark-vm:
@@ -285,13 +363,18 @@ gen-code: GOBIN = $(CURDIR)/tools_bin
 gen-code:
 	GOBIN=$(GOBIN) go install github.com/golang/mock/mockgen
 	GOBIN=$(GOBIN) go install golang.org/x/tools/cmd/stringer
-    # Make sure that we are using the tool binaries which are just built to generate code.
+	# Make sure that we are using the tool binaries which are just built to generate code.
+ifeq ($(GOOS),windows)
+	powershell ./scripts/gen-code-windows.ps1
+else
 	PATH=$(GOBIN):$(PATH) go generate ./...
+endif
 
 .PHONY: lint
 # To run golangci-lint locally: https://golangci-lint.run/usage/install/#local-installation
 lint:
-	golangci-lint run
+	env GOOS=windows golangci-lint run
+	env GOOS=darwin golangci-lint run
 
 .PHONY: mdlint
 # Install it locally: https://github.com/igorshubovych/markdownlint-cli#installation
@@ -302,12 +385,28 @@ mdlint:
 .PHONY: mdlint-ctr
 # If markdownlint is not installed, you can run markdownlint within a container.
 mdlint-ctr:
-	finch run --rm -v "$(shell pwd):/repo:ro" -w /repo avtodev/markdown-lint:v1 --ignore CHANGELOG.md '**/*.md'
+	$(BINARYNAME) run --rm -v "$(shell pwd):/repo:ro" -w /repo avtodev/markdown-lint:v1 --ignore CHANGELOG.md '**/*.md'
 
 .PHONY: clean
+ifeq ($(GOOS),windows)
 clean:
 	-@rm -rf $(OUTDIR) 2>/dev/null || true
 	-@rm -rf ./deps/finch-core/_output || true
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true
+else
+clean:
+	-sudo pkill '^socket_vmnet'
+	-sudo pkill '^qemu-system-'
+	-sudo pkill '^limactl'
+	-sudo rm -rf "/opt/finch/"
+	-sudo rm -rf "/private/var/run/finch-lima"
+	-sudo rm -rf "/private/etc/sudoers.d/finch-lima"
+	-@rm -rf $(OUTDIR) 2>/dev/null || true
+	-@rm -rf ./deps/finch-core/_output || true
+	-@rm -rf ./deps/finch-core/downloads/os/$(FINCH_OS_BASENAME) || true
+	-@rm ./*.tar.gz 2>/dev/null || true
+	-@rm ./*.qcow2 2>/dev/null || true
+	-@rm ./test-coverage.* 2>/dev/null || true
+endif

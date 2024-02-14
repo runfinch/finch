@@ -35,6 +35,10 @@ type execCmd struct {
 
 var _ Command = (*execCmd)(nil)
 
+func (c *execCmd) String() string {
+	return c.Cmd.String()
+}
+
 func (c *execCmd) Output() ([]byte, error) {
 	b, err := c.Cmd.Output()
 	return b, wrapIfExitError(err)
@@ -54,4 +58,8 @@ func (c *execCmd) SetStdout(stdout io.Writer) {
 
 func (c *execCmd) SetStderr(stderr io.Writer) {
 	c.Stderr = stderr
+}
+
+func (c *execCmd) StdinPipe() (io.WriteCloser, error) {
+	return c.Cmd.StdinPipe()
 }

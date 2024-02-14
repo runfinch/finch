@@ -1,0 +1,72 @@
+# - When a third-party action is added (i.e., `uses`), please also add it to `download-licenses` in Makefile.
+# - When a job is added/removed/renamed, please make corresponding changes in ci-docs.yaml.
+name: Benchmark
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'contrib/**'
+
+permissions:
+  # deployments permission to deploy GitHub pages website
+  deployments: write
+  # contents permission to update benchmark contents in gh-pages branch
+  contents: write
+
+jobs:
+  benchmark:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          [
+            [self-hosted, macos, amd64, 13, test],
+            [self-hosted, macos, amd64, 14, test],
+            [self-hosted, macos, arm64, 13, test],
+            [self-hosted, macos, arm64, 14, test]
+          ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          submodules: true
+      - name: Clean up previous files
+        run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true
+      - run: brew install go lz4 automake autoconf libtool
+        shell: zsh {0}
+      - name: Build project
+        run: |
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+        shell: zsh {0}
+      - name: Run benchmark
+        run: make test-benchmark | tee benchmark.txt
+        shell: zsh {0}
+      - name: Set OS info as env variable
+        run: |
+          echo "OS_VERSION=$(sw_vers -productVersion | cut -d '.' -f 1)" >> $GITHUB_ENV
+          echo "ARCH=$(uname -m)" >> $GITHUB_ENV
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@cc9ac13ce81036c9b67fcfe2cb95ca366684b9ea # v1.19.3
+        with:
+          name: Finch Benchmark
+          tool: 'go'
+          benchmark-data-dir-path: "dev/bench/macOS/${{ env.OS_VERSION }}/${{ env.ARCH }}"
+          output-file-path: benchmark.txt
+      - name: Push benchmark result
+        run: git push 'https://github.com/runfinch/finch.git' gh-pages:gh-pages

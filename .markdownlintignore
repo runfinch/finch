@@ -1,0 +1,6 @@
+deps/
+# Since the current documentation generation works by just capturing stdout, we don't do any post processing
+# The completion files have issues with code block style
+docs/cmd/*completion*.md
+# finch_logs.md has issues with the list not being surrounded by newlines
+docs/cmd/finch_logs.md

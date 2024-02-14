@@ -42,12 +42,20 @@ func (s *StdLib) LookupEnv(key string) (string, bool) {
 	return os.LookupEnv(key)
 }
 
+func (s *StdLib) Pipe() (*os.File, *os.File, error) {
+	return os.Pipe()
+}
+
 func (s *StdLib) Stdin() *os.File {
 	return os.Stdin
 }
 
 func (s *StdLib) Stdout() *os.File {
 	return os.Stdout
+}
+
+func (s *StdLib) SetStdout(w *os.File) {
+	os.Stdout = w
 }
 
 func (s *StdLib) Stderr() *os.File {
@@ -68,4 +76,20 @@ func (s *StdLib) Arch() string {
 
 func (s *StdLib) OS() string {
 	return runtime.GOOS
+}
+
+func (s *StdLib) GetUserHome() (string, error) {
+	return os.UserHomeDir()
+}
+
+func (s *StdLib) GetWd() (string, error) {
+	return os.Getwd()
+}
+
+func (s *StdLib) FilePathAbs(elem string) (string, error) {
+	return filepath.Abs(elem)
+}
+
+func (s *StdLib) FilePathToSlash(elem string) string {
+	return filepath.ToSlash(elem)
 }

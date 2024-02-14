@@ -5,7 +5,11 @@
 package container
 
 import (
+	"os/exec"
+	"regexp"
+	"runtime"
 	"testing"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -25,21 +29,39 @@ func TestContainer(t *testing.T) {
 	}
 
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
-		command.New(o, "vm", "init").WithTimeoutInSeconds(600).Run()
+		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 		tests.SetupLocalRegistry(o)
 		return nil
-	}, func(bytes []byte) {})
+	}, func(_ []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
-		command.New(o, "vm", "stop").WithTimeoutInSeconds(90).Run()
-		command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+		time.Sleep(1 * time.Second)
+		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+		time.Sleep(1 * time.Second)
 	}, func() {})
 
 	ginkgo.Describe(description, func() {
 		tests.Pull(o)
 		tests.Rm(o)
 		tests.Rmi(o)
-		tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified, DefaultHostGatewayIP: "192.168.5.2"})
+		if runtime.GOOS == "windows" {
+			// get ip address for adapter vEthernet (WSL)
+			n, err := exec.Command("cmd", "/C", "netsh", "interface", "ipv4", "show",
+				"addresses", "vEthernet (WSL)").Output()
+			gomega.Expect(err).Should(gomega.BeNil())
+			hostIP := extractIPAddress(string(n))
+			// wsl2 cgroup v2 is mounted at /sys/fs/cgroup/unified,
+			// containerd expects it at /sys/fs/cgroup based on
+			// https://github.com/containerd/cgroups/blob/cc78c6c1e32dc5bde018d92999910fdace3cfa27/utils.go#L36
+			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Hybrid, DefaultHostGatewayIP: hostIP})
+		} else {
+			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified, DefaultHostGatewayIP: "192.168.5.2"})
+		}
 		tests.Start(o)
 		tests.Stop(o)
 		tests.Cp(o)
@@ -84,4 +106,14 @@ func TestContainer(t *testing.T) {
 
 	gomega.RegisterFailHandler(ginkgo.Fail)
 	ginkgo.RunSpecs(t, description)
+}
+
+func extractIPAddress(data string) string {
+	re := regexp.MustCompile(`IP Address:\s+(\d+\.\d+\.\d+\.\d+)`)
+	match := re.FindStringSubmatch(data)
+
+	if match != nil {
+		return match[1]
+	}
+	return ""
 }

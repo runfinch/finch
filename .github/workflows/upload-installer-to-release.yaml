@@ -1,31 +1,54 @@
-#TODO: merge this workflow to the release-installer.yaml after the issue on arm hosts is fixed
 name: Upload installer
 on:
   workflow_dispatch: # Trigger this workflow from tag
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
 
 permissions:
   id-token: write   # This is required for requesting the JWT
   contents: write   # This is required for uploading the release assets
-jobs:         
+jobs:
+  get-tag-name:
+    name: Get tag name
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ inputs.ref_name }}" ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+
   upload-installers:
+    needs: get-tag-name
     runs-on: ubuntu-latest
     steps:
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: download-installer-session
           aws-region: ${{ secrets.REGION }}
-      - name: Download installers
+      - name: Download installers and dependency source code
         run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-aarch64.pkg Finch-${GITHUB_REF_NAME}-aarch64.pkg
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${GITHUB_REF_NAME}-x86_64.pkg Finch-${GITHUB_REF_NAME}-x86_64.pkg
-      - name: Upload installers to release
-        uses: softprops/action-gh-release@v1
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg
+          aws s3 cp s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/dependency-sources.tar.gz DependenciesSourceCode.tar.gz
+      - name: Upload installers and dependency source code to release
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ needs.get-tag-name.outputs.tag }}
           files: |
-            Finch-${{ github.ref_name }}-aarch64.pkg
-            Finch-${{ github.ref_name }}-x86_64.pkg
-      - name: Delete installers
-        run: rm -rf Finch-${{ github.ref_name }}-aarch64.pkg Finch-${{ github.ref_name }}-x86_64.pkg
+            Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg
+            Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg
+            DependenciesSourceCode.tar.gz
+      - name: Delete installers and dependency source code
+        run: rm -rf Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg DependenciesSourceCode.tar.gz

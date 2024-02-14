@@ -4,6 +4,7 @@
 package config
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -16,7 +17,13 @@ import (
 func Test_applyDefaults(t *testing.T) {
 	t.Parallel()
 
-	testCases := []struct {
+	var testCases []struct {
+		name    string
+		cfg     *Finch
+		mockSvc func(deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+		want    *Finch
+	}
+	darwinTestCases := []struct {
 		name    string
 		cfg     *Finch
 		mockSvc func(deps *mocks.LoadSystemDeps, mem *mocks.Memory)
@@ -42,7 +49,7 @@ func Test_applyDefaults(t *testing.T) {
 			cfg: &Finch{
 				Memory: pointer.String("4GiB"),
 			},
-			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+			mockSvc: func(deps *mocks.LoadSystemDeps, _ *mocks.Memory) {
 				deps.EXPECT().NumCPU().Return(8)
 			},
 			want: &Finch{
@@ -57,7 +64,7 @@ func Test_applyDefaults(t *testing.T) {
 			cfg: &Finch{
 				CPUs: pointer.Int(6),
 			},
-			mockSvc: func(deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+			mockSvc: func(_ *mocks.LoadSystemDeps, mem *mocks.Memory) {
 				// 12,884,901,888 == 12GiB
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888))
 			},
@@ -83,6 +90,42 @@ func Test_applyDefaults(t *testing.T) {
 				Rosetta: pointer.Bool(false),
 			},
 		},
+	}
+
+	windowsTestCases := []struct {
+		name    string
+		cfg     *Finch
+		mockSvc func(deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+		want    *Finch
+	}{
+		{
+			name: "happy path",
+			cfg:  &Finch{},
+			mockSvc: func(_ *mocks.LoadSystemDeps, _ *mocks.Memory) {
+			},
+			want: &Finch{
+				VMType: pointer.String("wsl2"),
+			},
+		},
+		{
+			name: "does not fill wsl2 default when it's set to something else",
+			cfg: &Finch{
+				VMType: pointer.String("wsl"),
+			},
+			mockSvc: func(_ *mocks.LoadSystemDeps, _ *mocks.Memory) {
+			},
+			want: &Finch{
+				VMType: pointer.String("wsl"),
+			},
+		},
+	}
+	switch runtime.GOOS {
+	case "windows":
+		testCases = append(testCases, windowsTestCases...)
+	case "darwin":
+		testCases = append(testCases, darwinTestCases...)
+	default:
+		t.Skip("Not running tests for " + runtime.GOOS)
 	}
 
 	for _, tc := range testCases {
