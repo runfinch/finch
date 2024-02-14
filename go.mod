@@ -3,7 +3,7 @@ module github.com/runfinch/finch
 go 1.22.0
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.24.1
+	github.com/aws/aws-sdk-go-v2 v1.25.0
 	github.com/docker/cli v24.0.7+incompatible
 	github.com/docker/docker v25.0.3+incompatible
 	github.com/golang/mock v1.6.0
@@ -29,7 +29,7 @@ require (
 )
 
 require (
-	github.com/aws/smithy-go v1.19.0 // indirect
+	github.com/aws/smithy-go v1.20.0 // indirect
 	github.com/containerd/containerd v1.7.12 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
