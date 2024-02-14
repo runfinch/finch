@@ -54,12 +54,8 @@ var testVMLifecycle = func(o *option.Option) {
 				gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Stopped"))
 			})
 
-			ginkgo.It("should be able to start the virtual machine", ginkgo.FlakeAttempts(3), func() {
-				// TODO: Remove FlakeAttempts
-				// vm start should happen in around 20 seconds if everything is working as expected
-				// sometimes it fails, but the failure timeout is 1 minute. Clamping to 30 seconds and
-				// allowing 3 tries will still be faster than the previous behavior.
-				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(30).Run()
+			ginkgo.It("should be able to start the virtual machine", func() {
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
 				command.Run(o, "images")
 				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
 			})

@@ -21,18 +21,21 @@ const (
 	virtualMachineRootCmd = "vm"
 )
 
-var resetVM = func(o *option.Option, installed bool) string {
-	var limaConfigFilePath string
-
-	origFinchCfg := readFile(finchConfigFilePath)
-	limaConfigFilePath = defaultLimaConfigFilePath
+func limaDataDirPath(installed bool) string {
+	limaConfigFilePath := defaultLimaDataDirPath
 	if installed {
 		path, err := exec.LookPath(e2e.InstalledTestSubject)
 		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 		realFinchPath, err := filepath.EvalSymlinks(path)
 		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-		limaConfigFilePath = filepath.Join(realFinchPath, "..", "..", "lima", "data", "_config", "override.yaml")
+		limaConfigFilePath = filepath.Join(realFinchPath, "..", "..", "lima", "data")
 	}
+	return limaConfigFilePath
+}
+
+var resetVM = func(o *option.Option, installed bool) string {
+	origFinchCfg := readFile(finchConfigFilePath)
+	limaConfigFilePath := filepath.Join(limaDataDirPath(installed), "_config", "override.yaml")
 	origLimaCfg := readFile(limaConfigFilePath)
 
 	command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
