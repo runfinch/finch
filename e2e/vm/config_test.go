@@ -7,7 +7,6 @@ import (
 	"errors"
 	"io/fs"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"time"
 
@@ -19,13 +18,12 @@ import (
 	"github.com/runfinch/common-tests/option"
 	"github.com/xorcare/pointer"
 	"gopkg.in/yaml.v3"
-
-	"github.com/runfinch/finch/e2e"
 )
 
 var (
-	defaultLimaDataDirPath    = filepath.Join("..", "..", "_output/lima/data")
-	defaultLimaConfigFilePath = filepath.Join(defaultLimaDataDirPath, "_config/override.yaml")
+	defaultLimaDataDirPath     = filepath.Join("..", "..", "_output/lima/data")
+	defaultLimaConfigFilePath  = filepath.Join(defaultLimaDataDirPath, "_config/default.yaml")
+	overrideLimaConfigFilePath = filepath.Join(defaultLimaDataDirPath, "_config/override.yaml")
 )
 
 func readFile(filePath string) []byte {
@@ -55,32 +53,20 @@ func updateAndApplyConfig(o *option.Option, configBytes []byte) *gexec.Session {
 // Many test cases only check partial file contents, rather than strictly checking
 // the exact contents, because other modules can update the same files.
 //
-// For example, pkg/dependency/vde/update_override_lima_config.go's appendNetworkConfiguration function
-// updates the lima override.yaml config file, independently of the config file module's function.
+// For example, pkg/dependency/vde/update_network_lima_config.go's appendNetworkConfiguration function
+// updates the lima default.yaml config file, independently of the config file module's function.
 //
 // For simplicity, the cleanup for this test suite currently does not distinguish between an
 // empty and a non-existent Finch config.yaml. Meaning, if you run this without an existing config.yaml,
 // an empty config.yaml will be created after all test cases are run. This currently does not change the behavior
 // of Finch, but may need to be revisited later.
-var _ = func(o *option.Option, installed bool) {
+var _ = func(o *option.Option) {
 	// These tests are run in serial because we only define one virtual machine instance, and it requires disk I/O.
 	ginkgo.Describe("Config", ginkgo.Serial, func() {
-		var limaConfigFilePath string
 		ginkgo.BeforeEach(func() {
 			origFinchCfg := readFile(finchConfigFilePath)
-			limaConfigFilePath = defaultLimaConfigFilePath
-			if installed {
-				path, err := exec.LookPath(e2e.InstalledTestSubject)
-				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-				realFinchPath, err := filepath.EvalSymlinks(path)
-				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-				limaConfigFilePath = filepath.Join(realFinchPath, "../../lima/data/_config/override.yaml")
-			}
-			origLimaCfg := readFile(limaConfigFilePath)
-
 			ginkgo.DeferCleanup(func() {
 				writeFile(finchConfigFilePath, origFinchCfg)
-				writeFile(limaConfigFilePath, origLimaCfg)
 
 				command.New(o, virtualMachineRootCmd, "stop").WithoutCheckingExitCode().WithTimeoutInSeconds(90).Run()
 				time.Sleep(1 * time.Second)
@@ -92,12 +78,16 @@ var _ = func(o *option.Option, installed bool) {
 			startCmdSession := updateAndApplyConfig(o, []byte("memory: 4GiB\ncpus: 6"))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
 
-			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
-			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(defaultLimaConfigFilePath).Should(gomega.BeARegularFile())
+			_, err := os.ReadFile(filepath.Clean(defaultLimaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			gomega.Expect(overrideLimaConfigFilePath).Should(gomega.BeARegularFile())
+			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
 			var limaCfg limayaml.LimaYAML
-			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
 			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
@@ -107,12 +97,16 @@ var _ = func(o *option.Option, installed bool) {
 			startCmdSession := updateAndApplyConfig(o, []byte("memory: 6GiB"))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
 
-			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
-			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(defaultLimaConfigFilePath).Should(gomega.BeARegularFile())
+			_, err := os.ReadFile(filepath.Clean(defaultLimaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			gomega.Expect(overrideLimaConfigFilePath).Should(gomega.BeARegularFile())
+			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
 			var limaCfg limayaml.LimaYAML
-			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
 			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("6GiB"))
@@ -122,12 +116,16 @@ var _ = func(o *option.Option, installed bool) {
 			startCmdSession := updateAndApplyConfig(o, nil)
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
 
-			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
-			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(defaultLimaConfigFilePath).Should(gomega.BeARegularFile())
+			_, err := os.ReadFile(filepath.Clean(defaultLimaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			gomega.Expect(overrideLimaConfigFilePath).Should(gomega.BeARegularFile())
+			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
 			var limaCfg limayaml.LimaYAML
-			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
 			gomega.Expect(*limaCfg.Memory).Should(gomega.MatchRegexp(`\dGiB`))
@@ -156,11 +154,16 @@ additional_directories:
     - path: /tmp/workspace`))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
 
-			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
-			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(defaultLimaConfigFilePath).Should(gomega.BeARegularFile())
+			_, err := os.ReadFile(filepath.Clean(defaultLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			gomega.Expect(overrideLimaConfigFilePath).Should(gomega.BeARegularFile())
+			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
 			var limaCfg limayaml.LimaYAML
-			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
 			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
@@ -175,15 +178,22 @@ additional_directories:
 			startCmdSession := updateAndApplyConfig(o, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: true"))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(0))
 
-			gomega.Expect(limaConfigFilePath).Should(gomega.BeARegularFile())
-			cfgBuf, err := os.ReadFile(filepath.Clean(limaConfigFilePath))
+			gomega.Expect(defaultLimaConfigFilePath).Should(gomega.BeARegularFile())
+			defaultCfgBuf, err := os.ReadFile(filepath.Clean(defaultLimaConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			gomega.Expect(overrideLimaConfigFilePath).Should(gomega.BeARegularFile())
+			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
 			var limaCfg limayaml.LimaYAML
-			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
 			gomega.Expect(*limaCfg.Memory).Should(gomega.Equal("4GiB"))
+
+			err = yaml.Unmarshal(defaultCfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.VMType).Should(gomega.Equal("qemu"))
 			gomega.Expect(*limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
 			gomega.Expect(*limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))

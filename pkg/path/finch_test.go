@@ -71,6 +71,13 @@ func TestFinch_LimaConfigDirectoryPath(t *testing.T) {
 	assert.Equal(t, res, filepath.Join("mock_finch", "lima", "data", "_config"))
 }
 
+func TestFinch_LimaDefaultConfigPath(t *testing.T) {
+	t.Parallel()
+
+	res := mockFinch.LimaDefaultConfigPath()
+	assert.Equal(t, res, filepath.Join("mock_finch", "lima", "data", "_config", "default.yaml"))
+}
+
 func TestFinch_LimaOverrideConfigPath(t *testing.T) {
 	t.Parallel()
 

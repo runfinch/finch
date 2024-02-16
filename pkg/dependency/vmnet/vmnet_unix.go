@@ -48,12 +48,12 @@ func newDeps(
 ) []dependency.Dependency {
 	binaries := newBinaries(fp, fs, execCmdCreator, logger)
 	sudoersFile := newSudoersFile(fs, execCmdCreator, limaCmdCreator, logger)
-	overrideLimaConfig := newOverrideLimaConfig(fp, binaries, sudoersFile, fs, logger)
+	defaultLimaConfig := newDefaultLimaConfig(fp, binaries, sudoersFile, fs, logger)
 
-	// Ordering of these dependencies is important because overrideLimaConfig has a dependency on binaries and sudoersFile.
-	// Adding the network configuration to Lima's overrideConfig without first installing binaries and sudoers leads
+	// Ordering of these dependencies is important because defaultLimaConfig has a dependency on binaries and sudoersFile.
+	// Adding the network configuration to Lima's defaultConfig without first installing binaries and sudoers leads
 	// to a broken user experience.
 	// Since Group.Install() installs dependencies serially, in-order, and continues to the next dependency after an error,
-	// overrideLimaConfig itself checks to make sure that binaries and sudoers are installed before installing itself.
-	return []dependency.Dependency{binaries, sudoersFile, overrideLimaConfig}
+	// defaultLimaConfig itself checks to make sure that binaries and sudoers are installed before installing itself.
+	return []dependency.Dependency{binaries, sudoersFile, defaultLimaConfig}
 }

@@ -36,16 +36,30 @@ func (m *LimaConfigApplier) EXPECT() *LimaConfigApplierMockRecorder {
 	return m.recorder
 }
 
-// Apply mocks base method.
-func (m *LimaConfigApplier) Apply(arg0 bool) error {
+// ConfigureDefaultLimaYaml mocks base method.
+func (m *LimaConfigApplier) ConfigureDefaultLimaYaml() error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Apply", arg0)
+	ret := m.ctrl.Call(m, "ConfigureDefaultLimaYaml")
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Apply indicates an expected call of Apply.
-func (mr *LimaConfigApplierMockRecorder) Apply(arg0 interface{}) *gomock.Call {
+// ConfigureDefaultLimaYaml indicates an expected call of ConfigureDefaultLimaYaml.
+func (mr *LimaConfigApplierMockRecorder) ConfigureDefaultLimaYaml() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Apply", reflect.TypeOf((*LimaConfigApplier)(nil).Apply), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfigureDefaultLimaYaml", reflect.TypeOf((*LimaConfigApplier)(nil).ConfigureDefaultLimaYaml))
+}
+
+// ConfigureOverrideLimaYaml mocks base method.
+func (m *LimaConfigApplier) ConfigureOverrideLimaYaml() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ConfigureOverrideLimaYaml")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ConfigureOverrideLimaYaml indicates an expected call of ConfigureOverrideLimaYaml.
+func (mr *LimaConfigApplierMockRecorder) ConfigureOverrideLimaYaml() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfigureOverrideLimaYaml", reflect.TypeOf((*LimaConfigApplier)(nil).ConfigureOverrideLimaYaml))
 }

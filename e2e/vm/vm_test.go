@@ -5,7 +5,6 @@ package vm
 
 import (
 	"os/exec"
-	"path/filepath"
 	"runtime"
 	"time"
 
@@ -13,30 +12,14 @@ import (
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
-
-	"github.com/runfinch/finch/e2e"
 )
 
 const (
 	virtualMachineRootCmd = "vm"
 )
 
-func limaDataDirPath(installed bool) string {
-	limaConfigFilePath := defaultLimaDataDirPath
-	if installed {
-		path, err := exec.LookPath(e2e.InstalledTestSubject)
-		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-		realFinchPath, err := filepath.EvalSymlinks(path)
-		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-		limaConfigFilePath = filepath.Join(realFinchPath, "..", "..", "lima", "data")
-	}
-	return limaConfigFilePath
-}
-
-var resetVM = func(o *option.Option, installed bool) string {
+var resetVM = func(o *option.Option) {
 	origFinchCfg := readFile(finchConfigFilePath)
-	limaConfigFilePath := filepath.Join(limaDataDirPath(installed), "_config", "override.yaml")
-	origLimaCfg := readFile(limaConfigFilePath)
 
 	command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
 	time.Sleep(1 * time.Second)
@@ -51,7 +34,6 @@ var resetVM = func(o *option.Option, installed bool) string {
 
 	ginkgo.DeferCleanup(func() {
 		writeFile(finchConfigFilePath, origFinchCfg)
-		writeFile(limaConfigFilePath, origLimaCfg)
 		command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
 		time.Sleep(1 * time.Second)
 		command.New(o, virtualMachineRootCmd, "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(10).Run()
@@ -61,6 +43,4 @@ var resetVM = func(o *option.Option, installed bool) string {
 		time.Sleep(1 * time.Second)
 		command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 	})
-
-	return limaConfigFilePath
 }

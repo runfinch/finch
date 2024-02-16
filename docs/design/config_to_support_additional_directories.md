@@ -6,7 +6,7 @@
 
 ## Approach
 
-The [finch.yaml](https://github.com/runfinch/finch/blob/d8174ff773f0f92ec94d6d97c753a872a98f74a0/finch.yaml#L35) file which is used to boot in Lima has Mounts field to handle the mount points. However, changing it in finch.yaml would make the configs only applied in `vm init`, and finch.yaml is expected to be the place to keep Finch's default config without being messed up with user's customized configs. So instead of adding to finch.yaml, I recommended adding additional_directories to Lima’s override.yaml file. Both `vm init` and `vm start` can apply the configs in override.yaml. This is same to how Finch applies cpu and memory configs today.
+The [finch.yaml](https://github.com/runfinch/finch/blob/d8174ff773f0f92ec94d6d97c753a872a98f74a0/finch.yaml#L35) file which is used to boot in Lima has Mounts field to handle the mount points. Mount Points added in finch.yaml will configure override.yaml on `vm init` and `vm start`.
 
 For example, for Finch config:
 
@@ -36,8 +36,6 @@ sshfs:
     protocolVersion: 9p2000.L
     msize: 128KiB
     cache: mmap
-networks:
-- lima: finch-shared
 ```
 
 Different to cpu and memory, the “mounts” field in override.yaml will be appended to the default mounts instead of replacing it. So we don’t have to add the default home directory to the override.yaml file. [Reference](https://github.com/lima-vm/lima/blob/585d6e25af62d0337cec83ffca226a2c8146a428/pkg/limayaml/defaults.go#L410)

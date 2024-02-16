@@ -67,6 +67,11 @@ func (w Finch) LimaConfigDirectoryPath() string {
 	return filepath.Join(string(w), "lima", "data", "_config")
 }
 
+// LimaDefaultConfigPath returns the lima override config file path.
+func (w Finch) LimaDefaultConfigPath() string {
+	return filepath.Join(string(w), "lima", "data", "_config", "default.yaml")
+}
+
 // LimaOverrideConfigPath returns the lima override config file path.
 func (w Finch) LimaOverrideConfigPath() string {
 	return filepath.Join(string(w), "lima", "data", "_config", "override.yaml")

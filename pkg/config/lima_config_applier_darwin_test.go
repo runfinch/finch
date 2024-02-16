@@ -18,18 +18,20 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/mocks"
-	"github.com/runfinch/finch/pkg/system"
 )
+
+var qemuPkgScriptWithHeader = fmt.Sprintf(qemuPkgInstallationScript, userModeEmulationProvisioningScriptHeader)
 
 func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name    string
-		config  *Finch
-		path    string
-		isInit  bool
-		mockSvc func(
+		name         string
+		config       *Finch
+		defaultPath  string
+		overridePath string
+		isInit       bool
+		mockSvc      func(
 			fs afero.Fs,
 			l *mocks.Logger,
 			cmd *mocks.Command,
@@ -47,22 +49,21 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				VMType:  pointer.String("qemu"),
 				Rosetta: pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
-				fs afero.Fs,
+				_ afero.Fs,
 				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
 				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
-				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
-				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
 				var limaCfg limayaml.LimaYAML
@@ -70,23 +71,14 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
-				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
-				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
 
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -99,25 +91,24 @@ fi
 				Rosetta:      pointer.Bool(false),
 				Snapshotters: []string{"soci"},
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				_ *mocks.LimaConfigApplierSystemDeps,
+				deps *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				deps.EXPECT().Arch()
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
-				require.NoError(t, err)
-
-				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
+				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, "")
 				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
 				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
@@ -126,31 +117,26 @@ fi
 					sociFileName,
 					sociServiceDownloadURL)
 
+				buf, err := afero.ReadFile(fs, "/override.yaml")
+				require.NoError(t, err)
+
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
-				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
-				require.Equal(t, "system", limaCfg.Provision[1].Mode)
-				require.Equal(t, "soci", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
-				require.Equal(t, sociInstallationScript, limaCfg.Provision[1].Script)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
+				require.Equal(t, "soci", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, sociInstallationScript, limaCfg.Provision[0].Script)
 
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -163,8 +149,9 @@ fi
 				Rosetta:      pointer.Bool(false),
 				Snapshotters: []string{},
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
@@ -178,7 +165,7 @@ fi
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
 				var limaCfg limayaml.LimaYAML
@@ -186,25 +173,18 @@ fi
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
+				val, ok := limaCfg.Env["CONTAINERD_SNAPSHOTTER"]
+				require.Equal(t, "", val)
+				require.False(t, ok)
+
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
-				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
-
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -217,8 +197,9 @@ fi
 				Rosetta:      pointer.Bool(false),
 				Snapshotters: []string{"overlayfs"},
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
@@ -232,7 +213,7 @@ fi
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
 				var limaCfg limayaml.LimaYAML
@@ -240,25 +221,16 @@ fi
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "overlayfs", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
-				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
-
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -271,25 +243,24 @@ fi
 				Rosetta:      pointer.Bool(false),
 				Snapshotters: []string{"overlayfs", "soci"},
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				_ *mocks.LimaConfigApplierSystemDeps,
+				deps *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				deps.EXPECT().Arch()
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
-				require.NoError(t, err)
-
-				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
+				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, "")
 				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
 				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
@@ -298,31 +269,27 @@ fi
 					sociFileName,
 					sociServiceDownloadURL)
 
+				buf, err := afero.ReadFile(fs, "/override.yaml")
+				require.NoError(t, err)
+
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, "overlayfs", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, sociInstallationScript, limaCfg.Provision[0].Script)
+
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, "", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
-				require.Equal(t, sociInstallationScript, limaCfg.Provision[1].Script)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
-
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -335,25 +302,24 @@ fi
 				Rosetta:      pointer.Bool(false),
 				Snapshotters: []string{"soci", "overlayfs"},
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				_ *mocks.LimaConfigApplierSystemDeps,
+				deps *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				deps.EXPECT().Arch()
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
-				require.NoError(t, err)
-
-				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, system.NewStdLib().Arch())
+				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, "")
 				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
 				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
@@ -362,31 +328,26 @@ fi
 					sociFileName,
 					sociServiceDownloadURL)
 
+				buf, err := afero.ReadFile(fs, "/override.yaml")
+				require.NoError(t, err)
+
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
+				require.Equal(t, "soci", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
+				require.Equal(t, sociInstallationScript, limaCfg.Provision[0].Script)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, "soci", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
-				require.Equal(t, sociInstallationScript, limaCfg.Provision[1].Script)
-				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
-
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -398,8 +359,9 @@ fi
 				VMType:  pointer.String("vz"),
 				Rosetta: pointer.Bool(true),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
@@ -407,34 +369,33 @@ fi
 				creator *mocks.CommandCreator,
 				deps *mocks.LimaConfigApplierSystemDeps,
 			) {
-				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
-cpus: 8
-vmType: "qemu"
-provision:
-- mode: system
-  script: |
-    # cross-arch tools
-    #!/bin/bash
-    qemu_pkgs=""
-    if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-      qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-    elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-      qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-    elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-      qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-    fi
+				err := afero.WriteFile(fs, "/default.yaml", []byte(`
+		vmType: "qemu"
+		provision:
+		- mode: system
+		  script: |
+		    # cross-arch tools
+		    #!/bin/bash
+		    qemu_pkgs=""
+		    if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+		      qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+		    elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+		      qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+		    elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+		      qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+		    fi
 
-    if [[ $qemu_pkgs ]]; then
-      dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-    fi
-`), 0o600)
+		    if [[ $qemu_pkgs ]]; then
+		      dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+		    fi
+		`), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 				deps.EXPECT().Arch().Return("arm64")
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
 				var limaCfg limayaml.LimaYAML
@@ -442,6 +403,12 @@ provision:
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
+
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+
 				require.Equal(t, "vz", *limaCfg.VMType)
 				require.Equal(t, "virtiofs", *limaCfg.MountType)
 				require.Equal(t, true, *limaCfg.Rosetta.BinFmt)
@@ -458,8 +425,9 @@ provision:
 				VMType:  pointer.String("qemu"),
 				Rosetta: pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
@@ -467,19 +435,18 @@ provision:
 				creator *mocks.CommandCreator,
 				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
-				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
-cpus: 8
+				err := afero.WriteFile(fs, "/default.yaml", []byte(`
 vmType: "vz"
 rosetta:
-  enabled: true
-  binfmt: true
+	enabled: true
+	binfmt: true
 `), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
 				var limaCfg limayaml.LimaYAML
@@ -487,26 +454,17 @@ rosetta:
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
+
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
 				require.Equal(t, "qemu", *limaCfg.VMType)
 				require.Equal(t, false, *limaCfg.Rosetta.Enabled)
 				require.Equal(t, false, *limaCfg.Rosetta.BinFmt)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
-
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -518,8 +476,9 @@ fi
 				VMType:  pointer.String("vz"),
 				Rosetta: pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: false,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       false,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
@@ -527,57 +486,19 @@ fi
 				_ *mocks.CommandCreator,
 				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
-				err := afero.WriteFile(fs, "/lima.yaml", []byte(`memory: 4GiB
-cpus: 8
-vmType: "qemu"
-mountType: "reverse-sshfs"
-provision:
-- mode: system
-  script: |
-    # cross-arch tools
-    #!/bin/bash
-    qemu_pkgs=""
-    if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-      qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-    elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-      qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-    elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-      qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-    fi
-
-    if [[ $qemu_pkgs ]]; then
-      dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-    fi
-`), 0o600)
+				err := afero.WriteFile(fs, "/default.yaml", []byte(`vmType: "qemu"
+mountType: "reverse-sshfs"`), 0o600)
 				require.NoError(t, err)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				buf, err := afero.ReadFile(fs, "/default.yaml")
 				require.NoError(t, err)
-
 				var limaCfg limayaml.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
-				require.Equal(t, 4, *limaCfg.CPUs)
-				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "qemu", *limaCfg.VMType)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
-				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
-
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				require.Equal(t, len(limaCfg.Provision), 0)
 			},
 			want: nil,
 		},
@@ -589,8 +510,9 @@ fi
 				VMType:  pointer.String("qemu"),
 				Rosetta: pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
@@ -604,7 +526,7 @@ fi
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
 				var limaCfg limayaml.LimaYAML
@@ -612,51 +534,59 @@ fi
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
+
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
-
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
 		{
-			name:   "lima config file does not contain valid YAML",
-			config: nil,
-			path:   "/lima.yaml",
-			isInit: true,
+			name: "lima config file does not contain valid YAML",
+			config: &Finch{
+				Memory:  pointer.String("2GiB"),
+				CPUs:    pointer.Int(4),
+				VMType:  pointer.String("qemu"),
+				Rosetta: pointer.Bool(false),
+			},
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
-				_ *mocks.Command,
-				_ *mocks.CommandCreator,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
 				_ *mocks.LimaConfigApplierSystemDeps,
 			) {
-				err := afero.WriteFile(fs, "/lima.yaml", []byte("this isn't YAML"), 0o600)
+				err := afero.WriteFile(fs, "/default.yaml", []byte("this isn't YAML"), 0o600)
 				require.NoError(t, err)
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				require.Equal(t, buf, []byte("this isn't YAML"))
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
-			want: fmt.Errorf(
-				"failed to unmarshal the lima config file: %w",
-				&yaml.TypeError{Errors: []string{"line 1: cannot unmarshal !!str `this is...` into limayaml.LimaYAML"}},
-			),
+			want: nil,
 		},
 		{
 			name: "lima config file with additional directories",
@@ -667,8 +597,9 @@ fi
 				VMType:                pointer.String("qemu"),
 				Rosetta:               pointer.Bool(false),
 			},
-			path:   "/lima.yaml",
-			isInit: true,
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
 			mockSvc: func(
 				fs afero.Fs,
 				_ *mocks.Logger,
@@ -682,7 +613,7 @@ fi
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				buf, err := afero.ReadFile(fs, "/lima.yaml")
+				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
 				var limaCfg limayaml.LimaYAML
@@ -690,26 +621,17 @@ fi
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
-				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, 1, len(limaCfg.Mounts))
 				require.Equal(t, "/Volumes", limaCfg.Mounts[0].Location)
 				require.Equal(t, true, *limaCfg.Mounts[0].Writable)
-				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, `# cross-arch tools
-#!/bin/bash
-qemu_pkgs=""
-if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-  qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-fi
 
-if [[ $qemu_pkgs ]]; then
-  dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-fi
-`, limaCfg.Provision[0].Script)
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
+				require.Equal(t, "system", limaCfg.Provision[0].Mode)
+				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -728,7 +650,13 @@ fi
 			fs := afero.NewMemMapFs()
 
 			tc.mockSvc(fs, l, cmd, cmdCreator, deps)
-			got := NewLimaApplier(tc.config, cmdCreator, fs, tc.path, deps).Apply(tc.isInit)
+			var got error
+			if tc.isInit {
+				got = NewLimaApplier(tc.config, cmdCreator, fs, tc.defaultPath, tc.overridePath, deps).ConfigureDefaultLimaYaml()
+				_ = NewLimaApplier(tc.config, cmdCreator, fs, tc.defaultPath, tc.overridePath, deps).ConfigureOverrideLimaYaml()
+			} else {
+				got = NewLimaApplier(tc.config, cmdCreator, fs, tc.defaultPath, tc.overridePath, deps).ConfigureOverrideLimaYaml()
+			}
 
 			require.Equal(t, tc.want, got)
 			tc.postRunCheck(t, fs)

@@ -28,7 +28,7 @@ var testCredHelper = func(o *option.Option, installed bool, registry string) {
 			if registry == "" {
 				ginkgo.Skip("No Provided Container Registry Url")
 			}
-			resetVM(o, installed)
+			resetVM(o)
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\ncreds_helpers:\n    "+
 				"- ecr-login\nvmType: %s\nrosetta: true", vmType)))

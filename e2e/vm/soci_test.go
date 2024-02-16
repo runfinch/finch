@@ -61,7 +61,7 @@ var testSoci = func(o *option.Option, installed bool) {
 		})
 
 		ginkgo.It("finch pull should have same mounts as nerdctl pull with SOCI", func() {
-			resetVM(o, installed)
+			resetVM(o)
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
 				"- soci\nvmType: %s\nrosetta: false", vmType)))
@@ -77,7 +77,7 @@ var testSoci = func(o *option.Option, installed bool) {
 		})
 
 		ginkgo.It("finch run should have same mounts as nerdctl run with SOCI", func() {
-			resetVM(o, installed)
+			resetVM(o)
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
 				"- soci\nvmType: %s\nrosetta: false", vmType)))
@@ -92,7 +92,7 @@ var testSoci = func(o *option.Option, installed bool) {
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
 		})
 		ginkgo.It("finch push should work", func() {
-			resetVM(o, installed)
+			resetVM(o)
 			resetDisks(o, installed)
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
 				"- soci\nvmType: %s\nrosetta: false", vmType)))

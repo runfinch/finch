@@ -82,7 +82,6 @@ func InstallOptionalDeps(groups []*Group, logger flog.Logger) error {
 			errs = append(errs, err)
 		}
 	}
-
 	if len(errs) > 0 {
 		return fmt.Errorf("failed to install dependencies: %w", errors.Join(errs...))
 	}
