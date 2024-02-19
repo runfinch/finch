@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1708372137917,
+  "lastUpdate": 1708372146492,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -32860,6 +32860,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 290,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47fe4f2d2cb070b94f97b316adee23a64c9c836a",
+          "message": "ci(deps): Bump aws-actions/configure-aws-credentials from 4.0.1 to 4.0.2 (#809)\n\nBumps\r\n[aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials)\r\nfrom 4.0.1 to 4.0.2.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/releases\">aws-actions/configure-aws-credentials's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v4.0.2</h2>\r\n<p>See the <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/blob/main/CHANGELOG.md\">changelog</a>\r\nfor details about the changes included in this release.</p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/blob/main/CHANGELOG.md\">aws-actions/configure-aws-credentials's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h1>Changelog</h1>\r\n<p>All notable changes to this project will be documented in this file.\r\nSee <a\r\nhref=\"https://github.com/conventional-changelog/standard-version\">standard-version</a>\r\nfor commit guidelines.</p>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v4.0.1...v4.0.2\">4.0.2</a>\r\n(2024-02-09)</h2>\r\n<ul>\r\n<li>Revert 4.0.1 to remove warning</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v4.0.0...v4.0.1\">4.0.1</a>\r\n(2023-10-03)</h2>\r\n<h3>Documentation</h3>\r\n<ul>\r\n<li>Throw a warning when customers use long-term credentials.</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v3.0.2...v4.0.0\">4.0.0</a>\r\n(2023-09-11)</h2>\r\n<ul>\r\n<li>Upgraded runtime to <code>node20</code> from\r\n<code>node16</code></li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v3.0.1...v3.0.2\">3.0.2</a>\r\n(2023-09-07)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>fixes <a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/817\">#817</a>\r\n<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/819\">#819</a>:\r\nvalidation logic throwing unwanted errors <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/d78f55b1db65186cb251a8504ae9527af06fc5fd\">d78f55b</a></li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v3.0.0...v3.0.1\">3.0.1</a>\r\n(2023-08-24)</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>Can configure <code>special-characters-workaround</code> to keep\r\nretrying credentials if the returned\r\ncredentials have special characters (Fixes <a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/599\">#599</a>)</li>\r\n</ul>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>Fixes <a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/792\">#792</a>:\r\nAction fails when intending to use existing credentials</li>\r\n<li>Minor typo fix from <a\r\nhref=\"https://github.com/ubaid-ansari21\"><code>@​ubaid-ansari21</code></a></li>\r\n</ul>\r\n<h3>Changes to existing functionality</h3>\r\n<ul>\r\n<li>Special characters are now allowed in returned credential variables\r\nunless you configure the\r\n<code>special-characters-workaround</code> option</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/v2.2.0...v3.0.0\">3.0.0</a>\r\n(2023-08-21)</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>Can configure <code>max-retries</code> and\r\n<code>disable-retry</code> to modify retry functionality when the assume\r\nrole call fails</li>\r\n<li>Set returned credentials as step outputs with\r\n<code>output-credentials</code></li>\r\n<li>Clear AWS related environment variables at the start of the action\r\nwith <code>unset-current-credentials</code></li>\r\n<li>Unique role identifier is now printed in the workflow logs</li>\r\n</ul>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>Can't use credentials if they contain a special character</li>\r\n<li>Retry functionality added when generating the JWT fails</li>\r\n<li>Can now use <code>webIdentityTokenFile</code> option</li>\r\n<li>Branch name validation too strict</li>\r\n<li>JS SDK v2 deprecation warning in workflow logs</li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/e3dd6a429d7300a6a4c196c26e071d42e0343502\"><code>e3dd6a4</code></a>\r\nchore: Bump <code>@​types/jest</code> from 29.5.11 to 29.5.12 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/1000\">#1000</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/c6c400fca46e6f0033dbdbac29d28db993b641dc\"><code>c6c400f</code></a>\r\nchore: Bump <code>@​types/node</code> from 20.11.5 to 20.11.16 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/999\">#999</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/c38ab417a361cbb7fa5bbab690a9356fda258f53\"><code>c38ab41</code></a>\r\nchore: Bump prettier from 3.2.4 to 3.2.5 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/998\">#998</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/2071ebe8a6b933b1341860457c7a33eb206dfb9a\"><code>2071ebe</code></a>\r\nchore: Bump <code>@​types/node</code> from 20.11.3 to 20.11.5 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/986\">#986</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/44112af7fc384b8b0a44e750998777ceac864b86\"><code>44112af</code></a>\r\nchore: Update dist</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/492c455782c0e7f83ae23aa2c3f8043cc93bf8ea\"><code>492c455</code></a>\r\nchore: Bump <code>@​aws-sdk/client-sts</code> from 3.490.0 to 3.496.0\r\n(<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/982\">#982</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/13e074e8f2e2f7c8cae9515694d0ff8ead9ed044\"><code>13e074e</code></a>\r\nchore: Update dist</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/5a676ce81e95cf6f41600bf05514c1a11daa0335\"><code>5a676ce</code></a>\r\nchore: Bump <code>@​smithy/property-provider</code> from 2.0.17 to 2.1.1\r\n(<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/985\">#985</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/e43a6967540faf6422502463f13b4b8fef4dc0ab\"><code>e43a696</code></a>\r\nchore: Bump ts-jest from 29.1.1 to 29.1.2 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/983\">#983</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/commit/eb98af56d55414d792b03da02b885834bbc725ba\"><code>eb98af5</code></a>\r\nchore: Bump prettier from 3.2.2 to 3.2.4 (<a\r\nhref=\"https://redirect.github.com/aws-actions/configure-aws-credentials/issues/981\">#981</a>)</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/aws-actions/configure-aws-credentials/compare/010d0da01d0b5a38af31e9c3470dbfdabdecca3a...e3dd6a429d7300a6a4c196c26e071d42e0343502\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=aws-actions/configure-aws-credentials&package-manager=github_actions&previous-version=4.0.1&new-version=4.0.2)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-02-19T14:44:26-05:00",
+          "tree_id": "2d20b95832873b849f2699a6cedcc1e3f4a32192",
+          "url": "https://github.com/runfinch/finch/commit/47fe4f2d2cb070b94f97b316adee23a64c9c836a"
+        },
+        "date": 1708372144835,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 35452969292,
+            "unit": "ns/op\t         0.5851 %cpu_avg/op\t        62.50 %cpu_peak/op\t        35.45 cpu_seconds/op\t1408868352 disk_bytes/op\t 1576856 B/op\t   33618 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 35452969292,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.5851,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 62.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 35.45,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1408868352,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1576856,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 33618,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 27527707167,
+            "unit": "ns/op\t         0.5094 %cpu_avg/op\t        71.43 %cpu_peak/op\t        27.53 cpu_seconds/op\t  70836224 disk_bytes/op\t 1241456 B/op\t   26024 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 27527707167,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.5094,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 71.43,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 27.53,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 70836224,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1241456,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 26024,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 254044510,
+            "unit": "ns/op\t         0.9863 %cpu_avg/op\t        17.14 %cpu_peak/op\t         0.2540 cpu_seconds/op\t      1024 disk_bytes/op\t   21064 B/op\t     285 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 254044510,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.9863,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 17.14,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.254,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 1024,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21064,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 285,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
