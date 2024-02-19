@@ -235,8 +235,9 @@ jobs:
         run: |
           wsl --list --verbose
           wsl --shutdown
-          timeout 10
+          Start-Sleep -s 10
           wsl --unregister lima-finch
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
           wsl --list --verbose    
       - name: Run container e2e tests
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
