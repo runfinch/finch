@@ -152,7 +152,7 @@ jobs:
           has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
           echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         if: ${{ steps.vars.outputs.has_creds == true }}
         with:
           role-to-assume: ${{ secrets.ROLE }}
@@ -212,7 +212,7 @@ jobs:
           echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         if: env.has_creds == 'true'
         with:
           role-to-assume: ${{ secrets.ROLE }}
