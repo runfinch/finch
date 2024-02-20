@@ -60,6 +60,7 @@ Write-Host "Files copied successfully."
 Write-Host "4. Copy extra scripts, license and icon..."
 Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "postinstall.bat") -Destination (Join-Path -Path $scriptDirectory -ChildPath "build\Finch")
 Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "uninstall.bat") -Destination (Join-Path -Path $scriptDirectory -ChildPath "build\Finch")
+Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "removevm.bat") -Destination (Join-Path -Path $scriptDirectory -ChildPath "build\Finch")
 Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "finch.ico") -Destination (Join-Path -Path $scriptDirectory -ChildPath "build\Finch")
 Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "LICENSE.rtf") -Destination (Join-Path -Path $scriptDirectory -ChildPath "build\Finch")
 Write-Host "Files copied successfully."
