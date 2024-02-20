@@ -21,6 +21,7 @@
             <File Id="config_yaml" Source="__SOURCE__\config.yaml" />
             <File Id="finch_ico" Source="__SOURCE__\finch.ico" />
             <File Id="LICENSE_rtf" Source="__SOURCE__\LICENSE.rtf" />
+            <File Id="removevm_bat" Source="__SOURCE__\removevm.bat" />
             <File Id="postinstall_bat" Source="__SOURCE__\postinstall.bat" />
             <File Id="uninstall_bat" Source="__SOURCE__\uninstall.bat" />
           </Component>
@@ -102,9 +103,11 @@
     </ComponentGroup>
     <CustomAction Id="RunPostInstallScript" FileKey="postinstall_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Return="check" Execute="deferred" Impersonate="no" />
     <CustomAction Id="RunUninstallScript" FileKey="uninstall_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Execute="deferred" Return="ignore" Impersonate="yes" />
+    <CustomAction Id="RunVMCleanupScript" FileKey="removevm_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Execute="deferred" Return="ignore" Impersonate="yes" />
     <InstallExecuteSequence>
       <RemoveExistingProducts After="InstallInitialize" />
-      <Custom Action="RunPostInstallScript" After="InstallFiles">NOT Installed</Custom>
+      <Custom Action="RunVMCleanupScript" After="InstallFiles">NOT Installed</Custom>
+      <Custom Action="RunPostInstallScript" After="RunVMCleanupScript">NOT Installed</Custom>
       <Custom Action="RunUninstallScript" After="InstallInitialize">REMOVE="ALL"</Custom> 
     </InstallExecuteSequence>
     <Property Id="WIXUI_INSTALLDIR" Value="ProgramFiles64Folder" />
