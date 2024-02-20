@@ -99,7 +99,7 @@
       <ComponentRef Id="Component_Roofts" />
     </ComponentGroup>
     <CustomAction Id="RunPostInstallScript" FileKey="postinstall_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Return="check" Execute="deferred" Impersonate="no" />
-    <CustomAction Id="RunUninstallScript" FileKey="uninstall_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Execute="deferred" Return="ignore" Impersonate="no" />
+    <CustomAction Id="RunUninstallScript" FileKey="uninstall_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Execute="deferred" Return="ignore" Impersonate="yes" />
     <InstallExecuteSequence>
       <RemoveExistingProducts After="InstallInitialize" />
       <Custom Action="RunPostInstallScript" After="InstallFiles">NOT Installed</Custom>
