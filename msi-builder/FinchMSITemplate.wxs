@@ -12,6 +12,8 @@
     <Feature Id="ProductFeature" Title="Finch" Level="1">
       <ComponentGroupRef Id="FinchComponents" />
     </Feature>
+    <!-- Disable FilesInUse/Restart dialogue -->
+    <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" />
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER" Name="Finch">
