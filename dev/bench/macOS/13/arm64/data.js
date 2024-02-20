@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1708387736208,
+  "lastUpdate": 1708463036210,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -33364,6 +33364,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 330,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pendo324@users.noreply.github.com",
+            "name": "Justin",
+            "username": "pendo324"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f64835d6b7d473eda434cbb932d3c049cac6a5d5",
+          "message": "fix(windows-installer): ignore FilesInUse/Restart dialogue (#823)\n\nIssue #, if available:\r\n- When upgrading Finch, if the VM is still running, an important looking\r\nscreen mentioning \"Files in use\" will pop up, and prompt the user to\r\nhave Finch try to delete these files, or ignore them. The default\r\nbehavior of these options doesn't actually do anything in our case.\r\nLuckily, stopping Finch's VM and making sure its removed (which is done\r\nin the uninstall script) should take care of this for us instead. This\r\nchange just removes the extra unnecessary step for users since it may be\r\nconfusing.\r\n\r\n*Description of changes:*\r\n- Suppress the \"Files in use\" dialogue since it's confusing and not\r\nuseful\r\n\r\n*Testing done:*\r\n- Simulated upgrades and uninstalls on my test machine\r\n\r\n\r\n\r\n- [x] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Justin Alvarez <alvajus@amazon.com>",
+          "timestamp": "2024-02-20T15:54:05-05:00",
+          "tree_id": "0dd7c132e845da8f552e609b9742570ed104c7cf",
+          "url": "https://github.com/runfinch/finch/commit/f64835d6b7d473eda434cbb932d3c049cac6a5d5"
+        },
+        "date": 1708463034850,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 39123905292,
+            "unit": "ns/op\t         0.5330 %cpu_avg/op\t        62.50 %cpu_peak/op\t        39.12 cpu_seconds/op\t1172520960 disk_bytes/op\t 1767760 B/op\t   37033 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 39123905292,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.533,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 62.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 39.12,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1172520960,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1767760,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 37033,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 22916349875,
+            "unit": "ns/op\t         0.5847 %cpu_avg/op\t        71.43 %cpu_peak/op\t        22.92 cpu_seconds/op\t 144404480 disk_bytes/op\t 1023032 B/op\t   21695 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 22916349875,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.5847,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 71.43,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 22.92,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 144404480,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1023032,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 21695,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 277709323,
+            "unit": "ns/op\t         1.816 %cpu_avg/op\t        18.75 %cpu_peak/op\t         0.2777 cpu_seconds/op\t      9216 disk_bytes/op\t   22206 B/op\t     309 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 277709323,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.816,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 18.75,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2777,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 9216,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22206,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 309,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
