@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.1.2](https://github.com/runfinch/finch/compare/v1.1.1...v1.1.2) (2024-02-20)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/docker from 25.0.1+incompatible to 25.0.3+incompatible ([#799](https://github.com/runfinch/finch/issues/799)) ([d761301](https://github.com/runfinch/finch/commit/d7613012551bd47c26476a993a35856aab91511c))
+* **deps:** Bump github.com/goccy/go-yaml from 1.11.2 to 1.11.3 ([#780](https://github.com/runfinch/finch/issues/780)) ([2e616ff](https://github.com/runfinch/finch/commit/2e616ff18d68931f0da81a04045960f035568322))
+* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.23.12 to 3.24.1 ([#787](https://github.com/runfinch/finch/issues/787)) ([55f6d92](https://github.com/runfinch/finch/commit/55f6d929949c1f776a63b93ea4a4446cc821e74a))
+* **deps:** Bump golang.org/x/crypto from 0.18.0 to 0.19.0 ([#806](https://github.com/runfinch/finch/issues/806)) ([3fbc87c](https://github.com/runfinch/finch/commit/3fbc87ce7e6a07a789674a52fb79f968db267951))
+* **deps:** Bump golang.org/x/tools from 0.17.0 to 0.18.0 ([#807](https://github.com/runfinch/finch/issues/807)) ([7323751](https://github.com/runfinch/finch/commit/7323751937900df76b217736acc51d77b9cff3d9))
+* **deps:** Bump k8s.io/apimachinery from 0.29.1 to 0.29.2 ([#820](https://github.com/runfinch/finch/issues/820)) ([6ca0f7f](https://github.com/runfinch/finch/commit/6ca0f7ff007f88ad37eb02b2c9437042a7350f37))
+* **deps:** Bump submodules and dependencies ([#795](https://github.com/runfinch/finch/issues/795)) ([ec77f1a](https://github.com/runfinch/finch/commit/ec77f1abe9c00ddd9cd84ed665204c2c5df4c40b))
+* **deps:** Bump submodules and dependencies ([#805](https://github.com/runfinch/finch/issues/805)) ([0bf9148](https://github.com/runfinch/finch/commit/0bf9148a6ce88dde413679cc9a3702a5d398d544))
+
+
+### Bug Fixes
+
+* Correct typo in type name of struct (NerdctlClientOuput) ([#743](https://github.com/runfinch/finch/issues/743)) ([13de2b9](https://github.com/runfinch/finch/commit/13de2b99fcd6f952beda9f75e6f3660974a815d0))
+* Env variable CONTAINERD_SNAPSHOTTER cleared on overlayfs and ref… ([#816](https://github.com/runfinch/finch/issues/816)) ([d222a34](https://github.com/runfinch/finch/commit/d222a347632f9898ed223a122c97d3a973bde3a5))
+* msi release tests cleanup ([#819](https://github.com/runfinch/finch/issues/819)) ([0f23660](https://github.com/runfinch/finch/commit/0f236609429534bab3057971e6126cf9b3ff47fc))
+* stop Finch on uninstall ([#818](https://github.com/runfinch/finch/issues/818)) ([a96788b](https://github.com/runfinch/finch/commit/a96788bbce5e9a6af805650a1c21d1c60e04fa68))
+* **windows-installer:** add new cleanup script on install ([#824](https://github.com/runfinch/finch/issues/824)) ([fccfa1d](https://github.com/runfinch/finch/commit/fccfa1dd5773242039254e067dcde0cd9fd4fe5e))
+* **windows-installer:** ignore FilesInUse/Restart dialogue ([#823](https://github.com/runfinch/finch/issues/823)) ([f64835d](https://github.com/runfinch/finch/commit/f64835d6b7d473eda434cbb932d3c049cac6a5d5))
+* **windows-installer:** uninstall script behavior ([#822](https://github.com/runfinch/finch/issues/822)) ([ace37ea](https://github.com/runfinch/finch/commit/ace37eaf48fca613f692e7a08b182d268fc60555))
+
+
+### Reverts
+
+* "always force stop when using Virtualization.framework" ([#370](https://github.com/runfinch/finch/issues/370)) ([cb3051e](https://github.com/runfinch/finch/commit/cb3051e60d80aabce550377696d4251c9a9b0eec))
+
 ## [1.1.1](https://github.com/runfinch/finch/compare/v1.1.0...v1.1.1) (2024-02-01)
 
 
