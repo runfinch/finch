@@ -87,7 +87,7 @@ jobs:
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
           echo "Update the local Finch cask with version $FINCH_VERSION"
-          brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
+          brew bump-cask-pr --write-only --version=$FINCH_VERSION finch
         shell: zsh {0}
       - name: Silently install
         run: |
@@ -208,7 +208,7 @@ jobs:
           export HOMEBREW_NO_INSTALL_FROM_API=1
           cd $(brew --repo homebrew/cask)
           echo "Update the local Finch cask with version $FINCH_VERSION"
-          brew bump-cask-pr --write-only -f --version=$FINCH_VERSION finch
+          brew bump-cask-pr --write-only --version=$FINCH_VERSION finch
         shell: zsh {0}
       - name: Silently install
         run: |
