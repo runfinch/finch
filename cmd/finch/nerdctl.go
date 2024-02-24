@@ -106,6 +106,9 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	if err != nil {
 		return err
 	}
+
+	cmdName, args = parseManagementCmd(cmdName, args)
+
 	var (
 		nerdctlArgs, envs, fileEnvs       []string
 		skip, hasCmdHander, hasArgHandler bool
@@ -473,4 +476,44 @@ var nerdctlCmds = map[string]string{
 	"update":    "Update configuration of one or more containers",
 	"volume":    "Manage volumes",
 	"wait":      "Block until one or more containers stop, then print their exit codes",
+}
+
+var managementCmds = []string{
+	"apparmor",
+	"builder",
+	"container",
+	"image",
+	"ipfs",
+	"namespace",
+	"network",
+	"system",
+	"volume",
+}
+
+// parseManagementCmd will parse commands such as ["container", "run", "alpine", ...]
+// into a single command, for eg: ["container run", "alpine", ...],
+// so that the command (such as "run") doesn't get treated as an argument.
+func parseManagementCmd(cmdName string, args []string) (string, []string) {
+	if !slices.Contains(managementCmds, cmdName) {
+		return cmdName, args
+	}
+
+	// find the next cmd argument that is not a flag starting with "-" or "--"
+	cmdSlice, args2 := []string{cmdName}, []string{}
+	index := len(args)
+	for i, arg := range args {
+		switch arg {
+		// separating debug arg to avoid `--debug` flag being interpreted as nerdctl command
+		case "--debug":
+			args2 = append(args2, arg)
+		default:
+			cmdSlice = append(cmdSlice, arg)
+		}
+		if !strings.HasPrefix(arg, "-") {
+			index = i + 1
+			break
+		}
+	}
+
+	return strings.Join(cmdSlice, " "), append(args2, args[index:]...)
 }
