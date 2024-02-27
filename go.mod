@@ -21,7 +21,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/tc-hib/go-winres v0.3.1
 	github.com/xorcare/pointer v1.2.2
-	golang.org/x/crypto v0.19.0
+	golang.org/x/crypto v0.20.0
 	golang.org/x/exp v0.0.0-20230810033253-352e893a4cad
 	golang.org/x/tools v0.18.0
 	gopkg.in/yaml.v3 v3.0.1
