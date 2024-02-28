@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1709136683786,
+  "lastUpdate": 1709140893092,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -10132,6 +10132,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 537,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "123a65976fecf00d2f5c522150f0c36f648da6c9",
+          "message": "ci(deps): Bump peter-evans/create-pull-request from 6.0.0 to 6.0.1 (#836)\n\nBumps\r\n[peter-evans/create-pull-request](https://github.com/peter-evans/create-pull-request)\r\nfrom 6.0.0 to 6.0.1.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/peter-evans/create-pull-request/releases\">peter-evans/create-pull-request's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>Create Pull Request v6.0.1</h2>\r\n<p>⚙️ Fixes <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2790\">an\r\nissue</a> where updating a pull request leads to the error <code>Cannot\r\nread properties of undefined (reading 'number')</code>. This was likely\r\ncaused by GitHub fixing a long standing bug with an API endpoint,\r\nresulting in a breaking change.</p>\r\n<h2>What's Changed</h2>\r\n<ul>\r\n<li>build(deps-dev): bump <code>@​types/jest</code> from 29.5.11 to\r\n29.5.12 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2730\">peter-evans/create-pull-request#2730</a></li>\r\n<li>build(deps-dev): bump prettier from 3.2.4 to 3.2.5 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2731\">peter-evans/create-pull-request#2731</a></li>\r\n<li>build(deps-dev): bump <code>@​types/node</code> from 18.19.10 to\r\n18.19.14 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2732\">peter-evans/create-pull-request#2732</a></li>\r\n<li>build(deps): bump peter-evans/slash-command-dispatch from 3 to 4 by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2748\">peter-evans/create-pull-request#2748</a></li>\r\n<li>build(deps): bump peter-evans/create-pull-request from 5 to 6 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2747\">peter-evans/create-pull-request#2747</a></li>\r\n<li>build(deps-dev): bump <code>@​types/node</code> from 18.19.14 to\r\n18.19.15 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2759\">peter-evans/create-pull-request#2759</a></li>\r\n<li>build(deps-dev): bump eslint-plugin-jest from 27.6.3 to 27.9.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2769\">peter-evans/create-pull-request#2769</a></li>\r\n<li>build(deps-dev): bump <code>@​types/node</code> from 18.19.15 to\r\n18.19.17 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2768\">peter-evans/create-pull-request#2768</a></li>\r\n<li>build(deps-dev): bump <code>@​types/node</code> from 18.19.17 to\r\n18.19.18 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2780\">peter-evans/create-pull-request#2780</a></li>\r\n<li>build(deps-dev): bump eslint from 8.56.0 to 8.57.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2781\">peter-evans/create-pull-request#2781</a></li>\r\n<li>fix: list pulls using the correct head format by <a\r\nhref=\"https://github.com/peter-evans\"><code>@​peter-evans</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2792\">peter-evans/create-pull-request#2792</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/peter-evans/create-pull-request/compare/v6.0.0...v6.0.1\">https://github.com/peter-evans/create-pull-request/compare/v6.0.0...v6.0.1</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/a4f52f8033a6168103c2538976c07b467e8163bc\"><code>a4f52f8</code></a>\r\nfix: list pulls using the correct head format (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2792\">#2792</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/853c071bcf61c8762f57e59c1576d97418f495ad\"><code>853c071</code></a>\r\nbuild(deps-dev): bump eslint from 8.56.0 to 8.57.0 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2781\">#2781</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/d2c126edc79e6a215930e9a6adc95b7686b84f78\"><code>d2c126e</code></a>\r\nbuild(deps-dev): bump <code>@​types/node</code> from 18.19.17 to\r\n18.19.18 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2780\">#2780</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/43d39c683601267cd565ea6bd727a4e92aa00852\"><code>43d39c6</code></a>\r\nbuild(deps-dev): bump <code>@​types/node</code> from 18.19.15 to\r\n18.19.17 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2768\">#2768</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/5a9d206da2b6452cd63eb84e2e5116ff3213e8cb\"><code>5a9d206</code></a>\r\nbuild(deps-dev): bump eslint-plugin-jest from 27.6.3 to 27.9.0 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2769\">#2769</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/e0743ed96cb63913cf4be3cd1f5492df2ae1c6a4\"><code>e0743ed</code></a>\r\nbuild(deps-dev): bump <code>@​types/node</code> from 18.19.14 to\r\n18.19.15 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2759\">#2759</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/e1529cb8abb50dd7240e4276b5c4e705d97be7e7\"><code>e1529cb</code></a>\r\nbuild(deps): bump peter-evans/create-pull-request from 5 to 6 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2747\">#2747</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/aad52e87e709ba797765001128cf194c946a457b\"><code>aad52e8</code></a>\r\nbuild(deps): bump peter-evans/slash-command-dispatch from 3 to 4 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2748\">#2748</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/a64ebdd73452502a4dd07379ce8f3640dcc0d987\"><code>a64ebdd</code></a>\r\nbuild(deps-dev): bump <code>@​types/node</code> from 18.19.10 to\r\n18.19.14 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2732\">#2732</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/51b40aff5f23f35e5211017631b0bc1d2746beab\"><code>51b40af</code></a>\r\nbuild(deps-dev): bump prettier from 3.2.4 to 3.2.5 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2731\">#2731</a>)</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/peter-evans/create-pull-request/compare/b1ddad2c994a25fbc81a28b3ec0e368bb2021c50...a4f52f8033a6168103c2538976c07b467e8163bc\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=peter-evans/create-pull-request&package-manager=github_actions&previous-version=6.0.0&new-version=6.0.1)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-02-28T12:04:59-05:00",
+          "tree_id": "ddb0b60ea64948b8ffa2cb2396d96dad14b8cb0f",
+          "url": "https://github.com/runfinch/finch/commit/123a65976fecf00d2f5c522150f0c36f648da6c9"
+        },
+        "date": 1709140892128,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 44064760509,
+            "unit": "ns/op\t         0.3486 %cpu_avg/op\t        30.00 %cpu_peak/op\t        44.06 cpu_seconds/op\t1341714432 disk_bytes/op\t 1981800 B/op\t   41876 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 44064760509,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3486,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 30,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 44.06,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1341714432,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1981800,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 41876,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 35690239549,
+            "unit": "ns/op\t         0.3006 %cpu_avg/op\t        35.29 %cpu_peak/op\t        35.69 cpu_seconds/op\t  17895424 disk_bytes/op\t 1581280 B/op\t   33740 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 35690239549,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3006,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 35.29,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 35.69,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 17895424,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1581280,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 33740,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 515957874,
+            "unit": "ns/op\t         0.7550 %cpu_avg/op\t        18.41 %cpu_peak/op\t         0.5159 cpu_seconds/op\t         0 disk_bytes/op\t   33772 B/op\t     543 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 515957874,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.755,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 18.41,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5159,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 33772,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 543,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
