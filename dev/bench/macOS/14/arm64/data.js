@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1709141031800,
+  "lastUpdate": 1709330109594,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -10828,6 +10828,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 298,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d2612aa7683e93213e0ba5f9e082afb343ddcaf2",
+          "message": "build(deps): Bump github.com/shirou/gopsutil/v3 from 3.24.1 to 3.24.2 (#838)\n\nBumps\r\n[github.com/shirou/gopsutil/v3](https://github.com/shirou/gopsutil) from\r\n3.24.1 to 3.24.2.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/shirou/gopsutil/releases\">github.com/shirou/gopsutil/v3's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v3.24.2</h2>\r\n<!-- raw HTML omitted -->\r\n<h2>What's Changed</h2>\r\n<h3>cpu</h3>\r\n<ul>\r\n<li>add support for OpenBSD/riscv64 by <a\r\nhref=\"https://github.com/jmatthew\"><code>@​jmatthew</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1594\">shirou/gopsutil#1594</a></li>\r\n<li>[ci]: add macos-13 and macos-14 on GitHub Action by <a\r\nhref=\"https://github.com/shirou\"><code>@​shirou</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1599\">shirou/gopsutil#1599</a></li>\r\n</ul>\r\n<h3>Documentation</h3>\r\n<ul>\r\n<li>cwd for windows is supported by <a\r\nhref=\"https://github.com/vlnaum\"><code>@​vlnaum</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1597\">shirou/gopsutil#1597</a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a href=\"https://github.com/jmatthew\"><code>@​jmatthew</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1594\">shirou/gopsutil#1594</a></li>\r\n<li><a href=\"https://github.com/vlnaum\"><code>@​vlnaum</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1597\">shirou/gopsutil#1597</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/shirou/gopsutil/compare/v3.24.1...v3.24.2\">https://github.com/shirou/gopsutil/compare/v3.24.1...v3.24.2</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/e767a0f0f85ae67f68c76d6a29c537ff71392f88\"><code>e767a0f</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1599\">#1599</a>\r\nfrom shirou/feat/add_macos_on_github_action_test</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/53fb8caad4bf683e50b5ee73e6bb1fbaafafd314\"><code>53fb8ca</code></a>\r\n[darwin][ci]: skip frequency check on GitHub Action</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/25c3f409bd30649a00cfdf52a65b267522fb2bc5\"><code>25c3f40</code></a>\r\n[ci]: add macos-13 and macos-14 on GitHub Action</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/146bae2a4787c7841a7fc2d706b1415e47898dd2\"><code>146bae2</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1597\">#1597</a>\r\nfrom vlnaum/cwd_windows</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/d3057c252fe2c12f0b2f62a597d47dddeadcb6e7\"><code>d3057c2</code></a>\r\ncwd support windows doc</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/8aeaf163abb6216e52f56bbba4919f6dbc4fd894\"><code>8aeaf16</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1594\">#1594</a>\r\nfrom jmatthew/openbsd-riscv64</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/cbbb2402fedb359c35cf71013f3c8e8768a736da\"><code>cbbb240</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1595\">#1595</a>\r\nfrom shirou/dependabot/github_actions/golangci/golan...</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/d0037dd62b71f9f239b56858c8e72d65ff831c7a\"><code>d0037dd</code></a>\r\nchore(deps): bump golangci/golangci-lint-action from 3.7.0 to 4.0.0</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/6ccc60519ec242820e0b2dddb0fae18376363ad3\"><code>6ccc605</code></a>\r\nupdate list OpenBSD arch list</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/27ffa28a0d97df0fde4df6982597d85c06859d78\"><code>27ffa28</code></a>\r\nadd support for OpenBSD/riscv64</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/shirou/gopsutil/compare/v3.24.1...v3.24.2\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/shirou/gopsutil/v3&package-manager=go_modules&previous-version=3.24.1&new-version=3.24.2)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-03-01T16:37:47-05:00",
+          "tree_id": "1e3088e0a6fc6a8d2ac9fc85e90f5807b0864516",
+          "url": "https://github.com/runfinch/finch/commit/d2612aa7683e93213e0ba5f9e082afb343ddcaf2"
+        },
+        "date": 1709330108263,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 37754295917,
+            "unit": "ns/op\t         0.8894 %cpu_avg/op\t        77.78 %cpu_peak/op\t        37.75 cpu_seconds/op\t1177341952 disk_bytes/op\t 1713032 B/op\t   35784 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 37754295917,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.8894,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 77.78,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 37.75,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1177341952,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1713032,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 35784,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 20434004500,
+            "unit": "ns/op\t         0.9223 %cpu_avg/op\t        57.14 %cpu_peak/op\t        20.43 cpu_seconds/op\t  16642048 disk_bytes/op\t  925288 B/op\t   19430 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 20434004500,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.9223,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 57.14,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 20.43,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 16642048,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 925288,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 19430,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 261593625,
+            "unit": "ns/op\t         2.568 %cpu_avg/op\t        19.38 %cpu_peak/op\t         0.2615 cpu_seconds/op\t      4096 disk_bytes/op\t   22226 B/op\t     294 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 261593625,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 2.568,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 19.38,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2615,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22226,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 294,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
