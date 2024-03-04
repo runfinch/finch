@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1709330109594,
+  "lastUpdate": 1709571359354,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -10996,6 +10996,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 294,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9f0953d260c806b4b243472ddce14284b2051a3e",
+          "message": "build(deps): Bump github.com/stretchr/testify from 1.8.4 to 1.9.0 (#839)\n\nBumps [github.com/stretchr/testify](https://github.com/stretchr/testify)\r\nfrom 1.8.4 to 1.9.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/stretchr/testify/releases\">github.com/stretchr/testify's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v1.9.0</h2>\r\n<h2>What's Changed</h2>\r\n<ul>\r\n<li>Fix Go modules version by <a\r\nhref=\"https://github.com/SuperQ\"><code>@​SuperQ</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1394\">stretchr/testify#1394</a></li>\r\n<li>Document that require is not safe to call in created goroutines by\r\n<a\r\nhref=\"https://github.com/programmer04\"><code>@​programmer04</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1392\">stretchr/testify#1392</a></li>\r\n<li>Remove myself from MAINTAINERS.md by <a\r\nhref=\"https://github.com/mvdkleijn\"><code>@​mvdkleijn</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1367\">stretchr/testify#1367</a></li>\r\n<li>Correct spelling/grammar by <a\r\nhref=\"https://github.com/echarrod\"><code>@​echarrod</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1389\">stretchr/testify#1389</a></li>\r\n<li>docs: Update URLs in README by <a\r\nhref=\"https://github.com/davidjb\"><code>@​davidjb</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1349\">stretchr/testify#1349</a></li>\r\n<li>Update mockery link to Github Pages in README by <a\r\nhref=\"https://github.com/LandonTClipp\"><code>@​LandonTClipp</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1346\">stretchr/testify#1346</a></li>\r\n<li>docs: Fix typos in tests and comments by <a\r\nhref=\"https://github.com/alexandear\"><code>@​alexandear</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1410\">stretchr/testify#1410</a></li>\r\n<li>CI: tests from go1.17 by <a\r\nhref=\"https://github.com/SuperQ\"><code>@​SuperQ</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1409\">stretchr/testify#1409</a></li>\r\n<li>Fix adding ? when no values passed by <a\r\nhref=\"https://github.com/lesichkovm\"><code>@​lesichkovm</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1320\">stretchr/testify#1320</a></li>\r\n<li>codegen: use standard header for generated files by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1406\">stretchr/testify#1406</a></li>\r\n<li>mock: AssertExpectations log reason only on failure by <a\r\nhref=\"https://github.com/hikyaru-suzuki\"><code>@​hikyaru-suzuki</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1360\">stretchr/testify#1360</a></li>\r\n<li>assert: fix flaky TestNeverTrue by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1417\">stretchr/testify#1417</a></li>\r\n<li>README: fix typos &quot;set up&quot; vs &quot;setup&quot; by <a\r\nhref=\"https://github.com/ossan-dev\"><code>@​ossan-dev</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1428\">stretchr/testify#1428</a></li>\r\n<li>mock: move regexp compilation outside of <code>Called</code> by <a\r\nhref=\"https://github.com/aud10slave\"><code>@​aud10slave</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/631\">stretchr/testify#631</a></li>\r\n<li>assert: refactor internal func getLen() by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1445\">stretchr/testify#1445</a></li>\r\n<li>mock: deprecate type AnythingOfTypeArgument (<a\r\nhref=\"https://redirect.github.com/stretchr/testify/issues/1434\">#1434</a>)\r\nby <a href=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1441\">stretchr/testify#1441</a></li>\r\n<li>Remove no longer needed assert.canConvert by <a\r\nhref=\"https://github.com/alexandear\"><code>@​alexandear</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1470\">stretchr/testify#1470</a></li>\r\n<li>assert: ObjectsAreEqual: use time.Equal for time.Time types by <a\r\nhref=\"https://github.com/tscales\"><code>@​tscales</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1464\">stretchr/testify#1464</a></li>\r\n<li>Bump actions/checkout from 3 to 4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1466\">stretchr/testify#1466</a></li>\r\n<li>Bump actions/setup-go from 3.2.0 to 4.1.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1451\">stretchr/testify#1451</a></li>\r\n<li>fix: make EventuallyWithT concurrency safe by <a\r\nhref=\"https://github.com/czeslavo\"><code>@​czeslavo</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1395\">stretchr/testify#1395</a></li>\r\n<li>assert: fix httpCode and HTTPBody occur panic when http.Handler read\r\nBody by <a href=\"https://github.com/hidu\"><code>@​hidu</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1484\">stretchr/testify#1484</a></li>\r\n<li>assert.EqualExportedValues: fix handling of arrays by <a\r\nhref=\"https://github.com/zrbecker\"><code>@​zrbecker</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1473\">stretchr/testify#1473</a></li>\r\n<li>.github: use latest Go versions by <a\r\nhref=\"https://github.com/kevinburkesegment\"><code>@​kevinburkesegment</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1489\">stretchr/testify#1489</a></li>\r\n<li>assert: Deprecate EqualExportedValues by <a\r\nhref=\"https://github.com/HaraldNordgren\"><code>@​HaraldNordgren</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1488\">stretchr/testify#1488</a></li>\r\n<li>suite: refactor test assertions by <a\r\nhref=\"https://github.com/alexandear\"><code>@​alexandear</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1474\">stretchr/testify#1474</a></li>\r\n<li>suite: fix SetupSubTest and TearDownSubTest execution order by <a\r\nhref=\"https://github.com/linusbarth\"><code>@​linusbarth</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1471\">stretchr/testify#1471</a></li>\r\n<li>docs: Fix deprecation comments for http package by <a\r\nhref=\"https://github.com/alexandear\"><code>@​alexandear</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1335\">stretchr/testify#1335</a></li>\r\n<li>Add map support doc comments to Subset and NotSubset by <a\r\nhref=\"https://github.com/jedevc\"><code>@​jedevc</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1306\">stretchr/testify#1306</a></li>\r\n<li>TestErrorIs/TestNotErrorIs: check error message contents by <a\r\nhref=\"https://github.com/craig65535\"><code>@​craig65535</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1435\">stretchr/testify#1435</a></li>\r\n<li>suite: fix subtest names (fix <a\r\nhref=\"https://redirect.github.com/stretchr/testify/issues/1501\">#1501</a>)\r\nby <a href=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1504\">stretchr/testify#1504</a></li>\r\n<li>assert: improve unsafe.Pointer tests by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1505\">stretchr/testify#1505</a></li>\r\n<li>assert: simplify isNil implementation by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1506\">stretchr/testify#1506</a></li>\r\n<li>assert.InEpsilonSlice: fix expected/actual order and other\r\nimprovements by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1483\">stretchr/testify#1483</a></li>\r\n<li>Fix dependency cycle with objx <a\r\nhref=\"https://redirect.github.com/stretchr/testify/issues/1292\">#1292</a>\r\nby <a href=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1453\">stretchr/testify#1453</a></li>\r\n<li>mock: refactor TestIsArgsEqual by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1444\">stretchr/testify#1444</a></li>\r\n<li>mock: optimize argument matching checks by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1416\">stretchr/testify#1416</a></li>\r\n<li>assert: fix TestEventuallyTimeout by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1412\">stretchr/testify#1412</a></li>\r\n<li>CI: add go 1.21 in GitHub Actions by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1450\">stretchr/testify#1450</a></li>\r\n<li>suite: fix recoverAndFailOnPanic to report test failure at the right\r\nlocation by <a\r\nhref=\"https://github.com/dolmen\"><code>@​dolmen</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1502\">stretchr/testify#1502</a></li>\r\n<li>Update maintainers by <a\r\nhref=\"https://github.com/brackendawson\"><code>@​brackendawson</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1533\">stretchr/testify#1533</a></li>\r\n<li>assert: Fix EqualValues to handle overflow/underflow by <a\r\nhref=\"https://github.com/arjunmahishi\"><code>@​arjunmahishi</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1531\">stretchr/testify#1531</a></li>\r\n<li>assert: better formatting for Len() error by <a\r\nhref=\"https://github.com/kevinburkesegment\"><code>@​kevinburkesegment</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1485\">stretchr/testify#1485</a></li>\r\n<li>Ensure AssertExpectations does not fail in skipped tests by <a\r\nhref=\"https://github.com/ianrose14\"><code>@​ianrose14</code></a> in <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1331\">stretchr/testify#1331</a></li>\r\n<li>suite: fix deadlock in suite.Require()/Assert() by <a\r\nhref=\"https://github.com/arjunmahishi\"><code>@​arjunmahishi</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1535\">stretchr/testify#1535</a></li>\r\n<li>Revert &quot;assert: ObjectsAreEqual: use time.Equal for time.Time\r\ntype&quot; by <a\r\nhref=\"https://github.com/brackendawson\"><code>@​brackendawson</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1537\">stretchr/testify#1537</a></li>\r\n<li>[chore] Add issue templates by <a\r\nhref=\"https://github.com/arjunmahishi\"><code>@​arjunmahishi</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1538\">stretchr/testify#1538</a></li>\r\n<li>Update the build status badge by <a\r\nhref=\"https://github.com/brackendawson\"><code>@​brackendawson</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/stretchr/testify/pull/1540\">stretchr/testify#1540</a></li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/bb548d0473d4e1c9b7bbfd6602c7bf12f7a84dd2\"><code>bb548d0</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/stretchr/testify/issues/1552\">#1552</a>\r\nfrom stretchr/dependabot/go_modules/github.com/stret...</li>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/814075f391adffd2bf2b5110a74c51827ba132c4\"><code>814075f</code></a>\r\nbuild(deps): bump github.com/stretchr/objx from 0.5.1 to 0.5.2</li>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/e0456122451b1839c8d58d32df6364e4d0f0a709\"><code>e045612</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/stretchr/testify/issues/1339\">#1339</a>\r\nfrom bogdandrutu/uintptr</li>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/5b6926d686d412518f50e888b9ae9b938355e011\"><code>5b6926d</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/stretchr/testify/issues/1385\">#1385</a>\r\nfrom hslatman/not-implements</li>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/9f97d67703eff02136d487e6c907e76fdea31a8b\"><code>9f97d67</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/stretchr/testify/issues/1550\">#1550</a>\r\nfrom stretchr/release-notes</li>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/bcb0d3fe49ff300fb78288cc144bc61a881f58ec\"><code>bcb0d3f</code></a>\r\nInclude the auto-release notes in releases</li>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/fb770f8238261aa22f8e0c56f18168ccb90f4a09\"><code>fb770f8</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/stretchr/testify/issues/1247\">#1247</a>\r\nfrom ccoVeille/typos</li>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/85d8bb6eea715dcbbb68f7c87b50e1956e20f892\"><code>85d8bb6</code></a>\r\nfix typos in comments, tests and github templates</li>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/e2741fa4e9bf2fdfe3ed48d976a7eeebe76c5009\"><code>e2741fa</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/stretchr/testify/issues/1548\">#1548</a>\r\nfrom arjunmahishi/msgAndArgs</li>\r\n<li><a\r\nhref=\"https://github.com/stretchr/testify/commit/6e59f20c0d3883d2bdc589a9e48374ea30601851\"><code>6e59f20</code></a>\r\nhttp_assertions: assert that the msgAndArgs actually works in tests</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/stretchr/testify/compare/v1.8.4...v1.9.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/stretchr/testify&package-manager=go_modules&previous-version=1.8.4&new-version=1.9.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-03-04T11:11:22-05:00",
+          "tree_id": "c4dede5619f23322e5ca83bcb6bcd50f6e91a772",
+          "url": "https://github.com/runfinch/finch/commit/9f0953d260c806b4b243472ddce14284b2051a3e"
+        },
+        "date": 1709571357940,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 38743421166,
+            "unit": "ns/op\t         0.4189 %cpu_avg/op\t        45.45 %cpu_peak/op\t        38.74 cpu_seconds/op\t1145266176 disk_bytes/op\t 1752976 B/op\t   36663 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 38743421166,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4189,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 45.45,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 38.74,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1145266176,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1752976,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 36663,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24295056750,
+            "unit": "ns/op\t         0.3509 %cpu_avg/op\t        30.00 %cpu_peak/op\t        24.29 cpu_seconds/op\t  72351744 disk_bytes/op\t 1081528 B/op\t   23009 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24295056750,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3509,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 30,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.29,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 72351744,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1081528,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 23009,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 258968479,
+            "unit": "ns/op\t         2.374 %cpu_avg/op\t        15.48 %cpu_peak/op\t         0.2589 cpu_seconds/op\t         0 disk_bytes/op\t   21892 B/op\t     290 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 258968479,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 2.374,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 15.48,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2589,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21892,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 290,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
