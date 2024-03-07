@@ -48,6 +48,7 @@ func TestVM(t *testing.T) {
 		time.Sleep(1 * time.Second)
 		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
 		time.Sleep(1 * time.Second)
+		resetDisks(o, *e2e.Installed)
 	}, func() {})
 
 	ginkgo.AfterEach(func() {

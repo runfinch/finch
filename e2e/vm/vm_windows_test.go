@@ -36,8 +36,9 @@ func TestVM(t *testing.T) {
 	}, func(_ []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
-		command.New(o, "vm", "stop").WithTimeoutInSeconds(90).Run()
-		command.New(o, "vm", "remove").WithTimeoutInSeconds(60).Run()
+		command.New(o, "vm", "stop", "-f").WithTimeoutInSeconds(90).Run()
+		command.New(o, "vm", "remove", "-f").WithTimeoutInSeconds(60).Run()
+		resetDisks(o, *e2e.Installed)
 	}, func() {})
 
 	ginkgo.Describe("", func() {
