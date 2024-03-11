@@ -52,3 +52,26 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           signoff: true
           title: 'build(deps): Bump submodules and dependencies'
+          body: >
+            Bump for Finch's dependencies.
+
+            Currently, this updates values based on artifacts defined in the finch-core repository,
+            such as: operating system images, and the version of Lima (and it's dependencies),
+            which are bundled as `lima-and-qemu.macos-*.*.tar.gz` archives.
+
+            Since updating the Lima version may also update the default version of the `nerdctl-full`
+            archive (which contains nerdctl, containerd, buildkit, etc.), this may require a manual
+            update to
+            [`e2e/vm/version_test.go`](https://github.com/runfinch/finch/tree/create-pull-request/patch/e2e/vm/version_test.go).
+
+            To do so, checkout this PR branch locally, add a new commit to the branch,
+            and push back to the branch:
+
+              ```bash
+              git fetch --all
+              git switch create-pull-request/patch
+              # make changes
+              git add e2e/vm/version_test.go
+              git commit -s "update dependency versions in version test"
+              git push
+              ```
