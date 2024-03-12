@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1710273677260,
+  "lastUpdate": 1710273959472,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -11596,6 +11596,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 547,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c63656063476314ecd16e23697b4cdb3a88cf197",
+          "message": "ci(deps): Bump google-github-actions/release-please-action from 4.0.2 to 4.1.0 (#852)\n\nBumps\r\n[google-github-actions/release-please-action](https://github.com/google-github-actions/release-please-action)\r\nfrom 4.0.2 to 4.1.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/google-github-actions/release-please-action/releases\">google-github-actions/release-please-action's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v4.1.0</h2>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v4.0.3...v4.1.0\">4.1.0</a>\r\n(2024-03-11)</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>add <code>changelog-host</code> input to <code>action.yml</code> (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/948\">#948</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/863b06fd1cd7f36c1d74d697ddebe3cf5be4c6b0\">863b06f</a>)</li>\r\n</ul>\r\n<h2>v4.0.3</h2>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v4.0.2...v4.0.3\">4.0.3</a>\r\n(2024-03-11)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 16.5.0 to 16.10.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/953\">#953</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/d7e88e0fd9e1a56d1075f610183d571f8347ff9b\">d7e88e0</a>)</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/google-github-actions/release-please-action/blob/main/CHANGELOG.md\">google-github-actions/release-please-action's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h1>Changelog</h1>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v4.0.3...v4.1.0\">4.1.0</a>\r\n(2024-03-11)</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>add <code>changelog-host</code> input to <code>action.yml</code> (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/948\">#948</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/863b06fd1cd7f36c1d74d697ddebe3cf5be4c6b0\">863b06f</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v4.0.2...v4.0.3\">4.0.3</a>\r\n(2024-03-11)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 16.5.0 to 16.10.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/953\">#953</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/d7e88e0fd9e1a56d1075f610183d571f8347ff9b\">d7e88e0</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v4.0.1...v4.0.2\">4.0.2</a>\r\n(2023-12-18)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 16.4.0 to 16.5.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/905\">#905</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/df719633a752e335dfde3e62e037315a25ecf6fc\">df71963</a>)</li>\r\n<li>log release-please version (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/910\">#910</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/2a496d1db5f8860ae46f6066f5dcb73490a99d02\">2a496d1</a>),\r\ncloses <a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/325\">#325</a></li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v4.0.0...v4.0.1\">4.0.1</a>\r\n(2023-12-07)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>bump release-please from 16.3.1 to 16.4.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/897\">#897</a>)\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/2463dad9b20163a40708db720b9fde34c2a2ab0e\">2463dad</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/v3.7.13...v4.0.0\">4.0.0</a>\r\n(2023-12-01)</h2>\r\n<h3>⚠ BREAKING CHANGES</h3>\r\n<ul>\r\n<li>remove most configuration options in favor of manifest configuration\r\nto configure the release-please-action</li>\r\n<li>rewrite in typescript</li>\r\n<li>remove command option in favor of setting <code>release-type</code>\r\nand\r\n<code>skip-github-release</code>/<code>skip-github-pull-request</code></li>\r\n<li>run on node20</li>\r\n<li><strong>deps:</strong> upgrade release-please to v16</li>\r\n<li>v4 release</li>\r\n</ul>\r\n<h3>Features</h3>\r\n<ul>\r\n<li><strong>deps:</strong> upgrade release-please to v16 (<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n<li>remove command option in favor of setting <code>release-type</code>\r\nand\r\n<code>skip-github-release</code>/<code>skip-github-pull-request</code>\r\n(<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n<li>remove most configuration options in favor of manifest configuration\r\nto configure the release-please-action (<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n<li>run on node20 (<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n<li>v4 release (<a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/9cf05a09b133475347f729dc7d17b023081cc8d3\">9cf05a0</a>)</li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/a37ac6e4f6449ce8b3f7607e4d97d0146028dc0b\"><code>a37ac6e</code></a>\r\nchore(main): release 4.1.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/957\">#957</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/733a6d752f7032c519e5e9c677b7bf840e3d1f54\"><code>733a6d7</code></a>\r\nchore: build dist (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/956\">#956</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/863b06fd1cd7f36c1d74d697ddebe3cf5be4c6b0\"><code>863b06f</code></a>\r\nfeat: add <code>changelog-host</code> input to <code>action.yml</code>\r\n(<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/948\">#948</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/078b9b8dda7799db29972b379561ff8e19b08e82\"><code>078b9b8</code></a>\r\nchore(main): release 4.0.3 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/955\">#955</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/4862c13f8c18f1bd9a9d243214c033d402c31d42\"><code>4862c13</code></a>\r\nchore: build dist (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/954\">#954</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/google-github-actions/release-please-action/commit/d7e88e0fd9e1a56d1075f610183d571f8347ff9b\"><code>d7e88e0</code></a>\r\nfix: bump release-please from 16.5.0 to 16.10.0 (<a\r\nhref=\"https://redirect.github.com/google-github-actions/release-please-action/issues/953\">#953</a>)</li>\r\n<li>See full diff in <a\r\nhref=\"https://github.com/google-github-actions/release-please-action/compare/cc61a07e2da466bebbc19b3a7dd01d6aecb20d1e...a37ac6e4f6449ce8b3f7607e4d97d0146028dc0b\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=google-github-actions/release-please-action&package-manager=github_actions&previous-version=4.0.2&new-version=4.1.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-03-12T16:01:56-04:00",
+          "tree_id": "ae5465824a47ec4e021fa3eb1b1ce1b4cefa6757",
+          "url": "https://github.com/runfinch/finch/commit/c63656063476314ecd16e23697b4cdb3a88cf197"
+        },
+        "date": 1710273958452,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 47453554196,
+            "unit": "ns/op\t         0.3306 %cpu_avg/op\t        46.15 %cpu_peak/op\t        47.45 cpu_seconds/op\t1250086912 disk_bytes/op\t 2122568 B/op\t   45051 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 47453554196,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3306,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 46.15,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 47.45,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1250086912,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2122568,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 45051,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 29661555322,
+            "unit": "ns/op\t         0.3269 %cpu_avg/op\t        55.56 %cpu_peak/op\t        29.66 cpu_seconds/op\t  16732160 disk_bytes/op\t 1337856 B/op\t   28213 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 29661555322,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3269,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 55.56,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 29.66,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 16732160,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1337856,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 28213,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 518554194,
+            "unit": "ns/op\t         1.491 %cpu_avg/op\t        19.05 %cpu_peak/op\t         0.5185 cpu_seconds/op\t    -22528 disk_bytes/op\t   33616 B/op\t     546 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 518554194,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.491,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 19.05,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5185,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": -22528,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 33616,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 546,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
