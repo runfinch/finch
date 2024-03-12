@@ -154,8 +154,8 @@ github.com/power-devops/perfstat v0.0.0-20221212215047-62379fc7944b/go.mod h1:Om
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
-github.com/runfinch/common-tests v0.7.14 h1:sWGMnrcbcirvkUwfqWJJPL1ok5y0Q+/w9G5HqwCnmqI=
-github.com/runfinch/common-tests v0.7.14/go.mod h1:4JVWZRyjSQ5+X9DRP4tg/Uvxi80AK8pOoe0qrBDi4y4=
+github.com/runfinch/common-tests v0.7.15 h1:gLYjCyYen0n0mImAefQaPxG+ARaLujQVIX7LiF9RycI=
+github.com/runfinch/common-tests v0.7.15/go.mod h1:4JVWZRyjSQ5+X9DRP4tg/Uvxi80AK8pOoe0qrBDi4y4=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf35Ld67mk=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
