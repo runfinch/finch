@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1710266898205,
+  "lastUpdate": 1710267115948,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -11260,6 +11260,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 592,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8e044217f97b9fe8b4557e5770eb2b383768c413",
+          "message": "build(deps): Bump github.com/onsi/ginkgo/v2 from 2.15.0 to 2.16.0 (#842)\n\nBumps [github.com/onsi/ginkgo/v2](https://github.com/onsi/ginkgo) from\r\n2.15.0 to 2.16.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/onsi/ginkgo/releases\">github.com/onsi/ginkgo/v2's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v2.16.0</h2>\r\n<h2>2.16.0</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>add SpecContext to reporting nodes</li>\r\n</ul>\r\n<h3>Fixes</h3>\r\n<ul>\r\n<li>merge coverages instead of combining them (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1329\">#1329</a>)\r\n(<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1340\">#1340</a>)\r\n[23f0cc5]</li>\r\n<li>core_dsl: disable Getwd() with environment variable (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1357\">#1357</a>)\r\n[cd418b7]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>docs/index.md: Typo [2cebe8d]</li>\r\n<li>fix docs [06de431]</li>\r\n<li>chore: test with Go 1.22 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1352\">#1352</a>)\r\n[898cba9]</li>\r\n<li>Bump golang.org/x/tools from 0.16.1 to 0.17.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1336\">#1336</a>)\r\n[17ae120]</li>\r\n<li>Bump golang.org/x/sys from 0.15.0 to 0.16.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1327\">#1327</a>)\r\n[5a179ed]</li>\r\n<li>Bump github.com/go-logr/logr from 1.3.0 to 1.4.1 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1321\">#1321</a>)\r\n[a1e6b69]</li>\r\n<li>Bump github-pages and jekyll-feed in /docs (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1351\">#1351</a>)\r\n[d52951d]</li>\r\n<li>Fix docs for handling failures in goroutines (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1339\">#1339</a>)\r\n[4471b2e]</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/onsi/ginkgo/blob/master/CHANGELOG.md\">github.com/onsi/ginkgo/v2's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2>2.16.0</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>add SpecContext to reporting nodes</li>\r\n</ul>\r\n<h3>Fixes</h3>\r\n<ul>\r\n<li>merge coverages instead of combining them (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1329\">#1329</a>)\r\n(<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1340\">#1340</a>)\r\n[23f0cc5]</li>\r\n<li>core_dsl: disable Getwd() with environment variable (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1357\">#1357</a>)\r\n[cd418b7]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>docs/index.md: Typo [2cebe8d]</li>\r\n<li>fix docs [06de431]</li>\r\n<li>chore: test with Go 1.22 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1352\">#1352</a>)\r\n[898cba9]</li>\r\n<li>Bump golang.org/x/tools from 0.16.1 to 0.17.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1336\">#1336</a>)\r\n[17ae120]</li>\r\n<li>Bump golang.org/x/sys from 0.15.0 to 0.16.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1327\">#1327</a>)\r\n[5a179ed]</li>\r\n<li>Bump github.com/go-logr/logr from 1.3.0 to 1.4.1 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1321\">#1321</a>)\r\n[a1e6b69]</li>\r\n<li>Bump github-pages and jekyll-feed in /docs (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1351\">#1351</a>)\r\n[d52951d]</li>\r\n<li>Fix docs for handling failures in goroutines (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1339\">#1339</a>)\r\n[4471b2e]</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/a181ee22f50186b1be81d3d3011a6841518782d2\"><code>a181ee2</code></a>\r\nv2.16.0</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/2cebe8d4def1a24d5df12819defbc980a0fcaea2\"><code>2cebe8d</code></a>\r\ndocs/index.md: Typo</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/881efde71ccc44d0d2ebc02f3641941e143a1c1d\"><code>881efde</code></a>\r\nupdate documentation to reflect changes to reporting nodes</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/c4e219ff5f317e6f0b78e30c2554088ee3ea2f92\"><code>c4e219f</code></a>\r\nadd SpecContext to other reporting nodes and update tests</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/06de43198fea28d265ee93530424252028f30181\"><code>06de431</code></a>\r\nfix docs</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/372d26a2c9cfda920b52f6230cdd2d94f1cdec2e\"><code>372d26a</code></a>\r\nupdate docs</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/fd929c6e27e6b53886f2d76525c97f9f130cb560\"><code>fd929c6</code></a>\r\nupdate test description</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/fed9402d63e0871b76dc390a18e3fa23d8428e92\"><code>fed9402</code></a>\r\nupdate documentation.</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/5ff9d7fafb94f34fa83fbbc29132d1ef60890e19\"><code>5ff9d7f</code></a>\r\nAdd SpecContext to ReportAfterSuite callback body.</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/9c771cd687800da7a9a6c65c0e447127e6a90548\"><code>9c771cd</code></a>\r\nAdd SpecContext to ReportAfterSuite callback body.</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/onsi/ginkgo/compare/v2.15.0...v2.16.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/onsi/ginkgo/v2&package-manager=go_modules&previous-version=2.15.0&new-version=2.16.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-03-12T10:38:01-07:00",
+          "tree_id": "6ad1fe2727188d083c3f644b70fbf07b5e59b1d8",
+          "url": "https://github.com/runfinch/finch/commit/8e044217f97b9fe8b4557e5770eb2b383768c413"
+        },
+        "date": 1710267114961,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 44671650271,
+            "unit": "ns/op\t         0.3531 %cpu_avg/op\t        50.00 %cpu_peak/op\t        44.67 cpu_seconds/op\t1296293888 disk_bytes/op\t 2008736 B/op\t   42479 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 44671650271,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3531,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 44.67,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1296293888,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2008736,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 42479,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 35986315133,
+            "unit": "ns/op\t         0.3023 %cpu_avg/op\t        30.77 %cpu_peak/op\t        35.99 cpu_seconds/op\t  16941056 disk_bytes/op\t 1596632 B/op\t   34075 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 35986315133,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3023,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 30.77,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 35.99,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 16941056,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1596632,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 34075,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 536518190,
+            "unit": "ns/op\t         0.8579 %cpu_avg/op\t        17.42 %cpu_peak/op\t         0.5365 cpu_seconds/op\t         0 disk_bytes/op\t   34512 B/op\t     562 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 536518190,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.8579,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 17.42,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5365,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 34512,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 562,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
