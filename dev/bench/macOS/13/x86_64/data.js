@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1710347437824,
+  "lastUpdate": 1710347553694,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -33250,6 +33250,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 537,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "769ae321828eb5842943a2bf503297543551bdfe",
+          "message": "build(deps): Bump github.com/docker/docker from 25.0.3+incompatible to 25.0.4+incompatible (#845)\n\nBumps [github.com/docker/docker](https://github.com/docker/docker) from\r\n25.0.3+incompatible to 25.0.4+incompatible.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/docker/docker/releases\">github.com/docker/docker's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v25.0.4</h2>\r\n<p>For a full list of pull requests and changes in this release, refer\r\nto the relevant GitHub milestones:</p>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/issues?q=is%3Aclosed+milestone%3A25.0.4\">docker/cli,\r\n25.0.4 milestone</a></li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/issues?q=is%3Aclosed+milestone%3A25.0.4\">moby/moby,\r\n25.0.4 milestone</a></li>\r\n<li>Deprecated and removed features, see <a\r\nhref=\"https://github.com/docker/cli/blob/v25.0.4/docs/deprecated.md\">Deprecated\r\nFeatures</a>.</li>\r\n<li>Changes to the Engine API, see <a\r\nhref=\"https://github.com/moby/moby/blob/v25.0.4/docs/api/version-history.md\">API\r\nversion history</a>.</li>\r\n</ul>\r\n<h3>Bug fixes and enhancements</h3>\r\n<ul>\r\n<li>Restore DNS names for containers in the default &quot;nat&quot;\r\nnetwork on Windows. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47490\">moby/moby#47490</a></li>\r\n<li>Fix <code>docker start</code> failing when used with\r\n<code>--checkpoint</code> <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47466\">moby/moby#47466</a></li>\r\n<li>Don't enforce new validation rules for existing swarm networks <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47482\">moby/moby#47482</a></li>\r\n<li>Restore IP connectivity between the host and containers on an\r\ninternal bridge network. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47481\">moby/moby#47481</a></li>\r\n<li>Fix a regression introduced in v25.0 that prevented the classic\r\nbuilder from ADDing a tar archive with xattrs created on a non-Linux OS\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47483\">moby/moby#47483</a></li>\r\n<li>containerd image store: Fix image pull not emitting <code>Pulling fs\r\nlayer</code> status <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47484\">moby/moby#47484</a></li>\r\n</ul>\r\n<h3>API</h3>\r\n<ul>\r\n<li>To preserve backwards compatibility, read-only mounts are not\r\nrecursive by default when using older clients (API version &lt; v1.44).\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47393\">moby/moby#47393</a></li>\r\n<li><code>GET /images/{id}/json</code> omits the <code>Created</code>\r\nfield (previously it was <code>0001-01-01T00:00:00Z</code>) if the\r\n<code>Created</code> field is missing from the image config. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47451\">moby/moby#47451</a></li>\r\n<li>Populate a missing <code>Created</code> field in <code>GET\r\n/images/{id}/json</code> with <code>0001-01-01T00:00:00Z</code> for API\r\nversion &lt;= 1.43. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47387\">moby/moby#47387</a></li>\r\n<li>Fix a regression that caused API socket connection failures to\r\nreport an API version negotiation failure instead. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47470\">moby/moby#47470</a></li>\r\n<li>Preserve supplied endpoint configuration in a container-create API\r\nrequest, when a container-wide MAC address is specified, but\r\n<code>NetworkMode</code> name-or-id is not the same as the name-or-id\r\nused in <code>NetworkSettings.Networks</code>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47510\">moby/moby#47510</a></li>\r\n</ul>\r\n<h3>Packaging updates</h3>\r\n<ul>\r\n<li>Upgrade Go runtime to <a\r\nhref=\"https://go.dev/doc/devel/release#go1.21.8\">1.21.8</a>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47503\">moby/moby#47503</a></li>\r\n<li>Upgrade RootlessKit to <a\r\nhref=\"https://github.com/rootless-containers/rootlesskit/releases/tag/v2.0.2\">v2.0.2</a>.\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47508\">moby/moby#47508</a></li>\r\n<li>Upgrade Compose to <a\r\nhref=\"https://github.com/docker/compose/releases/tag/v2.24.7\">v2.24.7</a>.\r\n<a\r\nhref=\"https://redirect.github.com/docker/docker-ce-packaging/pull/998\">docker/docker-ce-packaging#998</a></li>\r\n<li>Upgrade Buildx to <a\r\nhref=\"https://github.com/docker/buildx/releases/tag/v0.13.0\">v0.13.0</a>.\r\n<a\r\nhref=\"https://redirect.github.com/docker/docker-ce-packaging/pull/997\">docker/docker-ce-packaging#997</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/moby/moby/compare/v25.0.3...v25.0.4\">https://github.com/moby/moby/compare/v25.0.3...v25.0.4</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/061aa95809be396a6b5542618d8a34b02a21ff77\"><code>061aa95</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/47513\">#47513</a>\r\nfrom vvoland/v25.0-47498</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/d0d85f6438af71ddd15d0441ec219daba192d4e5\"><code>d0d85f6</code></a>\r\ndaemon: overlay2: remove world writable permission from the lower\r\nfile</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/5d6679345c8a9eed569d358857c0b974031c26e5\"><code>5d66793</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/47508\">#47508</a>\r\nfrom vvoland/v25.0-47504</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/ef1fa235cde1c2fdeeb26f9c6309421a3b23b846\"><code>ef1fa23</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/47510\">#47510</a>\r\nfrom akerouanton/25.0-47441_mac_addr_config_migration</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/0451b287dc4bef2fe95ebc7628bb89e3f8b00fb3\"><code>0451b28</code></a>\r\nDon't create endpoint config for MAC addr config migration</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/d27fe2558dcede92e30a7c4db0e779248d9b2c58\"><code>d27fe25</code></a>\r\ndockerd-rootless-setuptool.sh: check RootlessKit functionality</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/77de535364e099a75ba5a1fe5a7e1ca6b2a3dad3\"><code>77de535</code></a>\r\nDockerfile: update RootlessKit to v2.0.2</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/9e526bc3943c9db4cc3ffc27586ecfba82e7d581\"><code>9e526bc</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/47503\">#47503</a>\r\nfrom vvoland/v25.0-47502</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/2d347024d1ab2dea0a70a927fe6a6dd49e93b33d\"><code>2d34702</code></a>\r\nupdate to go1.21.8</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/51e876cd964c4bb1f0a7c1bc24ecab9321b3ff1c\"><code>51e876c</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/47493\">#47493</a>\r\nfrom akerouanton/25.0-47370_windows_natnw_dns_test</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/docker/docker/compare/v25.0.3...v25.0.4\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/docker/docker&package-manager=go_modules&previous-version=25.0.3+incompatible&new-version=25.0.4+incompatible)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-03-13T09:27:23-07:00",
+          "tree_id": "6ce8d7e213ccaebdee4e378f3bb653857e8c26ac",
+          "url": "https://github.com/runfinch/finch/commit/769ae321828eb5842943a2bf503297543551bdfe"
+        },
+        "date": 1710347552342,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 47184041908,
+            "unit": "ns/op\t         0.3759 %cpu_avg/op\t        38.46 %cpu_peak/op\t        47.18 cpu_seconds/op\t1301516288 disk_bytes/op\t 2110672 B/op\t   44820 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 47184041908,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3759,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 38.46,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 47.18,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1301516288,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2110672,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 44820,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 36481134827,
+            "unit": "ns/op\t         0.3361 %cpu_avg/op\t        33.33 %cpu_peak/op\t        36.48 cpu_seconds/op\t  34082816 disk_bytes/op\t 1654384 B/op\t   34490 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 36481134827,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3361,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 36.48,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 34082816,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1654384,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 34490,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 505852080,
+            "unit": "ns/op\t         0.5372 %cpu_avg/op\t        14.14 %cpu_peak/op\t         0.5058 cpu_seconds/op\t         0 disk_bytes/op\t   32792 B/op\t     536 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 505852080,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.5372,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 14.14,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5058,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 32792,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 536,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
