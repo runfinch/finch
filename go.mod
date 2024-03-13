@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.25.3
-	github.com/docker/cli v25.0.3+incompatible
+	github.com/docker/cli v25.0.4+incompatible
 	github.com/docker/docker v25.0.4+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
