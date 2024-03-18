@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1710434348062,
+  "lastUpdate": 1710792371334,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -13612,6 +13612,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 543,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "120ffccf2bb85fa0f5dd1c8907e9f8ecc70eb416",
+          "message": "build(deps): Bump github.com/lima-vm/lima from 0.20.2 to 0.21.0 (#862)\n\nBumps [github.com/lima-vm/lima](https://github.com/lima-vm/lima) from\r\n0.20.2 to 0.21.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/lima-vm/lima/releases\">github.com/lima-vm/lima's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v0.21.0</h2>\r\n<p>This release adds the support for <code>limactl start-at-login</code>\r\nand inotify.</p>\r\n<h2>Changes</h2>\r\n<ul>\r\n<li>\r\n<p><code>limactl</code> CLI:</p>\r\n<ul>\r\n<li>Add <code>limactl start-at-login INSTANCE</code> command (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2151\">#2151</a>,\r\nthanks to <a\r\nhref=\"https://github.com/roman-kiselenko\"><code>@​roman-kiselenko</code></a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>Mounts:</p>\r\n<ul>\r\n<li>Support for inotify: <code>limactl start --mount-inotify</code> (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1913\">#1913</a>,\r\nthanks to <a\r\nhref=\"https://github.com/balajiv113\"><code>@​balajiv113</code></a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>YAML:</p>\r\n<ul>\r\n<li>Allow <code>{{.Name}}</code> in provision scripts (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2179\">#2179</a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>nerdctl:</p>\r\n<ul>\r\n<li>Update to <a\r\nhref=\"https://github.com/containerd/nerdctl/releases/tag/v1.7.4\">v1.7.4</a>\r\n→ <a\r\nhref=\"https://github.com/containerd/nerdctl/releases/tag/v1.7.5\">v1.7.5</a>\r\n(<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2251\">#2251</a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>Templates:</p>\r\n<ul>\r\n<li>Alpine: demote from Tier 1 to Tier 2 (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2236\">#2236</a>)</li>\r\n<li>Update Ubuntu, Arch Linux, CentOS Stream, and Debian to the latest\r\nrevisions (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2248\">#2248</a>)</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<p>Full changes: <a\r\nhref=\"https://github.com/lima-vm/lima/milestone/43?closed=1\">https://github.com/lima-vm/lima/milestone/43?closed=1</a>\r\nThanks to <a\r\nhref=\"https://github.com/afbjorklund\"><code>@​afbjorklund</code></a> <a\r\nhref=\"https://github.com/alexandear\"><code>@​alexandear</code></a> <a\r\nhref=\"https://github.com/balajiv113\"><code>@​balajiv113</code></a> <a\r\nhref=\"https://github.com/blmhemu\"><code>@​blmhemu</code></a> <a\r\nhref=\"https://github.com/jandubois\"><code>@​jandubois</code></a> <a\r\nhref=\"https://github.com/norio-nomura\"><code>@​norio-nomura</code></a>\r\n<a href=\"https://github.com/pendo324\"><code>@​pendo324</code></a> <a\r\nhref=\"https://github.com/roman-kiselenko\"><code>@​roman-kiselenko</code></a>\r\n<a href=\"https://github.com/terev\"><code>@​terev</code></a></p>\r\n<h2>Usage</h2>\r\n<pre lang=\"console\"><code>[macOS]$ limactl create\r\n[macOS]$ limactl start\r\n...\r\nINFO[0029] READY. Run `lima` to open the shell.\r\n<p>[macOS]$ lima uname\r\nLinux\r\n</code></pre></p>\r\n<hr />\r\n<p>The binaries were built automatically on GitHub Actions.\r\nThe build log is available for 90 days: <a\r\nhref=\"https://github.com/lima-vm/lima/actions/runs/8307250970\">https://github.com/lima-vm/lima/actions/runs/8307250970</a></p>\r\n<p>The sha256sum of the SHA256SUMS file itself is\r\n<code>3a4fc483678ef5aea033a9d19b5e4db1ddc480f54d1a12afb257f255d72b5395</code>\r\n.</p>\r\n<h2>v0.21.0-beta.0</h2>\r\n<h2>Changes</h2>\r\n<ul>\r\n<li>\r\n<p><code>limactl</code> CLI:</p>\r\n<ul>\r\n<li>Add <code>limactl start-at-login INSTANCE</code> command (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2151\">#2151</a>,\r\nthanks to <a\r\nhref=\"https://github.com/roman-kiselenko\"><code>@​roman-kiselenko</code></a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>Mounts:</p>\r\n<ul>\r\n<li>Support for inotify: <code>limactl start --mount-inotify</code> (<a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/1913\">#1913</a>,\r\nthanks to <a\r\nhref=\"https://github.com/balajiv113\"><code>@​balajiv113</code></a>)</li>\r\n</ul>\r\n</li>\r\n<li>\r\n<p>YAML:</p>\r\n</li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/65873499802516189f13f02eaa5f61cc5dad27b6\"><code>6587349</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2251\">#2251</a>\r\nfrom AkihiroSuda/dev</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/93b145b890b7bc960d0c566d299de5feca4267b7\"><code>93b145b</code></a>\r\nnerdctl: update to v1.7.5</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/b06770d8b75780bc47196b3c0b6ddec0cc632d7d\"><code>b06770d</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2249\">#2249</a>\r\nfrom terev/guestagent-oomscoreadj</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/97b722c022e0ab07ad799eebf8e479cb2a362c23\"><code>97b722c</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2248\">#2248</a>\r\nfrom AkihiroSuda/dev</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/c5b4eba8f1d81fde3b1d7dc4a6330ac3bf5e7af2\"><code>c5b4eba</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/lima-vm/lima/issues/2250\">#2250</a>\r\nfrom alexandear/docs-config-fix-broken-links</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/2d69b14de5e2b318abf6946ed41e4b86c4eee355\"><code>2d69b14</code></a>\r\ndocs/config: fix broken links</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/e507f553063781557d406b83245d09d2de0abbf7\"><code>e507f55</code></a>\r\nAdjust guestagent oom parameters</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/bc28529046950d8e0d795adee1e66aa0b1c0b44a\"><code>bc28529</code></a>\r\ntemplates: update Usernetes to gen2-v20240203.0</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/1f94d5218d2cb3531196ed2972a3c1800d5bf49e\"><code>1f94d52</code></a>\r\ntemplates: update Debian 12 to 20240211-1654</li>\r\n<li><a\r\nhref=\"https://github.com/lima-vm/lima/commit/9138d39c886edc6ec383c44e1c7658d64635a887\"><code>9138d39</code></a>\r\ntemplates: update Debian 11 to 20240211-1654</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/lima-vm/lima/compare/v0.20.2...v0.21.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/lima-vm/lima&package-manager=go_modules&previous-version=0.20.2&new-version=0.21.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-03-18T16:02:21-04:00",
+          "tree_id": "8a4da28c5f8fd8fe33258cc89cfed3502b0570cd",
+          "url": "https://github.com/runfinch/finch/commit/120ffccf2bb85fa0f5dd1c8907e9f8ecc70eb416"
+        },
+        "date": 1710792370291,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 45552212358,
+            "unit": "ns/op\t         0.3474 %cpu_avg/op\t        33.33 %cpu_peak/op\t        45.55 cpu_seconds/op\t1286184960 disk_bytes/op\t 2042184 B/op\t   43242 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 45552212358,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3474,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 45.55,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1286184960,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2042184,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 43242,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 35500669209,
+            "unit": "ns/op\t         0.3524 %cpu_avg/op\t        42.86 %cpu_peak/op\t        35.50 cpu_seconds/op\t  65212416 disk_bytes/op\t 1572128 B/op\t   33534 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 35500669209,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3524,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 42.86,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 35.5,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 65212416,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1572128,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 33534,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 534740640,
+            "unit": "ns/op\t         0.8961 %cpu_avg/op\t        17.69 %cpu_peak/op\t         0.5347 cpu_seconds/op\t      8192 disk_bytes/op\t   34500 B/op\t     562 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 534740640,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.8961,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 17.69,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5347,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 8192,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 34500,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 562,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
