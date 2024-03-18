@@ -8,7 +8,7 @@ require (
 	github.com/docker/docker v25.0.4+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
-	github.com/lima-vm/lima v0.20.2
+	github.com/lima-vm/lima v0.21.0
 	github.com/onsi/ginkgo/v2 v2.16.0
 	github.com/onsi/gomega v1.31.1
 	github.com/pelletier/go-toml v1.9.5
@@ -30,7 +30,7 @@ require (
 
 require (
 	github.com/aws/smithy-go v1.20.1 // indirect
-	github.com/containerd/containerd v1.7.13 // indirect
+	github.com/containerd/containerd v1.7.14 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/docker/docker-credential-helpers v0.8.1 // indirect
@@ -57,7 +57,7 @@ require (
 	golang.org/x/image v0.10.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240213162025-012b6fc9bca9 // indirect
-	google.golang.org/grpc v1.61.1 // indirect
+	google.golang.org/grpc v1.62.1 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 )
 
