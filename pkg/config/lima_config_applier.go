@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	sociVersion                              = "0.4.0"
+	sociVersion                              = "0.5.0"
 	snapshotterProvisioningScriptHeader      = "# snapshotter provisioning script"
 	sociInstallationProvisioningScriptHeader = snapshotterProvisioningScriptHeader + ": soci"
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
