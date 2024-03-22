@@ -31,7 +31,7 @@ if [ ! -f /usr/local/bin/soci ]; then
 	set -e
 	curl --retry 2 --retry-max-time 120 -OL "%s"
 	# move to usr/local/bin
-	tar -C /usr/local/bin -xvf %s soci soci-snapshotter-grpc
+	tar -C /usr/local/bin -xvf %s ./soci ./soci-snapshotter-grpc
 
 	# install as a systemd service
 	curl --retry 2 --retry-max-time 120 -OL "%s"
