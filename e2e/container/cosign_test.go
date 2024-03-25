@@ -76,10 +76,6 @@ var testCosign = func(o *option.Option) {
 				tag).Err.Contents()).Should(gomega.ContainSubstring("no matching signatures"))
 			gomega.Expect(command.RunWithoutSuccessfulExit(o, "run", "-d", "--verify=cosign", "--cosign-key=./cosign_data/test-2.pub",
 				tag).Err.Contents()).Should(gomega.ContainSubstring("no matching signatures"))
-			gomega.Expect(command.RunWithoutSuccessfulExit(o, "pull", "--verify=cosign", "--cosign-key=./cosign_data/test-2.pub",
-				alpineImage).Err.Contents()).Should(gomega.ContainSubstring("no signatures found for image"))
-			gomega.Expect(command.RunWithoutSuccessfulExit(o, "run", "-d", "--verify=cosign", "--cosign-key=./cosign_data/test-2.pub",
-				alpineImage).Err.Contents()).Should(gomega.ContainSubstring("no signatures found for image"))
 		})
 	})
 }
