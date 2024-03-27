@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	github.com/aws/aws-sdk-go-v2 v1.25.3
 	github.com/docker/cli v26.0.0+incompatible
-	github.com/docker/docker v25.0.4+incompatible
+	github.com/docker/docker v26.0.0+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
 	github.com/lima-vm/lima v0.21.0
@@ -43,6 +43,7 @@ require (
 	github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1 // indirect
 	github.com/lima-vm/go-qcow2reader v0.1.1 // indirect
 	github.com/lufia/plan9stats v0.0.0-20231016141302-07b5767bb0ed // indirect
+	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
