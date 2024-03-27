@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1711478793004,
+  "lastUpdate": 1711552150944,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -34930,6 +34930,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 554,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f7cde37fc7cf6e05d90ad59512e1df08b71a67f1",
+          "message": "ci(deps): Bump actions/setup-python from 5.0.0 to 5.1.0 (#872)\n\nBumps [actions/setup-python](https://github.com/actions/setup-python)\r\nfrom 5.0.0 to 5.1.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/actions/setup-python/releases\">actions/setup-python's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v5.1.0</h2>\r\n<h2>What's Changed</h2>\r\n<ul>\r\n<li>Leveraging the raw API to retrieve the version-manifest, as it does\r\nnot impose a rate limit and hence facilitates unrestricted consumption\r\nwithout the need for a token for Github Enterprise Servers by <a\r\nhref=\"https://github.com/Shegox\"><code>@​Shegox</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/766\">actions/setup-python#766</a>.</li>\r\n<li>Dependency updates by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> and\r\n<a\r\nhref=\"https://github.com/HarithaVattikuti\"><code>@​HarithaVattikuti</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/817\">actions/setup-python#817</a></li>\r\n<li>Documentation changes for version in README by <a\r\nhref=\"https://github.com/basnijholt\"><code>@​basnijholt</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/776\">actions/setup-python#776</a></li>\r\n<li>Documentation changes for link in README by <a\r\nhref=\"https://github.com/ukd1\"><code>@​ukd1</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/793\">actions/setup-python#793</a></li>\r\n<li>Documentation changes for link in Advanced Usage by <a\r\nhref=\"https://github.com/Jamim\"><code>@​Jamim</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/782\">actions/setup-python#782</a></li>\r\n<li>Documentation changes for avoiding rate limit issues on GHES by <a\r\nhref=\"https://github.com/priya-kinthali\"><code>@​priya-kinthali</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/835\">actions/setup-python#835</a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/basnijholt\"><code>@​basnijholt</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/776\">actions/setup-python#776</a></li>\r\n<li><a href=\"https://github.com/ukd1\"><code>@​ukd1</code></a> made their\r\nfirst contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/793\">actions/setup-python#793</a></li>\r\n<li><a href=\"https://github.com/Jamim\"><code>@​Jamim</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/782\">actions/setup-python#782</a></li>\r\n<li><a href=\"https://github.com/Shegox\"><code>@​Shegox</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/766\">actions/setup-python#766</a></li>\r\n<li><a\r\nhref=\"https://github.com/priya-kinthali\"><code>@​priya-kinthali</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/actions/setup-python/pull/835\">actions/setup-python#835</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/actions/setup-python/compare/v5.0.0...v5.1.0\">https://github.com/actions/setup-python/compare/v5.0.0...v5.1.0</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-python/commit/82c7e631bb3cdc910f68e0081d67478d79c6982d\"><code>82c7e63</code></a>\r\nDocumentation changes for avoiding rate limit issues on GHES (<a\r\nhref=\"https://redirect.github.com/actions/setup-python/issues/835\">#835</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-python/commit/10aa35afd7f071e70ffaa122e3d7c6ffcb5f7ed1\"><code>10aa35a</code></a>\r\nfeat: fallback to raw endpoint for manifest when rate limit is reached\r\n(<a\r\nhref=\"https://redirect.github.com/actions/setup-python/issues/766\">#766</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-python/commit/9a7ac94420f42ee15fc60ab88d0dca4be1fd5757\"><code>9a7ac94</code></a>\r\nBump undici from 5.27.2 to 5.28.3 (<a\r\nhref=\"https://redirect.github.com/actions/setup-python/issues/817\">#817</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-python/commit/871daa956ca9ea99f3c3e30acb424b7960676734\"><code>871daa9</code></a>\r\nFix the &quot;Specifying multiple Python/PyPy versions&quot; link (<a\r\nhref=\"https://redirect.github.com/actions/setup-python/issues/782\">#782</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-python/commit/2f078955e4d0f34cc7a8b0108b2eb7bbe154438e\"><code>2f07895</code></a>\r\nFix broken README.md link (<a\r\nhref=\"https://redirect.github.com/actions/setup-python/issues/793\">#793</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/setup-python/commit/e9d6f990972a57673cdb72ec29e19d42ba28880f\"><code>e9d6f99</code></a>\r\nReplace setup-python@v4 by setup-python@v5 in README (<a\r\nhref=\"https://redirect.github.com/actions/setup-python/issues/776\">#776</a>)</li>\r\n<li>See full diff in <a\r\nhref=\"https://github.com/actions/setup-python/compare/0a5c61591373683505ea898e09a3ea4f39ef2b9c...82c7e631bb3cdc910f68e0081d67478d79c6982d\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=actions/setup-python&package-manager=github_actions&previous-version=5.0.0&new-version=5.1.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-03-27T11:05:36-04:00",
+          "tree_id": "34f2f365c78735cc1bd6c3d37cf0998e4c09467c",
+          "url": "https://github.com/runfinch/finch/commit/f7cde37fc7cf6e05d90ad59512e1df08b71a67f1"
+        },
+        "date": 1711552149415,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 45007764861,
+            "unit": "ns/op\t         0.2792 %cpu_avg/op\t        28.57 %cpu_peak/op\t        45.01 cpu_seconds/op\t1315622912 disk_bytes/op\t 2022656 B/op\t   42797 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 45007764861,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.2792,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 28.57,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 45.01,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1315622912,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2022656,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 42797,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 36587742751,
+            "unit": "ns/op\t         0.3378 %cpu_avg/op\t        31.25 %cpu_peak/op\t        36.59 cpu_seconds/op\t  18366464 disk_bytes/op\t 1660304 B/op\t   34612 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 36587742751,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3378,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 31.25,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 36.59,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 18366464,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1660304,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 34612,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 523486144,
+            "unit": "ns/op\t         0.3755 %cpu_avg/op\t        13.68 %cpu_peak/op\t         0.5234 cpu_seconds/op\t         0 disk_bytes/op\t   33612 B/op\t     553 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 523486144,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.3755,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 13.68,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5234,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 33612,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 553,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
