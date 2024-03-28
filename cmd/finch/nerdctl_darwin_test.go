@@ -176,7 +176,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
-					"-e", "ARG1=val1", "--rm", "alpine:latest", "env").Return(c)
+					"--rm", "-e", "ARG1=val1", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -207,7 +207,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG3").Return("val3", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
-					"-e", "ARG3=val3", "--rm", "alpine:latest", "env").Return(c)
+					"--rm", "-e", "ARG3=val3", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -241,7 +241,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				lcc.EXPECT().
-					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "-e", "ARG1=val1", "--rm", "alpine:latest", "env").
+					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "--rm", "-e", "ARG1=val1", "alpine:latest", "env").
 					Return(c)
 				c.EXPECT().Run()
 			},
@@ -276,7 +276,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				lcc.EXPECT().
-					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "-e", "ARG2=val2", "--rm", "alpine:latest", "env").
+					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "--rm", "-e", "ARG2=val2", "alpine:latest", "env").
 					Return(c)
 				c.EXPECT().Run()
 			},
