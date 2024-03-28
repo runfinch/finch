@@ -176,7 +176,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
-					"-e", "ARG1=val1", "--rm", "alpine:latest", "env").Return(c)
+					"--rm", "-e", "ARG1=val1", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -207,7 +207,39 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG3").Return("val3", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
-					"-e", "ARG3=val3", "--rm", "alpine:latest", "env").Return(c)
+					"--rm", "-e", "ARG3=val3", "alpine:latest", "env").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "with environment flags parsing and env value exists and with --debug flag",
+			cmdName: "run",
+			fc:      &config.Finch{},
+			args:    []string{"--debug", "--rm", "--env=ARG2", "-eARG3", "alpine:latest", "env"},
+			wantErr: nil,
+			mockSvc: func(
+				_ *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				_ *mocks.CommandCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				_ afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().SetLevel(flog.Debug)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				c := mocks.NewCommand(ctrl)
+				ncsd.EXPECT().LookupEnv("ARG2")
+				ncsd.EXPECT().LookupEnv("ARG3").Return("val3", true)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
+					"--rm", "-e", "ARG3=val3", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -241,7 +273,43 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				lcc.EXPECT().
-					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "-e", "ARG1=val1", "--rm", "alpine:latest", "env").
+					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "--rm", "-e", "ARG1=val1", "alpine:latest", "env").
+					Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name:    "with --env-file flag replacement and with --debug flag",
+			cmdName: "run",
+			fc:      &config.Finch{},
+			args:    []string{"--debug", "--rm", "--env-file=/env-file", "alpine:latest", "env"},
+			wantErr: nil,
+			mockSvc: func(
+				t *testing.T,
+				lcc *mocks.LimaCmdCreator,
+				_ *mocks.CommandCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				fs afero.Fs,
+			) {
+				envFileStr := "# a comment\nARG1=val1\n  ARG2\n\n  # a 2nd comment\nNOTSETARG\n  "
+				require.NoError(t, afero.WriteFile(fs, envFilePath, []byte(envFileStr), 0o600))
+
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().SetLevel(flog.Debug)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				c := mocks.NewCommand(ctrl)
+				ncsd.EXPECT().LookupEnv("ARG2")
+				ncsd.EXPECT().LookupEnv("NOTSETARG")
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				lcc.EXPECT().
+					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "--rm", "-e", "ARG1=val1", "alpine:latest", "env").
 					Return(c)
 				c.EXPECT().Run()
 			},
@@ -276,7 +344,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				lcc.EXPECT().
-					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "-e", "ARG2=val2", "--rm", "alpine:latest", "env").
+					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "--rm", "-e", "ARG2=val2", "alpine:latest", "env").
 					Return(c)
 				c.EXPECT().Run()
 			},
