@@ -111,6 +111,8 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		skip, hasCmdHander, hasArgHandler bool
 		cmdHandler                        commandHandler
 		aMap                              map[string]argHandler
+		envArgPos                         int
+		isDebug                           int
 	)
 
 	alias, hasAlias := aliasMap[cmdName]
@@ -139,6 +141,10 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		}
 	}
 
+	// envArgPos is used to preserve the position of first environment parameter
+	envArgPos = -1
+	// if a debug flag is passed before env arg pos we reduce the env arg pos by 1 to account for skipping debug flag
+	isDebug = 0
 	for i, arg := range args {
 		// Check if command requires arg handling
 		if hasArgHandler {
@@ -164,14 +170,24 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		switch {
 		case arg == "--debug":
 			// explicitly setting log level to avoid `--debug` flag being interpreted as nerdctl command
+			if envArgPos == -1 {
+				isDebug = 1
+			}
 			nc.logger.SetLevel(flog.Debug)
 		case argIsEnv(arg):
+			if envArgPos == -1 {
+				envArgPos = i - isDebug
+			}
 			shouldSkip, addEnv := handleEnv(nc.systemDeps, arg, args[i+1])
 			skip = shouldSkip
 			if addEnv != "" {
 				envs = append(envs, addEnv)
 			}
 		case strings.HasPrefix(arg, "--env-file"):
+			if envArgPos == -1 {
+				envArgPos = i - isDebug
+			}
+
 			shouldSkip, addEnvs, err := handleEnvFile(nc.fs, nc.systemDeps, arg, args[i+1])
 			if err != nil {
 				return err
@@ -249,14 +265,16 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	limaArgs = append(limaArgs, append([]string{nerdctlCmdName}, strings.Fields(cmdName)...)...)
 
-	var finalArgs []string
+	var envArgs []string
 	for key, val := range envVars {
-		finalArgs = append(finalArgs, "-e", fmt.Sprintf("%s=%s", key, val))
+		envArgs = append(envArgs, "-e", fmt.Sprintf("%s=%s", key, val))
 	}
-	finalArgs = append(finalArgs, nerdctlArgs...)
+	if envArgPos > -1 {
+		nerdctlArgs = append(nerdctlArgs[:envArgPos], append(envArgs, nerdctlArgs[envArgPos:]...)...)
+	}
 	// Add -E to sudo command in order to preserve existing environment variables, more info:
 	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
-	limaArgs = append(limaArgs, finalArgs...)
+	limaArgs = append(limaArgs, nerdctlArgs...)
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
 		return nc.lcc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
