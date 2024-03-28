@@ -202,7 +202,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 
 				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
-					"-e", "ARG1=val1", "--rm", "alpine:latest", "env").Return(c)
+					"--rm", "-e", "ARG1=val1", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -239,7 +239,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				// alias substitution run=>container run
 				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
-					"-e", "ARG3=val3", "--rm", "alpine:latest", "env").Return(c)
+					"--rm", "-e", "ARG3=val3", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -278,7 +278,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "-e", "ARG1=val1", "--rm", "alpine:latest", "env").Return(c)
+					"sudo", "-E", nerdctlCmdName, "container", "run", "--rm", "-e", "ARG1=val1", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -317,7 +317,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				lcc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "-e", "ARG2=val2", "--rm", "alpine:latest", "env").Return(c)
+					"sudo", "-E", nerdctlCmdName, "container", "run", "--rm", "-e", "ARG2=val2", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
