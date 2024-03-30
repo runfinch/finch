@@ -60,9 +60,11 @@ func handleFilePath(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string
 // hanldes -v/--volumes option. For anonymous volumes and named volumes this is no-op. For bind mounts path is converted to wsl path.
 func handleVolume(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
-	v := ""
-	found := false
-	before := ""
+	var (
+		v      string
+		found  bool
+		before string
+	)
 	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
@@ -115,9 +117,11 @@ func handleVolume(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, 
 // translates source path of the bind mount to wslpath for --mount option.
 func handleBindMounts(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
-	v := ""
-	found := false
-	before := ""
+	var (
+		v      string
+		found  bool
+		before string
+	)
 	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
@@ -181,9 +185,11 @@ func handleBindMounts(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []stri
 // handles --output/-o for build command.
 func handleOutputOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
-	v := ""
-	found := false
-	before := ""
+	var (
+		v      string
+		found  bool
+		before string
+	)
 	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
@@ -226,9 +232,11 @@ func handleOutputOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []st
 // handles --secret option for build command.
 func handleSecretOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
-	v := ""
-	found := false
-	before := ""
+	var (
+		v      string
+		found  bool
+		before string
+	)
 	if strings.Contains(nerdctlCmdArgs[index], "=") {
 		before, v, found = strings.Cut(prefix, "=")
 	} else {
