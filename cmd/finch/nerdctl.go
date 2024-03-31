@@ -491,4 +491,5 @@ var nerdctlCmds = map[string]string{
 	"update":    "Update configuration of one or more containers",
 	"volume":    "Manage volumes",
 	"wait":      "Block until one or more containers stop, then print their exit codes",
+	"attach":    "Attach stdin, stdout, and stderr to a running container",
 }
