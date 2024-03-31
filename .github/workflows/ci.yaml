@@ -95,12 +95,11 @@ jobs:
   shellcheck:
     name: ShellCheck
     runs-on: ubuntu-latest
+    container: koalaman/shellcheck-alpine:v0.10.0
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
-        with:
-          version: v0.9.0
+        run: shellcheck ./**/*.sh
         continue-on-error: true
   go-mod-tidy-check:
     runs-on: ubuntu-latest

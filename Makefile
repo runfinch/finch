@@ -269,8 +269,8 @@ download-licenses:
 	curl https://raw.githubusercontent.com/golangci/golangci-lint-action/master/LICENSE --output "$(LICENSEDIR)/github.com/golangci/golangci-lint-action/LICENSE"
 	mkdir -p "$(LICENSEDIR)/github.com/avto-dev/markdown-lint"
 	curl https://raw.githubusercontent.com/avto-dev/markdown-lint/master/LICENSE --output "$(LICENSEDIR)/github.com/avto-dev/markdown-lint/LICENSE"
-	mkdir -p "$(LICENSEDIR)"/github.com/ludeeus/action-shellcheck"
-	curl https://raw.githubusercontent.com/ludeeus/action-shellcheck/blob/2.0.0/LICENSE --output "$(LICENSEDIR)/github.com/ludeeus/action-shellcheck/LICENSE"
+	mkdir -p "$(LICENSEDIR)"/github.com/koalaman/shellcheck/LICENSE"
+	curl https://raw.githubusercontent.com/koalaman/shellcheck/blob/v0.10.0/LICENSE --output "$(LICENSEDIR)/github.com/koalaman/shellcheck/LICENSE"
 
     ### dependencies in ci.yaml - end ###
 
