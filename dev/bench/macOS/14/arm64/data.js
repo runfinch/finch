@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1711740197488,
+  "lastUpdate": 1711991378832,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -14692,6 +14692,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 299,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e1cbd0a466468eae01b60e3eb30bc3205a551ed4",
+          "message": "build(deps): Bump github.com/runfinch/common-tests from 0.7.18 to 0.7.21 (#878)\n\nBumps\r\n[github.com/runfinch/common-tests](https://github.com/runfinch/common-tests)\r\nfrom 0.7.18 to 0.7.21.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/runfinch/common-tests/releases\">github.com/runfinch/common-tests's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v0.7.21</h2>\r\n<h2><a\r\nhref=\"https://github.com/runfinch/common-tests/compare/v0.7.20...v0.7.21\">0.7.21</a>\r\n(2024-03-28)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>add a delay for system event monitoring to start before pull\r\ncompletes as the run commands are async (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/144\">#144</a>)\r\n(<a\r\nhref=\"https://github.com/runfinch/common-tests/commit/5de585f5bece7ed358928444cbde4cfe4426ff57\">5de585f</a>)</li>\r\n<li>add custom wait for retry logic (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/141\">#141</a>)\r\n(<a\r\nhref=\"https://github.com/runfinch/common-tests/commit/3b693190773706dde9b6f8dd11171e26cc0df404\">3b69319</a>)</li>\r\n</ul>\r\n<h2>v0.7.20</h2>\r\n<h2><a\r\nhref=\"https://github.com/runfinch/common-tests/compare/v0.7.19...v0.7.20\">0.7.20</a>\r\n(2024-03-27)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>image pull retry logic (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/139\">#139</a>)\r\n(<a\r\nhref=\"https://github.com/runfinch/common-tests/commit/4c30166cc5f7e1af73c7730aeea5dc72fea8d8d5\">4c30166</a>)</li>\r\n</ul>\r\n<h2>v0.7.19</h2>\r\n<h2><a\r\nhref=\"https://github.com/runfinch/common-tests/compare/v0.7.18...v0.7.19\">0.7.19</a>\r\n(2024-03-27)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>Retry image pull for 3 times and then fail (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/137\">#137</a>)\r\n(<a\r\nhref=\"https://github.com/runfinch/common-tests/commit/3f4765f82d255f710dae6aaf9a889b58e18f08ca\">3f4765f</a>)</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/runfinch/common-tests/blob/main/CHANGELOG.md\">github.com/runfinch/common-tests's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2><a\r\nhref=\"https://github.com/runfinch/common-tests/compare/v0.7.20...v0.7.21\">0.7.21</a>\r\n(2024-03-28)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>add a delay for system event monitoring to start before pull\r\ncompletes as the run commands are async (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/144\">#144</a>)\r\n(<a\r\nhref=\"https://github.com/runfinch/common-tests/commit/5de585f5bece7ed358928444cbde4cfe4426ff57\">5de585f</a>)</li>\r\n<li>add custom wait for retry logic (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/141\">#141</a>)\r\n(<a\r\nhref=\"https://github.com/runfinch/common-tests/commit/3b693190773706dde9b6f8dd11171e26cc0df404\">3b69319</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/runfinch/common-tests/compare/v0.7.19...v0.7.20\">0.7.20</a>\r\n(2024-03-27)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>image pull retry logic (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/139\">#139</a>)\r\n(<a\r\nhref=\"https://github.com/runfinch/common-tests/commit/4c30166cc5f7e1af73c7730aeea5dc72fea8d8d5\">4c30166</a>)</li>\r\n</ul>\r\n<h2><a\r\nhref=\"https://github.com/runfinch/common-tests/compare/v0.7.18...v0.7.19\">0.7.19</a>\r\n(2024-03-27)</h2>\r\n<h3>Bug Fixes</h3>\r\n<ul>\r\n<li>Retry image pull for 3 times and then fail (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/137\">#137</a>)\r\n(<a\r\nhref=\"https://github.com/runfinch/common-tests/commit/3f4765f82d255f710dae6aaf9a889b58e18f08ca\">3f4765f</a>)</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/runfinch/common-tests/commit/873339b02ac7ae609d5fdc0687a05a9ec34080cd\"><code>873339b</code></a>\r\nchore(main): release 0.7.21 (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/143\">#143</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/runfinch/common-tests/commit/5de585f5bece7ed358928444cbde4cfe4426ff57\"><code>5de585f</code></a>\r\nfix: add a delay for system event monitoring to start before pull\r\ncompletes a...</li>\r\n<li><a\r\nhref=\"https://github.com/runfinch/common-tests/commit/3b693190773706dde9b6f8dd11171e26cc0df404\"><code>3b69319</code></a>\r\nfix: add custom wait for retry logic (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/141\">#141</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/runfinch/common-tests/commit/37fc4ecb301b5c02c62975b9506671f7ad05aa26\"><code>37fc4ec</code></a>\r\nchore(main): release 0.7.20 (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/140\">#140</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/runfinch/common-tests/commit/4c30166cc5f7e1af73c7730aeea5dc72fea8d8d5\"><code>4c30166</code></a>\r\nfix: image pull retry logic (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/139\">#139</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/runfinch/common-tests/commit/a25bc55d714f525982c1d3e0d6ea0aecc34b81a0\"><code>a25bc55</code></a>\r\nchore(main): release 0.7.19 (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/138\">#138</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/runfinch/common-tests/commit/3f4765f82d255f710dae6aaf9a889b58e18f08ca\"><code>3f4765f</code></a>\r\nfix: Retry image pull for 3 times and then fail (<a\r\nhref=\"https://redirect.github.com/runfinch/common-tests/issues/137\">#137</a>)</li>\r\n<li>See full diff in <a\r\nhref=\"https://github.com/runfinch/common-tests/compare/v0.7.18...v0.7.21\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/runfinch/common-tests&package-manager=go_modules&previous-version=0.7.18&new-version=0.7.21)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-04-01T09:49:25-07:00",
+          "tree_id": "4601286cf26d227d0963ab367ac0b5a0e700a7c5",
+          "url": "https://github.com/runfinch/finch/commit/e1cbd0a466468eae01b60e3eb30bc3205a551ed4"
+        },
+        "date": 1711991376738,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 41515420667,
+            "unit": "ns/op\t         0.3931 %cpu_avg/op\t        40.00 %cpu_peak/op\t        41.52 cpu_seconds/op\t1291612160 disk_bytes/op\t 1869560 B/op\t   39336 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 41515420667,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3931,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 40,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 41.52,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1291612160,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1869560,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 39336,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24243040083,
+            "unit": "ns/op\t         0.3966 %cpu_avg/op\t        40.00 %cpu_peak/op\t        24.24 cpu_seconds/op\t  48246784 disk_bytes/op\t 1078584 B/op\t   22940 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24243040083,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3966,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 40,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.24,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 48246784,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1078584,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22940,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 271951844,
+            "unit": "ns/op\t         1.231 %cpu_avg/op\t        13.57 %cpu_peak/op\t         0.2719 cpu_seconds/op\t      4096 disk_bytes/op\t   22374 B/op\t     302 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 271951844,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.231,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 13.57,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2719,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22374,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 302,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
