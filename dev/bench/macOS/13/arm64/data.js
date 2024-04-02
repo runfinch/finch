@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1711991539696,
+  "lastUpdate": 1712078199173,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -39580,6 +39580,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 305,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "465e369479fb803dde75be02ee4a8e37c3a3ffdf",
+          "message": "build(deps): Bump github.com/shirou/gopsutil/v3 from 3.24.2 to 3.24.3 (#881)\n\nBumps\r\n[github.com/shirou/gopsutil/v3](https://github.com/shirou/gopsutil) from\r\n3.24.2 to 3.24.3.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/shirou/gopsutil/releases\">github.com/shirou/gopsutil/v3's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v3.24.3</h2>\r\n<!-- raw HTML omitted -->\r\n<h2>What's Changed</h2>\r\n<h3>disk</h3>\r\n<ul>\r\n<li>chore: fix typo by <a\r\nhref=\"https://github.com/majorteach\"><code>@​majorteach</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1615\">shirou/gopsutil#1615</a></li>\r\n</ul>\r\n<h3>host</h3>\r\n<ul>\r\n<li>[host][linux]: fix utmp size on linux/arm64 by <a\r\nhref=\"https://github.com/shirou\"><code>@​shirou</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1603\">shirou/gopsutil#1603</a></li>\r\n</ul>\r\n<h3>load</h3>\r\n<ul>\r\n<li>Total Processes in <code>MiscStat</code> Corrected by <a\r\nhref=\"https://github.com/eric1234\"><code>@​eric1234</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1612\">shirou/gopsutil#1612</a></li>\r\n</ul>\r\n<h3>process</h3>\r\n<ul>\r\n<li>[process][freebsd]: re-generate types on freebsd arm64 by <a\r\nhref=\"https://github.com/shirou\"><code>@​shirou</code></a> in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1609\">shirou/gopsutil#1609</a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/majorteach\"><code>@​majorteach</code></a> made\r\ntheir first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1615\">shirou/gopsutil#1615</a></li>\r\n<li><a href=\"https://github.com/eric1234\"><code>@​eric1234</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/pull/1612\">shirou/gopsutil#1612</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/shirou/gopsutil/compare/v3.24.2...v3.24.3\">https://github.com/shirou/gopsutil/compare/v3.24.2...v3.24.3</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/e230f528f075f78e713f167c28b692cc15307d19\"><code>e230f52</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1612\">#1612</a>\r\nfrom eric1234/correct-process-counts</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/ce0395f8af3f80b36d5fcd3cf1a232f77c480ffa\"><code>ce0395f</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1609\">#1609</a>\r\nfrom shirou/feat/process_freebsd_arm64_type_generated</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/1d9f956bef10ae35d5e9e2422fbc479d9ad960f9\"><code>1d9f956</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1615\">#1615</a>\r\nfrom majorteach/master</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/71b81735f99ca44f2c2068729afced6402a4289d\"><code>71b8173</code></a>\r\nchore: fix typo</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/cded1805c1be4d25dfd274999cd96eee64ae1d28\"><code>cded180</code></a>\r\nTotal Processes in <code>MiscStat</code> Corrected</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/6100124c96d37a9282ca4bf158db8a743e475077\"><code>6100124</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1611\">#1611</a>\r\nfrom shirou/dependabot/github_actions/actions/cache-...</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/83660dac66d479b372c8360328d38bdf9e047cd9\"><code>83660da</code></a>\r\nchore(deps): bump actions/cache from 4.0.1 to 4.0.2</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/1e5c5ae75b94734162e429574d0d36070ba83f82\"><code>1e5c5ae</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1604\">#1604</a>\r\nfrom shirou/dependabot/go_modules/github.com/stretch...</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/6df531fc9b6bab2eb3d287db285caac8839da269\"><code>6df531f</code></a>\r\nchore(deps): bump github.com/stretchr/testify from 1.8.4 to 1.9.0</li>\r\n<li><a\r\nhref=\"https://github.com/shirou/gopsutil/commit/c731c53c08db3d7c628e508597303fcd517dbd17\"><code>c731c53</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/shirou/gopsutil/issues/1605\">#1605</a>\r\nfrom shirou/dependabot/go_modules/golang.org/x/sys-0...</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/shirou/gopsutil/compare/v3.24.2...v3.24.3\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/shirou/gopsutil/v3&package-manager=go_modules&previous-version=3.24.2&new-version=3.24.3)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-04-02T12:58:36-04:00",
+          "tree_id": "78d453d3e4122ad23f4d504e02aada883514e4e6",
+          "url": "https://github.com/runfinch/finch/commit/465e369479fb803dde75be02ee4a8e37c3a3ffdf"
+        },
+        "date": 1712078197362,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 39922309041,
+            "unit": "ns/op\t         0.5918 %cpu_avg/op\t        62.50 %cpu_peak/op\t        39.92 cpu_seconds/op\t1112494080 disk_bytes/op\t 1803248 B/op\t   37833 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 39922309041,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.5918,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 62.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 39.92,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1112494080,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1803248,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 37833,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24327005792,
+            "unit": "ns/op\t         0.5914 %cpu_avg/op\t        55.56 %cpu_peak/op\t        24.33 cpu_seconds/op\t  66572288 disk_bytes/op\t 1081184 B/op\t   23009 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24327005792,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.5914,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 55.56,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.33,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 66572288,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1081184,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 23009,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 287894562,
+            "unit": "ns/op\t         0.8408 %cpu_avg/op\t        11.25 %cpu_peak/op\t         0.2878 cpu_seconds/op\t      4096 disk_bytes/op\t   22718 B/op\t     318 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 287894562,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.8408,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 11.25,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2878,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22718,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 318,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
