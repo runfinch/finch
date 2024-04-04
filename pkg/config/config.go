@@ -77,6 +77,7 @@ type Nerdctl struct {
 type LimaConfigApplier interface {
 	ConfigureOverrideLimaYaml() error
 	ConfigureDefaultLimaYaml() error
+	ModifyFinchConfig(fs afero.Fs, logger flog.Logger, cpus int, memory string) (bool, error)
 }
 
 // NerdctlConfigApplier applies nerdctl configuration changes.

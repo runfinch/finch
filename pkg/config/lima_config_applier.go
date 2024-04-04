@@ -14,6 +14,8 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/flog"
+	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/system"
 )
 
@@ -86,6 +88,7 @@ type limaConfigApplier struct {
 	limaDefaultConfigPath  string
 	limaOverrideConfigPath string
 	systemDeps             LimaConfigApplierSystemDeps
+	finchConfigPath        string
 }
 
 var _ LimaConfigApplier = (*limaConfigApplier)(nil)
@@ -99,6 +102,7 @@ func NewLimaApplier(
 	limaDefaultConfigPath string,
 	limaOverrideConfigPath string,
 	systemDeps LimaConfigApplierSystemDeps,
+	finchConfigPath string,
 ) LimaConfigApplier {
 	return &limaConfigApplier{
 		cfg:                    cfg,
@@ -107,7 +111,63 @@ func NewLimaApplier(
 		limaDefaultConfigPath:  limaDefaultConfigPath,
 		limaOverrideConfigPath: limaOverrideConfigPath,
 		systemDeps:             systemDeps,
+		finchConfigPath:        finchConfigPath,
 	}
+}
+
+func loadFinchConfig(fs afero.Fs, finchConfigPath string, logger flog.Logger, systemDeps LoadSystemDeps, mem fmemory.Memory) (*Finch, error) {
+	b, err := afero.ReadFile(fs, finchConfigPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read finch.yaml: %w", err)
+	}
+
+	var cfg Finch
+	if err := yaml.Unmarshal(b, &cfg); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
+	}
+	if err := validate(&cfg, logger, systemDeps, mem); err != nil {
+		return nil, fmt.Errorf("failed to validate config file: %w", err)
+	}
+
+	return &cfg, nil
+}
+
+func (lca *limaConfigApplier) ModifyFinchConfig(fs afero.Fs, logger flog.Logger, cpus int, memory string) (bool, error) {
+	var isConfigUpdated bool
+
+	systemDeps := system.NewStdLib()
+	mem := fmemory.NewMemory()
+
+	finchCfg, err := loadFinchConfig(fs, lca.finchConfigPath, logger, systemDeps, mem)
+	if err != nil {
+		return isConfigUpdated, fmt.Errorf("failed to load config: %w", err)
+	}
+
+	if cpus == 0 && memory == "" {
+		return isConfigUpdated, fmt.Errorf("specified number of CPUs or specified amount of memory should be valid values")
+	}
+
+	if cpus > 0 && *finchCfg.CPUs != cpus {
+		*finchCfg.CPUs = cpus
+		isConfigUpdated = true
+	}
+	if memory != "" && *finchCfg.Memory != memory {
+		*finchCfg.Memory = memory
+		isConfigUpdated = true
+	}
+
+	if !isConfigUpdated {
+		return isConfigUpdated, nil
+	}
+
+	if err := validate(finchCfg, logger, systemDeps, mem); err != nil {
+		return isConfigUpdated, fmt.Errorf("failed to validate config file: %w", err)
+	}
+	if err := writeConfig(finchCfg, lca.fs, lca.finchConfigPath); err != nil {
+		return isConfigUpdated, err
+	}
+
+	return isConfigUpdated, nil
 }
 
 // ConfigureDefaultLimaYaml writes Lima-specific config values from Finch's config to default.yaml at lima config file path.

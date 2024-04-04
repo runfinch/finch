@@ -11,6 +11,8 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	flog "github.com/runfinch/finch/pkg/flog"
+	afero "github.com/spf13/afero"
 )
 
 // LimaConfigApplier is a mock of LimaConfigApplier interface.
@@ -62,4 +64,19 @@ func (m *LimaConfigApplier) ConfigureOverrideLimaYaml() error {
 func (mr *LimaConfigApplierMockRecorder) ConfigureOverrideLimaYaml() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfigureOverrideLimaYaml", reflect.TypeOf((*LimaConfigApplier)(nil).ConfigureOverrideLimaYaml))
+}
+
+// ModifyFinchConfig mocks base method.
+func (m *LimaConfigApplier) ModifyFinchConfig(arg0 afero.Fs, arg1 flog.Logger, arg2 int, arg3 string) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ModifyFinchConfig", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ModifyFinchConfig indicates an expected call of ModifyFinchConfig.
+func (mr *LimaConfigApplierMockRecorder) ModifyFinchConfig(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyFinchConfig", reflect.TypeOf((*LimaConfigApplier)(nil).ModifyFinchConfig), arg0, arg1, arg2, arg3)
 }
