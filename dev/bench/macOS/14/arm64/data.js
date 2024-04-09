@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1712078474455,
+  "lastUpdate": 1712704799018,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -15196,6 +15196,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 303,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cfac010837e0dac39c02fd6ba5154760641074fb",
+          "message": "build(deps): Bump golang.org/x/tools from 0.19.0 to 0.20.0 (#889)\n\nBumps [golang.org/x/tools](https://github.com/golang/tools) from 0.19.0\nto 0.20.0.\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a\nhref=\"https://github.com/golang/tools/commit/11c692eb24abb64933c12b8f1b1ef7f4768a806e\"><code>11c692e</code></a>\ngopls/internal/test/marker/testdata: skip hover size tests on 32-bit\narm</li>\n<li><a\nhref=\"https://github.com/golang/tools/commit/fc660e510f18e54f2e17de0437f7ceeac4f30f59\"><code>fc660e5</code></a>\ngo.mod: update golang.org/x dependencies</li>\n<li><a\nhref=\"https://github.com/golang/tools/commit/6590f47255ceb98350d730b0da28133fc442111e\"><code>6590f47</code></a>\ninternal/gcimporter: renable tests of issue50259.go</li>\n<li><a\nhref=\"https://github.com/golang/tools/commit/f1d5252456df50ecbf20a3fc80c154067911e925\"><code>f1d5252</code></a>\ngopls/internal/golang: Hover: show wasted % of struct space</li>\n<li><a\nhref=\"https://github.com/golang/tools/commit/951bb4069c36d7f65ff0353b4ca6c10ff0231b05\"><code>951bb40</code></a>\ngopls/internal/test/integration/misc: fix flaky test</li>\n<li><a\nhref=\"https://github.com/golang/tools/commit/c9b0c65fdb3cbd3441bc1354d1daea50536bd08a\"><code>c9b0c65</code></a>\ngopls/internal/analysis/fillreturns: skip test if gotypesalias=1</li>\n<li><a\nhref=\"https://github.com/golang/tools/commit/c623a2817b4c985e38252e1ce89b85a91814bcea\"><code>c623a28</code></a>\ngopls/internal/cache: fix crash in snapshot.Analyze with patch\nversions</li>\n<li><a\nhref=\"https://github.com/golang/tools/commit/f345449c09b356db134114ed7e407b4c1eedc55c\"><code>f345449</code></a>\ngopls/internal/server: filter diagnostics to &quot;best&quot; views</li>\n<li><a\nhref=\"https://github.com/golang/tools/commit/42d590c9cf8d4c10cb82c05081a3b6a8f55b9bf0\"><code>42d590c</code></a>\ngopls/internal/test/integration: add a WriteGoSum run option</li>\n<li><a\nhref=\"https://github.com/golang/tools/commit/53d35a51d390a079bb6b6f2ba5e076f8a553d841\"><code>53d35a5</code></a>\ngopls/internal/golang: RenderPackageDoc: fix doc links</li>\n<li>Additional commits viewable in <a\nhref=\"https://github.com/golang/tools/compare/v0.19.0...v0.20.0\">compare\nview</a></li>\n</ul>\n</details>\n<br />\n\n\n[![Dependabot compatibility\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org/x/tools&package-manager=go_modules&previous-version=0.19.0&new-version=0.20.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\n\nDependabot will resolve any conflicts with this PR as long as you don't\nalter it yourself. You can also trigger a rebase manually by commenting\n`@dependabot rebase`.\n\n[//]: # (dependabot-automerge-start)\n[//]: # (dependabot-automerge-end)\n\n---\n\n<details>\n<summary>Dependabot commands and options</summary>\n<br />\n\nYou can trigger Dependabot actions by commenting on this PR:\n- `@dependabot rebase` will rebase this PR\n- `@dependabot recreate` will recreate this PR, overwriting any edits\nthat have been made to it\n- `@dependabot merge` will merge this PR after your CI passes on it\n- `@dependabot squash and merge` will squash and merge this PR after\nyour CI passes on it\n- `@dependabot cancel merge` will cancel a previously requested merge\nand block automerging\n- `@dependabot reopen` will reopen this PR if it is closed\n- `@dependabot close` will close this PR and stop Dependabot recreating\nit. You can achieve the same result by closing it manually\n- `@dependabot show <dependency name> ignore conditions` will show all\nof the ignore conditions of the specified dependency\n- `@dependabot ignore this major version` will close this PR and stop\nDependabot creating any more for this major version (unless you reopen\nthe PR or upgrade to it yourself)\n- `@dependabot ignore this minor version` will close this PR and stop\nDependabot creating any more for this minor version (unless you reopen\nthe PR or upgrade to it yourself)\n- `@dependabot ignore this dependency` will close this PR and stop\nDependabot creating any more for this dependency (unless you reopen the\nPR or upgrade to it yourself)\n\n\n</details>\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-04-09T16:15:11-07:00",
+          "tree_id": "38baba6465d9017f79e94ca0cdb04f9dd80d00c8",
+          "url": "https://github.com/runfinch/finch/commit/cfac010837e0dac39c02fd6ba5154760641074fb"
+        },
+        "date": 1712704796852,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 39021627167,
+            "unit": "ns/op\t         0.4208 %cpu_avg/op\t        50.00 %cpu_peak/op\t        39.02 cpu_seconds/op\t1186930688 disk_bytes/op\t 1765504 B/op\t   36967 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 39021627167,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4208,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 39.02,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1186930688,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1765504,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 36967,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 27612304208,
+            "unit": "ns/op\t         0.4042 %cpu_avg/op\t        44.44 %cpu_peak/op\t        27.61 cpu_seconds/op\t 167239680 disk_bytes/op\t 1245192 B/op\t   26087 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 27612304208,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4042,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 44.44,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 27.61,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 167239680,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1245192,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 26087,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 285639364,
+            "unit": "ns/op\t         0.8012 %cpu_avg/op\t        16.45 %cpu_peak/op\t         0.2856 cpu_seconds/op\t      8192 disk_bytes/op\t   23310 B/op\t     317 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 285639364,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.8012,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 16.45,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2856,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 8192,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 23310,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 317,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
