@@ -71,13 +71,24 @@ type Nerdctl struct {
 	HostsDir         []string `toml:"hosts_dir,omitempty"`
 }
 
+// VMConfigOpts represents the Options for finch vm settings command.
+type VMConfigOpts struct {
+	CPUs   int
+	Memory string
+}
+
+var (
+	DefaultCPUs   = 0
+	DefaultMemory = ""
+)
+
 // LimaConfigApplier applies lima configuration changes.
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_lima_config_applier.go -package=mocks -mock_names LimaConfigApplier=LimaConfigApplier . LimaConfigApplier
 type LimaConfigApplier interface {
 	ConfigureOverrideLimaYaml() error
 	ConfigureDefaultLimaYaml() error
-	ModifyFinchConfig(fs afero.Fs, logger flog.Logger, cpus int, memory string) (bool, error)
+	ModifyFinchConfig(fs afero.Fs, logger flog.Logger, opts VMConfigOpts) (bool, error)
 }
 
 // NerdctlConfigApplier applies nerdctl configuration changes.

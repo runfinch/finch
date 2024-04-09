@@ -132,7 +132,7 @@ func loadFinchConfig(fs afero.Fs, finchConfigPath string, logger flog.Logger, sy
 	return &cfg, nil
 }
 
-func (lca *limaConfigApplier) ModifyFinchConfig(fs afero.Fs, logger flog.Logger, cpus int, memory string) (bool, error) {
+func (lca *limaConfigApplier) ModifyFinchConfig(fs afero.Fs, logger flog.Logger, opts VMConfigOpts) (bool, error) {
 	var isConfigUpdated bool
 
 	systemDeps := system.NewStdLib()
@@ -143,21 +143,27 @@ func (lca *limaConfigApplier) ModifyFinchConfig(fs afero.Fs, logger flog.Logger,
 		return isConfigUpdated, fmt.Errorf("failed to load config: %w", err)
 	}
 
-	if cpus == 0 && memory == "" {
-		return isConfigUpdated, fmt.Errorf("specified number of CPUs or specified amount of memory should be valid values")
-	}
-
-	if cpus > 0 && *finchCfg.CPUs != cpus {
+	// Validation of the value passed by the user.
+	cpus, memory := opts.CPUs, opts.Memory
+	if cpus != DefaultCPUs {
+		err = validateCPUs(cpus, logger, systemDeps)
+		if err != nil {
+			return false, err
+		}
 		*finchCfg.CPUs = cpus
 		isConfigUpdated = true
 	}
-	if memory != "" && *finchCfg.Memory != memory {
+	if memory != DefaultMemory {
+		err = validateMemory(memory, logger, mem)
+		if err != nil {
+			return false, err
+		}
 		*finchCfg.Memory = memory
 		isConfigUpdated = true
 	}
 
 	if !isConfigUpdated {
-		return isConfigUpdated, nil
+		return isConfigUpdated, fmt.Errorf("the number of CPUs or the amount of memory should be at least one valid value")
 	}
 
 	if err := validate(finchCfg, logger, systemDeps, mem); err != nil {

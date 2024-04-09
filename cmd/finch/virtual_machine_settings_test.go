@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -39,7 +40,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 	}{
 		{
 			name:    "should configure the instance for invalid values",
-			wantErr: errors.New("specified number of CPUs or specified amount of memory should be valid values"),
+			wantErr: errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
 			command: &cobra.Command{
 				Use: "settings",
 			},
@@ -50,7 +51,11 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				fs afero.Fs,
 				ctrl *gomock.Controller,
 			) {
-				lca.EXPECT().ModifyFinchConfig(fs, logger, 0, "").Return(false, errors.New("specified number of CPUs or specified amount of memory should be valid values"))
+				opts := config.VMConfigOpts{
+					CPUs:   0,
+					Memory: "",
+				}
+				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(false, errors.New("the number of CPUs or the amount of memory should be at least one valid value"))
 			},
 		},
 		{
@@ -69,7 +74,11 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				fs afero.Fs,
 				ctrl *gomock.Controller,
 			) {
-				lca.EXPECT().ModifyFinchConfig(fs, logger, 6, "8GiB").Return(true, nil)
+				opts := config.VMConfigOpts{
+					CPUs:   6,
+					Memory: "8GiB",
+				}
+				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(true, nil)
 			},
 		},
 	}
@@ -107,8 +116,7 @@ func TestSettingsVMAction_run(t *testing.T) {
 			*mocks.LimaConfigApplier,
 			afero.Fs,
 			*gomock.Controller,
-			int,
-			string,
+			config.VMConfigOpts,
 		)
 		cpus   int
 		memory string
@@ -122,10 +130,9 @@ func TestSettingsVMAction_run(t *testing.T) {
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
 				ctrl *gomock.Controller,
-				cpus int,
-				memory string,
+				opts config.VMConfigOpts,
 			) {
-				lca.EXPECT().ModifyFinchConfig(fs, logger, cpus, memory).Return(true, nil)
+				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(true, nil)
 			},
 			cpus:   4,
 			memory: "6GiB",
@@ -139,27 +146,25 @@ func TestSettingsVMAction_run(t *testing.T) {
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
 				ctrl *gomock.Controller,
-				cpus int,
-				memory string,
+				opts config.VMConfigOpts,
 			) {
-				lca.EXPECT().ModifyFinchConfig(fs, logger, cpus, memory).Return(false, nil)
+				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(false, nil)
 			},
 			cpus:   4,
 			memory: "6GiB",
 		},
 		{
 			name:             "should return error if the configuration of CPU or memory is invalid",
-			wantErr:          errors.New("specified number of CPUs or specified amount of memory should be valid values"),
+			wantErr:          errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
 			wantStatusOutput: "",
 			mockSvc: func(
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
 				ctrl *gomock.Controller,
-				cpus int,
-				memory string,
+				opts config.VMConfigOpts,
 			) {
-				lca.EXPECT().ModifyFinchConfig(fs, logger, cpus, memory).Return(false, errors.New("specified number of CPUs or specified amount of memory should be valid values"))
+				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(false, errors.New("the number of CPUs or the amount of memory should be at least one valid value"))
 			},
 			cpus:   0,
 			memory: "",
@@ -176,10 +181,14 @@ func TestSettingsVMAction_run(t *testing.T) {
 			lca := mocks.NewLimaConfigApplier(ctrl)
 			fs := afero.NewMemMapFs()
 			stdout := bytes.Buffer{}
+			opts := config.VMConfigOpts{
+				CPUs:   tc.cpus,
+				Memory: tc.memory,
+			}
 
-			tc.mockSvc(logger, lca, fs, ctrl, tc.cpus, tc.memory)
+			tc.mockSvc(logger, lca, fs, ctrl, opts)
 
-			err := newSettingsVMAction(logger, lca, fs, &stdout).run(tc.cpus, tc.memory)
+			err := newSettingsVMAction(logger, lca, fs, &stdout).run(opts)
 			assert.Equal(t, err, tc.wantErr)
 			assert.Equal(t, tc.wantStatusOutput, stdout.String())
 		})

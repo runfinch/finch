@@ -10,6 +10,14 @@ import (
 	"github.com/runfinch/finch/pkg/fmemory"
 )
 
+func validateCPUs(_ int, _ flog.Logger, _ LoadSystemDeps) error {
+	return nil
+}
+
+func validateMemory(_ string, _ flog.Logger, _ fmemory.Memory) error {
+	return nil
+}
+
 func validate(_ *Finch, _ flog.Logger, _ LoadSystemDeps, _ fmemory.Memory) error {
 	return nil
 }

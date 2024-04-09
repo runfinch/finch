@@ -26,8 +26,8 @@ func newSettingsVMCommand(
 		RunE:  newSettingsVMAction(logger, lca, fs, stdout).runAdapter,
 	}
 
-	settingsVMCommand.Flags().Int("cpus", 0, "the amount of vCPU to dedicate to the virtual machine (restart the vm when applying this change.)")
-	settingsVMCommand.Flags().String("memory", "", "the amount of memory to dedicate to the virtual machine (restart the vm when applying this change.)")
+	settingsVMCommand.Flags().Int("cpus", config.DefaultCPUs, "the amount of vCPU to dedicate to the virtual machine (restart the vm when applying this change.)")
+	settingsVMCommand.Flags().String("memory", config.DefaultMemory, "the amount of memory to dedicate to the virtual machine (restart the vm when applying this change.)")
 
 	return settingsVMCommand
 }
@@ -64,11 +64,16 @@ func (sva *settingsVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	return sva.run(cpus, memory)
+	opts := config.VMConfigOpts{
+		CPUs:   cpus,
+		Memory: memory,
+	}
+
+	return sva.run(opts)
 }
 
-func (sva *settingsVMAction) run(cpus int, memory string) error {
-	isConfigUpdated, err := sva.limaConfigApplier.ModifyFinchConfig(sva.fs, sva.logger, cpus, memory)
+func (sva *settingsVMAction) run(opts config.VMConfigOpts) error {
+	isConfigUpdated, err := sva.limaConfigApplier.ModifyFinchConfig(sva.fs, sva.logger, opts)
 	if err != nil {
 		return err
 	}
