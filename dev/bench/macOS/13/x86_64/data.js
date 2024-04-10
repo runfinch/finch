@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1712712417442,
+  "lastUpdate": 1712719470304,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -37114,6 +37114,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 543,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c059d9ec3c4c17ba950bc25a9bb33a2b6c39394e",
+          "message": "build(deps): Bump github.com/aws/aws-sdk-go-v2 from 1.26.0 to 1.26.1 (#882)\n\nBumps\n[github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2)\nfrom 1.26.0 to 1.26.1.\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/0fde27cdffe0657695258e5d5220f7487117e71d\"><code>0fde27c</code></a>\nRelease 2024-03-29</li>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/57e0d95a95f10e285c38e27401de7da9b7bad559\"><code>57e0d95</code></a>\nRegenerated Clients</li>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/e114db5c702d1103267da632ce985e3ce30b17fe\"><code>e114db5</code></a>\nUpdate SDK's smithy-go dependency to v1.20.2</li>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/f456f0784da02a3b21c24140a5426be035670352\"><code>f456f07</code></a>\nUpdate endpoints model</li>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/96b431ae996732e64848cfa9c384db7ed76e84ef\"><code>96b431a</code></a>\nUpdate API model</li>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/6a694c7d3df3177fe4c4bbfff7e2e7a7733619bb\"><code>6a694c7</code></a>\ndep: upgrade to smithy 1.47.0 (<a\nhref=\"https://redirect.github.com/aws/aws-sdk-go-v2/issues/2587\">#2587</a>)</li>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/973665bdd90b166296bf6aa4746fe7d4987dc5cb\"><code>973665b</code></a>\nRelease 2024-03-28</li>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/8b24e40df3cc8d0b78361242cf8e9cc97abf823e\"><code>8b24e40</code></a>\nRegenerated Clients</li>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/8788e04046ab19ca6c89a4d95401850455082662\"><code>8788e04</code></a>\nUpdate endpoints model</li>\n<li><a\nhref=\"https://github.com/aws/aws-sdk-go-v2/commit/04803960abe0146af57291fa0f97fe347f667998\"><code>0480396</code></a>\nUpdate API model</li>\n<li>Additional commits viewable in <a\nhref=\"https://github.com/aws/aws-sdk-go-v2/compare/v1.26.0...v1.26.1\">compare\nview</a></li>\n</ul>\n</details>\n<br />\n\n\n[![Dependabot compatibility\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/aws/aws-sdk-go-v2&package-manager=go_modules&previous-version=1.26.0&new-version=1.26.1)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\n\nDependabot will resolve any conflicts with this PR as long as you don't\nalter it yourself. You can also trigger a rebase manually by commenting\n`@dependabot rebase`.\n\n[//]: # (dependabot-automerge-start)\n[//]: # (dependabot-automerge-end)\n\n---\n\n<details>\n<summary>Dependabot commands and options</summary>\n<br />\n\nYou can trigger Dependabot actions by commenting on this PR:\n- `@dependabot rebase` will rebase this PR\n- `@dependabot recreate` will recreate this PR, overwriting any edits\nthat have been made to it\n- `@dependabot merge` will merge this PR after your CI passes on it\n- `@dependabot squash and merge` will squash and merge this PR after\nyour CI passes on it\n- `@dependabot cancel merge` will cancel a previously requested merge\nand block automerging\n- `@dependabot reopen` will reopen this PR if it is closed\n- `@dependabot close` will close this PR and stop Dependabot recreating\nit. You can achieve the same result by closing it manually\n- `@dependabot show <dependency name> ignore conditions` will show all\nof the ignore conditions of the specified dependency\n- `@dependabot ignore this major version` will close this PR and stop\nDependabot creating any more for this major version (unless you reopen\nthe PR or upgrade to it yourself)\n- `@dependabot ignore this minor version` will close this PR and stop\nDependabot creating any more for this minor version (unless you reopen\nthe PR or upgrade to it yourself)\n- `@dependabot ignore this dependency` will close this PR and stop\nDependabot creating any more for this dependency (unless you reopen the\nPR or upgrade to it yourself)\n\n\n</details>\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-04-09T18:23:49-07:00",
+          "tree_id": "ea16b5cf561bf6684b6c7fee21e40174a7e0c7df",
+          "url": "https://github.com/runfinch/finch/commit/c059d9ec3c4c17ba950bc25a9bb33a2b6c39394e"
+        },
+        "date": 1712719468995,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 44453808405,
+            "unit": "ns/op\t         0.3313 %cpu_avg/op\t        28.57 %cpu_peak/op\t        44.45 cpu_seconds/op\t1487306752 disk_bytes/op\t 1994944 B/op\t   42203 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 44453808405,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3313,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 28.57,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 44.45,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1487306752,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1994944,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 42203,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 36356525046,
+            "unit": "ns/op\t         0.3322 %cpu_avg/op\t        42.86 %cpu_peak/op\t        36.36 cpu_seconds/op\t  20512768 disk_bytes/op\t 1650088 B/op\t   34385 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 36356525046,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3322,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 42.86,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 36.36,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 20512768,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1650088,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 34385,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 538161201,
+            "unit": "ns/op\t         1.031 %cpu_avg/op\t        19.87 %cpu_peak/op\t         0.5381 cpu_seconds/op\t      2048 disk_bytes/op\t   34484 B/op\t     564 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 538161201,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.031,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 19.87,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5381,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 2048,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 34484,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 564,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
