@@ -143,21 +143,12 @@ func (lca *limaConfigApplier) ModifyFinchConfig(fs afero.Fs, logger flog.Logger,
 		return isConfigUpdated, fmt.Errorf("failed to load config: %w", err)
 	}
 
-	// Validation of the value passed by the user.
 	cpus, memory := opts.CPUs, opts.Memory
 	if cpus != DefaultCPUs {
-		err = validateCPUs(cpus, logger, systemDeps)
-		if err != nil {
-			return false, err
-		}
 		*finchCfg.CPUs = cpus
 		isConfigUpdated = true
 	}
 	if memory != DefaultMemory {
-		err = validateMemory(memory, logger, mem)
-		if err != nil {
-			return false, err
-		}
 		*finchCfg.Memory = memory
 		isConfigUpdated = true
 	}
