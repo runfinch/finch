@@ -151,8 +151,10 @@ jobs:
     timeout-minutes: 180
     steps:
       - name: Cancel run if not EC2AMAZ-EHUJ744
+        uses: styfle/cancel-workflow-action@0.12.1
         if: ${{ runner.name != 'EC2AMAZ-EHUJ744' }}
-        run: gh run cancel ${{ github.run_id }}
+        with:
+          workflow_id: ${{ github.run_id }}
       - name: Configure git CRLF settings
         run: |
           git config --global core.autocrlf false
