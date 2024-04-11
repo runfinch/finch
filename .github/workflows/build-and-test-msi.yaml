@@ -77,12 +77,15 @@ jobs:
           aws-region: ${{ secrets.WINDOWS_REGION }}
       - name: Remove Finch VM
         run: |
+          $ErrorActionPreference = 'Ignore'
+          taskkill /f /im wslservice.exe
           wsl --list --verbose
           wsl --shutdown
           wsl --unregister lima-finch
           wsl --list --verbose
       - name: Clean up previous files
         run: |
+          takeown /F C:\actions-runner\_work\finch /R
           Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
           make clean
@@ -141,6 +144,7 @@ jobs:
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
+          taskkill /f /im wslservice.exe
           wsl --list --verbose
           wsl --shutdown
           wsl --unregister lima-finch
@@ -267,6 +271,7 @@ jobs:
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
+          taskkill /f /im wslservice.exe
           wsl --list --verbose
           wsl --shutdown
           wsl --unregister lima-finch
