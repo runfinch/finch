@@ -147,9 +147,12 @@ jobs:
       matrix:
         os: [[self-hosted, windows, amd64, test]]
         test-command: ['test-e2e-vm-serial']
-    runs-on: 'EC2AMAZ-EHUJ744'
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     steps:
+      - name: Cancel run if not EC2AMAZ-EHUJ744
+        if: ${{ runner.name != 'EC2AMAZ-EHUJ744' }}
+        run: gh run cancel ${{ github.run_id }}
       - name: Configure git CRLF settings
         run: |
           git config --global core.autocrlf false
