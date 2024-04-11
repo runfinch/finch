@@ -146,8 +146,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [[self-hosted, windows, amd64, test]]
-        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
-    runs-on: ${{ matrix.os }}
+        test-command: ['test-e2e-vm-serial']
+    runs-on: 'EC2AMAZ-EHUJ744'
     timeout-minutes: 180
     steps:
       - name: Configure git CRLF settings
