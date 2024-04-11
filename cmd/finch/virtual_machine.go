@@ -110,7 +110,15 @@ func virtualMachineCommands(
 		lcc,
 		logger,
 		dependencies(ecc, fc, fp, fs, lcc, logger, fp.FinchDir(finchRootPath)),
-		config.NewLimaApplier(fc, ecc, fs, fp.LimaDefaultConfigPath(), fp.LimaOverrideConfigPath(), system.NewStdLib(), fp.ConfigFilePath(finchRootPath)),
+		config.NewLimaApplier(
+			fc,
+			ecc,
+			fs,
+			fp.LimaDefaultConfigPath(),
+			fp.LimaOverrideConfigPath(),
+			system.NewStdLib(),
+			fp.ConfigFilePath(finchRootPath),
+		),
 		config.NewNerdctlApplier(
 			fssh.NewDialer(),
 			fs,

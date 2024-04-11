@@ -9,11 +9,12 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/runfinch/finch/pkg/config"
-	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/runfinch/finch/pkg/config"
+	"github.com/runfinch/finch/pkg/mocks"
 )
 
 func TestNewSettingsMCommand(t *testing.T) {
@@ -35,7 +36,6 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			afero.Fs,
-			*gomock.Controller,
 		)
 	}{
 		{
@@ -49,13 +49,15 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
-				ctrl *gomock.Controller,
 			) {
 				opts := config.VMConfigOpts{
 					CPUs:   0,
 					Memory: "",
 				}
-				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(false, errors.New("the number of CPUs or the amount of memory should be at least one valid value"))
+				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(
+					false,
+					errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
+				)
 			},
 		},
 		{
@@ -72,7 +74,6 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
-				ctrl *gomock.Controller,
 			) {
 				opts := config.VMConfigOpts{
 					CPUs:   6,
@@ -94,7 +95,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			stdout := bytes.Buffer{}
 
-			tc.mockSvc(logger, lca, fs, ctrl)
+			tc.mockSvc(logger, lca, fs)
 
 			cmd := newSettingsVMCommand(logger, lca, fs, &stdout)
 			cmd.SetArgs(tc.args)
@@ -115,7 +116,6 @@ func TestSettingsVMAction_run(t *testing.T) {
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			afero.Fs,
-			*gomock.Controller,
 			config.VMConfigOpts,
 		)
 		cpus   int
@@ -129,7 +129,6 @@ func TestSettingsVMAction_run(t *testing.T) {
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
-				ctrl *gomock.Controller,
 				opts config.VMConfigOpts,
 			) {
 				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(true, nil)
@@ -145,7 +144,6 @@ func TestSettingsVMAction_run(t *testing.T) {
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
-				ctrl *gomock.Controller,
 				opts config.VMConfigOpts,
 			) {
 				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(false, nil)
@@ -161,10 +159,12 @@ func TestSettingsVMAction_run(t *testing.T) {
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
-				ctrl *gomock.Controller,
 				opts config.VMConfigOpts,
 			) {
-				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(false, errors.New("the number of CPUs or the amount of memory should be at least one valid value"))
+				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(
+					false,
+					errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
+				)
 			},
 			cpus:   0,
 			memory: "",
@@ -186,7 +186,7 @@ func TestSettingsVMAction_run(t *testing.T) {
 				Memory: tc.memory,
 			}
 
-			tc.mockSvc(logger, lca, fs, ctrl, opts)
+			tc.mockSvc(logger, lca, fs, opts)
 
 			err := newSettingsVMAction(logger, lca, fs, &stdout).run(opts)
 			assert.Equal(t, err, tc.wantErr)

@@ -26,8 +26,16 @@ func newSettingsVMCommand(
 		RunE:  newSettingsVMAction(logger, lca, fs, stdout).runAdapter,
 	}
 
-	settingsVMCommand.Flags().Int("cpus", config.DefaultCPUs, "the amount of vCPU to dedicate to the virtual machine (restart the vm when applying this change.)")
-	settingsVMCommand.Flags().String("memory", config.DefaultMemory, "the amount of memory to dedicate to the virtual machine (restart the vm when applying this change.)")
+	settingsVMCommand.Flags().Int(
+		"cpus",
+		config.DefaultCPUs,
+		"the amount of vCPU to dedicate to the virtual machine (restart the vm when applying this change.)",
+	)
+	settingsVMCommand.Flags().String(
+		"memory",
+		config.DefaultMemory,
+		"the amount of memory to dedicate to the virtual machine (restart the vm when applying this change.)",
+	)
 
 	return settingsVMCommand
 }
