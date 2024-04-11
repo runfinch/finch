@@ -218,6 +218,7 @@ jobs:
       - name: Cleanup previous checkouts
         run: |
           Remove-Item C:\actions-runner\_work\finch\finch -Recurse -Force -ErrorAction Ignore
+          takeown /F C:\actions-runner\_work\finch /R
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
@@ -270,6 +271,7 @@ jobs:
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
+          taskkill /f /im wslservice.exe
           wsl --list --verbose
           wsl --shutdown
           wsl --unregister lima-finch
