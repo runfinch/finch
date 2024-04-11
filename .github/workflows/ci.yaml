@@ -34,10 +34,10 @@ jobs:
       - name: Pull latest awslabs/git-secrets repo
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
-           repository: awslabs/git-secrets
-           ref: 1.3.0
-           fetch-tags: true
-           path: git-secrets
+          repository: awslabs/git-secrets
+          ref: 1.3.0
+          fetch-tags: true
+          path: git-secrets
       - name: Install git secrets from source
         run: sudo make install
         working-directory: git-secrets
@@ -164,7 +164,7 @@ jobs:
       - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version-file: go.mod
-          cache: true  
+          cache: true
       - name: Set output variables
         id: vars
         run: |
@@ -217,6 +217,7 @@ jobs:
           git config --global core.eol lf
       - name: Cleanup previous checkouts
         run: |
+          takeown /F C:\actions-runner\_work\finch /R
           Remove-Item C:\actions-runner\_work\finch\finch -Recurse -Force -ErrorAction Ignore
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
@@ -270,6 +271,7 @@ jobs:
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
+          taskkill /f /im wslservice.exe
           wsl --list --verbose
           wsl --shutdown
           wsl --unregister lima-finch
