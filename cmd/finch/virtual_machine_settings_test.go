@@ -45,8 +45,8 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				Use: "settings",
 			},
 			args: []string{
-				"--cpus=6",
-				"--memory=8GiB",
+				"--cpus=2",
+				"--memory=2GiB",
 			},
 			mockSvc: func(
 				lca *mocks.LimaConfigApplier,
@@ -66,7 +66,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				Use: "settings",
 			},
 			args: []string{
-				"--cpus=6",
+				"--cpus=2",
 			},
 			mockSvc: func(
 				lca *mocks.LimaConfigApplier,
@@ -86,7 +86,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				Use: "settings",
 			},
 			args: []string{
-				"--memory=8GiB",
+				"--memory=2GiB",
 			},
 			mockSvc: func(
 				lca *mocks.LimaConfigApplier,
@@ -150,8 +150,8 @@ func TestSettingsVMAction_run(t *testing.T) {
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
-			cpus:   6,
-			memory: "8GiB",
+			cpus:   2,
+			memory: "2GiB",
 		},
 		{
 			name:             "should return an error if the configuration of CPU or memory is invalid",

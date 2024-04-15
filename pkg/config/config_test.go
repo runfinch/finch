@@ -358,8 +358,8 @@ func Test_ModifyFinchConfig(t *testing.T) {
 				data := "cpus: 4\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   6,
-			memory: "8GiB",
+			cpus:   2,
+			memory: "2GiB",
 			want:   true,
 			errMsg: "",
 		},
@@ -367,8 +367,8 @@ func Test_ModifyFinchConfig(t *testing.T) {
 			name:    "should return an error if the configuration file does not exist",
 			path:    "/config.yaml",
 			mockSvc: func(_ afero.Fs) {},
-			cpus:    6,
-			memory:  "8GiB",
+			cpus:    2,
+			memory:  "2GiB",
 			want:    false,
 			errMsg:  "failed to read config file: open /config.yaml: file does not exist",
 		},
@@ -392,7 +392,7 @@ func Test_ModifyFinchConfig(t *testing.T) {
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			cpus:   -1,
-			memory: "6GiB",
+			memory: "2GiB",
 			want:   false,
 			errMsg: "failed to validate config file: specified number of CPUs (-1) must be greater than 0",
 		},
@@ -403,8 +403,8 @@ func Test_ModifyFinchConfig(t *testing.T) {
 				data := "cpus: 4\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   4,
-			memory: "6Gi",
+			cpus:   2,
+			memory: "2Gi",
 			want:   false,
 			errMsg: "failed to validate config file: failed to parse memory to uint: invalid suffix: 'gi'",
 		},
