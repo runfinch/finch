@@ -648,14 +648,39 @@ mountType: "reverse-sshfs"`), 0o600)
 			deps := mocks.NewLimaConfigApplierSystemDeps(ctrl)
 			l := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
+			finchConfigPath := "/finch.yaml"
 
 			tc.mockSvc(fs, l, cmd, cmdCreator, deps)
 			var got error
 			if tc.isInit {
-				got = NewLimaApplier(tc.config, cmdCreator, fs, tc.defaultPath, tc.overridePath, deps).ConfigureDefaultLimaYaml()
-				_ = NewLimaApplier(tc.config, cmdCreator, fs, tc.defaultPath, tc.overridePath, deps).ConfigureOverrideLimaYaml()
+				got = NewLimaApplier(
+					tc.config,
+					cmdCreator,
+					fs,
+					tc.defaultPath,
+					tc.overridePath,
+					deps,
+					finchConfigPath,
+				).ConfigureDefaultLimaYaml()
+				_ = NewLimaApplier(
+					tc.config,
+					cmdCreator,
+					fs,
+					tc.defaultPath,
+					tc.overridePath,
+					deps,
+					finchConfigPath,
+				).ConfigureOverrideLimaYaml()
 			} else {
-				got = NewLimaApplier(tc.config, cmdCreator, fs, tc.defaultPath, tc.overridePath, deps).ConfigureOverrideLimaYaml()
+				got = NewLimaApplier(
+					tc.config,
+					cmdCreator,
+					fs,
+					tc.defaultPath,
+					tc.overridePath,
+					deps,
+					finchConfigPath,
+				).ConfigureOverrideLimaYaml()
 			}
 
 			require.Equal(t, tc.want, got)
