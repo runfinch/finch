@@ -11,9 +11,6 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	config "github.com/runfinch/finch/pkg/config"
-	flog "github.com/runfinch/finch/pkg/flog"
-	afero "github.com/spf13/afero"
 )
 
 // LimaConfigApplier is a mock of LimaConfigApplier interface.
@@ -67,17 +64,16 @@ func (mr *LimaConfigApplierMockRecorder) ConfigureOverrideLimaYaml() *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfigureOverrideLimaYaml", reflect.TypeOf((*LimaConfigApplier)(nil).ConfigureOverrideLimaYaml))
 }
 
-// ModifyFinchConfig mocks base method.
-func (m *LimaConfigApplier) ModifyFinchConfig(arg0 afero.Fs, arg1 flog.Logger, arg2 config.VMConfigOpts) (bool, error) {
+// GetFinchConfigPath mocks base method.
+func (m *LimaConfigApplier) GetFinchConfigPath() string {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ModifyFinchConfig", arg0, arg1, arg2)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret := m.ctrl.Call(m, "GetFinchConfigPath")
+	ret0, _ := ret[0].(string)
+	return ret0
 }
 
-// ModifyFinchConfig indicates an expected call of ModifyFinchConfig.
-func (mr *LimaConfigApplierMockRecorder) ModifyFinchConfig(arg0, arg1, arg2 interface{}) *gomock.Call {
+// GetFinchConfigPath indicates an expected call of GetFinchConfigPath.
+func (mr *LimaConfigApplierMockRecorder) GetFinchConfigPath() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyFinchConfig", reflect.TypeOf((*LimaConfigApplier)(nil).ModifyFinchConfig), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFinchConfigPath", reflect.TypeOf((*LimaConfigApplier)(nil).GetFinchConfigPath))
 }

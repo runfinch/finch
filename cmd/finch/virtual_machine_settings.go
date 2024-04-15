@@ -81,15 +81,18 @@ func (sva *settingsVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
 }
 
 func (sva *settingsVMAction) run(opts config.VMConfigOpts) error {
-	isConfigUpdated, err := sva.limaConfigApplier.ModifyFinchConfig(sva.fs, sva.logger, opts)
+	isConfigUpdated, err := config.ModifyFinchConfig(
+		sva.fs,
+		sva.logger,
+		sva.limaConfigApplier.GetFinchConfigPath(),
+		opts,
+	)
 	if err != nil {
 		return err
 	}
 
 	if isConfigUpdated {
 		fmt.Fprintln(sva.stdout, "Configurations have been successfully updated.")
-	} else {
-		fmt.Fprintln(sva.stdout, "Input values were unchanged from the configuration file, so changes were not applied.")
 	}
 
 	return nil

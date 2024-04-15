@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/mocks"
@@ -33,33 +34,10 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 		command *cobra.Command
 		args    []string
 		mockSvc func(
-			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			afero.Fs,
 		)
 	}{
-		{
-			name:    "should configure the instance for invalid values",
-			wantErr: errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
-			command: &cobra.Command{
-				Use: "settings",
-			},
-			args: []string{},
-			mockSvc: func(
-				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				fs afero.Fs,
-			) {
-				opts := config.VMConfigOpts{
-					CPUs:   0,
-					Memory: "",
-				}
-				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(
-					false,
-					errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
-				)
-			},
-		},
 		{
 			name:    "should configure the instance for valid CPU and memory values",
 			wantErr: nil,
@@ -71,15 +49,54 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				"--memory=8GiB",
 			},
 			mockSvc: func(
-				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
 			) {
-				opts := config.VMConfigOpts{
-					CPUs:   6,
-					Memory: "8GiB",
-				}
-				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(true, nil)
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 4\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+		},
+		{
+			name:    "should configure the instance for valid CPU value",
+			wantErr: nil,
+			command: &cobra.Command{
+				Use: "settings",
+			},
+			args: []string{
+				"--cpus=6",
+			},
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 4\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+		},
+		{
+			name:    "should configure the instance for valid memory value",
+			wantErr: nil,
+			command: &cobra.Command{
+				Use: "settings",
+			},
+			args: []string{
+				"--memory=8GiB",
+			},
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 4\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
 		},
 	}
@@ -95,7 +112,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			stdout := bytes.Buffer{}
 
-			tc.mockSvc(logger, lca, fs)
+			tc.mockSvc(lca, fs)
 
 			cmd := newSettingsVMCommand(logger, lca, fs, &stdout)
 			cmd.SetArgs(tc.args)
@@ -113,10 +130,8 @@ func TestSettingsVMAction_run(t *testing.T) {
 		wantErr          error
 		wantStatusOutput string
 		mockSvc          func(
-			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			afero.Fs,
-			config.VMConfigOpts,
 		)
 		cpus   int
 		memory string
@@ -126,48 +141,51 @@ func TestSettingsVMAction_run(t *testing.T) {
 			wantErr:          nil,
 			wantStatusOutput: "Configurations have been successfully updated.\n",
 			mockSvc: func(
-				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
-				opts config.VMConfigOpts,
 			) {
-				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(true, nil)
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 4\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
-			cpus:   4,
-			memory: "6GiB",
+			cpus:   6,
+			memory: "8GiB",
 		},
 		{
-			name:             "should not update vm settings if the configuration is not updated",
-			wantErr:          nil,
-			wantStatusOutput: "Input values were unchanged from the configuration file, so changes were not applied.\n",
-			mockSvc: func(
-				logger *mocks.Logger,
-				lca *mocks.LimaConfigApplier,
-				fs afero.Fs,
-				opts config.VMConfigOpts,
-			) {
-				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(false, nil)
-			},
-			cpus:   4,
-			memory: "6GiB",
-		},
-		{
-			name:             "should return error if the configuration of CPU or memory is invalid",
+			name:             "should return an error if the configuration of CPU or memory is invalid",
 			wantErr:          errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
 			wantStatusOutput: "",
 			mockSvc: func(
-				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
-				opts config.VMConfigOpts,
 			) {
-				lca.EXPECT().ModifyFinchConfig(fs, logger, opts).Return(
-					false,
-					errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
-				)
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 4\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
 			cpus:   0,
 			memory: "",
+		},
+		{
+			name:             "should return an error if the configuration of CPU or memory is invalid",
+			wantErr:          errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
+			wantStatusOutput: "",
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 4\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+			cpus:   4,
+			memory: "6GiB",
 		},
 	}
 
@@ -186,7 +204,7 @@ func TestSettingsVMAction_run(t *testing.T) {
 				Memory: tc.memory,
 			}
 
-			tc.mockSvc(logger, lca, fs, opts)
+			tc.mockSvc(lca, fs)
 
 			err := newSettingsVMAction(logger, lca, fs, &stdout).run(opts)
 			assert.Equal(t, err, tc.wantErr)

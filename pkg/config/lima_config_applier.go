@@ -14,8 +14,6 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/command"
-	"github.com/runfinch/finch/pkg/flog"
-	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/system"
 )
 
@@ -113,58 +111,6 @@ func NewLimaApplier(
 		systemDeps:             systemDeps,
 		finchConfigPath:        finchConfigPath,
 	}
-}
-
-func loadFinchConfig(fs afero.Fs, finchConfigPath string, logger flog.Logger, systemDeps LoadSystemDeps, mem fmemory.Memory) (*Finch, error) {
-	b, err := afero.ReadFile(fs, finchConfigPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read finch.yaml: %w", err)
-	}
-
-	var cfg Finch
-	if err := yaml.Unmarshal(b, &cfg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
-	}
-	if err := validate(&cfg, logger, systemDeps, mem); err != nil {
-		return nil, fmt.Errorf("failed to validate config file: %w", err)
-	}
-
-	return &cfg, nil
-}
-
-func (lca *limaConfigApplier) ModifyFinchConfig(fs afero.Fs, logger flog.Logger, opts VMConfigOpts) (bool, error) {
-	var isConfigUpdated bool
-
-	systemDeps := system.NewStdLib()
-	mem := fmemory.NewMemory()
-
-	finchCfg, err := loadFinchConfig(fs, lca.finchConfigPath, logger, systemDeps, mem)
-	if err != nil {
-		return isConfigUpdated, fmt.Errorf("failed to load config: %w", err)
-	}
-
-	cpus, memory := opts.CPUs, opts.Memory
-	if cpus != DefaultCPUs {
-		*finchCfg.CPUs = cpus
-		isConfigUpdated = true
-	}
-	if memory != DefaultMemory {
-		*finchCfg.Memory = memory
-		isConfigUpdated = true
-	}
-
-	if !isConfigUpdated {
-		return isConfigUpdated, fmt.Errorf("the number of CPUs or the amount of memory should be at least one valid value")
-	}
-
-	if err := validate(finchCfg, logger, systemDeps, mem); err != nil {
-		return isConfigUpdated, fmt.Errorf("failed to validate config file: %w", err)
-	}
-	if err := writeConfig(finchCfg, lca.fs, lca.finchConfigPath); err != nil {
-		return isConfigUpdated, err
-	}
-
-	return isConfigUpdated, nil
 }
 
 // ConfigureDefaultLimaYaml writes Lima-specific config values from Finch's config to default.yaml at lima config file path.
@@ -328,4 +274,8 @@ func findWslDiskFormatScript(limaCfg *limayaml.LimaYAML) bool {
 	}
 
 	return hasWslDiskFormatScript
+}
+
+func (lca *limaConfigApplier) GetFinchConfigPath() string {
+	return lca.finchConfigPath
 }
