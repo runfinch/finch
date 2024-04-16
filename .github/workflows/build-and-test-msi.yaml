@@ -78,7 +78,7 @@ jobs:
       - name: Remove Finch VM
         run: |
           $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe
+          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
           wsl --shutdown
           wsl --unregister lima-finch
@@ -144,7 +144,7 @@ jobs:
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe
+          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
           wsl --shutdown
           wsl --unregister lima-finch
@@ -271,7 +271,7 @@ jobs:
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe
+          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
           wsl --shutdown
           wsl --unregister lima-finch
