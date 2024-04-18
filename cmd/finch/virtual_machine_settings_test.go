@@ -45,7 +45,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				Use: "settings",
 			},
 			args: []string{
-				"--cpus=2",
+				"--cpus=1",
 				"--memory=2GiB",
 			},
 			mockSvc: func(
@@ -53,7 +53,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
@@ -66,14 +66,14 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				Use: "settings",
 			},
 			args: []string{
-				"--cpus=2",
+				"--cpus=1",
 			},
 			mockSvc: func(
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
@@ -93,7 +93,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
@@ -145,12 +145,12 @@ func TestSettingsVMAction_run(t *testing.T) {
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
-			cpus:   2,
+			cpus:   1,
 			memory: "2GiB",
 		},
 		{
@@ -162,7 +162,7 @@ func TestSettingsVMAction_run(t *testing.T) {
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
@@ -179,12 +179,12 @@ func TestSettingsVMAction_run(t *testing.T) {
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
-			cpus:   4,
+			cpus:   2,
 			memory: "6GiB",
 		},
 	}

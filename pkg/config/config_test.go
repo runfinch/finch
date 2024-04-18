@@ -355,10 +355,10 @@ func Test_ModifyFinchConfig(t *testing.T) {
 			name: "should update vm settings",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   2,
+			cpus:   1,
 			memory: "2GiB",
 			want:   true,
 			errMsg: "",
@@ -367,7 +367,7 @@ func Test_ModifyFinchConfig(t *testing.T) {
 			name: "should return an error if the configurations of CPU and memory are invalid",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			cpus:   0,
@@ -402,7 +402,7 @@ func Test_ModifyFinchConfig(t *testing.T) {
 			name: "should return an error if the configuration of CPU is invalid",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			cpus:   -1,
@@ -414,7 +414,7 @@ func Test_ModifyFinchConfig(t *testing.T) {
 			name: "should return an error if the configuration of memory is invalid",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			cpus:   2,
@@ -498,7 +498,7 @@ func Test_loadFinchConfig(t *testing.T) {
 			name: "config file exists, but is invalid yaml format",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
-				data := "cpus: 4\nmemory 6Gi"
+				data := "cpus: 2\nmemory 6Gi"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			want:   nil,
@@ -518,14 +518,14 @@ func Test_loadFinchConfig(t *testing.T) {
 			name: "successfully loads config.yaml",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, _ *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
-				data := "cpus: 4\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 
 				deps.EXPECT().NumCPU().Return(4)
 				mem.EXPECT().TotalMemory().Return(uint64(6_442_450_944))
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(4),
+				CPUs:   pointer.Int(2),
 				Memory: pointer.String("6GiB"),
 			},
 			errMsg: "",
@@ -551,7 +551,7 @@ func Test_loadFinchConfig(t *testing.T) {
 			name: "should return an error if the configuration of memory is invalid",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
-				data := "cpus: 4\nmemory: 6Gi"
+				data := "cpus: 2\nmemory: 6Gi"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			want:   nil,
@@ -570,12 +570,12 @@ func Test_loadFinchConfig(t *testing.T) {
 		{
 			name: "successfully loads config.yaml",
 			path: "/config.yaml",
-			mockSvc: func(fs afero.Fs, _ *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
-				data := "cpus: 4\nmemory: 6GiB"
+			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
+				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(4),
+				CPUs:   pointer.Int(2),
 				Memory: pointer.String("6GiB"),
 			},
 			errMsg: "",
