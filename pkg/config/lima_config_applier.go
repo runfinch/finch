@@ -86,6 +86,7 @@ type limaConfigApplier struct {
 	limaDefaultConfigPath  string
 	limaOverrideConfigPath string
 	systemDeps             LimaConfigApplierSystemDeps
+	finchConfigPath        string
 }
 
 var _ LimaConfigApplier = (*limaConfigApplier)(nil)
@@ -99,6 +100,7 @@ func NewLimaApplier(
 	limaDefaultConfigPath string,
 	limaOverrideConfigPath string,
 	systemDeps LimaConfigApplierSystemDeps,
+	finchConfigPath string,
 ) LimaConfigApplier {
 	return &limaConfigApplier{
 		cfg:                    cfg,
@@ -107,6 +109,7 @@ func NewLimaApplier(
 		limaDefaultConfigPath:  limaDefaultConfigPath,
 		limaOverrideConfigPath: limaOverrideConfigPath,
 		systemDeps:             systemDeps,
+		finchConfigPath:        finchConfigPath,
 	}
 }
 
@@ -271,4 +274,8 @@ func findWslDiskFormatScript(limaCfg *limayaml.LimaYAML) bool {
 	}
 
 	return hasWslDiskFormatScript
+}
+
+func (lca *limaConfigApplier) GetFinchConfigPath() string {
+	return lca.finchConfigPath
 }

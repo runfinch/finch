@@ -335,3 +335,289 @@ func Test_ensureConfigDir(t *testing.T) {
 		})
 	}
 }
+
+func Test_ModifyFinchConfig(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name            string
+		path            string
+		mockSvc         func(fs afero.Fs)
+		postRunCheck    func(t *testing.T, fs afero.Fs)
+		want            bool
+		errMsg          string
+		opts            VMConfigOpts
+		cpus            int
+		memory          string
+		isConfigUpdated bool
+	}{
+		{
+			name: "should update vm settings",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs) {
+				data := "cpus: 2\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			cpus:   1,
+			memory: "2GiB",
+			want:   true,
+			errMsg: "",
+		},
+		{
+			name: "should return an error if the configurations of CPU and memory are invalid",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs) {
+				data := "cpus: 2\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			cpus:   0,
+			memory: "",
+			want:   false,
+			errMsg: "the number of CPUs or the amount of memory should be at least one valid value",
+		},
+	}
+
+	darwinTestCases := []struct {
+		name            string
+		path            string
+		mockSvc         func(fs afero.Fs)
+		postRunCheck    func(t *testing.T, fs afero.Fs)
+		want            bool
+		errMsg          string
+		opts            VMConfigOpts
+		cpus            int
+		memory          string
+		isConfigUpdated bool
+	}{
+		{
+			name:    "should return an error if the configuration file does not exist",
+			path:    "/config.yaml",
+			mockSvc: func(_ afero.Fs) {},
+			cpus:    2,
+			memory:  "2GiB",
+			want:    false,
+			errMsg:  "failed to read config file: open /config.yaml: file does not exist",
+		},
+		{
+			name: "should return an error if the configuration of CPU is invalid",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs) {
+				data := "cpus: 2\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			cpus:   -1,
+			memory: "2GiB",
+			want:   false,
+			errMsg: "failed to validate config file: specified number of CPUs (-1) must be greater than 0",
+		},
+		{
+			name: "should return an error if the configuration of memory is invalid",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs) {
+				data := "cpus: 2\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			cpus:   2,
+			memory: "2Gi",
+			want:   false,
+			errMsg: "failed to validate config file: failed to parse memory to uint: invalid suffix: 'gi'",
+		},
+	}
+
+	windowsTestCases := []struct {
+		name            string
+		path            string
+		mockSvc         func(fs afero.Fs)
+		postRunCheck    func(t *testing.T, fs afero.Fs)
+		want            bool
+		errMsg          string
+		opts            VMConfigOpts
+		cpus            int
+		memory          string
+		isConfigUpdated bool
+	}{
+		{
+			name:    "should return an error if the configuration file does not exist",
+			path:    "/config.yaml",
+			mockSvc: func(_ afero.Fs) {},
+			cpus:    2,
+			memory:  "2GiB",
+			want:    false,
+			errMsg:  "failed to read config file: open \\config.yaml: file does not exist",
+		},
+	}
+
+	switch runtime.GOOS {
+	case "windows":
+		testCases = append(testCases, windowsTestCases...)
+	case "darwin":
+		testCases = append(testCases, darwinTestCases...)
+	default:
+		t.Skip("Not running tests for " + runtime.GOOS)
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			fs := afero.NewMemMapFs()
+			l := mocks.NewLogger(ctrl)
+
+			opts := VMConfigOpts{
+				CPUs:   tc.cpus,
+				Memory: tc.memory,
+			}
+
+			tc.mockSvc(fs)
+
+			isConfigUpdated, err := ModifyFinchConfig(fs, l, tc.path, opts)
+			errMsg := ""
+			if err != nil {
+				errMsg = err.Error()
+			}
+			require.Equal(t, tc.want, isConfigUpdated)
+			require.Equal(t, tc.errMsg, errMsg)
+		})
+	}
+}
+
+func Test_loadFinchConfig(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name         string
+		path         string
+		mockSvc      func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+		postRunCheck func(t *testing.T, fs afero.Fs)
+		want         *Finch
+		errMsg       string
+	}{
+		{
+			name: "config file exists, but is invalid yaml format",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
+				data := "cpus: 2\nmemory 6Gi"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			want:   nil,
+			errMsg: "failed to unmarshal config file: yaml: line 2: could not find expected ':'",
+		},
+	}
+
+	darwinTestCases := []struct {
+		name         string
+		path         string
+		mockSvc      func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+		postRunCheck func(t *testing.T, fs afero.Fs)
+		want         *Finch
+		errMsg       string
+	}{
+		{
+			name: "successfully loads config.yaml",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs, _ *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+				data := "cpus: 2\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+
+				deps.EXPECT().NumCPU().Return(4)
+				mem.EXPECT().TotalMemory().Return(uint64(6_442_450_944))
+			},
+			want: &Finch{
+				CPUs:   pointer.Int(2),
+				Memory: pointer.String("6GiB"),
+			},
+			errMsg: "",
+		},
+		{
+			name:    "config file does not exist",
+			path:    "/config.yaml",
+			mockSvc: func(_ afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {},
+			want:    nil,
+			errMsg:  "failed to read config file: open /config.yaml: file does not exist",
+		},
+		{
+			name: "should return an error if the configuration of CPU is invalid",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
+				data := "cpus: 0\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			want:   nil,
+			errMsg: "failed to validate config file: specified number of CPUs (0) must be greater than 0",
+		},
+		{
+			name: "should return an error if the configuration of memory is invalid",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
+				data := "cpus: 2\nmemory: 6Gi"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			want:   nil,
+			errMsg: "failed to validate config file: failed to parse memory to uint: invalid suffix: 'gi'",
+		},
+	}
+
+	windowsTestCases := []struct {
+		name         string
+		path         string
+		mockSvc      func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+		postRunCheck func(t *testing.T, fs afero.Fs)
+		want         *Finch
+		errMsg       string
+	}{
+		{
+			name: "successfully loads config.yaml",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
+				data := "cpus: 2\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			want: &Finch{
+				CPUs:   pointer.Int(2),
+				Memory: pointer.String("6GiB"),
+			},
+			errMsg: "",
+		},
+		{
+			name:    "config file does not exist",
+			path:    "/config.yaml",
+			mockSvc: func(_ afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {},
+			want:    nil,
+			errMsg:  "failed to read config file: open \\config.yaml: file does not exist",
+		},
+	}
+
+	switch runtime.GOOS {
+	case "windows":
+		testCases = append(testCases, windowsTestCases...)
+	case "darwin":
+		testCases = append(testCases, darwinTestCases...)
+	default:
+		t.Skip("Not running tests for " + runtime.GOOS)
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			ctrl := gomock.NewController(t)
+
+			fs := afero.NewMemMapFs()
+			l := mocks.NewLogger(ctrl)
+			deps := mocks.NewLoadSystemDeps(ctrl)
+			mem := mocks.NewMemory(ctrl)
+
+			tc.mockSvc(fs, l, deps, mem)
+
+			finchCfg, err := loadFinchConfig(fs, tc.path, l, deps, mem)
+			errMsg := ""
+			if err != nil {
+				errMsg = err.Error()
+			}
+			require.Equal(t, tc.want, finchCfg)
+			require.Equal(t, tc.errMsg, errMsg)
+		})
+	}
+}

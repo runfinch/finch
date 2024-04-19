@@ -71,12 +71,25 @@ type Nerdctl struct {
 	HostsDir         []string `toml:"hosts_dir,omitempty"`
 }
 
+// VMConfigOpts represents the Options for finch vm settings command.
+type VMConfigOpts struct {
+	CPUs   int
+	Memory string
+}
+
+// Default values for the command line arguments --cpus and --memory.
+const (
+	DefaultCPUs   = 0
+	DefaultMemory = ""
+)
+
 // LimaConfigApplier applies lima configuration changes.
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_lima_config_applier.go -package=mocks -mock_names LimaConfigApplier=LimaConfigApplier . LimaConfigApplier
 type LimaConfigApplier interface {
 	ConfigureOverrideLimaYaml() error
 	ConfigureDefaultLimaYaml() error
+	GetFinchConfigPath() string
 }
 
 // NerdctlConfigApplier applies nerdctl configuration changes.
@@ -154,4 +167,58 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 	}
 
 	return defCfg, nil
+}
+
+// loadFinchConfig Load Finch's configuration from a YAML file.
+func loadFinchConfig(fs afero.Fs, finchConfigPath string, logger flog.Logger, systemDeps LoadSystemDeps, mem fmemory.Memory) (*Finch, error) {
+	b, err := afero.ReadFile(fs, finchConfigPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read config file: %w", err)
+	}
+
+	var cfg Finch
+	if err := yaml.Unmarshal(b, &cfg); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
+	}
+	if err := validate(&cfg, logger, systemDeps, mem); err != nil {
+		return nil, fmt.Errorf("failed to validate config file: %w", err)
+	}
+
+	return &cfg, nil
+}
+
+// ModifyFinchConfig Modify Finch's configuration from user inputs.
+func ModifyFinchConfig(fs afero.Fs, logger flog.Logger, finchConfigPath string, opts VMConfigOpts) (bool, error) {
+	var isConfigUpdated bool
+
+	systemDeps := system.NewStdLib()
+	mem := fmemory.NewMemory()
+
+	finchCfg, err := loadFinchConfig(fs, finchConfigPath, logger, systemDeps, mem)
+	if err != nil {
+		return isConfigUpdated, err
+	}
+
+	cpus, memory := opts.CPUs, opts.Memory
+	if cpus != DefaultCPUs && cpus != *finchCfg.CPUs {
+		*finchCfg.CPUs = cpus
+		isConfigUpdated = true
+	}
+	if memory != DefaultMemory && memory != *finchCfg.Memory {
+		*finchCfg.Memory = memory
+		isConfigUpdated = true
+	}
+
+	if !isConfigUpdated {
+		return isConfigUpdated, fmt.Errorf("the number of CPUs or the amount of memory should be at least one valid value")
+	}
+
+	if err := validate(finchCfg, logger, systemDeps, mem); err != nil {
+		return false, fmt.Errorf("failed to validate config file: %w", err)
+	}
+	if err := writeConfig(finchCfg, fs, finchConfigPath); err != nil {
+		return false, err
+	}
+
+	return isConfigUpdated, nil
 }

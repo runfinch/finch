@@ -49,6 +49,7 @@ func newVirtualMachineCommand(
 		newStatusVMCommand(limaCmdCreator, logger, os.Stdout),
 		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs,
 			fp.LimaSSHPrivateKeyPath(), diskManager),
+		newSettingsVMCommand(logger, lca, fs, os.Stdout),
 	)
 
 	return virtualMachineCommand
@@ -109,7 +110,15 @@ func virtualMachineCommands(
 		lcc,
 		logger,
 		dependencies(ecc, fc, fp, fs, lcc, logger, fp.FinchDir(finchRootPath)),
-		config.NewLimaApplier(fc, ecc, fs, fp.LimaDefaultConfigPath(), fp.LimaOverrideConfigPath(), system.NewStdLib()),
+		config.NewLimaApplier(
+			fc,
+			ecc,
+			fs,
+			fp.LimaDefaultConfigPath(),
+			fp.LimaOverrideConfigPath(),
+			system.NewStdLib(),
+			fp.ConfigFilePath(finchRootPath),
+		),
 		config.NewNerdctlApplier(
 			fssh.NewDialer(),
 			fs,

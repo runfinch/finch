@@ -63,3 +63,17 @@ func (mr *LimaConfigApplierMockRecorder) ConfigureOverrideLimaYaml() *gomock.Cal
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfigureOverrideLimaYaml", reflect.TypeOf((*LimaConfigApplier)(nil).ConfigureOverrideLimaYaml))
 }
+
+// GetFinchConfigPath mocks base method.
+func (m *LimaConfigApplier) GetFinchConfigPath() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFinchConfigPath")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetFinchConfigPath indicates an expected call of GetFinchConfigPath.
+func (mr *LimaConfigApplierMockRecorder) GetFinchConfigPath() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFinchConfigPath", reflect.TypeOf((*LimaConfigApplier)(nil).GetFinchConfigPath))
+}
