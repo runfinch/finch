@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713805585511,
+  "lastUpdate": 1713810360661,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -17716,6 +17716,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 309,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f8b7f254a67413111dc1de70255a28ffab49d62a",
+          "message": "build(deps): Bump k8s.io/apimachinery from 0.29.3 to 0.30.0 (#904)\n\nBumps [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery)\r\nfrom 0.29.3 to 0.30.0.\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/37988e577e160bf7749437141fee1d6b8ca15dd6\"><code>37988e5</code></a>\r\nMerge remote-tracking branch 'origin/master' into release-1.30</li>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/c857a38a52c72d37c39c124eea4f96f736aeabf6\"><code>c857a38</code></a>\r\nUpdate x/net for CVE-2023-45288</li>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/0407311be590a4faa7e79343d1e1cd5c965663b6\"><code>0407311</code></a>\r\nfollowup to allow special characters</li>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/25164f774551e54ff86b6d19a3132ad064537aa0\"><code>25164f7</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/kubernetes/apimachinery/issues/123435\">#123435</a>\r\nfrom tallclair/apparmor-ga</li>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/cbfe0a1feaa598afa1cb1bdd3278c143adffe14f\"><code>cbfe0a1</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/kubernetes/apimachinery/issues/123758\">#123758</a>\r\nfrom liggitt/protobump</li>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/21d26b6fd4119c6286de788d5591b0caddc636c5\"><code>21d26b6</code></a>\r\nBump github.com/golang/protobuf v1.5.4, google.golang.org/protobuf\r\nv1.33.0</li>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/0c29f846b598a7241c41adae0fa677e6ea51885b\"><code>0c29f84</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/kubernetes/apimachinery/issues/123385\">#123385</a>\r\nfrom HirazawaUi/allow-special-characters</li>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/60d24f246fed895446a3e8aed930ddb9dec96e9e\"><code>60d24f2</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/kubernetes/apimachinery/issues/123708\">#123708</a>\r\nfrom p0lyn0mial/upstream-const-watchlist-bookmark-...</li>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/513d23a10f5618b52ab462e139d752da30be0ca4\"><code>513d23a</code></a>\r\napimachinery/meta/types.go: define InitialEventsAnnotationKey const</li>\r\n<li><a\r\nhref=\"https://github.com/kubernetes/apimachinery/commit/67cb3a878cd3b7d9717b93c24bc6cf21195fba51\"><code>67cb3a8</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/kubernetes/apimachinery/issues/123413\">#123413</a>\r\nfrom seans3/tunneling-spdy-websockets</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/kubernetes/apimachinery/compare/v0.29.3...v0.30.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=k8s.io/apimachinery&package-manager=go_modules&previous-version=0.29.3&new-version=0.30.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-04-22T13:46:16-04:00",
+          "tree_id": "7f8816004025d96d8b5edba6e73b8c6523a5a8da",
+          "url": "https://github.com/runfinch/finch/commit/f8b7f254a67413111dc1de70255a28ffab49d62a"
+        },
+        "date": 1713810358789,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 38652437125,
+            "unit": "ns/op\t         0.4048 %cpu_avg/op\t        44.44 %cpu_peak/op\t        38.65 cpu_seconds/op\t1142702080 disk_bytes/op\t 1749680 B/op\t   36606 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 38652437125,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4048,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 44.44,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 38.65,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1142702080,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1749680,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 36606,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24318664875,
+            "unit": "ns/op\t         0.4414 %cpu_avg/op\t        40.00 %cpu_peak/op\t        24.32 cpu_seconds/op\t 187187200 disk_bytes/op\t 1080920 B/op\t   23000 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24318664875,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4414,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 40,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.32,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 187187200,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1080920,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 23000,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 265010698,
+            "unit": "ns/op\t         1.258 %cpu_avg/op\t        11.11 %cpu_peak/op\t         0.2650 cpu_seconds/op\t      4096 disk_bytes/op\t   22008 B/op\t     295 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 265010698,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.258,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 11.11,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.265,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22008,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 295,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
