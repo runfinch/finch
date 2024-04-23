@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713810582130,
+  "lastUpdate": 1713893902983,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -18052,6 +18052,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 302,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a536eece6d2217865eeb70dd428a103654620148",
+          "message": "ci(deps): Bump actions/download-artifact from 4.1.4 to 4.1.6 (#909)\n\nBumps\r\n[actions/download-artifact](https://github.com/actions/download-artifact)\r\nfrom 4.1.4 to 4.1.6.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/actions/download-artifact/releases\">actions/download-artifact's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v4.1.6</h2>\r\n<h2>What's Changed</h2>\r\n<ul>\r\n<li>updating <code>@actions/artifact</code> dependency to v2.1.6 by <a\r\nhref=\"https://github.com/eggyhead\"><code>@​eggyhead</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/download-artifact/pull/324\">actions/download-artifact#324</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/actions/download-artifact/compare/v4.1.5...v4.1.6\">https://github.com/actions/download-artifact/compare/v4.1.5...v4.1.6</a></p>\r\n<h2>v4.1.5</h2>\r\n<h2>What's Changed</h2>\r\n<ul>\r\n<li>Update readme with v3/v2/v1 deprecation notice by <a\r\nhref=\"https://github.com/robherley\"><code>@​robherley</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/download-artifact/pull/322\">actions/download-artifact#322</a></li>\r\n<li>Update dependencies <code>@actions/core</code> to v1.10.1 and\r\n<code>@actions/artifact</code> to v2.1.5</li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/actions/download-artifact/compare/v4.1.4...v4.1.5\">https://github.com/actions/download-artifact/compare/v4.1.4...v4.1.5</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/9c19ed7fe5d278cd354c7dfd5d3b88589c7e2395\"><code>9c19ed7</code></a>\r\nMerge branch 'main' into eggyhead/use-artifact-v2.1.6</li>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/3d3ea8741ef44e86f7392b41e391bde3c36219bd\"><code>3d3ea87</code></a>\r\nupdating license</li>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/89af5db8211998d3ca691103a86b0b9362a94286\"><code>89af5db</code></a>\r\nupdating artifact package v2.1.6</li>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/b4aefff88e83a2676a730654e1ce3dce61880379\"><code>b4aefff</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/actions/download-artifact/issues/323\">#323</a>\r\nfrom actions/eggyhead/update-artifact-v215</li>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/8caf195ad4b1dee92908e23f56eeb0696f1dd42d\"><code>8caf195</code></a>\r\npackage lock update</li>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/d7a2ec411d177e8ca679ac5969b70be59c322700\"><code>d7a2ec4</code></a>\r\nupdating package version</li>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/e56a1d48ef0f0a8ad8d864416ee03b4f1ab51164\"><code>e56a1d4</code></a>\r\nupdating core dependency</li>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/1fcda58b3a5574619fcf6509778850ca2e4b8736\"><code>1fcda58</code></a>\r\nupdating core license</li>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/325a10d8b7c55aa3c81692cd880369f752a98121\"><code>325a10d</code></a>\r\nupdating actions dependency to v2.1.5</li>\r\n<li><a\r\nhref=\"https://github.com/actions/download-artifact/commit/f8aaee4a210a18d68ebae4a0694be12377e38762\"><code>f8aaee4</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/actions/download-artifact/issues/322\">#322</a>\r\nfrom actions/robherley/deprecation-notice</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/actions/download-artifact/compare/c850b930e6ba138125429b7e5c93fc707a7f8427...9c19ed7fe5d278cd354c7dfd5d3b88589c7e2395\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=actions/download-artifact&package-manager=github_actions&previous-version=4.1.4&new-version=4.1.6)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-04-23T12:35:42-04:00",
+          "tree_id": "596634dbe7530bb5a8ab0ac9b5402241dd6d1e1b",
+          "url": "https://github.com/runfinch/finch/commit/a536eece6d2217865eeb70dd428a103654620148"
+        },
+        "date": 1713893901014,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 39003900291,
+            "unit": "ns/op\t         0.4400 %cpu_avg/op\t        40.00 %cpu_peak/op\t        39.00 cpu_seconds/op\t1260769280 disk_bytes/op\t 1762304 B/op\t   36897 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 39003900291,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.44,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 40,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 39,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1260769280,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1762304,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 36897,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24759761792,
+            "unit": "ns/op\t         0.5627 %cpu_avg/op\t        57.14 %cpu_peak/op\t        24.76 cpu_seconds/op\t  21573632 disk_bytes/op\t 1100072 B/op\t   23409 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24759761792,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.5627,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 57.14,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.76,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 21573632,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1100072,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 23409,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 280571302,
+            "unit": "ns/op\t         1.185 %cpu_avg/op\t        12.50 %cpu_peak/op\t         0.2805 cpu_seconds/op\t         0 disk_bytes/op\t   22780 B/op\t     310 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 280571302,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.185,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 12.5,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2805,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22780,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 310,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
