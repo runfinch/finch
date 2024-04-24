@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713967499160,
+  "lastUpdate": 1713968908545,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -18556,6 +18556,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 305,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bfeb585d599959b1af636beb11267dd52ab39c3e",
+          "message": "build(deps): Bump github.com/docker/cli from 26.0.2+incompatible to 26.1.0+incompatible (#913)\n\nBumps [github.com/docker/cli](https://github.com/docker/cli) from\r\n26.0.2+incompatible to 26.1.0+incompatible.\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/9714adc6c797755f63053726c56bc1c17c0c9204\"><code>9714adc</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/cli/issues/5034\">#5034</a> from\r\nvvoland/vendor-docker</li>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/aec1d364bf36d7e73f6abc680bbc4d603cd47411\"><code>aec1d36</code></a>\r\nvendor: github.com/docker/docker v26.1.0-dev (c8af8ebe4a89)</li>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/e397e505d9c2efdf86a73875cc5d4d415ab2bafb\"><code>e397e50</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/cli/issues/5033\">#5033</a> from\r\nlaurazard/hooks-error-message</li>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/43cb06e1ae89ec8b1c37a468c3ccdb14e007a398\"><code>43cb06e</code></a>\r\nhooks: pass command execution error to plugins</li>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/d8fc76ea56520a1c768851bd3153bfa7b1746117\"><code>d8fc76e</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/cli/issues/5030\">#5030</a> from\r\nlaurazard/hooks-plugin-name</li>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/9d8320de9def774a8f91c80b01f72a2e1eec7a59\"><code>9d8320d</code></a>\r\nhooks: include full configured command</li>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/118d6bafe06ee7c34054ec7c04d7eebe9bbaf249\"><code>118d6ba</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/cli/issues/4981\">#4981</a> from\r\nvvoland/ci-validate-pr</li>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/4eeb7762473899a28f6709f5d2f3d3b9e48179bf\"><code>4eeb776</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/cli/issues/5031\">#5031</a> from\r\nvvoland/vendor-docker</li>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/6ad512068c6d61ba51414efd0977bbb386c15051\"><code>6ad5120</code></a>\r\nvendor: github.com/docker/docker v26.1.0-dev (ee8b788538ea)</li>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/commit/c3243a8cc3da6bafc9e363d3d09550e558cd529f\"><code>c3243a8</code></a>\r\nci/validate-pr: Use <code>::error::</code> command to print errors</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/docker/cli/compare/v26.0.2...v26.1.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/docker/cli&package-manager=go_modules&previous-version=26.0.2+incompatible&new-version=26.1.0+incompatible)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-04-24T10:08:49-04:00",
+          "tree_id": "cd4d9f43e088f471fc17a9c04234785ae3c7ab17",
+          "url": "https://github.com/runfinch/finch/commit/bfeb585d599959b1af636beb11267dd52ab39c3e"
+        },
+        "date": 1713968906545,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 38343199084,
+            "unit": "ns/op\t         0.4688 %cpu_avg/op\t        66.67 %cpu_peak/op\t        38.34 cpu_seconds/op\t1344909312 disk_bytes/op\t 1736200 B/op\t   36303 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 38343199084,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4688,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 66.67,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 38.34,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1344909312,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1736200,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 36303,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 27589126208,
+            "unit": "ns/op\t         0.3783 %cpu_avg/op\t        37.50 %cpu_peak/op\t        27.59 cpu_seconds/op\t 171167744 disk_bytes/op\t 1244784 B/op\t   26079 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 27589126208,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3783,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 27.59,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 171167744,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1244784,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 26079,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 270407688,
+            "unit": "ns/op\t         1.727 %cpu_avg/op\t        17.50 %cpu_peak/op\t         0.2703 cpu_seconds/op\t      4096 disk_bytes/op\t   22680 B/op\t     302 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 270407688,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.727,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 17.5,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2703,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22680,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 302,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
