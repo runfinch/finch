@@ -13,7 +13,7 @@ jobs:
       tag: ${{ steps.latesttag.outputs.tag }}
       version: ${{ steps.latestversion.outputs.version }}
     steps:
-      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
         with:
             fetch-depth: 0
       - name: 'Get the latest tag'
@@ -53,7 +53,7 @@ jobs:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
         with:
           ref: ${{ env.FINCH_TAG }}
           fetch-depth: 0
@@ -176,7 +176,7 @@ jobs:
       FINCH_TAG: ${{ needs.get-latest-tag.outputs.tag }}
       FINCH_VERSION: ${{ needs.get-latest-tag.outputs.version }}
     steps:
-      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
         with:
           ref: ${{ env.FINCH_TAG }}
           fetch-depth: 0
