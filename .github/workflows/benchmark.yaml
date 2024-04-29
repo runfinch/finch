@@ -47,7 +47,7 @@ jobs:
           fi
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true
-      - run: brew install go lz4 automake autoconf libtool
+      - run: brew install go lz4 automake autoconf libtool yq
         shell: zsh {0}
       - name: Build project
         run: |

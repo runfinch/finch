@@ -143,6 +143,8 @@ endif
 .PHONY: finch.yaml
 finch.yaml: finch-core
 	mkdir -p $(OUTDIR)/os
+	# merge the appropriate YAMLs
+	cd finch.yaml.d && yq eval-all '. as $$item ireduce ({}; . *+ $$item)' mac.yaml common.yaml > ../finch.yaml
 	cp finch.yaml $(OUTDIR)/os
 	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
 	# this sed command uses the alternative separator of "|" because the image location uses "/"
@@ -154,6 +156,8 @@ finch.yaml: finch-core
 .PHONY: finch.yaml
 finch.windows.yaml: finch-core-local
 	mkdir -p $(OUTDIR)/os
+	# merge the appropriate YAMLs
+	cd finch.yaml.d && yq eval-all '. as $$item ireduce ({}; . *+ $$item)' windows.yaml common.yaml > ../finch.windows.yaml
 	cp finch.windows.yaml $(OUTDIR)/os/finch.yaml
 	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
 	# this sed command uses the alternative separator of "|" because the image location uses "/"
