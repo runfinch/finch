@@ -17,7 +17,7 @@ containerd:
   #     digest: "sha256:f354541e6234235f2ea32d6ed64e9d59a7cc4e0b7f15e63deef9cd5e90a298ef"
 
 provision:
-- mode: boot
+- mode: system
   script: |
     modprobe br_netfilter
     cat <<EOF > /etc/sysctl.d/99-finch.conf
@@ -26,7 +26,6 @@ provision:
     net.ipv4.ip_forward = 1
     EOF
     sysctl --system
-# # `user` is executed without the root privilege
 - mode: user
   script: |
     #!/bin/bash
