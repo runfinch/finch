@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1714430734688,
+  "lastUpdate": 1714494956706,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -19996,6 +19996,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 562,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "939639edd7cea38a05ce139d49b5f1b5c4305a1f",
+          "message": "build(deps): Bump github.com/onsi/ginkgo/v2 from 2.17.1 to 2.17.2 (#920)\n\nBumps [github.com/onsi/ginkgo/v2](https://github.com/onsi/ginkgo) from\r\n2.17.1 to 2.17.2.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/onsi/ginkgo/releases\">github.com/onsi/ginkgo/v2's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v2.17.2</h2>\r\n<h2>2.17.2</h2>\r\n<h3>Fixes</h3>\r\n<ul>\r\n<li>fix: close files [32259c8]</li>\r\n<li>fix github output log level for skipped specs [780e7a3]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>Bump github.com/google/pprof [d91fe4e]</li>\r\n<li>Bump github.com/go-task/slim-sprig to v3 [8cb662e]</li>\r\n<li>Bump golang.org/x/net in\r\n/integration/_fixtures/version_mismatch_fixture (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1391\">#1391</a>)\r\n[3134422]</li>\r\n<li>Bump github-pages from 230 to 231 in /docs (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1384\">#1384</a>)\r\n[eca81b4]</li>\r\n<li>Bump golang.org/x/tools from 0.19.0 to 0.20.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1383\">#1383</a>)\r\n[760def8]</li>\r\n<li>Bump golang.org/x/net from 0.23.0 to 0.24.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1381\">#1381</a>)\r\n[4ce33f4]</li>\r\n<li>Fix test for gomega version bump [f2fcd97]</li>\r\n<li>Bump github.com/onsi/gomega from 1.30.0 to 1.33.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1390\">#1390</a>)\r\n[fd622d2]</li>\r\n<li>Bump golang.org/x/tools from 0.17.0 to 0.19.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1368\">#1368</a>)\r\n[5474a26]</li>\r\n<li>Bump github-pages from 229 to 230 in /docs (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1359\">#1359</a>)\r\n[e6d1170]</li>\r\n<li>Bump google.golang.org/protobuf from 1.28.0 to 1.33.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1374\">#1374</a>)\r\n[7f447b2]</li>\r\n<li>Bump golang.org/x/net from 0.20.0 to 0.23.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1380\">#1380</a>)\r\n[f15239a]</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/onsi/ginkgo/blob/master/CHANGELOG.md\">github.com/onsi/ginkgo/v2's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2>2.17.2</h2>\r\n<h3>Fixes</h3>\r\n<ul>\r\n<li>fix: close files [32259c8]</li>\r\n<li>fix github output log level for skipped specs [780e7a3]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>Bump github.com/google/pprof [d91fe4e]</li>\r\n<li>Bump github.com/go-task/slim-sprig to v3 [8cb662e]</li>\r\n<li>Bump golang.org/x/net in\r\n/integration/_fixtures/version_mismatch_fixture (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1391\">#1391</a>)\r\n[3134422]</li>\r\n<li>Bump github-pages from 230 to 231 in /docs (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1384\">#1384</a>)\r\n[eca81b4]</li>\r\n<li>Bump golang.org/x/tools from 0.19.0 to 0.20.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1383\">#1383</a>)\r\n[760def8]</li>\r\n<li>Bump golang.org/x/net from 0.23.0 to 0.24.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1381\">#1381</a>)\r\n[4ce33f4]</li>\r\n<li>Fix test for gomega version bump [f2fcd97]</li>\r\n<li>Bump github.com/onsi/gomega from 1.30.0 to 1.33.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1390\">#1390</a>)\r\n[fd622d2]</li>\r\n<li>Bump golang.org/x/tools from 0.17.0 to 0.19.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1368\">#1368</a>)\r\n[5474a26]</li>\r\n<li>Bump github-pages from 229 to 230 in /docs (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1359\">#1359</a>)\r\n[e6d1170]</li>\r\n<li>Bump google.golang.org/protobuf from 1.28.0 to 1.33.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1374\">#1374</a>)\r\n[7f447b2]</li>\r\n<li>Bump golang.org/x/net from 0.20.0 to 0.23.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1380\">#1380</a>)\r\n[f15239a]</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/7836496233b965f84a4e0268c0173ff1154a9447\"><code>7836496</code></a>\r\nv2.17.2</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/d91fe4e0f1465425ec119c2a55901a5f18b79079\"><code>d91fe4e</code></a>\r\nBump github.com/google/pprof</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/8cb662e892ca24d05fa748c26052c5164e44c2f4\"><code>8cb662e</code></a>\r\nBump github.com/go-task/slim-sprig to v3</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/32259c8b061575609fcf13c3dc429c3050545027\"><code>32259c8</code></a>\r\nfix: close files</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/313442296dc90b138c03ddfee47337bdfea186fd\"><code>3134422</code></a>\r\nBump golang.org/x/net in /integration/_fixtures/version_mismatch_fixture\r\n(<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1391\">#1391</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/eca81b4f8c35793e37922f82275f3c8dfa724f67\"><code>eca81b4</code></a>\r\nBump github-pages from 230 to 231 in /docs (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1384\">#1384</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/760def865e81163b67e4ccda3fc2f7f5ab4109b9\"><code>760def8</code></a>\r\nBump golang.org/x/tools from 0.19.0 to 0.20.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1383\">#1383</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/4ce33f4df3dc1b1b0388ace2a2555b00343c9670\"><code>4ce33f4</code></a>\r\nBump golang.org/x/net from 0.23.0 to 0.24.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1381\">#1381</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/f2fcd97cfb472bcafac5b2ddfb9ec567e9e702c9\"><code>f2fcd97</code></a>\r\nFix test for gomega version bump</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/ginkgo/commit/fd622d239cddeaa27827beebc514f619549541fb\"><code>fd622d2</code></a>\r\nBump github.com/onsi/gomega from 1.30.0 to 1.33.0 (<a\r\nhref=\"https://redirect.github.com/onsi/ginkgo/issues/1390\">#1390</a>)</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/onsi/ginkgo/compare/v2.17.1...v2.17.2\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/onsi/ginkgo/v2&package-manager=go_modules&previous-version=2.17.1&new-version=2.17.2)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-04-30T12:32:03-04:00",
+          "tree_id": "152646a633400a45fef9644d0fe88c7a3054ba12",
+          "url": "https://github.com/runfinch/finch/commit/939639edd7cea38a05ce139d49b5f1b5c4305a1f"
+        },
+        "date": 1714494955822,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 45402992278,
+            "unit": "ns/op\t         0.2783 %cpu_avg/op\t        28.57 %cpu_peak/op\t        45.40 cpu_seconds/op\t1380831232 disk_bytes/op\t 2038200 B/op\t   43144 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 45402992278,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.2783,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 28.57,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 45.4,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1380831232,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2038200,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 43144,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 29771545821,
+            "unit": "ns/op\t         0.3773 %cpu_avg/op\t        30.77 %cpu_peak/op\t        29.77 cpu_seconds/op\t  80502784 disk_bytes/op\t 1343032 B/op\t   28326 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 29771545821,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3773,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 30.77,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 29.77,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 80502784,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1343032,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 28326,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 517324651,
+            "unit": "ns/op\t         0.4380 %cpu_avg/op\t        11.69 %cpu_peak/op\t         0.5173 cpu_seconds/op\t      4096 disk_bytes/op\t   33956 B/op\t     543 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 517324651,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.438,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 11.69,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5173,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 33956,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 543,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
