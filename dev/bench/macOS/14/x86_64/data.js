@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1715117939579,
+  "lastUpdate": 1715121920893,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -22012,6 +22012,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 567,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df9a3cbace5c15d6faa8d1c49deeca9cb53ac1da",
+          "message": "ci(deps): Bump softprops/action-gh-release from 2.0.4 to 2.0.5 (#935)\n\nBumps\r\n[softprops/action-gh-release](https://github.com/softprops/action-gh-release)\r\nfrom 2.0.4 to 2.0.5.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/softprops/action-gh-release/releases\">softprops/action-gh-release's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v2.0.5</h2>\r\n<ul>\r\n<li>Factor in file names with spaces when upserting files <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/446\">#446</a>\r\nvia <a\r\nhref=\"https://github.com/MystiPanda\"><code>@​MystiPanda</code></a></li>\r\n<li>Improvements to error handling <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/449\">#449</a>\r\nvia <a href=\"https://github.com/till\"><code>@​till</code></a></li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md\">softprops/action-gh-release's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2>2.0.5</h2>\r\n<ul>\r\n<li>Factor in file names with spaces when upserting files <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/446\">#446</a>\r\nvia <a\r\nhref=\"https://github.com/MystiPanda\"><code>@​MystiPanda</code></a></li>\r\n<li>Improvements to error handling <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/449\">#449</a>\r\nvia <a href=\"https://github.com/till\"><code>@​till</code></a></li>\r\n</ul>\r\n<h2>2.0.4</h2>\r\n<ul>\r\n<li>Minor follow up to <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/417\">#417</a>.\r\n<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/425\">#425</a></li>\r\n</ul>\r\n<h2>2.0.3</h2>\r\n<ul>\r\n<li>Declare <code>make_latest</code> as an input field in\r\n<code>action.yml</code> <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/419\">#419</a></li>\r\n</ul>\r\n<h2>2.0.2</h2>\r\n<ul>\r\n<li>Revisit approach to <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/384\">#384</a>\r\nmaking unresolved pattern failures opt-in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/417\">#417</a></li>\r\n</ul>\r\n<h2>2.0.1</h2>\r\n<ul>\r\n<li>Add support for make_latest property <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/304\">#304</a>\r\nvia <a\r\nhref=\"https://github.com/samueljseay\"><code>@​samueljseay</code></a></li>\r\n<li>Fail run if files setting contains invalid patterns <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/384\">#384</a>\r\nvia <a\r\nhref=\"https://github.com/rpdelaney\"><code>@​rpdelaney</code></a></li>\r\n<li>Add support for proxy env variables (don't use node-fetch) <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/386/\">#386</a>\r\nvia <a\r\nhref=\"https://github.com/timor-raiman\"><code>@​timor-raiman</code></a></li>\r\n<li>Suppress confusing warning when input_files is empty <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/389\">#389</a>\r\nvia <a href=\"https://github.com/Drowze\"><code>@​Drowze</code></a></li>\r\n</ul>\r\n<h2>2.0.0</h2>\r\n<ul>\r\n<li><code>2.0.0</code>!? this release corrects a disjunction between git\r\ntag versions used in the marketplace and versions list this file.\r\nPrevious versions should have really been 1.*. Going forward this should\r\nbe better aligned.</li>\r\n<li>Upgrade action.yml declaration to node20 to address\r\ndeprecations</li>\r\n</ul>\r\n<h2>0.1.15</h2>\r\n<ul>\r\n<li>Upgrade to action.yml declaration to node16 to address\r\ndeprecations</li>\r\n<li>Upgrade dependencies</li>\r\n<li>Add <code>asset</code> output as a JSON array containing information\r\nabout the uploaded assets</li>\r\n</ul>\r\n<h2>0.1.14</h2>\r\n<ul>\r\n<li>provides an new workflow input option\r\n<code>generate_release_notes</code> which when set to true will\r\nautomatically generate release notes for you based on GitHub activity <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/179\">#179</a>.\r\nPlease see the <a\r\nhref=\"https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes\">GitHub\r\ndocs for this feature</a> for more information</li>\r\n</ul>\r\n<h2>0.1.13</h2>\r\n<ul>\r\n<li>fix issue with multiple runs concatenating release bodies <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/145\">#145</a></li>\r\n</ul>\r\n<h2>0.1.12</h2>\r\n<ul>\r\n<li>fix bug leading to empty strings subsituted for inputs users don't\r\nprovide breaking api calls <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/144\">#144</a></li>\r\n</ul>\r\n<h2>0.1.11</h2>\r\n<ul>\r\n<li>better error message on release create failed <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/143\">#143</a></li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/69320dbe05506a9a39fc8ae11030b214ec2d1f87\"><code>69320db</code></a>\r\nupdate changelog</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/9771ccf55ff16f083af69228ef39c5da2c54f02b\"><code>9771ccf</code></a>\r\nupdate changelog rebuild dist</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/0a76e4214a22dfa2946790a0b56e12720488e0d2\"><code>0a76e42</code></a>\r\nFix: error handling (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/449\">#449</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/3989e4b325fd35af0f19f42a37021d50b48b77e0\"><code>3989e4b</code></a>\r\ndocument impl detail</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/72e945e627950fcf3856e5ed050e717cba6004fd\"><code>72e945e</code></a>\r\nupdate changelog</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/40bf9ec7aa10e323231ddc29feb3b271d2432b7e\"><code>40bf9ec</code></a>\r\nfmt and build</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/998623f0c3438e2dc850076c2ac4d7ceeed7c000\"><code>998623f</code></a>\r\nfix: support space in file name (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/446\">#446</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/0979303f0222052f8b9e0d89ccaba124618f4abf\"><code>0979303</code></a>\r\nFix failure (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/447\">#447</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/9b795e578288d5ff64564dfa7dd4cda7b04bb648\"><code>9b795e5</code></a>\r\nUpdate README.md (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/432\">#432</a>)</li>\r\n<li>See full diff in <a\r\nhref=\"https://github.com/softprops/action-gh-release/compare/9d7c94cfd0a1f3ed45544c887983e9fa900f0564...69320dbe05506a9a39fc8ae11030b214ec2d1f87\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=softprops/action-gh-release&package-manager=github_actions&previous-version=2.0.4&new-version=2.0.5)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-05-07T18:41:25-04:00",
+          "tree_id": "23bc6d775f2efb3dd9f961ec4c31cf0df56b4ddf",
+          "url": "https://github.com/runfinch/finch/commit/df9a3cbace5c15d6faa8d1c49deeca9cb53ac1da"
+        },
+        "date": 1715121920008,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 45855297789,
+            "unit": "ns/op\t         0.3386 %cpu_avg/op\t        66.67 %cpu_peak/op\t        45.86 cpu_seconds/op\t1221910528 disk_bytes/op\t 2058008 B/op\t   43595 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 45855297789,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3386,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 66.67,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 45.86,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1221910528,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2058008,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 43595,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 30619809946,
+            "unit": "ns/op\t         0.3369 %cpu_avg/op\t        30.77 %cpu_peak/op\t        30.62 cpu_seconds/op\t 134139904 disk_bytes/op\t 1375968 B/op\t   29073 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30619809946,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3369,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 30.77,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.62,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 134139904,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1375968,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 29073,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 514627326,
+            "unit": "ns/op\t         0.8615 %cpu_avg/op\t        19.81 %cpu_peak/op\t         0.5146 cpu_seconds/op\t      4096 disk_bytes/op\t   33428 B/op\t     542 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 514627326,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.8615,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 19.81,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5146,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 33428,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 542,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
