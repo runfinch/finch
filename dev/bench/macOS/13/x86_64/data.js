@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1715125343812,
+  "lastUpdate": 1715125572532,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -43330,6 +43330,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 542,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "17bbcb1d26e27b7e46fef8bd8e33c02f67b3f082",
+          "message": "ci(deps): Bump golangci/golangci-lint-action from 5.3.0 to 6.0.0 (#937)\n\nBumps\r\n[golangci/golangci-lint-action](https://github.com/golangci/golangci-lint-action)\r\nfrom 5.3.0 to 6.0.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/golangci/golangci-lint-action/releases\">golangci/golangci-lint-action's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v6.0.0</h2>\r\n<!-- raw HTML omitted -->\r\n<h2>What's Changed</h2>\r\n<p>This version removes <code>annotations</code> option (because it was\r\nuseless), and removes the default output format\r\n(<code>github-actions</code>).\r\nThe annotations are still produced but with another approach.</p>\r\n<h3>Changes</h3>\r\n<ul>\r\n<li>feat: rewrite format handling by <a\r\nhref=\"https://github.com/ldez\"><code>@​ldez</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1038\">golangci/golangci-lint-action#1038</a></li>\r\n</ul>\r\n<h3>Dependencies</h3>\r\n<ul>\r\n<li>build(deps-dev): bump <code>@​typescript-eslint/eslint-plugin</code>\r\nfrom 7.7.1 to 7.8.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1034\">golangci/golangci-lint-action#1034</a></li>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.12.7 to 20.12.8\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1036\">golangci/golangci-lint-action#1036</a></li>\r\n<li>build(deps-dev): bump <code>@​typescript-eslint/parser</code> from\r\n7.7.1 to 7.8.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1035\">golangci/golangci-lint-action#1035</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/golangci/golangci-lint-action/compare/v5.3.0...v6.0.0\">https://github.com/golangci/golangci-lint-action/compare/v5.3.0...v6.0.0</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/23faadfdeb23a6f9e511beaba149bb123b5b145a\"><code>23faadf</code></a>\r\ndoc: improve readme</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/b556f25b3c7399b6dad72f47062098ff1b36e060\"><code>b556f25</code></a>\r\ndoc: improve readme</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/789f114c52eaee9275c87b15fc90e449e56d1b0a\"><code>789f114</code></a>\r\nfeat: rewrite format handling (<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/issues/1038\">#1038</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/d36b91c2948e1d383efc1388208baed5ac9b8e0d\"><code>d36b91c</code></a>\r\nbuild(deps-dev): bump <code>@​typescript-eslint/parser</code> from 7.7.1\r\nto 7.8.0 (<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/issues/1035\">#1035</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/a9eb1153485e197079024eb082ecd007e94b286b\"><code>a9eb115</code></a>\r\nbuild(deps): bump <code>@​types/node</code> from 20.12.7 to 20.12.8 (<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/issues/1036\">#1036</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/bd4fa7c9002facfc2cebdefb1a94ba57d2e87851\"><code>bd4fa7c</code></a>\r\nbuild(deps-dev): bump <code>@​typescript-eslint/eslint-plugin</code>\r\nfrom 7.7.1 to 7.8.0 (#...</li>\r\n<li>See full diff in <a\r\nhref=\"https://github.com/golangci/golangci-lint-action/compare/38e1018663fa5173f3968ea0777460d3de38f256...23faadfdeb23a6f9e511beaba149bb123b5b145a\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golangci/golangci-lint-action&package-manager=github_actions&previous-version=5.3.0&new-version=6.0.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-05-07T19:38:21-04:00",
+          "tree_id": "0ad6c336e15672d520cab375fabcc35156b61fc2",
+          "url": "https://github.com/runfinch/finch/commit/17bbcb1d26e27b7e46fef8bd8e33c02f67b3f082"
+        },
+        "date": 1715125571485,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 45570219521,
+            "unit": "ns/op\t         0.3678 %cpu_avg/op\t        38.46 %cpu_peak/op\t        45.57 cpu_seconds/op\t1442816000 disk_bytes/op\t 2045784 B/op\t   43330 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 45570219521,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3678,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 38.46,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 45.57,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1442816000,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2045784,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 43330,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 30842224990,
+            "unit": "ns/op\t         0.3501 %cpu_avg/op\t        35.71 %cpu_peak/op\t        30.84 cpu_seconds/op\t  15159296 disk_bytes/op\t 1387240 B/op\t   29332 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 30842224990,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3501,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 35.71,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 30.84,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 15159296,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1387240,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 29332,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 530774678,
+            "unit": "ns/op\t         0.7674 %cpu_avg/op\t        24.05 %cpu_peak/op\t         0.5307 cpu_seconds/op\t         0 disk_bytes/op\t   34224 B/op\t     558 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 530774678,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.7674,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 24.05,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5307,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 34224,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 558,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
