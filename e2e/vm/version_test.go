@@ -47,8 +47,8 @@ var testVersion = func(o *option.Option) {
 		ginkgo.It("Should print finch version information", func() {
 			tmpl, err := template.New("versionTemplate").Parse(`Client:
  Version:	{{ .FinchVersion }}
- OS\/Arch:	[A-Za-z0-9]+\/[A-Za-z0-9]+
  GitCommit:	{{ .FinchCommit }}
+ OS\/Arch:	[A-Za-z0-9]+\/[A-Za-z0-9]+
  nerdctl:
   Version:	{{ .NerdctlVersion }}
   GitCommit:	[a-z0-9]{40}
