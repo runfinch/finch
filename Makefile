@@ -374,6 +374,11 @@ else
 	PATH=$(GOBIN):$(PATH) go generate ./...
 endif
 
+# Generate documentations for the finch commands
+.PHONY: gen-docs
+gen-docs:
+	$(GO) run docs/gen-docs.go
+
 .PHONY: lint
 # To run golangci-lint locally: https://golangci-lint.run/usage/install/#local-installation
 lint:
