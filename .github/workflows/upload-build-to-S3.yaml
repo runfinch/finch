@@ -30,7 +30,7 @@ jobs:
           brew install lz4 automake autoconf libtool yq
           make clean
           make download-licenses 
-          make
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
           tar -zcvf finch.${GITHUB_REF_NAME}.aarch64.tar.gz _output
         shell: zsh {0}
 
@@ -59,7 +59,7 @@ jobs:
           brew install lz4 automake autoconf libtool yq
           make clean
           make download-licenses 
-          make
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
           tar -zcvf finch.${GITHUB_REF_NAME}.x86_64.tar.gz _output
         shell: zsh {0}
 

@@ -58,7 +58,7 @@ jobs:
           git clean -f -d
           make clean
           make download-licenses 
-          make
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
         shell: zsh {0}
 
       - name: configure aws credentials
@@ -96,7 +96,7 @@ jobs:
           git clean -f -d
           make clean
           make download-licenses 
-          make
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
         shell: zsh {0}
 
       - name: configure aws credentials
