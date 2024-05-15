@@ -41,16 +41,16 @@ REGISTRY ?= ""
 ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = aarch64
-	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/39/Cloud/aarch64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-39-1.5.aarch64-20240322230317.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1712655075.tar.gz
+	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/40/Cloud/aarch64/images/
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-40-1.14.aarch64-20240514214641.qcow2
+	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1715678889.tar.gz
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
-	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/39/Cloud/x86_64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-39-1.5.x86_64-20240322192200.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1712655075.tar.gz
-	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1711139710.tar.gz
+	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/40/Cloud/x86_64/images/
+	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-40-1.14.x86_64-20240514214655.qcow2
+	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1715678889.tar.gz
+	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1715724303.tar.gz
 	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
 endif
 
