@@ -66,9 +66,9 @@ func newDeps(
 	configs := map[string]helperConfig{}
 	installFolder := filepath.Join(finchDir, "cred-helpers")
 
-	const versionEcr = "0.7.0"
-	const hashARM64 = "sha256:ff14a4da40d28a2d2d81a12a7c9c36294ddf8e6439780c4ccbc96622991f3714"
-	const hashAMD64 = "sha256:c978912da7f54eb3bccf4a3f990c91cc758e1494a8af7a60f3faf77271b565db"
+	const versionEcr = "0.8.0"
+	const hashARM64 = "sha256:d62badea3153688ec5c24f440df9fb84ff4b02c624dff9288967267e7445daa1"
+	const hashAMD64 = "sha256:dcc7ae9915b5d8fa2d9e2b18fc30bab5bfbbce5b82401c7644e6ab97973ac35c"
 	credHelperURLEcr := fmt.Sprintf("https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
 		"/%s/linux-%s/docker-credential-ecr-login", versionEcr, arch)
 
