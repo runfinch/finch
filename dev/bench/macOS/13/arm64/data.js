@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1715795461271,
+  "lastUpdate": 1715803866338,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -46804,6 +46804,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 303,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c7388bb9638d0c2306efc9dc6c4f11996d6f11bb",
+          "message": "build(deps): Bump submodules and dependencies (#895)\n\nBump for Finch's dependencies.\r\nCurrently, this updates values based on artifacts defined in the\r\nfinch-core repository, such as: operating system images, and the version\r\nof Lima (and it's dependencies), which are bundled as\r\n`lima-and-qemu.macos-*.*.tar.gz` archives.\r\nSince updating the Lima version may also update the default version of\r\nthe `nerdctl-full` archive (which contains nerdctl, containerd,\r\nbuildkit, etc.), this may require a manual update to\r\n[`e2e/vm/version_test.go`](https://github.com/runfinch/finch/tree/create-pull-request/patch/e2e/vm/version_test.go).\r\nTo do so, checkout this PR branch locally, add a new commit to the\r\nbranch, and push back to the branch:\r\n\r\n  ```bash\r\n  git fetch --all\r\n  git switch create-pull-request/patch\r\n  # make changes\r\n  git add e2e/vm/version_test.go\r\n  git commit -s \"update dependency versions in version test\"\r\n  git push\r\n  ```\r\n\r\n---------\r\n\r\nSigned-off-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>\r\nSigned-off-by: Justin Alvarez <alvajus@amazon.com>\r\nCo-authored-by: pendo324 <424987+pendo324@users.noreply.github.com>\r\nCo-authored-by: Justin Alvarez <alvajus@amazon.com>",
+          "timestamp": "2024-05-15T16:01:38-04:00",
+          "tree_id": "654d27ae89f0800e85e6d71073763d57d51377ed",
+          "url": "https://github.com/runfinch/finch/commit/c7388bb9638d0c2306efc9dc6c4f11996d6f11bb"
+        },
+        "date": 1715803865579,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 36012187542,
+            "unit": "ns/op\t         0.4134 %cpu_avg/op\t        50.00 %cpu_peak/op\t        36.01 cpu_seconds/op\t1140953088 disk_bytes/op\t 1596464 B/op\t   34069 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 36012187542,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4134,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 36.01,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1140953088,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1596464,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 34069,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 22753929083,
+            "unit": "ns/op\t         0.5686 %cpu_avg/op\t        50.00 %cpu_peak/op\t        22.75 cpu_seconds/op\t 245571584 disk_bytes/op\t 1016832 B/op\t   21531 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 22753929083,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.5686,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 22.75,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 245571584,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1016832,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 21531,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 254031740,
+            "unit": "ns/op\t         2.293 %cpu_avg/op\t        22.92 %cpu_peak/op\t         0.2540 cpu_seconds/op\t      1024 disk_bytes/op\t   21264 B/op\t     286 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 254031740,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 2.293,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 22.92,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.254,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 1024,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21264,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 286,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
