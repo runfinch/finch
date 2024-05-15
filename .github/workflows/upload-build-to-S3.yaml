@@ -30,10 +30,7 @@ jobs:
           brew install lz4 automake autoconf libtool yq
           make clean
           make download-licenses 
-          CGO_CFLAGS="-mmacosx-version-min=11.0" \
-            CGO_LDFLAGS="-mmacosx-version-min=11.0" \
-            FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch \
-            make
+          make
           tar -zcvf finch.${GITHUB_REF_NAME}.aarch64.tar.gz _output
         shell: zsh {0}
 
@@ -62,10 +59,7 @@ jobs:
           brew install lz4 automake autoconf libtool yq
           make clean
           make download-licenses 
-          CGO_CFLAGS="-mmacosx-version-min=11.0" \
-            CGO_LDFLAGS="-mmacosx-version-min=11.0" \
-            FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch \
-            make
+          make
           tar -zcvf finch.${GITHUB_REF_NAME}.x86_64.tar.gz _output
         shell: zsh {0}
 

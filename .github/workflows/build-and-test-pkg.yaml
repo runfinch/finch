@@ -58,10 +58,7 @@ jobs:
           git clean -f -d
           make clean
           make download-licenses 
-          CGO_CFLAGS="-mmacosx-version-min=11.0" \
-            CGO_LDFLAGS="-mmacosx-version-min=11.0" \
-            FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch \
-            make
+          make
         shell: zsh {0}
 
       - name: configure aws credentials
@@ -99,10 +96,7 @@ jobs:
           git clean -f -d
           make clean
           make download-licenses 
-          CGO_CFLAGS="-mmacosx-version-min=11.0" \
-            CGO_LDFLAGS="-mmacosx-version-min=11.0" \
-            FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch \
-            make
+          make
         shell: zsh {0}
 
       - name: configure aws credentials
