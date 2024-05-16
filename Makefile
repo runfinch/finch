@@ -25,6 +25,7 @@ LICENSEDIR := $(OUTDIR)/license-files
 VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
 GITCOMMIT := $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 LDFLAGS := "-X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
+MIN_MACOS_VERSION ?= 11.0
 
 GOOS ?= $(shell $(GO) env GOOS)
 ifeq ($(GOOS),windows)
@@ -203,6 +204,8 @@ uninstall: uninstall.finch
 .PHONY: finch
 ifeq ($(GOOS),windows)
 finch: finch-windows finch-general
+else ifeq ($(GOOS),darwin)
+finch: finch-macos
 else
 finch: finch-unix
 endif
@@ -210,6 +213,10 @@ endif
 finch-windows:
 	GOBIN=$(GOBIN) go install github.com/tc-hib/go-winres
 	$(GO) generate cmd/finch/main_windows.go
+
+finch-macos: export CGO_CFLAGS := -mmacosx-version-min=$(MIN_MACOS_VERSION)
+finch-macos: export CGO_LDFLAGS := -mmacosx-version-min=$(MIN_MACOS_VERSION)
+finch-macos: finch-unix
 
 finch-unix: finch-general
 
