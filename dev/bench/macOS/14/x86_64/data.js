@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1715804566703,
+  "lastUpdate": 1715873378407,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -23692,6 +23692,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 552,
+            "unit": "allocs/op",
+            "extra": "2 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pendo324@users.noreply.github.com",
+            "name": "Justin",
+            "username": "pendo324"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da4c523814f9f913956f1bf77c00a7abea4a3560",
+          "message": "ci: remove macOS 11 release runners (#947)\n\nIssue #, if available:\r\n-\r\nhttps://github.com/runfinch/finch/actions/runs/9092946617/job/24990820049#step:4:172\r\n- Builds are failing when running on older versions of macOS due to the\r\nnew dependency on yq, which we install via brew. It is possible to\r\ninstall this dependency through other means (curling / chmoding /\r\nmoving), but this seems like a better long-term solution.\r\n\r\n*Description of changes:*\r\n- Removes the need to build finch on macOS 11. This was previously done\r\nso that our binaries would be compatible with older versions of macOS.\r\nHowever, we can get around this by using the `CGO` flags that are in\r\nthis diff, entirely removing the need to build on older macOS versions.\r\nIn the future, these hosts can be completely dropped from the CI as\r\nwell, as macOS 11 is no longer one of the 2 most recent versions of\r\nmacOS.\r\n- Going forward, it may be possible to use something like\r\n[crazy-max/xgo](https://github.com/crazy-max/xgo?tab=readme-ov-file) or\r\n[crazy-max/goxx](https://github.com/crazy-max/goxx?tab=readme-ov-file),\r\nwith the [osxcross\r\ntoolchain](https://github.com/crazy-max/goxx?tab=readme-ov-file#macosx-cross-toolchain)\r\nto containerize builds of Finch, making them more reproducible and\r\nremoving the need for macOS build/release hosts entirely.\r\n\r\n*Testing done:*\r\n- Verified finch binaries built on macOS 14 run properly on macOS 11\r\nhosts\r\n- Since this isn't obvious, this is how you can at least test that the\r\ncompiler used the flags:\r\n    ```shell\r\n    otool -l ./_output/bin/finch | grep minos\r\n        minos 11.0\r\n    ```\r\n\r\n\r\n- [x] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Justin Alvarez <alvajus@amazon.com>",
+          "timestamp": "2024-05-16T11:25:47-04:00",
+          "tree_id": "cbccd01f7f0d00498b72814be5999d288f729a86",
+          "url": "https://github.com/runfinch/finch/commit/da4c523814f9f913956f1bf77c00a7abea4a3560"
+        },
+        "date": 1715873377310,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 41717365481,
+            "unit": "ns/op\t         0.4202 %cpu_avg/op\t        46.67 %cpu_peak/op\t        41.72 cpu_seconds/op\t1324421120 disk_bytes/op\t 1886448 B/op\t   39707 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 41717365481,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4202,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 46.67,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 41.72,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1324421120,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1886448,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 39707,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 28791079584,
+            "unit": "ns/op\t         0.3933 %cpu_avg/op\t        36.36 %cpu_peak/op\t        28.79 cpu_seconds/op\t  16674816 disk_bytes/op\t 1301784 B/op\t   27387 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 28791079584,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3933,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 36.36,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 28.79,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 16674816,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1301784,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 27387,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 548851791,
+            "unit": "ns/op\t         0.6368 %cpu_avg/op\t        24.36 %cpu_peak/op\t         0.5488 cpu_seconds/op\t      8192 disk_bytes/op\t   34732 B/op\t     572 allocs/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 548851791,
+            "unit": "ns/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.6368,
+            "unit": "%cpu_avg/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 24.36,
+            "unit": "%cpu_peak/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.5488,
+            "unit": "cpu_seconds/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 8192,
+            "unit": "disk_bytes/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 34732,
+            "unit": "B/op",
+            "extra": "2 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 572,
             "unit": "allocs/op",
             "extra": "2 times\n12 procs"
           }
