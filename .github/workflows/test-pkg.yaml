@@ -1,0 +1,148 @@
+name: build-pkg
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+        required: true
+      arch:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      tag:
+        type: string
+        required: true
+jobs:
+  get-output-arch:
+    uses: ./.github/workflows/pkg-output-arch.yaml
+    with:
+      arch: ${{ inputs.arch }}
+  test:
+    runs-on:
+      [
+        self-hosted,
+        release,
+        '${{ inputs.os }}',
+        '${{ inputs.arch }}',
+        '${{ inputs.version }}',
+      ]
+    needs: get-output-arch
+    timeout-minutes: 180
+    env:
+      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
+    steps:
+      - name: Checkout the tag
+        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Clean up previous files
+        run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: download-installer-session
+          aws-region: ${{ secrets.REGION }}
+      - name: Download from S3
+        run: |
+          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg
+        shell: zsh {0}
+      - name: Silently install
+        run: sudo installer -pkg Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg -target /
+      - name: Install Rosetta 2
+        run: echo "A" | softwareupdate --install-rosetta || true
+      - name: Install build dependencies
+        run: |
+          pkgs=("lz4" "automake" "autoconf" "libtool")
+          if [[ ${{ inputs.version }} != "11" ]]; then
+            pkgs += "yq"
+          else
+            # install yq manually
+            curl -OL https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_darwin_${{ inputs.arch }}
+            chmod +x yq_darwin_${{ inputs.arch }}
+            mv yq_darwin_${{ inputs.arch }} /usr/local/bin/yq
+          fi
+          brew install $(printf " %s" "${pkgs[@]}")
+      - name: Build project
+        run: |
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make
+        shell: zsh {0}
+      - name: Multiple instances of Finch test
+        run: |
+          # start two Finch VM instances
+          ./_output/bin/finch vm init
+          finch vm init
+          # start a container in each VM instance
+          ./_output/bin/finch pull alpine
+          finch pull alpine
+          ./_output/bin/finch run --name test-ctr1 alpine
+          finch run --name test-ctr2 alpine
+          # check whether containers exist
+          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
+            exit 1
+          fi
+          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
+            exit 1
+          fi
+          if ! finch ps -a | grep 'test-ctr2'; then
+            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
+            exit 1
+          fi
+          if finch ps -a | grep 'test-ctr1'; then
+            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
+            exit 1
+          fi
+          # clean up the VMs
+          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
+          finch vm stop && finch vm remove
+      - name: Clean up multiple instance test
+        run: |
+          sudo rm -rf ./_output
+          echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+          # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
+          # that caused the VM initialization failure in the e2e test. 
+          # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
+          sudo installer -pkg Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg -target /
+      - name: Run VM e2e tests
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            git status
+            git clean -f -d
+            INSTALLED=true make test-e2e-vm
+      - name: Run container e2e tests
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            git status
+            git clean -f -d
+            INSTALLED=true make test-e2e-container
+      - name: Silently uninstall
+        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
+      - name: Delete installer
+        run: rm -rf Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg

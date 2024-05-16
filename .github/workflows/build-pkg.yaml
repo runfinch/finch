@@ -1,0 +1,66 @@
+name: build-pkg
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+        required: true
+      arch:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      tag:
+        type: string
+        required: true
+jobs:
+  get-output-arch:
+    uses: ./.github/workflows/pkg-output-arch.yaml
+    with:
+      arch: ${{ inputs.arch }}
+  build:
+    runs-on:
+      [
+        self-hosted,
+        release,
+        '${{ inputs.os }}',
+        '${{ inputs.arch }}',
+        '${{ inputs.version }}',
+      ]
+    needs:
+      - get-output-arch
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Build for macOS ${{ inputs.version }} (${{ needs.get-output-arch.outputs.arch }})
+        run: |
+          brew install lz4 automake autoconf libtool yq
+          git status
+          git clean -f -d
+          make clean
+          make download-licenses 
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
+        shell: zsh {0}
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: dependency-upload-session
+          aws-region: ${{ secrets.REGION }}
+
+      - id: final
+        name: generate pkg
+        run: |
+          ./installer-builder/tools/release-installer.sh ${{ needs.get-output-arch.outputs.arch }} ${{ inputs.tag }} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
+        shell: zsh {0}

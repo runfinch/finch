@@ -17,7 +17,8 @@ permissions:
   # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
   # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
   id-token: write
-  contents: read    # This is required for actions/checkout
+  # This is required for actions/checkout
+  contents: read
 
 jobs:
   get-tag-name:
@@ -35,316 +36,53 @@ jobs:
             tag=${{ github.ref_name }}
           fi
           echo "tag=$tag" >> ${GITHUB_OUTPUT}
-  
+
   macos-aarch64-pkg-build:
     needs: get-tag-name
-    runs-on: [self-hosted, macos, arm64, 14, release]
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
-        with:
-          ref: ${{ needs.get-tag-name.outputs.tag }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
-        with:
-          go-version-file: go.mod
-          cache: true
-      - name: Make macos aarch64 build
-        run: |
-          brew install lz4 automake autoconf libtool yq
-          git status
-          git clean -f -d
-          make clean
-          make download-licenses 
-          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
-        shell: zsh {0}
-
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        with:
-          role-to-assume: ${{ secrets.ROLE }}
-          role-session-name: dependency-upload-session
-          aws-region: ${{ secrets.REGION }}
-
-      - name: generate pkg
-        run: |
-          ./installer-builder/tools/release-installer.sh aarch64 ${{ needs.get-tag-name.outputs.tag }} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
-        shell: zsh {0}
+    uses: ./.github/workflows/build-pkg.yaml
+    with:
+      os: macos
+      arch: arm64
+      version: 14
+      tag: ${{ needs.get-tag-name.outputs.tag }}
 
   macos-x86-64-pkg-build:
     needs: get-tag-name
-    runs-on: [self-hosted, macos, amd64, 14, release]
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
-        with:
-          ref: ${{ needs.get-tag-name.outputs.tag }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
-        with:
-          go-version-file: go.mod
-          cache: true
-
-      - name: Make macos x86_64 build
-        run: |
-          brew install lz4 automake autoconf libtool yq
-          git status
-          git clean -f -d
-          make clean
-          make download-licenses 
-          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
-        shell: zsh {0}
-
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        with:
-          role-to-assume: ${{ secrets.ROLE }}
-          role-session-name: dependency-upload-session
-          aws-region: ${{ secrets.REGION }}
-
-      - name: generate pkg
-        run: |
-          ./installer-builder/tools/release-installer.sh x86_64 ${{ needs.get-tag-name.outputs.tag }} ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} ${{ secrets.EXECUTABLE_BUCKET }} ${{ secrets.PKG_BUCKET }} ${{ secrets.NOTARIZATION_ACCOUNT }} ${{ secrets.NOTARIZATION_CREDENTIAL }}
-        shell: zsh {0}
+    uses: ./.github/workflows/build-pkg.yaml
+    with:
+      os: macos
+      arch: amd64
+      version: 14
+      tag: ${{ needs.get-tag-name.outputs.tag }}
 
   macos-aarch64-pkg-test:
     strategy:
       fail-fast: false
       matrix:
-        os: [
-              [self-hosted, macos, arm64, 11, release], 
-              [self-hosted, macos, arm64, 14, release], 
-              [self-hosted, macos, arm64, 13, release]
-            ]
-    runs-on: ${{ matrix.os }}
+        version: [11, 13, 14]
     needs:
       - get-tag-name
       - macos-aarch64-pkg-build
-    timeout-minutes: 180
-    env:
-      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
-    steps:
-      - name: Checkout the tag
-        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
-        with:
-          ref: ${{ needs.get-tag-name.outputs.tag }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
-        with:
-          go-version-file: go.mod
-          cache: true
-      - name: Clean up previous files
-        run: |
-          sudo rm -rf /opt/finch
-          sudo rm -rf ~/.finch
-          sudo rm -rf ./_output
-          if pgrep '^qemu-system'; then
-            sudo pkill '^qemu-system'
-          fi
-          if pgrep '^socket_vmnet'; then
-            sudo pkill '^socket_vmnet'
-          fi
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        with:
-          role-to-assume: ${{ secrets.ROLE }}
-          role-session-name: download-installer-session
-          aws-region: ${{ secrets.REGION }}
-      - name: Download from S3
-        run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg
-        shell: zsh {0}
-      - name: Silently install
-        run: sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg -target /
-      - name: Install Rosetta 2
-        run: echo "A" | softwareupdate --install-rosetta || true 
-      - name: Build project
-        run: |
-          brew install lz4 automake autoconf libtool yq
-          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          make
-        shell: zsh {0}
-      - name: Multiple instances of Finch test
-        run: |
-          # start two Finch VM instances
-          ./_output/bin/finch vm init
-          finch vm init
-          # start a container in each VM instance
-          ./_output/bin/finch pull alpine
-          finch pull alpine
-          ./_output/bin/finch run --name test-ctr1 alpine
-          finch run --name test-ctr2 alpine
-          # check whether containers exist
-          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
-            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
-            exit 1
-          fi
-          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
-            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
-            exit 1
-          fi
-          if ! finch ps -a | grep 'test-ctr2'; then
-            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
-            exit 1
-          fi
-          if finch ps -a | grep 'test-ctr1'; then
-            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
-            exit 1
-          fi
-          # clean up the VMs
-          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
-          finch vm stop && finch vm remove
-      - name: Clean up multiple instance test
-        run: |
-          sudo rm -rf ./_output
-          echo 'y' | sudo bash /Applications/Finch/uninstall.sh
-          # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
-          # that caused the VM initialization failure in the e2e test. 
-          # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
-          sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg -target /
-      - name: Run VM e2e tests
-        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
-        with:
-          timeout_minutes: 180
-          max_attempts: 3
-          command: |
-            git status
-            git clean -f -d
-            INSTALLED=true make test-e2e-vm
-      - name: Run container e2e tests
-        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
-        with:
-          timeout_minutes: 180
-          max_attempts: 3
-          command: |
-            git status
-            git clean -f -d
-            INSTALLED=true make test-e2e-container    
-      - name: Silently uninstall
-        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
-      - name: Delete installer
-        run: rm -rf Finch-${{ needs.get-tag-name.outputs.tag }}-aarch64.pkg
+    uses: ./.github/workflows/test-pkg.yaml
+    with:
+      os: macos
+      arch: arm64
+      version: ${{ matrix.version }}
+      tag: ${{ needs.get-tag-name.outputs.tag }}
 
   macos-x86-64-pkg-test:
     strategy:
       fail-fast: false
       matrix:
-        os: [
-              [self-hosted, macos, amd64, 11, release], 
-              [self-hosted, macos, amd64, 14, release], 
-              [self-hosted, macos, amd64, 13, release]
-            ]
-    runs-on: ${{ matrix.os }}
+        os: [macos]
+        version: [11, 13, 14]
+        arch: [amd64, arm64]
     needs:
       - get-tag-name
-      - macos-x86-64-pkg-build
-    timeout-minutes: 180
-    env:
-      ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
-    steps:
-      - name: Checkout the tag
-        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
-        with:
-          ref: ${{ needs.get-tag-name.outputs.tag }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
-        with:
-          go-version-file: go.mod
-          cache: true
-      - name: Clean up previous files
-        run: |
-          sudo rm -rf /opt/finch
-          sudo rm -rf ~/.finch
-          sudo rm -rf ./_output
-          if pgrep '^qemu-system'; then
-            sudo pkill '^qemu-system'
-          fi
-          if pgrep '^socket_vmnet'; then
-            sudo pkill '^socket_vmnet'
-          fi
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        with:
-          role-to-assume: ${{ secrets.ROLE }}
-          role-session-name: download-installer-session
-          aws-region: ${{ secrets.REGION }}
-      - name: Download from S3
-        run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg
-        shell: zsh {0}
-      - name: Silently install
-        run: |
-          sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg -target /
-      - name: Install Rosetta 2
-        run: echo "A" | softwareupdate --install-rosetta || true 
-      - name: Build project
-        run: |
-          brew install lz4 automake autoconf libtool yq
-          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          make
-        shell: zsh {0}
-      - name: Multiple instances of Finch test
-        run: |
-          # start two Finch VM instances
-          ./_output/bin/finch vm init
-          finch vm init
-          # start a container in each VM instance
-          ./_output/bin/finch pull alpine
-          finch pull alpine
-          ./_output/bin/finch run --name test-ctr1 alpine
-          finch run --name test-ctr2 alpine
-          # check whether containers exist
-          if ! ./_output/bin/finch ps -a | grep 'test-ctr1'; then
-            echo "ERROR: The container test-ctr1 doesn't exist in the built finch VM"
-            exit 1
-          fi
-          if ./_output/bin/finch ps -a | grep 'test-ctr2'; then
-            echo "ERROR: The container test-ctr2 shoudn't exist in the built finch VM"
-            exit 1
-          fi
-          if ! finch ps -a | grep 'test-ctr2'; then
-            echo "ERROR: The container test-ctr2 doesn't exist in the installed finch VM"
-            exit 1
-          fi
-          if finch ps -a | grep 'test-ctr1'; then
-            echo "ERROR: The container test-ctr1 shoudn't exist in the installed finch VM"
-            exit 1
-          fi
-          # clean up the VMs
-          ./_output/bin/finch vm stop && ./_output/bin/finch vm remove
-          finch vm stop && finch vm remove
-      - name: Clean up multiple instance test
-        run: |
-          sudo rm -rf ./_output
-          echo 'y' | sudo bash /Applications/Finch/uninstall.sh
-          sudo installer -pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg -target /
-      - name: Run VM e2e tests
-        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
-        with:
-          timeout_minutes: 180
-          max_attempts: 3
-          command: |
-            git status
-            git clean -f -d
-            INSTALLED=true make test-e2e-vm
-      - name: Run container e2e tests
-        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
-        with:
-          timeout_minutes: 180
-          max_attempts: 3
-          command: |
-            git status
-            git clean -f -d
-            INSTALLED=true make test-e2e-container
-      - name: Silently uninstall
-        run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
-      - name: Delete installer
-        run: rm -rf Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg
+      - macos-aarch64-pkg-build
+    uses: ./.github/workflows/test-pkg.yaml
+    with:
+      os: macos
+      arch: amd64
+      version: ${{ matrix.version }}
+      tag: ${{ needs.get-tag-name.outputs.tag }}
