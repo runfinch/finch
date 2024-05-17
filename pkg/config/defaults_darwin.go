@@ -20,15 +20,24 @@ const (
 	fallbackCPUs   int     = 2
 )
 
-func vmDefault(cfg *Finch) {
+func vmDefault(cfg *Finch, supportsVz bool) {
 	if cfg.VMType == nil {
-		cfg.VMType = pointer.String("qemu")
+		if supportsVz {
+			cfg.VMType = pointer.String("vz")
+		} else {
+			cfg.VMType = pointer.String("qemu")
+		}
 	}
 }
 
-func rosettaDefault(cfg *Finch) {
+func rosettaDefault(cfg *Finch, supportsVz bool) {
 	if cfg.Rosetta == nil {
 		cfg.Rosetta = pointer.Bool(false)
+		if supportsVz && cfg.VMType != nil && *cfg.VMType == "vz" {
+			cfg.Rosetta = pointer.Bool(true)
+		} else {
+			cfg.Rosetta = pointer.Bool(false)
+		}
 	}
 }
 

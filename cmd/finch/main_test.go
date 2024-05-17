@@ -193,10 +193,11 @@ func TestNewApp(t *testing.T) {
 	fp := path.Finch("")
 	fs := afero.NewMemMapFs()
 	stdOut := os.Stdout
+	ecc := mocks.NewCommandCreator(ctrl)
 
 	require.NoError(t, afero.WriteFile(fs, "/real/config.yaml", []byte(configStr), 0o600))
 
-	cmd := newApp(l, fp, fs, &config.Finch{}, stdOut, "", "")
+	cmd := newApp(l, fp, fs, &config.Finch{}, stdOut, "", "", ecc)
 
 	assert.Equal(t, cmd.Name(), finchRootCmd)
 	assert.Equal(t, cmd.Version, version.Version)

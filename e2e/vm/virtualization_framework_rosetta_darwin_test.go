@@ -18,20 +18,20 @@ import (
 	"github.com/runfinch/finch/pkg/config"
 )
 
-var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed bool) {
-	ginkgo.Describe("Virtualization framework", ginkgo.Ordered, func() {
+var testNonDefaultOptions = func(o *option.Option, installed bool) {
+	ginkgo.Describe("Non-default options", ginkgo.Ordered, func() {
 		supportsVz, supportsVzErr := config.SupportsVirtualizationFramework(finch_cmd.NewExecCmdCreator())
 		gomega.Expect(supportsVzErr).ShouldNot(gomega.HaveOccurred())
 
-		ginkgo.Describe("Virtualization framework", ginkgo.Ordered, func() {
+		ginkgo.Describe("QEMU", ginkgo.Ordered, func() {
 			ginkgo.BeforeAll(func() {
 				if !supportsVz {
-					ginkgo.Skip("Skipping because system does not support Virtualization.framework")
+					ginkgo.Skip("Skipping because default for this system is already QEMU")
 				}
 
 				resetVM(o)
 				resetDisks(o, installed)
-				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
+				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: qemu\nrosetta: false"))
 				// vm init with VZ set sometimes takes 2 minutes just to convert the disk to raw
 				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
 				tests.SetupLocalRegistry(o)
@@ -46,7 +46,7 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 			tests.Port(o)
 		})
 
-		ginkgo.Describe("Virtualization framework and Rosetta", ginkgo.Ordered, func() {
+		ginkgo.Describe("Virtualization framework without Rosetta", ginkgo.Ordered, func() {
 			ginkgo.BeforeAll(func() {
 				if !supportsVz || runtime.GOOS != "darwin" || runtime.GOARCH != "arm64" {
 					ginkgo.Skip("Skipping because system does not support Rosetta")
@@ -54,7 +54,7 @@ var testVirtualizationFrameworkAndRosetta = func(o *option.Option, installed boo
 
 				resetVM(o)
 				resetDisks(o, installed)
-				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: true"))
+				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
 				// vm init with VZ set sometimes takes 2 minutes just to convert the disk to raw
 				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
 				tests.SetupLocalRegistry(o)

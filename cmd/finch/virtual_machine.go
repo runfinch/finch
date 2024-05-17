@@ -100,7 +100,7 @@ func virtualMachineCommands(
 	logger flog.Logger,
 	fp path.Finch,
 	lcc command.LimaCmdCreator,
-	ecc *command.ExecCmdCreator,
+	ecc command.Creator,
 	fs afero.Fs,
 	fc *config.Finch,
 	home string,

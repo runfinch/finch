@@ -150,13 +150,13 @@ creds_helpers:
 additional_directories:
   # the path of each additional directory.
   - path: /Volumes
-# vmType (Experimental): sets which Hypervisor to use to launch the VM. (optional)
+# vmType: sets which Hypervisor to use to launch the VM. (optional)
 # Only takes effect when a new VM is launched (only on vm init).
 # One of: "qemu", "vz".
-#   - "qemu" (default): Uses QEMU as the Hypervisor.
-#   - "vz": Uses Virtualization.framework as the Hypervisor.
-vmType: "qemu"
-# rosetta (Experimental): sets whether to enable Rosetta as the binfmt_misc handler inside the VM. (optional)
+#   - "qemu": Uses QEMU as the Hypervisor.
+#   - "vz" (default): Uses Virtualization.framework as the Hypervisor.
+vmType: "vz"
+# rosetta: sets whether to enable Rosetta as the binfmt_misc handler inside the VM. (optional)
 # Only takes effect when a new VM is launched (only on vm init).
 # Only available when using vmType "vz" on Apple Silicon running macOS 13+.
 # If true, also sets vmType to "vz".
