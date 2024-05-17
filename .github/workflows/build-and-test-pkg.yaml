@@ -76,7 +76,7 @@ jobs:
         version: [11, 13, 14]
     needs:
       - get-tag-name
-      - macos-aarch64-pkg-build
+      - macos-x86-64-pkg-build
     uses: ./.github/workflows/test-pkg.yaml
     secrets: inherit
     with:
