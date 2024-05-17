@@ -1,4 +1,4 @@
-name: build-pkg
+name: test-pkg
 on:
   workflow_call:
     inputs:
@@ -8,6 +8,9 @@ on:
       arch:
         type: string
         required: true
+      output_arch:
+        type: string
+        required: true  
       version:
         type: string
         required: true
@@ -15,10 +18,6 @@ on:
         type: string
         required: true
 jobs:
-  get-output-arch:
-    uses: ./.github/workflows/pkg-output-arch.yaml
-    with:
-      arch: ${{ inputs.arch }}
   test:
     runs-on:
       [
@@ -28,7 +27,6 @@ jobs:
         '${{ inputs.arch }}',
         '${{ inputs.version }}',
       ]
-    needs: get-output-arch
     timeout-minutes: 180
     env:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
@@ -63,10 +61,12 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Download from S3
         run: |
-          aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg
+          aws s3 cp \
+            s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg \
+            Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg
         shell: zsh {0}
       - name: Silently install
-        run: sudo installer -pkg Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg -target /
+        run: sudo installer -pkg Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg -target /
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true
       - name: Install build dependencies
@@ -123,7 +123,7 @@ jobs:
           # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
           # that caused the VM initialization failure in the e2e test. 
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
-          sudo installer -pkg Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg -target /
+          sudo installer -pkg Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg -target /
       - name: Run VM e2e tests
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
@@ -145,4 +145,4 @@ jobs:
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
-        run: rm -rf Finch-${{ inputs.tag }}-${{ needs.get-output-arch.outputs.arch }}.pkg
+        run: rm -rf Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg

@@ -43,6 +43,7 @@ jobs:
     with:
       os: macos
       arch: arm64
+      output_arch: aarch64
       version: 14
       tag: ${{ needs.get-tag-name.outputs.tag }}
 
@@ -52,6 +53,7 @@ jobs:
     with:
       os: macos
       arch: amd64
+      output_arch: x86_64
       version: 14
       tag: ${{ needs.get-tag-name.outputs.tag }}
 
@@ -67,6 +69,7 @@ jobs:
     with:
       os: macos
       arch: arm64
+      output_arch: aarch64
       version: ${{ matrix.version }}
       tag: ${{ needs.get-tag-name.outputs.tag }}
 
@@ -74,9 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos]
         version: [11, 13, 14]
-        arch: [amd64, arm64]
     needs:
       - get-tag-name
       - macos-aarch64-pkg-build
@@ -84,5 +85,6 @@ jobs:
     with:
       os: macos
       arch: amd64
+      output_arch: x86_64
       version: ${{ matrix.version }}
       tag: ${{ needs.get-tag-name.outputs.tag }}
