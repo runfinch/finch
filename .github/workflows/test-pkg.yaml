@@ -81,14 +81,15 @@ jobs:
         run: |
           pkgs=("lz4" "automake" "autoconf" "libtool")
           if [[ ${{ inputs.version }} != "11" ]]; then
-            pkgs += "yq"
+            pkgs+="yq"
           else
             # install yq manually
             curl -OL https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_darwin_${{ inputs.arch }}
             chmod +x yq_darwin_${{ inputs.arch }}
-            mv yq_darwin_${{ inputs.arch }} /usr/local/bin/yq
+            sudo mv yq_darwin_${{ inputs.arch }} /usr/local/bin/yq
           fi
           brew install $(printf " %s" "${pkgs[@]}")
+        shell: zsh {0}
       - name: Build project
         run: |
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
