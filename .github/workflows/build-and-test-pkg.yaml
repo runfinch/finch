@@ -13,13 +13,6 @@ on:
 env:
   GO111MODULE: on
 
-permissions:
-  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
-  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
-  id-token: write
-  # This is required for actions/checkout
-  contents: read
-
 jobs:
   get-tag-name:
     name: Get tag name
@@ -40,6 +33,7 @@ jobs:
   macos-aarch64-pkg-build:
     needs: get-tag-name
     uses: ./.github/workflows/build-pkg.yaml
+    secrets: inherit
     with:
       os: macos
       arch: arm64
@@ -50,6 +44,7 @@ jobs:
   macos-x86-64-pkg-build:
     needs: get-tag-name
     uses: ./.github/workflows/build-pkg.yaml
+    secrets: inherit
     with:
       os: macos
       arch: amd64
@@ -66,6 +61,7 @@ jobs:
       - get-tag-name
       - macos-aarch64-pkg-build
     uses: ./.github/workflows/test-pkg.yaml
+    secrets: inherit
     with:
       os: macos
       arch: arm64
@@ -82,6 +78,7 @@ jobs:
       - get-tag-name
       - macos-aarch64-pkg-build
     uses: ./.github/workflows/test-pkg.yaml
+    secrets: inherit
     with:
       os: macos
       arch: amd64

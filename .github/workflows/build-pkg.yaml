@@ -17,6 +17,14 @@ on:
       tag:
         type: string
         required: true
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  # This is required for actions/checkout
+  contents: read
+
 jobs:
   build:
     runs-on:
