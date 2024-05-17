@@ -70,7 +70,7 @@ func Test_applyDefaults(t *testing.T) {
 			},
 			mockSvc: func(
 				deps *mocks.LoadSystemDeps,
-				mem *mocks.Memory,
+				_ *mocks.Memory,
 				ecc *mocks.CommandCreator,
 				ctrl *gomock.Controller,
 			) {
@@ -92,7 +92,7 @@ func Test_applyDefaults(t *testing.T) {
 				CPUs: pointer.Int(6),
 			},
 			mockSvc: func(
-				deps *mocks.LoadSystemDeps,
+				_ *mocks.LoadSystemDeps,
 				mem *mocks.Memory,
 				ecc *mocks.CommandCreator,
 				ctrl *gomock.Controller,
