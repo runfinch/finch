@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1715877463925,
+  "lastUpdate": 1716229599545,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -23596,6 +23596,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 301,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pendo324@users.noreply.github.com",
+            "name": "Justin",
+            "username": "pendo324"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6a26de04084498ba73838b3c66d8f921e4695d56",
+          "message": "ci(refactor): split build-and-test-pkg for better reuse (#953)\n\nIssue #, if available:\r\n\r\n*Description of changes:*\r\nWhile I was fixing the macOS pkg build error on macOS 11 (due to `yq`\r\nfrom brew not building properly), I noticed that most of the file was\r\nrepeated (due to different archs being built/tested as different jobs)\r\nwhich caused it to be pretty unnecessarily unwieldy. This was the case\r\nfor both the build and the test workflow jobs.\r\n\r\nI initially thought I could combine them using matrices, but then we\r\nlose the ability to run the test jobs as soon as each respective build\r\ncompletes (with a matrix, it would have to wait until _both_ builds\r\ncomplete, which isn't even guaranteed). There were other complications\r\nthat made matrices hard, like the fact that we only want to build once\r\nper arch, but we want to test on several other arch/version\r\ncombinations.\r\n\r\nInstead, I was able to split the workflows into reusable/composite\r\nworkflows, so that only the inputs vary, and the script is mostly the\r\nsame.\r\n\r\n*Testing done:*\r\n\r\n\r\n- [x] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Justin Alvarez <alvajus@amazon.com>",
+          "timestamp": "2024-05-20T14:22:32-04:00",
+          "tree_id": "b1c362b85d42982050682742c714b84513c5da9f",
+          "url": "https://github.com/runfinch/finch/commit/6a26de04084498ba73838b3c66d8f921e4695d56"
+        },
+        "date": 1716229596933,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 37494519041,
+            "unit": "ns/op\t         0.4182 %cpu_avg/op\t        37.50 %cpu_peak/op\t        37.49 cpu_seconds/op\t1308274688 disk_bytes/op\t 1701568 B/op\t   35516 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 37494519041,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4182,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 37.49,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1308274688,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 1701568,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 35516,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 23542548125,
+            "unit": "ns/op\t         0.4263 %cpu_avg/op\t        50.00 %cpu_peak/op\t        23.54 cpu_seconds/op\t  16916480 disk_bytes/op\t 1048312 B/op\t   22240 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 23542548125,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4263,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 23.54,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 16916480,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1048312,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22240,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 285588177,
+            "unit": "ns/op\t         1.652 %cpu_avg/op\t        18.47 %cpu_peak/op\t         0.2855 cpu_seconds/op\t      4096 disk_bytes/op\t   22940 B/op\t     315 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 285588177,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.652,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 18.47,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2855,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22940,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 315,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
