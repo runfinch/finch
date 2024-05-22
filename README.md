@@ -155,11 +155,19 @@ additional_directories:
 # One of: "qemu", "vz".
 #   - "qemu": Uses QEMU as the Hypervisor.
 #   - "vz" (default): Uses Virtualization.framework as the Hypervisor.
+#
+# NOTE: prior to version 1.2.0, "qemu" was the default, and it will still be the default for
+# macOS versions that do not support Virtualization.framework (pre-13.0.0).
 vmType: "vz"
-# rosetta: sets whether to enable Rosetta as the binfmt_misc handler inside the VM. (optional)
+# rosetta: sets whether to enable Rosetta as the binfmt_misc handler for x86_64 
+# binaries inside the VM, as an alternative to qemu user mode emulation. (optional)
 # Only takes effect when a new VM is launched (only on vm init).
 # Only available when using vmType "vz" on Apple Silicon running macOS 13+.
 # If true, also sets vmType to "vz".
+#
+# NOTE: while Rosetta is generally faster than qemu user mode emulation, it causes
+# some performance regressions, as noted in this issue:
+# https://github.com/lima-vm/lima/issues/1269
 rosetta: false
 ```
 

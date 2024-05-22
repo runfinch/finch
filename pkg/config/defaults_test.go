@@ -60,7 +60,7 @@ func Test_applyDefaults(t *testing.T) {
 				CPUs:    pointer.Int(2),
 				Memory:  pointer.String("3GiB"),
 				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
+				Rosetta: pointer.Bool(false),
 			},
 		},
 		{
@@ -83,7 +83,7 @@ func Test_applyDefaults(t *testing.T) {
 				CPUs:    pointer.Int(2),
 				Memory:  pointer.String("4GiB"),
 				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
+				Rosetta: pointer.Bool(false),
 			},
 		},
 		{
@@ -107,7 +107,7 @@ func Test_applyDefaults(t *testing.T) {
 				CPUs:    pointer.Int(6),
 				Memory:  pointer.String("3GiB"),
 				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
+				Rosetta: pointer.Bool(false),
 			},
 		},
 		{
@@ -130,7 +130,7 @@ func Test_applyDefaults(t *testing.T) {
 				CPUs:    pointer.Int(2),
 				Memory:  pointer.String("2GiB"),
 				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
+				Rosetta: pointer.Bool(false),
 			},
 		},
 		{

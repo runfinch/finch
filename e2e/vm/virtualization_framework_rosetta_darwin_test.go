@@ -46,7 +46,7 @@ var testNonDefaultOptions = func(o *option.Option, installed bool) {
 			tests.Port(o)
 		})
 
-		ginkgo.Describe("Virtualization framework without Rosetta", ginkgo.Ordered, func() {
+		ginkgo.Describe("Virtualization framework with Rosetta", ginkgo.Ordered, func() {
 			ginkgo.BeforeAll(func() {
 				if !supportsVz || runtime.GOOS != "darwin" || runtime.GOARCH != "arm64" {
 					ginkgo.Skip("Skipping because system does not support Rosetta")
@@ -54,7 +54,7 @@ var testNonDefaultOptions = func(o *option.Option, installed bool) {
 
 				resetVM(o)
 				resetDisks(o, installed)
-				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: false"))
+				writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 6\nvmType: vz\nrosetta: true"))
 				// vm init with VZ set sometimes takes 2 minutes just to convert the disk to raw
 				command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
 				tests.SetupLocalRegistry(o)

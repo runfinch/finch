@@ -31,14 +31,9 @@ func vmDefault(cfg *Finch, supportsVz bool) {
 	}
 }
 
-func rosettaDefault(cfg *Finch, supportsVz bool) {
+func rosettaDefault(cfg *Finch) {
 	if cfg.Rosetta == nil {
 		cfg.Rosetta = pointer.Bool(false)
-		if supportsVz && cfg.VMType != nil && *cfg.VMType == "vz" {
-			cfg.Rosetta = pointer.Bool(true)
-		} else {
-			cfg.Rosetta = pointer.Bool(false)
-		}
 	}
 }
 
@@ -79,7 +74,7 @@ func applyDefaults(
 		supportsVz = true
 	}
 	vmDefault(cfg, supportsVz)
-	rosettaDefault(cfg, supportsVz)
+	rosettaDefault(cfg)
 
 	return cfg
 }

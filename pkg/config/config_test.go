@@ -96,7 +96,7 @@ cpus: 8
 				Memory:  pointer.String("4GiB"),
 				CPUs:    pointer.Int(8),
 				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
+				Rosetta: pointer.Bool(false),
 			},
 			wantErr: nil,
 		},
@@ -122,7 +122,7 @@ cpus: 8
 				Memory:  pointer.String("3GiB"),
 				CPUs:    pointer.Int(2),
 				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
+				Rosetta: pointer.Bool(false),
 			},
 			wantErr: nil,
 		},
@@ -137,7 +137,7 @@ cpus: 8
 				ecc *mocks.CommandCreator,
 				ctrl *gomock.Controller,
 			) {
-				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("memory: 2GiB"), 0o600))
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("memory: 2GiB\nrosetta: true"), 0o600))
 				deps.EXPECT().NumCPU().Return(4).Times(2)
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(1)
 				c := mocks.NewCommand(ctrl)
@@ -174,7 +174,7 @@ cpus: 8
 				Memory:  pointer.String("3GiB"),
 				CPUs:    pointer.Int(2),
 				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
+				Rosetta: pointer.Bool(false),
 			},
 			wantErr: nil,
 		},
@@ -200,7 +200,7 @@ cpus: 8
 				Memory:  pointer.String("3GiB"),
 				CPUs:    pointer.Int(2),
 				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
+				Rosetta: pointer.Bool(false),
 			},
 			wantErr: nil,
 		},
