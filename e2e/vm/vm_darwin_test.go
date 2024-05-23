@@ -66,7 +66,7 @@ func TestVM(t *testing.T) {
 		testConfig(o, *e2e.Installed)
 		testFinchConfigFile(o)
 		testVersion(o)
-		testVirtualizationFrameworkAndRosetta(o, *e2e.Installed)
+		testNonDefaultOptions(o, *e2e.Installed)
 		testSupportBundle(o)
 		testCredHelper(o, *e2e.Installed, *e2e.Registry)
 		testSoci(o, *e2e.Installed)

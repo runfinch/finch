@@ -56,12 +56,29 @@ func xmain(logger flog.Logger,
 	if err != nil {
 		return fmt.Errorf("failed to get finch root path: %w", err)
 	}
-	fc, err := config.Load(fs, fp.ConfigFilePath(finchRootPath), logger, loadCfgDeps, mem)
+	ecc := command.NewExecCmdCreator()
+	fc, err := config.Load(
+		fs,
+		fp.ConfigFilePath(finchRootPath),
+		logger,
+		loadCfgDeps,
+		mem,
+		ecc,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	return newApp(logger, fp, fs, fc, stdOut, home, finchRootPath).Execute()
+	return newApp(
+		logger,
+		fp,
+		fs,
+		fc,
+		stdOut,
+		home,
+		finchRootPath,
+		ecc,
+	).Execute()
 }
 
 var newApp = func(
@@ -72,6 +89,7 @@ var newApp = func(
 	stdOut io.Writer,
 	home,
 	finchRootPath string,
+	ecc command.Creator,
 ) *cobra.Command {
 	usage := fmt.Sprintf("%v <command>", finchRootCmd)
 	rootCmd := &cobra.Command{
@@ -93,7 +111,6 @@ var newApp = func(
 		return nil
 	}
 
-	ecc := command.NewExecCmdCreator()
 	lcc := command.NewLimaCmdCreator(ecc,
 		logger,
 		fp.LimaHomePath(),
@@ -129,7 +146,7 @@ var newApp = func(
 
 func initializeNerdctlCommands(
 	lcc command.LimaCmdCreator,
-	ecc *command.ExecCmdCreator,
+	ecc command.Creator,
 	logger flog.Logger,
 	fs afero.Fs,
 	fc *config.Finch,

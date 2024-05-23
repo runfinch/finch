@@ -11,6 +11,7 @@ import (
 	"github.com/docker/go-units"
 	"github.com/xorcare/pointer"
 
+	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/fmemory"
 )
 
@@ -20,9 +21,13 @@ const (
 	fallbackCPUs   int     = 2
 )
 
-func vmDefault(cfg *Finch) {
+func vmDefault(cfg *Finch, supportsVz bool) {
 	if cfg.VMType == nil {
-		cfg.VMType = pointer.String("qemu")
+		if supportsVz {
+			cfg.VMType = pointer.String("vz")
+		} else {
+			cfg.VMType = pointer.String("qemu")
+		}
 	}
 }
 
@@ -52,4 +57,24 @@ func cpuDefault(cfg *Finch, deps LoadSystemDeps) {
 			cfg.CPUs = pointer.Int(fallbackCPUs)
 		}
 	}
+}
+
+// applyDefaults sets default configuration options if they are not already set.
+func applyDefaults(
+	cfg *Finch,
+	deps LoadSystemDeps,
+	mem fmemory.Memory,
+	ecc command.Creator,
+) *Finch {
+	cpuDefault(cfg, deps)
+	memoryDefault(cfg, mem)
+	supportsVz := false
+	vz, err := SupportsVirtualizationFramework(ecc)
+	if err == nil && vz {
+		supportsVz = true
+	}
+	vmDefault(cfg, supportsVz)
+	rosettaDefault(cfg)
+
+	return cfg
 }

@@ -20,7 +20,7 @@ import (
 )
 
 func dependencies(
-	ecc *command.ExecCmdCreator,
+	ecc command.Creator,
 	fc *config.Finch,
 	fp path.Finch,
 	fs afero.Fs,

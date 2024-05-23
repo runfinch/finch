@@ -18,6 +18,7 @@ import (
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
+	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/system"
@@ -135,12 +136,19 @@ func ensureConfigDir(fs afero.Fs, path string, log flog.Logger) error {
 }
 
 // Load loads Finch's configuration from a YAML file and initializes default values.
-func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDeps, mem fmemory.Memory) (*Finch, error) {
+func Load(
+	fs afero.Fs,
+	cfgPath string,
+	log flog.Logger,
+	systemDeps LoadSystemDeps,
+	mem fmemory.Memory,
+	ecc command.Creator,
+) (*Finch, error) {
 	b, err := afero.ReadFile(fs, cfgPath)
 	if err != nil {
 		if errors.Is(err, afero.ErrFileNotFound) {
 			log.Infof("Using default values due to missing config file at %q", cfgPath)
-			defCfg := applyDefaults(&Finch{}, systemDeps, mem)
+			defCfg := applyDefaults(&Finch{}, systemDeps, mem, ecc)
 			if err := ensureConfigDir(fs, filepath.Dir(cfgPath), log); err != nil {
 				return nil, fmt.Errorf("failed to ensure %q directory: %w", cfgPath, err)
 			}
@@ -157,7 +165,7 @@ func Load(fs afero.Fs, cfgPath string, log flog.Logger, systemDeps LoadSystemDep
 		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
 	}
 
-	defCfg := applyDefaults(&cfg, systemDeps, mem)
+	defCfg := applyDefaults(&cfg, systemDeps, mem, ecc)
 	if err := writeConfig(defCfg, fs, cfgPath); err != nil {
 		return nil, err
 	}
