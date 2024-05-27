@@ -142,10 +142,6 @@ func (lca *limaConfigApplier) ConfigureDefaultLimaYaml() error {
 		return fmt.Errorf("failed to write to the lima config file: %w", err)
 	}
 
-	if err != nil {
-		return fmt.Errorf("unable to apply override config: %w", err)
-	}
-
 	return nil
 }
 
