@@ -102,7 +102,7 @@ This is needed because we use `Loose` instead of `Strict` regarding [branch prot
 
 ## Development Environment Setup
 
-This section describes how one can develop Finch CLI locally on macOS, build it, and then run it to test out the changes. The design ensures that the local development environment is isolated from the installation (i.e., we should not need to run `make install` to do local development). Please note that this section uses [Homebrew](https://brew.sh/) to install dependencies.
+This section describes how one can develop Finch CLI locally, build it, and then run it to test out the changes. The design ensures that the local development environment is isolated from the installation (i.e., we should not need to run `make install` to do local development).
 
 ### Linter
 
@@ -114,16 +114,40 @@ For more details, see [`.golangci.yaml`](./.golangci.yaml) and the `lint` target
 
 ### Install dependencies
 
-Before building, install dependencies required to build the project binaries.
+#### macOS
+
+Please note that this section uses [Homebrew](https://brew.sh/) to install dependencies, which has to be installed before continuing to the next steps.
+
+Before building Finch, install dependencies required to build the project binaries using Homebrew:
 
 ```sh
 brew install go lz4 automake autoconf libtool yq
 ```
 
-Note that you may need to add the following to the `.profile` file of your shell if `which libtool` does not return the one installed by Homebrew. The one that comes with macOS is too old for our use.
+Note that you may need to add the following to the `.profile` file of your shell if `which libtool` does not return the one installed by Homebrew. The one that comes with macOS is too old for use with Finch.
 
 ```sh
 export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+```
+
+#### Windows
+
+The easiest way to install dependencies on Windows is through the use of `winget`, which comes [pre-installed on modern versions of Windows](https://learn.microsoft.com/en-us/windows/package-manager/winget/#install-winget). Follow the instructions in the link if typing `winget` in your Terminal does not work out of the box.
+
+After ensuring `winget` is working, running the following command will setup all of the pre-requisites needed to build Finch on Windows:
+
+```powershell
+winget install -e --id GnuWin32.Make 
+winget install -e --id Git.Git
+winget install -e --id=GoLang.Go
+winget install -e --id MikeFarah.yq
+```
+
+In order to actually run Finch on Windows, you will need to also configure WSL 2 ([the runfinch.com website has detailed instructions](https://runfinch.com/docs/managing-finch/windows/installation/)):
+
+```powershell
+wsl --update
+wsl --install Ubuntu
 ```
 
 ### Build
@@ -257,6 +281,10 @@ make lint
 
 We also have more criteria than just that before we can accept and merge it. We recommend that you check the following things locally
 before you submit your code:
+
+### Documentation
+
+If your change adds any new commands or parameters (for example, if adding a new `--example` flag to `finch vm stop`), ensure that `./_output/bin/finch gen-docs generate -p ./docs/cmd` is run and the result is added to a commit in the PR branch. [PR #938](https://github.com/runfinch/finch/pull/938) is a good example of when documentation had to be added for a new command parameter. Another case when this may happen is when a nerdctl command or parameter is modified.
 
 ### Testing
 
