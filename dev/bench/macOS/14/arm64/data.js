@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1717443180753,
+  "lastUpdate": 1717456808810,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -25108,6 +25108,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 283,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7fc3104212fbc2bca36d71c404cbb2b36570b9af",
+          "message": "chore(main): release 1.2.0 (#883)\n\n:robot: I have created a release *beep* *boop*\n---\n\n\n## [1.2.0](https://github.com/runfinch/finch/compare/v1.1.3...v1.2.0)\n(2024-06-03)\n\n\n### Build System or External Dependencies\n\n* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.26.0 to 1.26.1\n([#882](https://github.com/runfinch/finch/issues/882))\n([c059d9e](https://github.com/runfinch/finch/commit/c059d9ec3c4c17ba950bc25a9bb33a2b6c39394e))\n* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.26.1 to 1.27.0\n([#954](https://github.com/runfinch/finch/issues/954))\n([b06280c](https://github.com/runfinch/finch/commit/b06280cfcd70cfd38a7d7d7aa911aab3469c2e67))\n* **deps:** Bump github.com/docker/cli from 26.0.0+incompatible to\n26.0.1+incompatible\n([#894](https://github.com/runfinch/finch/issues/894))\n([680e23f](https://github.com/runfinch/finch/commit/680e23fd5b5406855c65821029d94f777cdacb28))\n* **deps:** Bump github.com/docker/cli from 26.0.1+incompatible to\n26.0.2+incompatible\n([#906](https://github.com/runfinch/finch/issues/906))\n([6fc6ce5](https://github.com/runfinch/finch/commit/6fc6ce5918454f18037733ac9dcc0b9a3e8798af))\n* **deps:** Bump github.com/docker/cli from 26.0.2+incompatible to\n26.1.0+incompatible\n([#913](https://github.com/runfinch/finch/issues/913))\n([bfeb585](https://github.com/runfinch/finch/commit/bfeb585d599959b1af636beb11267dd52ab39c3e))\n* **deps:** Bump github.com/docker/cli from 26.1.0+incompatible to\n26.1.1+incompatible\n([#922](https://github.com/runfinch/finch/issues/922))\n([7b6b3d2](https://github.com/runfinch/finch/commit/7b6b3d24467b1becb0c8c9c6d44815ef6e62910b))\n* **deps:** Bump github.com/docker/cli from 26.1.1+incompatible to\n26.1.2+incompatible\n([#941](https://github.com/runfinch/finch/issues/941))\n([eec3462](https://github.com/runfinch/finch/commit/eec346241518140706129755e6b546394006f3f5))\n* **deps:** Bump github.com/docker/cli from 26.1.2+incompatible to\n26.1.3+incompatible\n([#952](https://github.com/runfinch/finch/issues/952))\n([9a94c57](https://github.com/runfinch/finch/commit/9a94c57cf8d966f42d8ec8510bac5617e292f7ec))\n* **deps:** Bump github.com/docker/docker from 26.0.0+incompatible to\n26.0.1+incompatible\n([#892](https://github.com/runfinch/finch/issues/892))\n([05610c1](https://github.com/runfinch/finch/commit/05610c1b70d884fdbaf74c467e090ddcadd100e9))\n* **deps:** Bump github.com/docker/docker from 26.0.1+incompatible to\n26.0.2+incompatible\n([#905](https://github.com/runfinch/finch/issues/905))\n([69e7d0b](https://github.com/runfinch/finch/commit/69e7d0b153c60653a4f0299c66bb984c39f6434b))\n* **deps:** Bump github.com/docker/docker from 26.0.2+incompatible to\n26.1.0+incompatible\n([#912](https://github.com/runfinch/finch/issues/912))\n([5e5f8a8](https://github.com/runfinch/finch/commit/5e5f8a83aaaa9602e7e22ef48ea4f93be1bfe3c3))\n* **deps:** Bump github.com/docker/docker from 26.1.0+incompatible to\n26.1.1+incompatible\n([#924](https://github.com/runfinch/finch/issues/924))\n([79eb863](https://github.com/runfinch/finch/commit/79eb86318039016e184fdad7c24ebc95c25b73b0))\n* **deps:** Bump github.com/docker/docker from 26.1.1+incompatible to\n26.1.2+incompatible\n([#940](https://github.com/runfinch/finch/issues/940))\n([aa3ab01](https://github.com/runfinch/finch/commit/aa3ab0129bfba62fbaf8ef82cb45b971fcd555c6))\n* **deps:** Bump github.com/docker/docker from 26.1.2+incompatible to\n26.1.3+incompatible\n([#951](https://github.com/runfinch/finch/issues/951))\n([cef9d8f](https://github.com/runfinch/finch/commit/cef9d8fdc335f9a7d762fb260f84056217f2d7d0))\n* **deps:** Bump github.com/lima-vm/lima from 0.21.0 to 0.22.0\n([#934](https://github.com/runfinch/finch/issues/934))\n([62d67d5](https://github.com/runfinch/finch/commit/62d67d5cd3a069eeee209a9c854afa3b98165975))\n* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.17.1 to 2.17.2\n([#920](https://github.com/runfinch/finch/issues/920))\n([939639e](https://github.com/runfinch/finch/commit/939639edd7cea38a05ce139d49b5f1b5c4305a1f))\n* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.17.2 to 2.17.3\n([#933](https://github.com/runfinch/finch/issues/933))\n([c56019d](https://github.com/runfinch/finch/commit/c56019d4d0d9e0479b7580d72beff1ae677c7c09))\n* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.17.3 to 2.19.0\n([#959](https://github.com/runfinch/finch/issues/959))\n([08d7a34](https://github.com/runfinch/finch/commit/08d7a3406106838cf3cad9f27f27f5aba5fef507))\n* **deps:** Bump github.com/onsi/gomega from 1.33.0 to 1.33.1\n([#923](https://github.com/runfinch/finch/issues/923))\n([e7f4e0d](https://github.com/runfinch/finch/commit/e7f4e0db0e7e5e4bb246c7b503f51dc59e392d55))\n* **deps:** Bump github.com/runfinch/common-tests from 0.7.18 to 0.7.21\n([#878](https://github.com/runfinch/finch/issues/878))\n([e1cbd0a](https://github.com/runfinch/finch/commit/e1cbd0a466468eae01b60e3eb30bc3205a551ed4))\n* **deps:** Bump github.com/runfinch/common-tests from 0.7.21 to 0.7.22\n([#907](https://github.com/runfinch/finch/issues/907))\n([84b4a69](https://github.com/runfinch/finch/commit/84b4a692fc81bdf28ed215322b2b8f90ca556976))\n* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.24.2 to 3.24.3\n([#881](https://github.com/runfinch/finch/issues/881))\n([465e369](https://github.com/runfinch/finch/commit/465e369479fb803dde75be02ee4a8e37c3a3ffdf))\n* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.24.3 to 3.24.4\n([#925](https://github.com/runfinch/finch/issues/925))\n([8cd5643](https://github.com/runfinch/finch/commit/8cd5643b13adeac92ead09d45e8d890bb99d01a8))\n* **deps:** Bump github.com/shirou/gopsutil/v3 from 3.24.4 to 3.24.5\n([#962](https://github.com/runfinch/finch/issues/962))\n([8e51db3](https://github.com/runfinch/finch/commit/8e51db3c0d622d850ffd7e8d38b9e846ff586e95))\n* **deps:** Bump github.com/tc-hib/go-winres from 0.3.1 to 0.3.3\n([#893](https://github.com/runfinch/finch/issues/893))\n([ebb4c9f](https://github.com/runfinch/finch/commit/ebb4c9f5a40a003aebefa765de971835c461c3d2))\n* **deps:** Bump golang.org/x/crypto from 0.22.0 to 0.23.0\n([#928](https://github.com/runfinch/finch/issues/928))\n([1687293](https://github.com/runfinch/finch/commit/16872932c1345d5894a2d5c859f0fbcdc756ff35))\n* **deps:** Bump golang.org/x/text from 0.14.0 to 0.15.0\n([#929](https://github.com/runfinch/finch/issues/929))\n([85e1bec](https://github.com/runfinch/finch/commit/85e1becd9a1c4a1396c8611dab74ec36d41d10eb))\n* **deps:** Bump golang.org/x/tools from 0.19.0 to 0.20.0\n([#889](https://github.com/runfinch/finch/issues/889))\n([cfac010](https://github.com/runfinch/finch/commit/cfac010837e0dac39c02fd6ba5154760641074fb))\n* **deps:** Bump golang.org/x/tools from 0.20.0 to 0.21.0\n([#932](https://github.com/runfinch/finch/issues/932))\n([a853a8a](https://github.com/runfinch/finch/commit/a853a8a968ff13524521bd0e201640680e5b8e47))\n* **deps:** Bump k8s.io/apimachinery from 0.29.3 to 0.30.0\n([#904](https://github.com/runfinch/finch/issues/904))\n([f8b7f25](https://github.com/runfinch/finch/commit/f8b7f254a67413111dc1de70255a28ffab49d62a))\n* **deps:** Bump k8s.io/apimachinery from 0.30.0 to 0.30.1\n([#946](https://github.com/runfinch/finch/issues/946))\n([dc4ebf9](https://github.com/runfinch/finch/commit/dc4ebf92931fe9b44466a6a1a60daa11183fe53d))\n* **deps:** Bump submodules and dependencies\n([#874](https://github.com/runfinch/finch/issues/874))\n([a9f73be](https://github.com/runfinch/finch/commit/a9f73be25a32b9f0d96fe79f92ae02050694fc47))\n* **deps:** Bump submodules and dependencies\n([#895](https://github.com/runfinch/finch/issues/895))\n([c7388bb](https://github.com/runfinch/finch/commit/c7388bb9638d0c2306efc9dc6c4f11996d6f11bb))\n* unify macos/windows yamls\n([#921](https://github.com/runfinch/finch/issues/921))\n([86d9a23](https://github.com/runfinch/finch/commit/86d9a231a9c454bcde220c7a72b122c64df21fdd))\n\n\n### Features\n\n* Add the --format option to the finch version command\n([#926](https://github.com/runfinch/finch/issues/926))\n([a9d04e3](https://github.com/runfinch/finch/commit/a9d04e35515bedb970f403a732377ddf3ce6df18))\n* make Virtualization Framework default\n([#956](https://github.com/runfinch/finch/issues/956))\n([75b69b8](https://github.com/runfinch/finch/commit/75b69b8a79d51c71d21fbddec15e5593c717edcf))\n\n\n### Bug Fixes\n\n* add finch vm settings subcommand\n([#887](https://github.com/runfinch/finch/issues/887))\n([8e809cc](https://github.com/runfinch/finch/commit/8e809cce3c4032b145682da724308782acc74ad1))\n* Remove unnecessary error handling\n([#961](https://github.com/runfinch/finch/issues/961))\n([f441fc9](https://github.com/runfinch/finch/commit/f441fc9767d75ad893277a86cd846e7bfbb33a77))\n\n---\nThis PR was generated with [Release\nPlease](https://github.com/googleapis/release-please). See\n[documentation](https://github.com/googleapis/release-please#release-please).\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+          "timestamp": "2024-06-03T16:14:42-07:00",
+          "tree_id": "4ac92274019fc68f459f154589640ce840a25f24",
+          "url": "https://github.com/runfinch/finch/commit/7fc3104212fbc2bca36d71c404cbb2b36570b9af"
+        },
+        "date": 1717456806989,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 71217680750,
+            "unit": "ns/op\t         0.2819 %cpu_avg/op\t        42.86 %cpu_peak/op\t        71.22 cpu_seconds/op\t1785421824 disk_bytes/op\t 3153456 B/op\t   67186 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 71217680750,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.2819,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 42.86,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 71.22,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1785421824,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3153456,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 67186,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 23468983541,
+            "unit": "ns/op\t         0.2453 %cpu_avg/op\t        25.00 %cpu_peak/op\t        23.47 cpu_seconds/op\t  13447168 disk_bytes/op\t 1041784 B/op\t   22099 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 23468983541,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.2453,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 25,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 23.47,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 13447168,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1041784,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 22099,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 243696517,
+            "unit": "ns/op\t         0.2194 %cpu_avg/op\t         4.801 %cpu_peak/op\t         0.2436 cpu_seconds/op\t         0 disk_bytes/op\t   21129 B/op\t     275 allocs/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 243696517,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.2194,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 4.801,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2436,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21129,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 275,
             "unit": "allocs/op",
             "extra": "5 times\n8 procs"
           }
