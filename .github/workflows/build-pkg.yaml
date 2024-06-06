@@ -49,7 +49,7 @@ jobs:
           cache: true
       - name: Build for macOS ${{ inputs.version }} (${{ inputs.output_arch }})
         run: |
-          brew install lz4 automake autoconf libtool yq
+          brew install lz4 automake autoconf libtool yq llvm
           git status
           git clean -f -d
           make clean
