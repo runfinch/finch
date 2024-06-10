@@ -44,6 +44,8 @@ buildPkgInstaller() {
     mkdir -p $INSTALLER_FULL_PATH/unsigned/package/artifact
 
     #build pkg
+    # this identifier doens't match what's in the Info.plist for Finch, but changing it now
+    # would break upgrades
     pkgbuild --identifier org.Finch."${VERSION}" \
     --version "$VERSION" \
     --scripts $INSTALLER_FULL_PATH/darwin/scripts \
