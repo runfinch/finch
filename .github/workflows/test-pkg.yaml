@@ -40,7 +40,7 @@ jobs:
       ACCESS_TOKEN: ${{ secrets.FINCH_BOT_TOKEN }}
     steps:
       - name: Checkout the tag
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           ref: ${{ inputs.tag }}
           fetch-depth: 0
