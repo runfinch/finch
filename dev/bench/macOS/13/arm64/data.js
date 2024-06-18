@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1718296343274,
+  "lastUpdate": 1718724366010,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -51006,6 +51006,174 @@ window.BENCHMARK_DATA = {
             "value": 268,
             "unit": "allocs/op",
             "extra": "5 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "14fd0d2b7e3f92429a500fb1bf0347bf7a95bbac",
+          "message": "ci(deps): bump actions/checkout from 4.1.6 to 4.1.7 (#982)\n\nBumps [actions/checkout](https://github.com/actions/checkout) from 4.1.6\r\nto 4.1.7.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/actions/checkout/releases\">actions/checkout's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v4.1.7</h2>\r\n<h2>What's Changed</h2>\r\n<ul>\r\n<li>Bump the minor-npm-dependencies group across 1 directory with 4\r\nupdates by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1739\">actions/checkout#1739</a></li>\r\n<li>Bump actions/checkout from 3 to 4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1697\">actions/checkout#1697</a></li>\r\n<li>Check out other refs/* by commit by <a\r\nhref=\"https://github.com/orhantoy\"><code>@​orhantoy</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1774\">actions/checkout#1774</a></li>\r\n<li>Pin actions/checkout's own workflows to a known, good, stable\r\nversion. by <a href=\"https://github.com/jww3\"><code>@​jww3</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1776\">actions/checkout#1776</a></li>\r\n</ul>\r\n<h2>New Contributors</h2>\r\n<ul>\r\n<li><a href=\"https://github.com/orhantoy\"><code>@​orhantoy</code></a>\r\nmade their first contribution in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1774\">actions/checkout#1774</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/actions/checkout/compare/v4.1.6...v4.1.7\">https://github.com/actions/checkout/compare/v4.1.6...v4.1.7</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/actions/checkout/blob/main/CHANGELOG.md\">actions/checkout's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h1>Changelog</h1>\r\n<h2>v4.1.7</h2>\r\n<ul>\r\n<li>Bump the minor-npm-dependencies group across 1 directory with 4\r\nupdates by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1739\">actions/checkout#1739</a></li>\r\n<li>Bump actions/checkout from 3 to 4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1697\">actions/checkout#1697</a></li>\r\n<li>Check out other refs/* by commit by <a\r\nhref=\"https://github.com/orhantoy\"><code>@​orhantoy</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1774\">actions/checkout#1774</a></li>\r\n<li>Pin actions/checkout's own workflows to a known, good, stable\r\nversion. by <a href=\"https://github.com/jww3\"><code>@​jww3</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1776\">actions/checkout#1776</a></li>\r\n</ul>\r\n<h2>v4.1.6</h2>\r\n<ul>\r\n<li>Check platform to set archive extension appropriately by <a\r\nhref=\"https://github.com/cory-miller\"><code>@​cory-miller</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1732\">actions/checkout#1732</a></li>\r\n</ul>\r\n<h2>v4.1.5</h2>\r\n<ul>\r\n<li>Update NPM dependencies by <a\r\nhref=\"https://github.com/cory-miller\"><code>@​cory-miller</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1703\">actions/checkout#1703</a></li>\r\n<li>Bump github/codeql-action from 2 to 3 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1694\">actions/checkout#1694</a></li>\r\n<li>Bump actions/setup-node from 1 to 4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1696\">actions/checkout#1696</a></li>\r\n<li>Bump actions/upload-artifact from 2 to 4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1695\">actions/checkout#1695</a></li>\r\n<li>README: Suggest <code>user.email</code> to be\r\n<code>41898282+github-actions[bot]@users.noreply.github.com</code> by <a\r\nhref=\"https://github.com/cory-miller\"><code>@​cory-miller</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1707\">actions/checkout#1707</a></li>\r\n</ul>\r\n<h2>v4.1.4</h2>\r\n<ul>\r\n<li>Disable <code>extensions.worktreeConfig</code> when disabling\r\n<code>sparse-checkout</code> by <a\r\nhref=\"https://github.com/jww3\"><code>@​jww3</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1692\">actions/checkout#1692</a></li>\r\n<li>Add dependabot config by <a\r\nhref=\"https://github.com/cory-miller\"><code>@​cory-miller</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1688\">actions/checkout#1688</a></li>\r\n<li>Bump the minor-actions-dependencies group with 2 updates by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1693\">actions/checkout#1693</a></li>\r\n<li>Bump word-wrap from 1.2.3 to 1.2.5 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1643\">actions/checkout#1643</a></li>\r\n</ul>\r\n<h2>v4.1.3</h2>\r\n<ul>\r\n<li>Check git version before attempting to disable\r\n<code>sparse-checkout</code> by <a\r\nhref=\"https://github.com/jww3\"><code>@​jww3</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1656\">actions/checkout#1656</a></li>\r\n<li>Add SSH user parameter by <a\r\nhref=\"https://github.com/cory-miller\"><code>@​cory-miller</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1685\">actions/checkout#1685</a></li>\r\n<li>Update <code>actions/checkout</code> version in\r\n<code>update-main-version.yml</code> by <a\r\nhref=\"https://github.com/jww3\"><code>@​jww3</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1650\">actions/checkout#1650</a></li>\r\n</ul>\r\n<h2>v4.1.2</h2>\r\n<ul>\r\n<li>Fix: Disable sparse checkout whenever <code>sparse-checkout</code>\r\noption is not present <a\r\nhref=\"https://github.com/dscho\"><code>@​dscho</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1598\">actions/checkout#1598</a></li>\r\n</ul>\r\n<h2>v4.1.1</h2>\r\n<ul>\r\n<li>Correct link to GitHub Docs by <a\r\nhref=\"https://github.com/peterbe\"><code>@​peterbe</code></a> in <a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1511\">actions/checkout#1511</a></li>\r\n<li>Link to release page from what's new section by <a\r\nhref=\"https://github.com/cory-miller\"><code>@​cory-miller</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1514\">actions/checkout#1514</a></li>\r\n</ul>\r\n<h2>v4.1.0</h2>\r\n<ul>\r\n<li><a href=\"https://redirect.github.com/actions/checkout/pull/1396\">Add\r\nsupport for partial checkout filters</a></li>\r\n</ul>\r\n<h2>v4.0.0</h2>\r\n<ul>\r\n<li><a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1067\">Support\r\nfetching without the --progress option</a></li>\r\n<li><a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1436\">Update to\r\nnode20</a></li>\r\n</ul>\r\n<h2>v3.6.0</h2>\r\n<ul>\r\n<li><a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1377\">Fix: Mark\r\ntest scripts with Bash'isms to be run via Bash</a></li>\r\n<li><a href=\"https://redirect.github.com/actions/checkout/pull/579\">Add\r\noption to fetch tags even if fetch-depth &gt; 0</a></li>\r\n</ul>\r\n<h2>v3.5.3</h2>\r\n<ul>\r\n<li><a\r\nhref=\"https://redirect.github.com/actions/checkout/pull/1196\">Fix:\r\nCheckout fail in self-hosted runners when faulty submodule are\r\nchecked-in</a></li>\r\n<li><a href=\"https://redirect.github.com/actions/checkout/pull/1287\">Fix\r\ntypos found by codespell</a></li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/actions/checkout/commit/692973e3d937129bcbf40652eb9f2f61becf3332\"><code>692973e</code></a>\r\nPrepare 4.1.7 release (<a\r\nhref=\"https://redirect.github.com/actions/checkout/issues/1775\">#1775</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/checkout/commit/6ccd57f4c5d15bdc2fef309bd9fb6cc9db2ef1c6\"><code>6ccd57f</code></a>\r\nPin actions/checkout's own workflows to a known, good, stable version.\r\n(<a\r\nhref=\"https://redirect.github.com/actions/checkout/issues/1776\">#1776</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/checkout/commit/b17fe1e4d59a9d1d95a7aead5e6fcd13e50939a5\"><code>b17fe1e</code></a>\r\nHandle hidden refs (<a\r\nhref=\"https://redirect.github.com/actions/checkout/issues/1774\">#1774</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/checkout/commit/b80ff79f1755d06ba70441c368a6fe801f5f3a62\"><code>b80ff79</code></a>\r\nBump actions/checkout from 3 to 4 (<a\r\nhref=\"https://redirect.github.com/actions/checkout/issues/1697\">#1697</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/actions/checkout/commit/b1ec3021b8fa02164da82ca1557d017d83b0e179\"><code>b1ec302</code></a>\r\nBump the minor-npm-dependencies group across 1 directory with 4 updates\r\n(<a\r\nhref=\"https://redirect.github.com/actions/checkout/issues/1739\">#1739</a>)</li>\r\n<li>See full diff in <a\r\nhref=\"https://github.com/actions/checkout/compare/a5ac7e51b41094c92402da3b24376905380afc29...692973e3d937129bcbf40652eb9f2f61becf3332\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=actions/checkout&package-manager=github_actions&previous-version=4.1.6&new-version=4.1.7)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-06-18T08:19:35-07:00",
+          "tree_id": "fa3ff85fabad0cd9d90db2750983e5782fcd448a",
+          "url": "https://github.com/runfinch/finch/commit/14fd0d2b7e3f92429a500fb1bf0347bf7a95bbac"
+        },
+        "date": 1718724364095,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 59880961334,
+            "unit": "ns/op\t         0.4870 %cpu_avg/op\t        50.00 %cpu_peak/op\t        59.88 cpu_seconds/op\t1657978880 disk_bytes/op\t 2687728 B/op\t   56616 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 59880961334,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.487,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 59.88,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1657978880,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2687728,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 56616,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 22435417000,
+            "unit": "ns/op\t         0.4022 %cpu_avg/op\t        37.50 %cpu_peak/op\t        22.44 cpu_seconds/op\t   3555328 disk_bytes/op\t  999624 B/op\t   21150 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 22435417000,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4022,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 22.44,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 3555328,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 999624,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 21150,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 251341250,
+            "unit": "ns/op\t         1.016 %cpu_avg/op\t        13.06 %cpu_peak/op\t         0.2513 cpu_seconds/op\t    190464 disk_bytes/op\t   21018 B/op\t     283 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 251341250,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.016,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 13.06,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2513,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 190464,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21018,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 283,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
           }
         ]
       }
