@@ -45,14 +45,21 @@ jobs:
           git secrets --scan-history
 
   gen-code-no-diff:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - run: echo "Skipping CI for docs & contrib files"
   unit-tests:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - run: echo "Skipping CI for docs & contrib files"
   go-linter:
+    name: lint
     runs-on: ubuntu-latest
     steps:
       - run: echo "Skipping CI for docs & contrib files"
