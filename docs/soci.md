@@ -31,7 +31,7 @@ snapshotters:
 ```
 
 > **NOTE**
-> More info on using the `snapshotters` config option can be found in [`snapshotters.md`](https://github.com/runfinch/finch/blob/main/docs/design/snapshotters.md).
+> More info on using the `snapshotters` config option can be found in [`snapshotters.md`](https://github.com/runfinch/finch/blob/main/docs/snapshotters.md).
 
 To get the full benefit of SOCI, users need to pull and run images that have a SOCI index. Although creating a SOCI index for images is not yet supported on Finch,
 images that already have SOCI indices can be found [here](https://gallery.ecr.aws/soci-workshop-examples?page=1).
