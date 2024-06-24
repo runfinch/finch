@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719271641778,
+  "lastUpdate": 1719271890779,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -52182,6 +52182,174 @@ window.BENCHMARK_DATA = {
             "value": 286,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "94b24d6a5eab2c3e17e65ac4a7c16c1905b2339d",
+          "message": "ci(deps): bump softprops/action-gh-release from 2.0.5 to 2.0.6 (#992)\n\nBumps\r\n[softprops/action-gh-release](https://github.com/softprops/action-gh-release)\r\nfrom 2.0.5 to 2.0.6.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/softprops/action-gh-release/releases\">softprops/action-gh-release's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v2.0.6</h2>\r\n<p>maintenance release with updated dependencies</p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md\">softprops/action-gh-release's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2>2.0.6</h2>\r\n<ul>\r\n<li>maintenance release with updated dependencies</li>\r\n</ul>\r\n<h2>2.0.5</h2>\r\n<ul>\r\n<li>Factor in file names with spaces when upserting files <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/446\">#446</a>\r\nvia <a\r\nhref=\"https://github.com/MystiPanda\"><code>@​MystiPanda</code></a></li>\r\n<li>Improvements to error handling <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/449\">#449</a>\r\nvia <a href=\"https://github.com/till\"><code>@​till</code></a></li>\r\n</ul>\r\n<h2>2.0.4</h2>\r\n<ul>\r\n<li>Minor follow up to <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/417\">#417</a>.\r\n<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/425\">#425</a></li>\r\n</ul>\r\n<h2>2.0.3</h2>\r\n<ul>\r\n<li>Declare <code>make_latest</code> as an input field in\r\n<code>action.yml</code> <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/419\">#419</a></li>\r\n</ul>\r\n<h2>2.0.2</h2>\r\n<ul>\r\n<li>Revisit approach to <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/384\">#384</a>\r\nmaking unresolved pattern failures opt-in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/417\">#417</a></li>\r\n</ul>\r\n<h2>2.0.1</h2>\r\n<ul>\r\n<li>Add support for make_latest property <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/304\">#304</a>\r\nvia <a\r\nhref=\"https://github.com/samueljseay\"><code>@​samueljseay</code></a></li>\r\n<li>Fail run if files setting contains invalid patterns <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/384\">#384</a>\r\nvia <a\r\nhref=\"https://github.com/rpdelaney\"><code>@​rpdelaney</code></a></li>\r\n<li>Add support for proxy env variables (don't use node-fetch) <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/386/\">#386</a>\r\nvia <a\r\nhref=\"https://github.com/timor-raiman\"><code>@​timor-raiman</code></a></li>\r\n<li>Suppress confusing warning when input_files is empty <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/389\">#389</a>\r\nvia <a href=\"https://github.com/Drowze\"><code>@​Drowze</code></a></li>\r\n</ul>\r\n<h2>2.0.0</h2>\r\n<ul>\r\n<li><code>2.0.0</code>!? this release corrects a disjunction between git\r\ntag versions used in the marketplace and versions list this file.\r\nPrevious versions should have really been 1.*. Going forward this should\r\nbe better aligned.</li>\r\n<li>Upgrade action.yml declaration to node20 to address\r\ndeprecations</li>\r\n</ul>\r\n<h2>0.1.15</h2>\r\n<ul>\r\n<li>Upgrade to action.yml declaration to node16 to address\r\ndeprecations</li>\r\n<li>Upgrade dependencies</li>\r\n<li>Add <code>asset</code> output as a JSON array containing information\r\nabout the uploaded assets</li>\r\n</ul>\r\n<h2>0.1.14</h2>\r\n<ul>\r\n<li>provides an new workflow input option\r\n<code>generate_release_notes</code> which when set to true will\r\nautomatically generate release notes for you based on GitHub activity <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/179\">#179</a>.\r\nPlease see the <a\r\nhref=\"https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes\">GitHub\r\ndocs for this feature</a> for more information</li>\r\n</ul>\r\n<h2>0.1.13</h2>\r\n<ul>\r\n<li>fix issue with multiple runs concatenating release bodies <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/145\">#145</a></li>\r\n</ul>\r\n<h2>0.1.12</h2>\r\n<ul>\r\n<li>fix bug leading to empty strings subsituted for inputs users don't\r\nprovide breaking api calls <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/144\">#144</a></li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/a74c6b72af54cfa997e81df42d94703d6313a2d0\"><code>a74c6b7</code></a>\r\nupdate changelog</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/b909f761f0367defeee0c2804db31a81c41dd81e\"><code>b909f76</code></a>\r\nupdate dist/index.js</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/e49d08fa3245e75166ef8eb8bc9d7521d34658eb\"><code>e49d08f</code></a>\r\nchore(deps): bump glob from 8.0.3 to 10.4.2</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/f12ad255e1c9d5cfd57d1ea9dca3e3001392be35\"><code>f12ad25</code></a>\r\nchore(deps): bump <code>@​octokit/plugin-throttling</code> from 4.3.2 to\r\n9.3.0</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/7039a825a7b0413e21c08b679d39690ada00386f\"><code>7039a82</code></a>\r\nchore: release 2.0.6</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/f9c2b6ca3738015453adef1caa20347e8ac0fa6d\"><code>f9c2b6c</code></a>\r\nchore: update deps and run build</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/73738a629386c54e67bc26a1e14437a5d0b686a0\"><code>73738a6</code></a>\r\nchore(deps): bump node dep and <code>@types/node</code></li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/a500a35279e4ba77e64279527fb2a91bfc538dbe\"><code>a500a35</code></a>\r\nBump ts-jest from 29.0.3 to 29.1.4 (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/459\">#459</a>)</li>\r\n<li>See full diff in <a\r\nhref=\"https://github.com/softprops/action-gh-release/compare/69320dbe05506a9a39fc8ae11030b214ec2d1f87...a74c6b72af54cfa997e81df42d94703d6313a2d0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=softprops/action-gh-release&package-manager=github_actions&previous-version=2.0.5&new-version=2.0.6)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-06-24T19:23:41-04:00",
+          "tree_id": "4a4024f649cb589d1f9a95647780e05552ccb1f7",
+          "url": "https://github.com/runfinch/finch/commit/94b24d6a5eab2c3e17e65ac4a7c16c1905b2339d"
+        },
+        "date": 1719271889555,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 60615361917,
+            "unit": "ns/op\t         0.3380 %cpu_avg/op\t        44.44 %cpu_peak/op\t        60.62 cpu_seconds/op\t1912385536 disk_bytes/op\t 2710872 B/op\t   57156 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 60615361917,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.338,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 44.44,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 60.62,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1912385536,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2710872,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 57156,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 16832977250,
+            "unit": "ns/op\t         0.4937 %cpu_avg/op\t        37.50 %cpu_peak/op\t        16.83 cpu_seconds/op\t  17735680 disk_bytes/op\t  749056 B/op\t   15914 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 16832977250,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4937,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 16.83,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 17735680,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 749056,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 15914,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 246403300,
+            "unit": "ns/op\t         1.091 %cpu_avg/op\t        12.00 %cpu_peak/op\t         0.2464 cpu_seconds/op\t      3276 disk_bytes/op\t   20894 B/op\t     277 allocs/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 246403300,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.091,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 12,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2464,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 3276,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 20894,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 277,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
           }
         ]
       }
