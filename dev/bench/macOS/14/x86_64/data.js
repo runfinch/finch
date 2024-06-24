@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1718988302624,
+  "lastUpdate": 1719265939142,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -27892,6 +27892,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 496,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b2bed648eae4cb915514981da777b9df7729f88",
+          "message": "build(deps): bump github.com/spf13/cobra from 1.8.0 to 1.8.1 (#983)\n\nBumps [github.com/spf13/cobra](https://github.com/spf13/cobra) from\r\n1.8.0 to 1.8.1.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/spf13/cobra/releases\">github.com/spf13/cobra's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v1.8.1</h2>\r\n<h2>✨ Features</h2>\r\n<ul>\r\n<li>Add env variable to suppress completion descriptions on create by <a\r\nhref=\"https://github.com/scop\"><code>@​scop</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1938\">spf13/cobra#1938</a></li>\r\n</ul>\r\n<h2>🐛 Bug fixes</h2>\r\n<ul>\r\n<li>Micro-optimizations by <a\r\nhref=\"https://github.com/scop\"><code>@​scop</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/1957\">spf13/cobra#1957</a></li>\r\n</ul>\r\n<h2>🔧 Maintenance</h2>\r\n<ul>\r\n<li>build(deps): bump github.com/cpuguy83/go-md2man/v2 from 2.0.3 to\r\n2.0.4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2127\">spf13/cobra#2127</a></li>\r\n<li>Consistent annotation names by <a\r\nhref=\"https://github.com/nirs\"><code>@​nirs</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2140\">spf13/cobra#2140</a></li>\r\n<li>Remove fully inactivated linters by <a\r\nhref=\"https://github.com/nirs\"><code>@​nirs</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2148\">spf13/cobra#2148</a></li>\r\n<li>Address golangci-lint deprecation warnings, enable some more linters\r\nby <a href=\"https://github.com/scop\"><code>@​scop</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2152\">spf13/cobra#2152</a></li>\r\n</ul>\r\n<h2>🧪 Testing &amp; CI/CD</h2>\r\n<ul>\r\n<li>Add test for func in cobra.go by <a\r\nhref=\"https://github.com/korovindenis\"><code>@​korovindenis</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2094\">spf13/cobra#2094</a></li>\r\n<li>ci: test golang 1.22 by <a\r\nhref=\"https://github.com/cyrilico\"><code>@​cyrilico</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2113\">spf13/cobra#2113</a></li>\r\n<li>Optimized and added more linting by <a\r\nhref=\"https://github.com/scop\"><code>@​scop</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2099\">spf13/cobra#2099</a></li>\r\n<li>build(deps): bump actions/setup-go from 4 to 5 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2087\">spf13/cobra#2087</a></li>\r\n<li>build(deps): bump actions/labeler from 4 to 5 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2086\">spf13/cobra#2086</a></li>\r\n<li>build(deps): bump golangci/golangci-lint-action from 3.7.0 to 4.0.0\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2108\">spf13/cobra#2108</a></li>\r\n<li>build(deps): bump actions/cache from 3 to 4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2102\">spf13/cobra#2102</a></li>\r\n</ul>\r\n<h2>✏️ Documentation</h2>\r\n<ul>\r\n<li>Fixes and docs for usage as plugin by <a\r\nhref=\"https://github.com/nirs\"><code>@​nirs</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2070\">spf13/cobra#2070</a></li>\r\n<li>flags: clarify documentation that LocalFlags related function do not\r\nmodify the state by <a\r\nhref=\"https://github.com/niamster\"><code>@​niamster</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2064\">spf13/cobra#2064</a></li>\r\n<li>chore: remove repetitive words by <a\r\nhref=\"https://github.com/racerole\"><code>@​racerole</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2122\">spf13/cobra#2122</a></li>\r\n<li>Add LXC to the list of projects using Cobra <a\r\nhref=\"https://github.com/VaradBelwalkar\"><code>@​VaradBelwalkar</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2071\">spf13/cobra#2071</a></li>\r\n<li>Update projects_using_cobra.md by <a\r\nhref=\"https://github.com/marcuskohlberg\"><code>@​marcuskohlberg</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2089\">spf13/cobra#2089</a></li>\r\n<li>[chore]: update projects using cobra by <a\r\nhref=\"https://github.com/cmwylie19\"><code>@​cmwylie19</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2093\">spf13/cobra#2093</a></li>\r\n<li>Add Taikun CLI to list of projects by <a\r\nhref=\"https://github.com/Smidra\"><code>@​Smidra</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2098\">spf13/cobra#2098</a></li>\r\n<li>Add Incus to the list of projects using Cobra by <a\r\nhref=\"https://github.com/montag451\"><code>@​montag451</code></a> in <a\r\nhref=\"https://redirect.github.com/spf13/cobra/pull/2118\">spf13/cobra#2118</a></li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/e94f6d0dd9a5e5738dca6bce03c4b1207ffbc0ec\"><code>e94f6d0</code></a>\r\nAddress golangci-lint deprecation warnings, enable some more linters (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2152\">#2152</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/8003b74a10ef0d0d84fe3c408d3939d86fdeb210\"><code>8003b74</code></a>\r\nRemove fully inactivated linters (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2148\">#2148</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/5c2c1d627d35a00153764a3d37400efc66eaca1c\"><code>5c2c1d6</code></a>\r\nConsistent annotation names (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2140\">#2140</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/5a1acea3210649f3d70002818ec04b09f6347062\"><code>5a1acea</code></a>\r\nbuild(deps): bump github.com/cpuguy83/go-md2man/v2 from 2.0.3 to 2.0.4\r\n(<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2127\">#2127</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/0fc86c2ffd0326b6f6ed5fa36803d26993655c08\"><code>0fc86c2</code></a>\r\ndocs: update user guide (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2128\">#2128</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/6b5f577ebce858ee70fcdd1f062ea3af4b1c03ab\"><code>6b5f577</code></a>\r\nMore linting (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2099\">#2099</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/bd914e58d69d65e494b45bdb40e90ca816b92fcc\"><code>bd914e5</code></a>\r\nfix: remove deprecated io/ioutils package (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2120\">#2120</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/1f80fa2e23cc550c131e8a54dc72d11b265c6fcf\"><code>1f80fa2</code></a>\r\nchore: remove repetitive words (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2122\">#2122</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/c69ae4c36b134dd69e5ab9d3d6b9f571ca5afe1e\"><code>c69ae4c</code></a>\r\nci: test golang 1.22 (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2113\">#2113</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/spf13/cobra/commit/a30cee5e5ab0949cc888ef00ae6aee24e091e042\"><code>a30cee5</code></a>\r\nbuild(deps): bump actions/cache from 3 to 4 (<a\r\nhref=\"https://redirect.github.com/spf13/cobra/issues/2102\">#2102</a>)</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/spf13/cobra/compare/v1.8.0...v1.8.1\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/spf13/cobra&package-manager=go_modules&previous-version=1.8.0&new-version=1.8.1)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-06-24T17:46:29-04:00",
+          "tree_id": "d51372c15a2af7b550fb5b631fe5d518f9fb5bb5",
+          "url": "https://github.com/runfinch/finch/commit/7b2bed648eae4cb915514981da777b9df7729f88"
+        },
+        "date": 1719265937828,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 84548002280,
+            "unit": "ns/op\t         0.5517 %cpu_avg/op\t        46.67 %cpu_peak/op\t        84.55 cpu_seconds/op\t1958617088 disk_bytes/op\t 3812032 B/op\t   80373 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 84548002280,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.5517,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 46.67,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 84.55,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1958617088,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3812032,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 80373,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24784751800,
+            "unit": "ns/op\t         0.4468 %cpu_avg/op\t        28.57 %cpu_peak/op\t        24.78 cpu_seconds/op\t   9027584 disk_bytes/op\t 1110176 B/op\t   23652 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24784751800,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4468,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 28.57,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.78,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 9027584,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1110176,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 23652,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 450873167,
+            "unit": "ns/op\t         0.6569 %cpu_avg/op\t        16.92 %cpu_peak/op\t         0.4508 cpu_seconds/op\t      5461 disk_bytes/op\t   30602 B/op\t     482 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 450873167,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.6569,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 16.92,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.4508,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 5461,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 30602,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 482,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
           }
