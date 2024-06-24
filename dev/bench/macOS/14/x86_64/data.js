@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719271722995,
+  "lastUpdate": 1719271845660,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -28228,6 +28228,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 496,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "67739cf48a756590e1cf417e072e1ab0cd746b3c",
+          "message": "ci(deps): bump peter-evans/create-pull-request from 6.0.5 to 6.1.0 (#987)\n\nBumps\r\n[peter-evans/create-pull-request](https://github.com/peter-evans/create-pull-request)\r\nfrom 6.0.5 to 6.1.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/peter-evans/create-pull-request/releases\">peter-evans/create-pull-request's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>Create Pull Request v6.1.0</h2>\r\n<p>✨ Adds <code>pull-request-branch</code> as an action output.</p>\r\n<h2>What's Changed</h2>\r\n<ul>\r\n<li>build(deps): bump undici from 6.14.1 to 6.15.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2873\">peter-evans/create-pull-request#2873</a></li>\r\n<li>Update distribution by <a\r\nhref=\"https://github.com/actions-bot\"><code>@​actions-bot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2878\">peter-evans/create-pull-request#2878</a></li>\r\n<li>build(deps-dev): bump <code>@​types/node</code> from 18.19.31 to\r\n18.19.32 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2884\">peter-evans/create-pull-request#2884</a></li>\r\n<li>build(deps-dev): bump <code>@​types/node</code> from 18.19.32 to\r\n18.19.33 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2890\">peter-evans/create-pull-request#2890</a></li>\r\n<li>build(deps-dev): bump ts-jest from 29.1.2 to 29.1.3 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2892\">peter-evans/create-pull-request#2892</a></li>\r\n<li>build(deps): bump undici from 6.15.0 to 6.18.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2891\">peter-evans/create-pull-request#2891</a></li>\r\n<li>Update distribution by <a\r\nhref=\"https://github.com/actions-bot\"><code>@​actions-bot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2907\">peter-evans/create-pull-request#2907</a></li>\r\n<li>build(deps): bump undici from 6.18.0 to 6.18.1 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2913\">peter-evans/create-pull-request#2913</a></li>\r\n<li>build(deps-dev): bump ts-jest from 29.1.3 to 29.1.4 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2914\">peter-evans/create-pull-request#2914</a></li>\r\n<li>Update distribution by <a\r\nhref=\"https://github.com/actions-bot\"><code>@​actions-bot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2921\">peter-evans/create-pull-request#2921</a></li>\r\n<li>build(deps): bump undici from 6.18.1 to 6.18.2 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2934\">peter-evans/create-pull-request#2934</a></li>\r\n<li>build(deps-dev): bump prettier from 3.2.5 to 3.3.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2936\">peter-evans/create-pull-request#2936</a></li>\r\n<li>build(deps-dev): bump <code>@​types/node</code> from 18.19.33 to\r\n18.19.34 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2935\">peter-evans/create-pull-request#2935</a></li>\r\n<li>Update distribution by <a\r\nhref=\"https://github.com/actions-bot\"><code>@​actions-bot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2947\">peter-evans/create-pull-request#2947</a></li>\r\n<li>build(deps-dev): bump prettier from 3.3.0 to 3.3.2 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2959\">peter-evans/create-pull-request#2959</a></li>\r\n<li>build(deps-dev): bump braces from 3.0.2 to 3.0.3 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2962\">peter-evans/create-pull-request#2962</a></li>\r\n<li>build(deps-dev): bump ws from 8.11.0 to 8.17.1 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2970\">peter-evans/create-pull-request#2970</a></li>\r\n<li>build(deps-dev): bump ts-jest from 29.1.4 to 29.1.5 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2975\">peter-evans/create-pull-request#2975</a></li>\r\n<li>build(deps-dev): bump <code>@​types/node</code> from 18.19.34 to\r\n18.19.36 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2976\">peter-evans/create-pull-request#2976</a></li>\r\n<li>build(deps): bump undici from 6.18.2 to 6.19.2 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2977\">peter-evans/create-pull-request#2977</a></li>\r\n<li>Update distribution by <a\r\nhref=\"https://github.com/actions-bot\"><code>@​actions-bot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2990\">peter-evans/create-pull-request#2990</a></li>\r\n<li>feat: add branch name output by <a\r\nhref=\"https://github.com/peter-evans\"><code>@​peter-evans</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/pull/2995\">peter-evans/create-pull-request#2995</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/peter-evans/create-pull-request/compare/v6.0.5...v6.1.0\">https://github.com/peter-evans/create-pull-request/compare/v6.0.5...v6.1.0</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/c5a7806660adbe173f04e3e038b0ccdcd758773c\"><code>c5a7806</code></a>\r\nfeat: add branch name output (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2995\">#2995</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/4383ba9ef00dba2e170ae6fe3eb477b6b0eafa65\"><code>4383ba9</code></a>\r\nbuild: update distribution (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2990\">#2990</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/36f7648874f472efde0769f1fee777f86161cfb4\"><code>36f7648</code></a>\r\nbuild(deps): bump undici from 6.18.2 to 6.19.2 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2977\">#2977</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/5f7c1586fdafcea53df1c73a7e5b0a78d8e9a643\"><code>5f7c158</code></a>\r\nbuild(deps-dev): bump <code>@​types/node</code> from 18.19.34 to\r\n18.19.36 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2976\">#2976</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/db1713da3a7003971bce54a7a6c91de34081f726\"><code>db1713d</code></a>\r\nbuild(deps-dev): bump ts-jest from 29.1.4 to 29.1.5 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2975\">#2975</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/ca98a71ccc705c342f8ce2da65477ee957baf25c\"><code>ca98a71</code></a>\r\nbuild(deps-dev): bump ws from 8.11.0 to 8.17.1 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2970\">#2970</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/ce008085c89860856de52c613ad894311f83c931\"><code>ce00808</code></a>\r\nbuild(deps-dev): bump braces from 3.0.2 to 3.0.3 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2962\">#2962</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/7318c0b7b6c557038902b1096f1d79c878a561bc\"><code>7318c0b</code></a>\r\nbuild(deps-dev): bump prettier from 3.3.0 to 3.3.2 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2959\">#2959</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/e30bbbb3c94577a6d7716b09e7b77102d2f28ac3\"><code>e30bbbb</code></a>\r\nbuild: update distribution (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2947\">#2947</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/peter-evans/create-pull-request/commit/bad19b8e0bdb4a23e0fd723a76aa449674746ee4\"><code>bad19b8</code></a>\r\nbuild(deps-dev): bump <code>@​types/node</code> from 18.19.33 to\r\n18.19.34 (<a\r\nhref=\"https://redirect.github.com/peter-evans/create-pull-request/issues/2935\">#2935</a>)</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/peter-evans/create-pull-request/compare/6d6857d36972b65feb161a90e484f2984215f83e...c5a7806660adbe173f04e3e038b0ccdcd758773c\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=peter-evans/create-pull-request&package-manager=github_actions&previous-version=6.0.5&new-version=6.1.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-06-24T19:23:07-04:00",
+          "tree_id": "5809b9f520f49e7c471a3cbd2dcc2a3f93c68b06",
+          "url": "https://github.com/runfinch/finch/commit/67739cf48a756590e1cf417e072e1ab0cd746b3c"
+        },
+        "date": 1719271843684,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 137159890608,
+            "unit": "ns/op\t         0.1691 %cpu_avg/op\t        25.00 %cpu_peak/op\t       137.2 cpu_seconds/op\t9844899840 disk_bytes/op\t 6162592 B/op\t  128511 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 137159890608,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.1691,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 25,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 137.2,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 9844899840,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 6162592,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 128511,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24838829435,
+            "unit": "ns/op\t         0.3472 %cpu_avg/op\t        28.57 %cpu_peak/op\t        24.84 cpu_seconds/op\t  18845696 disk_bytes/op\t 1109784 B/op\t   23655 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24838829435,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3472,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 28.57,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.84,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 18845696,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1109784,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 23655,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 483507840,
+            "unit": "ns/op\t         1.073 %cpu_avg/op\t        19.91 %cpu_peak/op\t         0.4834 cpu_seconds/op\t      1365 disk_bytes/op\t   32072 B/op\t     513 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 483507840,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.073,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 19.91,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.4834,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 1365,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 32072,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 513,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
           }
