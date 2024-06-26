@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719420736610,
+  "lastUpdate": 1719432034957,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -28126,6 +28126,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
             "value": 20780,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 263,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "55906459+austinvazquez@users.noreply.github.com",
+            "name": "Austin Vazquez",
+            "username": "austinvazquez"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6fcc73b5dddf7c239eacf1f4cba410ac790d5a18",
+          "message": "ci: add workaround for WSL hanging in CI (#993)\n\nIssue #, if available:\r\nThere is a known issue, https://github.com/microsoft/WSL/issues/8529,\r\nwhere WSL commands can hang. This can cause Windows e2e tests to block\r\nuntil hitting the 2 hour timeout.\r\n\r\n*Description of changes:*\r\nThis change adds a workaround to detect the bad state and attempt to\r\nmitigate by killing the WSL service. If the issue cannot be resolved,\r\nthe test will only hang for 300 seconds before failing.\r\n\r\n*Testing done:*\r\nCI run was successful with 8 WSL shutdown failures.\r\n\r\nhttps://github.com/runfinch/finch/actions/runs/9682445232/job/26715743040\r\n\r\n<img width=\"2051\" alt=\"image\"\r\nsrc=\"https://github.com/runfinch/finch/assets/55906459/ee582249-8257-48eb-bab3-993150feec80\">\r\n\r\n- [x] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n*Trade-off analysis*\r\nThe trade-off for this approach is the test suite can take longer with\r\nmultiple reset VM calls being made. Sample runs which previously took\r\n~15 minutes are up to ~37 minutes with the hanging mitigation; however,\r\nthis is down from the 2 hour timeout failure which would occur without\r\nthe mitigation.\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Austin Vazquez <macedonv@amazon.com>",
+          "timestamp": "2024-06-26T12:55:07-07:00",
+          "tree_id": "74addea478800250db352f715e130dd73ae74bff",
+          "url": "https://github.com/runfinch/finch/commit/6fcc73b5dddf7c239eacf1f4cba410ac790d5a18"
+        },
+        "date": 1719432033116,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 70286013959,
+            "unit": "ns/op\t         0.3064 %cpu_avg/op\t        37.50 %cpu_peak/op\t        70.29 cpu_seconds/op\t1916325888 disk_bytes/op\t 3121544 B/op\t   66433 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 70286013959,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3064,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 70.29,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1916325888,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3121544,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 66433,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 23202317750,
+            "unit": "ns/op\t         0.2735 %cpu_avg/op\t        33.33 %cpu_peak/op\t        23.20 cpu_seconds/op\t  18669568 disk_bytes/op\t 1032552 B/op\t   21897 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 23202317750,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.2735,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 23.2,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 18669568,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1032552,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 21897,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 232266467,
+            "unit": "ns/op\t         1.090 %cpu_avg/op\t         8.889 %cpu_peak/op\t         0.2322 cpu_seconds/op\t         0 disk_bytes/op\t   20598 B/op\t     263 allocs/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 232266467,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.09,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 8.889,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2322,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 20598,
             "unit": "B/op",
             "extra": "5 times\n8 procs"
           },
