@@ -73,8 +73,10 @@ arch-test:
 .PHONY: all
 ifeq ($(GOOS),windows)
 all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml
-else
+else ifeq ($(GOOS),darwin)
 all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
+else ifeq ($(GOOS),linux)
+all: finch
 endif
 
 .PHONY: all-local
@@ -206,8 +208,10 @@ ifeq ($(GOOS),windows)
 finch: finch-windows finch-general
 else ifeq ($(GOOS),darwin)
 finch: finch-macos
+else ifeq ($(GOOS),linux)
+finch: finch-native
 else
-finch: finch-unix
+finch: finch-general
 endif
 
 finch-windows:
@@ -220,8 +224,11 @@ finch-macos: finch-unix
 
 finch-unix: finch-general
 
+finch-native: GO_BUILD_TAGS += "native"
+finch-native: finch-general
+
 finch-general:
-	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
+	$(GO) build -ldflags $(LDFLAGS) -tags $(GO_BUILD_TAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
 
 .PHONY: release
 release: check-licenses all download-licenses

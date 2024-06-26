@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//go:build darwin
+//go:build darwin && !native
 
 package main
 
@@ -21,6 +21,10 @@ var aliasMap = map[string]string{}
 var argHandlerMap = map[string]map[string]argHandler{}
 
 var commandHandlerMap = map[string]commandHandler{}
+
+func (nc *nerdctlCommand) GetCmdArgs() []string {
+	return []string{"shell", limaInstanceName, "sudo", "-E"}
+}
 
 func resolveIP(host string, logger flog.Logger, _ command.Creator) (string, error) {
 	parts := strings.SplitN(host, ":", 2)

@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//go:build windows
+//go:build windows && !native
 
 package config
 
@@ -25,4 +25,16 @@ func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limayaml
 		return nil, fmt.Errorf("unsupported vm type \"%s\" for windows", *lca.cfg.VMType)
 	}
 	return limaCfg, nil
+}
+
+func (lca *limaConfigApplier) configureCPUs(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+	return limaCfg
+}
+
+func (lca *limaConfigApplier) configureMemory(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+	return limaCfg
+}
+
+func (lca *limaConfigApplier) configureMounts(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+	return limaCfg
 }

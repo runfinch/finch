@@ -4,13 +4,10 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
-	"github.com/runfinch/finch/pkg/lima"
 	"github.com/runfinch/finch/pkg/support"
 )
 
@@ -88,18 +85,4 @@ func (gsa *generateSupportBundleAction) run(additionalFiles []string, excludeFil
 	gsa.logger.Info("Please ensure there is no sensitive information in the bundle before uploading.")
 	gsa.logger.Info("By default, this bundle contains basic logs and configs for Finch.")
 	return nil
-}
-
-func (gsa *generateSupportBundleAction) assertVMExists() error {
-	status, err := lima.GetVMStatus(gsa.lcc, gsa.logger, limaInstanceName)
-	if err != nil {
-		return err
-	}
-	switch status {
-	case lima.Nonexistent:
-		return fmt.Errorf("cannot create support bundle for nonexistent VM, run `finch %s init` to create a new instance",
-			virtualMachineRootCmd)
-	default:
-		return nil
-	}
 }

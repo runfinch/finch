@@ -19,7 +19,6 @@ import (
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
-	"github.com/runfinch/finch/pkg/lima"
 	"github.com/runfinch/finch/pkg/system"
 
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -261,7 +260,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	// Add -E to sudo command in order to preserve existing environment variables, more info:
 	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
-	limaArgs := append(nc.GetLimaArgs(), append(additionalEnv, passedEnvArgs...)...)
+	limaArgs := append(nc.GetCmdArgs(), append(additionalEnv, passedEnvArgs...)...)
 
 	limaArgs = append(limaArgs, append([]string{nerdctlCmdName}, strings.Fields(cmdName)...)...)
 
@@ -281,28 +280,6 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	}
 
 	return nc.lcc.Create(limaArgs...).Run()
-}
-
-func (nc *nerdctlCommand) assertVMIsRunning(creator command.LimaCmdCreator, logger flog.Logger) error {
-	// Extra call to check VM before running nerdctl commands. These are the reasons of not doing message replacing
-	// 1. for the non-help commands, replacing stdout may cause "stdin is not a terminal" error for the commands that need input.
-	// E.g. finch login.
-	// 2. an extra call could give us more control about the error messages. Message replacing may fail if upstream
-	// changes the format of source string, which leads to extra CI validation work.
-	status, err := lima.GetVMStatus(creator, logger, limaInstanceName)
-	if err != nil {
-		return err
-	}
-	switch status {
-	case lima.Nonexistent:
-		return fmt.Errorf("instance %q does not exist, run `finch %s init` to create a new instance",
-			limaInstanceName, virtualMachineRootCmd)
-	case lima.Stopped:
-		return fmt.Errorf("instance %q is stopped, run `finch %s start` to start the instance",
-			limaInstanceName, virtualMachineRootCmd)
-	default:
-		return nil
-	}
 }
 
 // shouldReplaceForHelp returns true if we should replace "nerdctl" with "finch" for the output of the given command.

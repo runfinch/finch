@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//go:build darwin
+//go:build darwin && !native
 
 package config
 
@@ -63,4 +63,24 @@ func userModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) {
 		Mode:   "system",
 		Script: fmt.Sprintf(qemuPkgInstallationScript, userModeEmulationProvisioningScriptHeader),
 	})
+}
+
+func (lca *limaConfigApplier) configureCPUs(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+	limaCfg.CPUs = lca.cfg.CPUs
+	return limaCfg
+}
+
+func (lca *limaConfigApplier) configureMemory(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+	limaCfg.Memory = lca.cfg.Memory
+	return limaCfg
+}
+
+func (lca *limaConfigApplier) configureMounts(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+	limaCfg.Mounts = []limayaml.Mount{}
+	for _, ad := range lca.cfg.AdditionalDirectories {
+		limaCfg.Mounts = append(limaCfg.Mounts, limayaml.Mount{
+			Location: *ad.Path, Writable: pointer.Bool(true),
+		})
+	}
+	return limaCfg
 }

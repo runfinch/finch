@@ -14,7 +14,6 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
@@ -29,30 +28,9 @@ type AdditionalDirectory struct {
 	Path *string `yaml:"path"`
 }
 
-// Finch represents the configuration file for Finch CLI.
-type Finch struct {
-	CPUs   *int    `yaml:"cpus,omitempty"`
-	Memory *string `yaml:"memory,omitempty"`
-	// Snapshotters: the snapshotters that will be installed and configured automatically on vm init or on vm start.
-	// Values: `soci` for SOCI snapshotter; `overlayfs` for default overlay snapshotter.
+type GeneralSettings struct {
 	Snapshotters []string `yaml:"snapshotters,omitempty"`
-	// CredsHelper: the list of credential helpers that will be installed and configured automatically on vm init or on vm start
 	CredsHelpers []string `yaml:"creds_helpers,omitempty"`
-	// AdditionalDirectories are the work directories that are not supported by default. In macOS, only home directory is supported by default.
-	// For example, if you want to mount a directory into a container, and that directory is not under your home directory,
-	// then you'll need to specify this field to add that directory or any ascendant of it as a work directory.
-	AdditionalDirectories []AdditionalDirectory `yaml:"additional_directories,omitempty"`
-	// VMType sets which technology to use for Finch's VM.
-	// Currently supports `qemu` and `vz` (Virtualization.framework).
-	// Also sets mountType to "virtiofs", instead of the default "reverse-sshfs"
-	// Requires macOS 13.0 or later.
-	// This setting will only be applied on vm init.
-	VMType *limayaml.VMType `yaml:"vmType,omitempty"`
-	// Use Rosetta 2 when available. Forces vmType to "vz" (Virtualization.framework) if set to `true`.
-	// Requires macOS 13.0 or later and an Apple Silicon (ARM64) mac.
-	// Has no effect on systems where Rosetta 2 is not available (Intel/AMD64 macs, or macOS < 13.0).
-	// This setting will only be applied on vm init.
-	Rosetta *bool `yaml:"rosetta,omitempty"`
 }
 
 // Nerdctl is a copy from github.com/containerd/nerdctl/cmd/nerdctl/main.go
@@ -99,6 +77,13 @@ type LimaConfigApplier interface {
 type NerdctlConfigApplier interface {
 	Apply(remoteAddr string) error
 }
+
+// // NerdctlConfigApplierSystemDeps provides system dependencies.
+// //
+// //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_nerdctl_config_applier_system_deps.go -package=mocks -mock_names NerdctlConfigApplierSystemDeps=NerdctlConfigApplierSystemDeps . NerdctlConfigApplierSystemDeps
+// type NerdctlConfigApplierSystemDeps interface {
+// 	system.UserHomeDir
+// }
 
 // LoadSystemDeps contains the system dependencies for Load.
 //
@@ -193,40 +178,4 @@ func loadFinchConfig(fs afero.Fs, finchConfigPath string, logger flog.Logger, sy
 	}
 
 	return &cfg, nil
-}
-
-// ModifyFinchConfig Modify Finch's configuration from user inputs.
-func ModifyFinchConfig(fs afero.Fs, logger flog.Logger, finchConfigPath string, opts VMConfigOpts) (bool, error) {
-	var isConfigUpdated bool
-
-	systemDeps := system.NewStdLib()
-	mem := fmemory.NewMemory()
-
-	finchCfg, err := loadFinchConfig(fs, finchConfigPath, logger, systemDeps, mem)
-	if err != nil {
-		return isConfigUpdated, err
-	}
-
-	cpus, memory := opts.CPUs, opts.Memory
-	if cpus != DefaultCPUs && cpus != *finchCfg.CPUs {
-		*finchCfg.CPUs = cpus
-		isConfigUpdated = true
-	}
-	if memory != DefaultMemory && memory != *finchCfg.Memory {
-		*finchCfg.Memory = memory
-		isConfigUpdated = true
-	}
-
-	if !isConfigUpdated {
-		return isConfigUpdated, fmt.Errorf("the number of CPUs or the amount of memory should be at least one valid value")
-	}
-
-	if err := validate(finchCfg, logger, systemDeps, mem); err != nil {
-		return false, fmt.Errorf("failed to validate config file: %w", err)
-	}
-	if err := writeConfig(finchCfg, fs, finchConfigPath); err != nil {
-		return false, err
-	}
-
-	return isConfigUpdated, nil
 }
