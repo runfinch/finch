@@ -7,9 +7,13 @@
 package vm
 
 import (
+	"context"
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -59,4 +63,41 @@ var resetDisks = func(_ *option.Option, _ bool) {
 	finchRootDir := os.Getenv("LOCALAPPDATA")
 	dataDiskDir := filepath.Join(finchRootDir, ".finch", ".disks")
 	gomega.Expect(os.RemoveAll(dataDiskDir)).ShouldNot(gomega.HaveOccurred())
+}
+
+// shutdownWSL is a wrapper function for "wsl --shutdown".
+//
+// This is a workaround for https://github.com/microsoft/WSL/issues/8529
+//
+// If WSL is suspected of hanging for longer than 180 seconds, then
+// kill the WSL service and retry the shutdown command.
+//
+// This function will at maximum run for 300 seconds before returning
+// context.DeadlineExceeded error.
+var shutdownWSL = func() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 180*time.Second)
+	defer cancel()
+
+	if err := exec.CommandContext(ctx, "wsl", "--shutdown").Run(); err != nil {
+		ginkgo.GinkgoLogr.Error(err, "WSL shutdown failed", "time", time.Now().Format(time.RFC3339))
+
+		// wsl might be hung, kill the wsl service and try again.
+		// https://github.com/microsoft/WSL/issues/8529
+		killCtx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+		defer cancel()
+
+		if err := exec.CommandContext(killCtx, "taskkill", "/f", "/im", "wslservice.exe").Run(); err != nil {
+			ginkgo.GinkgoLogr.Error(err, "WSL task kill failed", "time", time.Now().Format(time.RFC3339))
+			return fmt.Errorf("unable to kill wsl service: %w", err)
+		}
+
+		retryCtx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+		defer cancel()
+
+		if err := exec.CommandContext(retryCtx, "wsl", "--shutdown").Run(); err != nil {
+			return fmt.Errorf("unable to shutdown wsl: %w", err)
+		}
+	}
+
+	return nil
 }
