@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719272135575,
+  "lastUpdate": 1719418266256,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -52518,6 +52518,174 @@ window.BENCHMARK_DATA = {
             "value": 289,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1f682607bb5430cf88ea50c5c5ba3d4f5299ccc0",
+          "message": "build(deps): bump github.com/docker/docker from 26.1.4+incompatible to 27.0.1+incompatible (#996)\n\nBumps [github.com/docker/docker](https://github.com/docker/docker) from\r\n26.1.4+incompatible to 27.0.1+incompatible.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/docker/docker/releases\">github.com/docker/docker's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v27.0.1</h2>\r\n<h2>27.0.1</h2>\r\n<p>For a full list of pull requests and changes in this release, refer\r\nto the relevant GitHub milestones:</p>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/docker/cli/issues?q=is%3Aclosed+milestone%3A27.0.0\">docker/cli,\r\n27.0.0 milestone</a></li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/issues?q=is%3Aclosed+milestone%3A27.0.0\">moby/moby,\r\n27.0.0 milestone</a></li>\r\n<li>Deprecated and removed features, see <a\r\nhref=\"https://github.com/docker/cli/blob/v27.0.1/docs/deprecated.md\">Deprecated\r\nFeatures</a>.</li>\r\n<li>Changes to the Engine API, see <a\r\nhref=\"https://github.com/moby/moby/blob/v27.0.1/docs/api/version-history.md\">API\r\nversion history</a>.</li>\r\n</ul>\r\n<h3>New</h3>\r\n<ul>\r\n<li>containerd image store: Add <code>--platform</code> flag to\r\n<code>docker image push</code> and improve the default behavior when not\r\nall platforms of the multi-platform image are available locally. <a\r\nhref=\"https://redirect.github.com/docker/cli/pull/4984\">docker/cli#4984</a>,\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47679\">moby/moby#47679</a></li>\r\n<li>Add support to <code>docker stack deploy</code> for\r\n<code>driver_opts</code> in a service's networks. <a\r\nhref=\"https://redirect.github.com/docker/cli/pull/5125\">docker/cli#5125</a></li>\r\n<li>Consider additional <code>/usr/local/libexec</code> and\r\n<code>/usr/libexec</code> paths when looking up the userland proxy\r\nbinaries by a name with a <code>docker-</code> prefix. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47804\">moby/moby#47804</a></li>\r\n</ul>\r\n<h3>Bug fixes and enhancements</h3>\r\n<ul>\r\n<li><code>*client.Client</code> instances are now always safe for\r\nconcurrent use by multiple goroutines. Previously, this could lead to\r\ndata races when the <code>WithAPIVersionNegotiation()</code> option is\r\nused. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47961\">moby/moby#47961</a></li>\r\n<li>Fix a bug causing the Docker CLI to leak Unix sockets in\r\n<code>$TMPDIR</code> in some cases. <a\r\nhref=\"https://redirect.github.com/docker/cli/pull/5146\">docker/cli#5146</a></li>\r\n<li>Don't ignore a custom seccomp profile when used in conjunction with\r\n<code>--privileged</code>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47500\">moby/moby#47500</a></li>\r\n<li>rootless: overlay2: support native overlay diff when using\r\nrootless-mode with Linux kernel version 5.11 and later. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47605\">moby/moby#47605</a></li>\r\n<li>Fix the <code>StartInterval</code> default value of healthcheck to\r\nreflect the documented value of 5s. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47799\">moby/moby#47799</a></li>\r\n<li>Fix <code>docker save</code> and <code>docker load</code> not ending\r\non the daemon side when the operation was cancelled by the user, for\r\nexample with <!-- raw HTML omitted -->Ctrl+C<!-- raw HTML omitted -->.\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47629\">moby/moby#47629</a></li>\r\n<li>The <code>StartedAt</code> property of containers is now recorded\r\nbefore container startup, guaranteeing that the <code>StartedAt</code>\r\nis always before <code>FinishedAt</code>. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47003\">moby/moby#47003</a></li>\r\n<li>The internal DNS resolver used by Windows containers on Windows now\r\nforwards requests to external DNS servers by default. This enables\r\n<code>nslookup</code> to resolve external hostnames. This behaviour can\r\nbe disabled via <code>daemon.json</code>, using\r\n<code>&quot;features&quot;: { &quot;windows-dns-proxy&quot;: false\r\n}</code>. The configuration option will be removed in a future release.\r\n<a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47826\">moby/moby#47826</a></li>\r\n<li>Print a warning when the CLI does not have permissions to read the\r\nconfiguration file. <a\r\nhref=\"https://redirect.github.com/docker/cli/pull/5077\">docker/cli#5077</a></li>\r\n<li>Fix a goroutine and file-descriptor leak on container attach. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/45052\">moby/moby#45052</a></li>\r\n<li>Clear the networking state of all stopped or dead containers during\r\ndaemon start-up. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47984\">moby/moby#47984</a></li>\r\n<li>Write volume options JSON atomically to avoid &quot;invalid\r\nJSON&quot; errors after system crash. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/48034\">moby/moby#48034</a></li>\r\n<li>Allow multiple macvlan networks with the same parent. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47318\">moby/moby#47318</a></li>\r\n<li>Allow BuildKit to be used on Windows daemons that advertise it. <a\r\nhref=\"https://redirect.github.com/docker/cli/pull/5178\">docker/cli#5178</a></li>\r\n</ul>\r\n<h3>Networking</h3>\r\n<ul>\r\n<li>Allow sysctls to be set per-interface during container creation and\r\nnetwork connection. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47686\">moby/moby#47686</a>\r\n<ul>\r\n<li>In a future release, this will be the only way to set per-interface\r\nsysctl options.\r\nFor example, on the command line in a <code>docker run</code>\r\ncommand,<code>--network mynet --sysctl\r\nnet.ipv4.conf.eth0.log_martians=1</code> will be rejected.\r\nInstead, you must use <code>--network\r\nname=mynet,driver-opt=com.docker.network.endpoint.sysctls=net.ipv4.conf.IFNAME.log_martians=1</code>.</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<h4>IPv6</h4>\r\n<ul>\r\n<li><code>ip6tables</code> is no longer experimental. You may remove the\r\n<code>experimental</code> configuration option and continue to use IPv6,\r\nif it is not required by any other features.</li>\r\n<li><code>ip6tables</code> is now enabled for Linux bridge networks by\r\ndefault. <a\r\nhref=\"https://redirect.github.com/moby/moby/pull/47747\">moby/moby#47747</a>\r\n<ul>\r\n<li>This makes IPv4 and IPv6 behaviors consistent with each other, and\r\nreduces the risk that IPv6-enabled containers are inadvertently exposed\r\nto the network.</li>\r\n<li>There is no impact if you are running Docker Engine with\r\n<code>ip6tables</code> enabled (new default).</li>\r\n<li>If you are using an IPv6-enabled bridge network without\r\n<code>ip6tables</code>, this is likely a breaking change. Only published\r\ncontainer ports (<code>-p</code> or <code>--publish</code>) are\r\naccessible from outside the Docker bridge network, and outgoing\r\nconnections masquerade as the host.</li>\r\n<li>To restore the behavior of earlier releases, no\r\n<code>ip6tables</code> at all, set <code>&quot;ip6tables&quot;:\r\nfalse</code> in <code>daemon.json</code>, or use the CLI option\r\n<code>--ip6tables=false</code>. Alternatively, leave\r\n<code>ip6tables</code> enabled, publish ports, and enable direct\r\nrouting.</li>\r\n<li>With <code>ip6tables</code> enabled, if <code>ip6tables</code> is\r\nnot functional on your host, Docker Engine will start but it will not be\r\npossible to create an IPv6-enabled network.</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/ff1e2c0de72a1bbbe4cdbe1558da57d327899df5\"><code>ff1e2c0</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/48050\">#48050</a>\r\nfrom thaJeztah/deprecate_graphdriver_plugins</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/6da604aa6a74ab770207932b3cbc3d009c3ae25f\"><code>6da604a</code></a>\r\ndeprecate experimental Graphdriver plugins, and disable by default</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/81b202797920d5b52ffd960f344f62cb25ebab71\"><code>81b2027</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/48049\">#48049</a>\r\nfrom thaJeztah/fix_swagger_tmpfsopts</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/97f6a9d005fa3389ae2cea198fa2f4c850876a95\"><code>97f6a9d</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/48045\">#48045</a>\r\nfrom thaJeztah/bump_ttrpc_1.2.5</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/3aace758b92ac82313dacd4c5270057544f1c938\"><code>3aace75</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/48046\">#48046</a>\r\nfrom thaJeztah/daemon_no_logrus</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/ce5571f343d89c9338d4dd589b16d7cfd4ff0df0\"><code>ce5571f</code></a>\r\napi: swagger: fix definition of TmpFsOptions (API v1.46)</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/a9ab04603ea0271d0faf0a25de3a6357c68d3002\"><code>a9ab046</code></a>\r\ncmd/dockerd: initMiddlewares: use containerd/logs</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/418eed6e4e1a453f9779ad5407b26dbedace83be\"><code>418eed6</code></a>\r\nMerge pull request <a\r\nhref=\"https://redirect.github.com/docker/docker/issues/47804\">#47804</a>\r\nfrom cpuguy83/more_paths_docker_proxy</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/e355e1001111ae4681efa2188a3fc1f9653d90fb\"><code>e355e10</code></a>\r\nvendor: github.com/containerd/ttrpc v1.2.5</li>\r\n<li><a\r\nhref=\"https://github.com/moby/moby/commit/f8c088be055b72e58005ef9e56cf4f4008bbc5dd\"><code>f8c088b</code></a>\r\nLookup docker-proxy in libexec paths</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/docker/docker/compare/v26.1.4...v27.0.1\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/docker/docker&package-manager=go_modules&previous-version=26.1.4+incompatible&new-version=27.0.1+incompatible)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-06-26T11:39:44-04:00",
+          "tree_id": "1ec8b6c4f033c9f775e2c3e095b6347f2827bcfd",
+          "url": "https://github.com/runfinch/finch/commit/1f682607bb5430cf88ea50c5c5ba3d4f5299ccc0"
+        },
+        "date": 1719418265342,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 58795488500,
+            "unit": "ns/op\t         0.3952 %cpu_avg/op\t        45.45 %cpu_peak/op\t        58.80 cpu_seconds/op\t1916448768 disk_bytes/op\t 2636288 B/op\t   55466 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 58795488500,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3952,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 45.45,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 58.8,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1916448768,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 2636288,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 55466,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 22771647209,
+            "unit": "ns/op\t         0.3553 %cpu_avg/op\t        30.00 %cpu_peak/op\t        22.77 cpu_seconds/op\t  19963904 disk_bytes/op\t 1013336 B/op\t   21464 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 22771647209,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3553,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 30,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 22.77,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 19963904,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1013336,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 21464,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 233683092,
+            "unit": "ns/op\t         0.7624 %cpu_avg/op\t         5.859 %cpu_peak/op\t         0.2336 cpu_seconds/op\t         0 disk_bytes/op\t   20635 B/op\t     267 allocs/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 233683092,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.7624,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 5.859,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2336,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 20635,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 267,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
           }
         ]
       }
