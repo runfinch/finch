@@ -1,0 +1,32 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# For Finch on Windows, the rootfs location and digest are set
+# based on the values in deps/finch-core/deps/rootfs.conf
+-include $(FINCH_CORE_DIR)/deps/rootfs.conf
+ifeq ($(ARCH),x86_64)
+FINCH_ROOTFS_BASENAME ?= $(X86_64_ARTIFACT)
+FINCH_ROOTFS_DIGEST ?= $(X86_64_512_DIGEST)
+else
+$(error Finch on Windows ARM not supported)
+endif
+
+FINCH_IMAGE_LOCATION := $(OS_OUTDIR)/$(FINCH_ROOTFS_BASENAME)
+FINCH_IMAGE_DIGEST := "sha512:$(FINCH_ROOTFS_DIGEST)"
+
+$(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/windows.yaml
+	# merge the appropriate YAMLs into a temporary finch.yaml file on the current working directory
+	cd finch.yaml.d && yq eval-all '. as $$item ireduce ({}; . *+ $$item)' windows.yaml common.yaml > ../finch.yaml.temp
+
+	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
+	# this sed command uses the alternative separator of "|" because the image location uses "/"
+    # Because the path in windows /C:/<some-path> is not an Absolute path, prefix with file:/ which is handled by lima
+	# https://github.com/lima-vm/lima/blob/da1260dc87fb30345c3ee7bfb131c29646e26d10/pkg/downloader/downloader.go#L266
+	sed -i.bak -e "s|<finch_image_location>|file://$(FINCH_IMAGE_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" finch.yaml.temp
+	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" finch.yaml.temp
+
+	# Replacement was successful, so cleanup .bak
+	@rm finch.yaml.temp.bak
+
+	mv finch.yaml.temp $@
