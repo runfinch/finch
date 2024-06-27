@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"golang.org/x/exp/slices"
@@ -240,9 +241,17 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	var passedEnvArgs []string
 	for _, e := range passedEnvs {
 		v, b := nc.systemDeps.LookupEnv(e)
-		if b {
-			passedEnvArgs = append(passedEnvArgs, fmt.Sprintf("%s=%s", e, v))
+		if !b {
+			continue
 		}
+		if runtime.GOOS == "windows" && e == "COMPOSE_FILE" {
+			wslPath, err := convertToWSLPath(nc.systemDeps, v)
+			if err != nil {
+				return err
+			}
+			v = wslPath
+		}
+		passedEnvArgs = append(passedEnvArgs, fmt.Sprintf("%s=%s", e, v))
 	}
 
 	var additionalEnv []string
