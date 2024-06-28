@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719526386336,
+  "lastUpdate": 1719579979185,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -28806,6 +28806,174 @@ window.BENCHMARK_DATA = {
             "value": 295,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "44946173+haytok@users.noreply.github.com",
+            "name": "Hayato Kiwata",
+            "username": "haytok"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "17d4bc8fbdf6b80e5070d2aa3ed1c85b112252fb",
+          "message": "fix: Allow to use the COMPOSE_FILE variable in finch compose (#994)\n\nnerdctl allows us to launch containers using a Docker Compose file\r\nspecified in the COMPOSE_FILE environment variable.\r\n\r\nFor example, suppose we have created the following Docker Compose file.\r\n\r\n```\r\n> cat a.yaml\r\nservices:\r\n  test:\r\n    image: amazonlinux:2023\r\n```\r\n\r\nBy specifying this Docker Compose file in the COMPOSE_FILE environment\r\nvariable and running nerdctl compose up, we can start the container.\r\n\r\n```\r\n> sudo COMPOSE_FILE=a.yaml _output/nerdctl compose up\r\nINFO[0000] Ensuring image amazonlinux:2023\r\nINFO[0000] Re-creating container nerdctl-test-1\r\nINFO[0000] Attaching to logs\r\nINFO[0000] Container \"nerdctl-test-1\" exited\r\nINFO[0000] All the containers have exited\r\nINFO[0000] Stopping containers (forcibly)\r\nINFO[0000] Stopping container nerdctl-test-1\r\n```\r\n\r\nHowever, since the COMPOSE_FILE environment variable is not passed in\r\nfinch compose, the following error occurs.\r\n\r\n```\r\n> COMPOSE_FILE=a.yaml finch compose up\r\nFATA[0000] no configuration file provided: not found\r\nFATA[0000] exit status 1\r\n```\r\n\r\nAnd this bug is reported in the following issue.\r\n\r\n- https://github.com/runfinch/finch/issues/347\r\n\r\nTherefore, this fix allows the finch compose command to use the Docker\r\nCompose file specified in the COMPOSE_FILE environment variable.\r\n\r\nIssue #, if available: #347\r\n\r\n*Description of changes:* The details are described in this commit\r\nmessage.\r\n\r\n*Testing done:* Yes\r\n\r\n\r\n\r\n- [x] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Hayato Kiwata <haytok@amazon.co.jp>",
+          "timestamp": "2024-06-28T22:01:01+09:00",
+          "tree_id": "28fa2ead828e3e34941f9053f1a86793637859ed",
+          "url": "https://github.com/runfinch/finch/commit/17d4bc8fbdf6b80e5070d2aa3ed1c85b112252fb"
+        },
+        "date": 1719579977333,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 125415193000,
+            "unit": "ns/op\t         0.1669 %cpu_avg/op\t        30.00 %cpu_peak/op\t       125.4 cpu_seconds/op\t9538338816 disk_bytes/op\t 5596704 B/op\t  118712 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 125415193000,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.1669,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 30,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 125.4,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 9538338816,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 5596704,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 118712,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 17122874958,
+            "unit": "ns/op\t         0.4734 %cpu_avg/op\t        37.50 %cpu_peak/op\t        17.12 cpu_seconds/op\t   5091328 disk_bytes/op\t  762208 B/op\t   16205 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 17122874958,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4734,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 17.12,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 5091328,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 762208,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 16205,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 235569717,
+            "unit": "ns/op\t         0.7383 %cpu_avg/op\t         8.042 %cpu_peak/op\t         0.2355 cpu_seconds/op\t         0 disk_bytes/op\t   20774 B/op\t     267 allocs/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 235569717,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.7383,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 8.042,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2355,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 20774,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 267,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
           }
         ]
       }
