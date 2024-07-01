@@ -12,8 +12,11 @@ FINCH_OS_BASENAME=$(AARCH64_ARTIFACT)
 FINCH_OS_DIGEST=$(AARCH64_512_DIGEST)
 endif
 
-FINCH_IMAGE_LOCATION:=$(OS_OUTDIR)/$(FINCH_OS_BASENAME)
-FINCH_IMAGE_DIGEST:="sha512:$(FINCH_OS_DIGEST)"
+# This variable is used to generate release builds, where the OS iamge path should be overwritten
+# to /Applications/Finch/...
+FINCH_OS_IMAGE_LOCATION_ROOT ?= $(DEST)
+FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_OS_BASENAME)
+FINCH_IMAGE_DIGEST := "sha512:$(FINCH_OS_DIGEST)"
 
 .PHONY: finch.yaml
 finch.yaml: $(OS_OUTDIR)/finch.yaml
