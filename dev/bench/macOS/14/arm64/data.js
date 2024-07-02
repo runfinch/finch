@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719936210076,
+  "lastUpdate": 1719959189492,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -29980,6 +29980,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 269,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pendo324@users.noreply.github.com",
+            "name": "Justin",
+            "username": "pendo324"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "12b6934900f47b057fdde8be2f9b3677d00d37aa",
+          "message": "ci(release): fix MSI release build rootfs path (#1009)\n\nIssue #, if available:\r\n- MSI release builds are broken, as seen in [this automated\r\nrun](https://github.com/runfinch/finch/actions/runs/9764308833/job/26959973907)\r\n    - Debugged by looking at the lima stderr logs and found:\r\n    ```\r\n{\"level\":\"fatal\",\"msg\":\"failed to download\r\n\\\"file://C:/actions-runner/_work/finch/finch/_output/os/finch-rootfs-production-amd64-1719439880.tar.gz\\\":\r\nopen\r\nC:/actions-runner/_work/finch/finch/_output/os/finch-rootfs-production-amd64-1719439880.tar.gz:\r\nThe system cannot find the path\r\nspecified.\",\"time\":\"2024-07-02T19:14:36Z\"}\r\n    ```\r\n\r\n*Description of changes:*\r\n- This regression occurred because `FINCH_ROOTFS_LOCATION_ROOT` was\r\nremoved from the Makefile during recent refactoring.\r\n`FINCH_ROOTFS_LOCATION_ROOT` was used to override the path of the rootfs\r\nfile used at runtime by Lima. Removing it means that release builds,\r\nwhich are installed to different locations than dev builds, will not\r\nfunction. This PR makes it so Windows follows the macOS Makefile\r\nvariable name (`FINCH_OS_IMAGE_LOCATION_ROOT`), as seen in\r\nhttps://github.com/runfinch/finch/pull/1007\r\n\r\n*Testing done:*\r\n\r\n\r\n\r\n- [x] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\n---------\r\n\r\nSigned-off-by: Justin Alvarez <alvajus@amazon.com>",
+          "timestamp": "2024-07-02T15:21:31-07:00",
+          "tree_id": "c2f3bd8a1eaa73cb72b5704bf6b04c66b3a5ef66",
+          "url": "https://github.com/runfinch/finch/commit/12b6934900f47b057fdde8be2f9b3677d00d37aa"
+        },
+        "date": 1719959188810,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 77106237917,
+            "unit": "ns/op\t         0.7550 %cpu_avg/op\t        50.00 %cpu_peak/op\t        77.11 cpu_seconds/op\t3257712640 disk_bytes/op\t 3476176 B/op\t   72841 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 77106237917,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.755,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 50,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 77.11,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 3257712640,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3476176,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 72841,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 19873542375,
+            "unit": "ns/op\t         0.6808 %cpu_avg/op\t        71.43 %cpu_peak/op\t        19.87 cpu_seconds/op\t  44068864 disk_bytes/op\t  896152 B/op\t   18799 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 19873542375,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.6808,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 71.43,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 19.87,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 44068864,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 896152,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 18799,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 236661475,
+            "unit": "ns/op\t         1.548 %cpu_avg/op\t        16.39 %cpu_peak/op\t         0.2366 cpu_seconds/op\t         0 disk_bytes/op\t   20860 B/op\t     267 allocs/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 236661475,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.548,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 16.39,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2366,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 20860,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 267,
             "unit": "allocs/op",
             "extra": "5 times\n8 procs"
           }
