@@ -4,7 +4,7 @@ Finch Windows MSI Tool to generate MSI installer from Finch build
 
 ## Instructions
 
-[1] Build finch:  `make FINCH_OS_IMAGE_LOCATION_ROOT=/__INSTALLFOLDER__`
+[1] Build finch:  `make FINCH_OS_IMAGE_LOCATION_ROOT=__INSTALLFOLDER__`
 
 - It will inject the placeholder `__INSTALLFOLDER__` into `os\finch.yaml` for the rootfs location
 
