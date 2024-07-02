@@ -3,6 +3,10 @@ name: Build, test and upload .msi to S3
 # TODO: add scheduler and tests
 on:
   workflow_dispatch:
+    inputs:
+      ref_name:
+        required: true
+        type: string
   workflow_call:
     inputs:
       ref_name:
