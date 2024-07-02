@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.2.1](https://github.com/runfinch/finch/compare/v1.2.0...v1.2.1) (2024-07-02)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.27.0 to 1.27.1 ([#963](https://github.com/runfinch/finch/issues/963)) ([4c2dc12](https://github.com/runfinch/finch/commit/4c2dc1220c51990ebd3f96b973d05e30122a4b8d))
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.27.1 to 1.27.2 ([#974](https://github.com/runfinch/finch/issues/974)) ([54aa67c](https://github.com/runfinch/finch/commit/54aa67cd50a9f02122f6c4af15e6299aeb56f833))
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.27.2 to 1.30.0 ([#991](https://github.com/runfinch/finch/issues/991)) ([bbcb8e7](https://github.com/runfinch/finch/commit/bbcb8e7fdc518eddeb64d1b6f0b59931a0f8450f))
+* **deps:** Bump github.com/docker/cli from 26.1.3+incompatible to 26.1.4+incompatible ([#973](https://github.com/runfinch/finch/issues/973)) ([f774e2d](https://github.com/runfinch/finch/commit/f774e2d7316da5bb1a29f12ed58ba1ebd08f5a6c))
+* **deps:** bump github.com/docker/cli from 26.1.4+incompatible to 27.0.2+incompatible ([#999](https://github.com/runfinch/finch/issues/999)) ([0244698](https://github.com/runfinch/finch/commit/0244698ebe15f215941a875692246ba5c81cbdea))
+* **deps:** bump github.com/docker/cli from 27.0.2+incompatible to 27.0.3+incompatible ([#1005](https://github.com/runfinch/finch/issues/1005)) ([c801e69](https://github.com/runfinch/finch/commit/c801e690330dd44b9e5501dad529543d88849ab2))
+* **deps:** Bump github.com/docker/docker from 26.1.3+incompatible to 26.1.4+incompatible ([#972](https://github.com/runfinch/finch/issues/972)) ([05b9c05](https://github.com/runfinch/finch/commit/05b9c0506b7c482b916445a4e53664846c5c45b6))
+* **deps:** bump github.com/docker/docker from 26.1.4+incompatible to 27.0.1+incompatible ([#996](https://github.com/runfinch/finch/issues/996)) ([1f68260](https://github.com/runfinch/finch/commit/1f682607bb5430cf88ea50c5c5ba3d4f5299ccc0))
+* **deps:** bump github.com/docker/docker from 27.0.1+incompatible to 27.0.2+incompatible ([#1001](https://github.com/runfinch/finch/issues/1001)) ([50a639b](https://github.com/runfinch/finch/commit/50a639b4ea9c9c1c59a67ed6a26902aae5b01abe))
+* **deps:** bump github.com/docker/docker from 27.0.2+incompatible to 27.0.3+incompatible ([#1006](https://github.com/runfinch/finch/issues/1006)) ([537abad](https://github.com/runfinch/finch/commit/537abadac3acc3e51d81f13e584c6d4e234cd654))
+* **deps:** bump github.com/spf13/cobra from 1.8.0 to 1.8.1 ([#983](https://github.com/runfinch/finch/issues/983)) ([7b2bed6](https://github.com/runfinch/finch/commit/7b2bed648eae4cb915514981da777b9df7729f88))
+* **deps:** bump golang.org/x/image from 0.12.0 to 0.18.0 ([#998](https://github.com/runfinch/finch/issues/998)) ([398658e](https://github.com/runfinch/finch/commit/398658eaff3299d6edf705f922ce1f1732d974cb))
+* **deps:** Bump golang.org/x/text from 0.15.0 to 0.16.0 ([#964](https://github.com/runfinch/finch/issues/964)) ([8a3973a](https://github.com/runfinch/finch/commit/8a3973a4d08e3ed7b33fde4d94a2717126042618))
+* **deps:** Bump golang.org/x/tools from 0.21.0 to 0.22.0 ([#967](https://github.com/runfinch/finch/issues/967)) ([3921b00](https://github.com/runfinch/finch/commit/3921b00807455aacaeb526fe7db8da2f68a81fd3))
+* **deps:** bump k8s.io/apimachinery from 0.30.1 to 0.30.2 ([#981](https://github.com/runfinch/finch/issues/981)) ([c8ebf20](https://github.com/runfinch/finch/commit/c8ebf20285afdc23684866e69ef955021260bcc9))
+* **deps:** Bump submodules and dependencies ([#1008](https://github.com/runfinch/finch/issues/1008)) ([6134a5a](https://github.com/runfinch/finch/commit/6134a5aa96ae424c64101fe91814ca2dcef21555))
+* **deps:** Bump submodules and dependencies ([#949](https://github.com/runfinch/finch/issues/949)) ([b5ee424](https://github.com/runfinch/finch/commit/b5ee42460f58f9ee96b3ae0b908349a04662d20b))
+
+
+### Bug Fixes
+
+* add SOCI snapshotter hash check ([#985](https://github.com/runfinch/finch/issues/985)) ([563f346](https://github.com/runfinch/finch/commit/563f346fa1b5380576213175055e308500a0cdbb))
+* Allow to use the COMPOSE_FILE variable in finch compose ([#994](https://github.com/runfinch/finch/issues/994)) ([17d4bc8](https://github.com/runfinch/finch/commit/17d4bc8fbdf6b80e5070d2aa3ed1c85b112252fb))
+* Enable `finch support-bundle generate` to execute on Windows whe… ([#976](https://github.com/runfinch/finch/issues/976)) ([9c1caf0](https://github.com/runfinch/finch/commit/9c1caf0af243cc925f51e24abc59ed29172ddd21))
+* update snapshotters reference ([#986](https://github.com/runfinch/finch/issues/986)) ([06b9027](https://github.com/runfinch/finch/commit/06b9027d7194a6b8d7cc32f8bc40988fcde5a64a))
+* verify shasum for finch dependencies ([#969](https://github.com/runfinch/finch/issues/969)) ([9d85f25](https://github.com/runfinch/finch/commit/9d85f25c2026032122c05d54fdcf6dcb4031ea86))
+
 ## [1.2.0](https://github.com/runfinch/finch/compare/v1.1.3...v1.2.0) (2024-06-03)
 
 
