@@ -22,7 +22,10 @@ import (
 	"github.com/runfinch/finch/pkg/config"
 )
 
-var finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
+var (
+	finchConfigFilePath = os.Getenv("HOME") + "/.finch/finch.yaml"
+	finchConfigJSONPath = os.Getenv("HOME") + "/.finch/config.json"
+)
 
 func limaDataDirPath(installed bool) string {
 	limaConfigFilePath := defaultLimaDataDirPath

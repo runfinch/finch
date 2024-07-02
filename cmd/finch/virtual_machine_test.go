@@ -17,7 +17,7 @@ import (
 func TestVirtualMachineCommand(t *testing.T) {
 	t.Parallel()
 
-	cmd := newVirtualMachineCommand(nil, nil, nil, nil, nil, "", nil, nil)
+	cmd := newVirtualMachineCommand(nil, nil, nil, nil, nil, "", nil, nil, "")
 	assert.Equal(t, cmd.Use, virtualMachineRootCmd)
 
 	// check the number of subcommand for vm

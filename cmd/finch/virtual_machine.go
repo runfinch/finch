@@ -36,6 +36,7 @@ func newVirtualMachineCommand(
 	fp path.Finch,
 	fs afero.Fs,
 	diskManager disk.UserDataDiskManager,
+	finchDir string,
 ) *cobra.Command {
 	virtualMachineCommand := &cobra.Command{
 		Use:   virtualMachineRootCmd,
@@ -43,12 +44,12 @@ func newVirtualMachineCommand(
 	}
 
 	virtualMachineCommand.AddCommand(
-		newStartVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fs, fp.LimaSSHPrivateKeyPath(), diskManager),
+		newStartVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fs, fp.LimaSSHPrivateKeyPath(), diskManager, finchDir),
 		newStopVMCommand(limaCmdCreator, diskManager, logger),
 		newRemoveVMCommand(limaCmdCreator, diskManager, logger),
 		newStatusVMCommand(limaCmdCreator, logger, os.Stdout),
 		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs,
-			fp.LimaSSHPrivateKeyPath(), diskManager),
+			fp.LimaSSHPrivateKeyPath(), diskManager, finchDir),
 		newSettingsVMCommand(logger, lca, fs, os.Stdout),
 	)
 
@@ -106,10 +107,12 @@ func virtualMachineCommands(
 	home string,
 	finchRootPath string,
 ) *cobra.Command {
+	finchDir := fp.FinchDir(finchRootPath)
+
 	return newVirtualMachineCommand(
 		lcc,
 		logger,
-		dependencies(ecc, fc, fp, fs, lcc, logger, fp.FinchDir(finchRootPath)),
+		dependencies(ecc, fc, fp, fs, lcc, logger, finchDir),
 		config.NewLimaApplier(
 			fc,
 			ecc,
@@ -123,7 +126,7 @@ func virtualMachineCommands(
 			fssh.NewDialer(),
 			fs,
 			fp.LimaSSHPrivateKeyPath(),
-			fp.FinchDir(finchRootPath),
+			finchDir,
 			home,
 			fp.LimaInstancePath(),
 			fc,
@@ -131,5 +134,6 @@ func virtualMachineCommands(
 		fp,
 		fs,
 		disk.NewUserDataDiskManager(lcc, ecc, &afero.OsFs{}, fp, finchRootPath, fc, logger),
+		finchDir,
 	)
 }

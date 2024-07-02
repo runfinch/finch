@@ -177,8 +177,8 @@ func Load(
 	return defCfg, nil
 }
 
-// loadFinchConfig Load Finch's configuration from a YAML file.
-func loadFinchConfig(fs afero.Fs, finchConfigPath string, logger flog.Logger, systemDeps LoadSystemDeps, mem fmemory.Memory) (*Finch, error) {
+// LoadFinchConfig Load Finch's configuration from a YAML file.
+func LoadFinchConfig(fs afero.Fs, finchConfigPath string, logger flog.Logger, systemDeps LoadSystemDeps, mem fmemory.Memory) (*Finch, error) {
 	b, err := afero.ReadFile(fs, finchConfigPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
@@ -202,7 +202,7 @@ func ModifyFinchConfig(fs afero.Fs, logger flog.Logger, finchConfigPath string, 
 	systemDeps := system.NewStdLib()
 	mem := fmemory.NewMemory()
 
-	finchCfg, err := loadFinchConfig(fs, finchConfigPath, logger, systemDeps, mem)
+	finchCfg, err := LoadFinchConfig(fs, finchConfigPath, logger, systemDeps, mem)
 	if err != nil {
 		return isConfigUpdated, err
 	}

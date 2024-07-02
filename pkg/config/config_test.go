@@ -597,7 +597,7 @@ func Test_ModifyFinchConfig(t *testing.T) {
 	}
 }
 
-func Test_loadFinchConfig(t *testing.T) {
+func Test_LoadFinchConfig(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
@@ -725,7 +725,7 @@ func Test_loadFinchConfig(t *testing.T) {
 
 			tc.mockSvc(fs, l, deps, mem)
 
-			finchCfg, err := loadFinchConfig(fs, tc.path, l, deps, mem)
+			finchCfg, err := LoadFinchConfig(fs, tc.path, l, deps, mem)
 			errMsg := ""
 			if err != nil {
 				errMsg = err.Error()
