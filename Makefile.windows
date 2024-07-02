@@ -13,7 +13,7 @@ endif
 
 # This variable is used to generate release builds, where the OS rootfs path should be overwritten
 # to C:/Program Files/Finch/...
-FINCH_OS_IMAGE_LOCATION_ROOT ?= $(DEST)
+FINCH_OS_IMAGE_LOCATION_ROOT ?= $(OUTDIR)
 FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_ROOTFS_BASENAME)
 FINCH_IMAGE_DIGEST := "sha512:$(FINCH_ROOTFS_DIGEST)"
 
