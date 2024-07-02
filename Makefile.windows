@@ -11,7 +11,10 @@ else
 $(error Finch on Windows ARM not supported)
 endif
 
-FINCH_IMAGE_LOCATION := $(OS_OUTDIR)/$(FINCH_ROOTFS_BASENAME)
+# This variable is used to generate release builds, where the OS rootfs path should be overwritten
+# to C:/Program Files/Finch/...
+FINCH_OS_IMAGE_LOCATION_ROOT ?= $(DEST)
+FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_ROOTFS_BASENAME)
 FINCH_IMAGE_DIGEST := "sha512:$(FINCH_ROOTFS_DIGEST)"
 
 $(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/windows.yaml

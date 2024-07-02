@@ -92,7 +92,7 @@ jobs:
           cd deps/finch-core && make clean
       - name: Build project
         run: |
-          make FINCH_ROOTFS_LOCATION_ROOT=/__INSTALLFOLDER__
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/__INSTALLFOLDER__
       - name: generate and download signed msi
         run: |
           $version="${{ needs.get-tag-name.outputs.version }}"
