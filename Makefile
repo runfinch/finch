@@ -26,7 +26,7 @@ UNAME := $(shell uname -m)
 ARCH ?= $(UNAME)
 SUPPORTED_ARCH = false
 LICENSEDIR := $(OUTDIR)/license-files
-VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+VERSION := 1.2.1
 GITCOMMIT := $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 LDFLAGS = "-w -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
 MIN_MACOS_VERSION ?= 11.0
