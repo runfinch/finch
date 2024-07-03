@@ -35,11 +35,6 @@ jobs:
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
   
-  release-homebrew:
-    needs: upload-pkg-and-dependency-source-code-to-release
-    secrets: inherit
-    uses: ./.github/workflows/release-homebrew.yaml
-
   build-and-test-finch-msi:
     needs: get-latest-tag
     uses: ./.github/workflows/build-and-test-msi.yaml
