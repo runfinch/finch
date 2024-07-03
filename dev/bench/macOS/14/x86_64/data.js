@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1720019544424,
+  "lastUpdate": 1720037438280,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -31252,6 +31252,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 470,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "55906459+austinvazquez@users.noreply.github.com",
+            "name": "Austin Vazquez",
+            "username": "austinvazquez"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7f5f13bd1e62162be5a385d0254424e8784414fa",
+          "message": "ci: apply WSL hanging workaround to MSI builder (#1012)\n\nIssue #, if available:\r\nThe MSI builder workflow is stuck due to WSL hanging issue.\r\n\r\n*Description of changes:*\r\nThis change applies the workaround for WSL hanging to the MSI builder\r\nworkflow.\r\n\r\n*Testing done:*\r\nCI is successful\r\n\r\n- [x] I've reviewed the guidance in CONTRIBUTING.md\r\n\r\n#### License Acceptance\r\n\r\nBy submitting this pull request, I confirm that my contribution is made\r\nunder the terms of the Apache 2.0 license.\r\n\r\nSigned-off-by: Austin Vazquez <macedonv@amazon.com>",
+          "timestamp": "2024-07-03T13:04:25-07:00",
+          "tree_id": "607363a5479b22314cc283b378282d1864768b3a",
+          "url": "https://github.com/runfinch/finch/commit/7f5f13bd1e62162be5a385d0254424e8784414fa"
+        },
+        "date": 1720037437349,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 138830894796,
+            "unit": "ns/op\t         0.1638 %cpu_avg/op\t        33.33 %cpu_peak/op\t       138.8 cpu_seconds/op\t9861263360 disk_bytes/op\t 6235376 B/op\t  130169 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 138830894796,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.1638,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 138.8,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 9861263360,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 6235376,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 130169,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24894946100,
+            "unit": "ns/op\t         0.3420 %cpu_avg/op\t        28.57 %cpu_peak/op\t        24.89 cpu_seconds/op\t  18907136 disk_bytes/op\t 1113064 B/op\t   23710 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24894946100,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.342,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 28.57,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.89,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 18907136,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1113064,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 23710,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 472624919,
+            "unit": "ns/op\t         0.8140 %cpu_avg/op\t        20.98 %cpu_peak/op\t         0.4726 cpu_seconds/op\t      4096 disk_bytes/op\t   31677 B/op\t     500 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 472624919,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.814,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 20.98,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.4726,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 4096,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 31677,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 500,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
           }
