@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
@@ -28,7 +29,13 @@ type AdditionalDirectory struct {
 	Path *string `yaml:"path"`
 }
 
-type GeneralSettings struct {
+// SystemSettings represents all settings shared by virtualized Finch configurations.
+type SharedSystemSettings struct {
+	VMType *limayaml.VMType `yaml:"vmType,omitempty"`
+}
+
+// GeneralSettings represents settings shared by all Finch configurations.
+type SharedSettings struct {
 	Snapshotters []string `yaml:"snapshotters,omitempty"`
 	CredsHelpers []string `yaml:"creds_helpers,omitempty"`
 }

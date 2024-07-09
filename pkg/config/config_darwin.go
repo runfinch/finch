@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -19,15 +18,18 @@ import (
 	"github.com/runfinch/finch/pkg/system"
 )
 
-// Finch represents the configuration file for Finch CLI.
-type Finch struct {
+type SystemSettings struct {
 	CPUs                  *int                  `yaml:"cpus,omitempty"`
 	Memory                *string               `yaml:"memory,omitempty"`
 	AdditionalDirectories []AdditionalDirectory `yaml:"additional_directories,omitempty"`
-	VMType                *limayaml.VMType      `yaml:"vmType,omitempty"`
 	Rosetta               *bool                 `yaml:"rosetta,omitempty"`
-	Snapshotters          []string              `yaml:"snapshotters,omitempty"`
-	CredsHelpers          []string              `yaml:"creds_helpers,omitempty"`
+	SharedSystemSettings  `yaml:",inline"`
+}
+
+// Finch represents the configuration file for Finch CLI.
+type Finch struct {
+	SystemSettings `yaml:",inline"`
+	SharedSettings `yaml:",inline"`
 }
 
 // SupportsVirtualizationFramework checks if the user's system supports Virtualization.framework.

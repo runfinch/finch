@@ -38,10 +38,10 @@ func TestPostVMStartInitAction_runAdapter(t *testing.T) {
 	}{
 		{
 			name: "config files are applied after boot",
-			mockSvc: func(logger *mocks.Logger, lcc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("80"), nil)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
 				nca.EXPECT().Apply("127.0.0.1:80").Return(nil)
 			},
 			cmd: &cobra.Command{
@@ -59,12 +59,12 @@ func TestPostVMStartInitAction_runAdapter(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
 			command := mocks.NewCommand(ctrl)
 			nca := mocks.NewNerdctlConfigApplier(ctrl)
-			tc.mockSvc(logger, lcc, command, nca)
+			tc.mockSvc(logger, ncc, command, nca)
 
-			err := newPostVMStartInitAction(logger, lcc, nil, "", nca).runAdapter(tc.cmd, tc.args)
+			err := newPostVMStartInitAction(logger, ncc, nil, "", nca).runAdapter(tc.cmd, tc.args)
 			assert.Equal(t, err, tc.wantErr)
 		})
 	}
@@ -80,39 +80,39 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 	}{
 		{
 			name: "config files are applied after boot",
-			mockSvc: func(logger *mocks.Logger, lcc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("80"), nil)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
 				nca.EXPECT().Apply("127.0.0.1:80").Return(nil)
 			},
 			wantErr: nil,
 		},
 		{
 			name: "should return an error if sshPortCmd has an error output",
-			mockSvc: func(logger *mocks.Logger, lcc *mocks.LimaCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return(nil, errors.New("ssh port error"))
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
 			},
 			wantErr: errors.New("ssh port error"),
 		},
 		{
 			name: "should print info and return without error if port is 0",
-			mockSvc: func(logger *mocks.Logger, lcc *mocks.LimaCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("0"), nil)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
 				logger.EXPECT().Warnln("SSH port = 0, is the instance running? Not able to apply VM configuration options")
 			},
 			wantErr: nil,
 		},
 		{
 			name: "should return error if applyNerdctlConfig has an error",
-			mockSvc: func(logger *mocks.Logger, lcc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("80"), nil)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
 				nca.EXPECT().Apply("127.0.0.1:80").Return(errors.New("applyNerdctlConfig has an error"))
 			},
 			wantErr: errors.New("applyNerdctlConfig has an error"),
@@ -126,12 +126,12 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
 			command := mocks.NewCommand(ctrl)
 			nca := mocks.NewNerdctlConfigApplier(ctrl)
-			tc.mockSvc(logger, lcc, command, nca)
+			tc.mockSvc(logger, ncc, command, nca)
 
-			err := newPostVMStartInitAction(logger, lcc, nil, "", nca).run()
+			err := newPostVMStartInitAction(logger, ncc, nil, "", nca).run()
 			assert.Equal(t, err, tc.wantErr)
 		})
 	}

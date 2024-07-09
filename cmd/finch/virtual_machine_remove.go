@@ -17,7 +17,7 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 )
 
-func newRemoveVMCommand(limaCmdCreator command.LimaCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *cobra.Command {
+func newRemoveVMCommand(limaCmdCreator command.NerdctlCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *cobra.Command {
 	removeVMCommand := &cobra.Command{
 		Use:   "remove",
 		Short: "Remove the virtual machine instance",
@@ -30,12 +30,12 @@ func newRemoveVMCommand(limaCmdCreator command.LimaCmdCreator, diskManager disk.
 }
 
 type removeVMAction struct {
-	creator     command.LimaCmdCreator
+	creator     command.NerdctlCmdCreator
 	logger      flog.Logger
 	diskManager disk.UserDataDiskManager
 }
 
-func newRemoveVMAction(creator command.LimaCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *removeVMAction {
+func newRemoveVMAction(creator command.NerdctlCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *removeVMAction {
 	return &removeVMAction{creator: creator, logger: logger, diskManager: diskManager}
 }
 
@@ -60,7 +60,7 @@ func (rva *removeVMAction) run(force bool) error {
 	return rva.removeVM(false)
 }
 
-func (rva *removeVMAction) assertVMIsStopped(creator command.LimaCmdCreator, logger flog.Logger) error {
+func (rva *removeVMAction) assertVMIsStopped(creator command.NerdctlCmdCreator, logger flog.Logger) error {
 	status, err := lima.GetVMStatus(creator, logger, limaInstanceName)
 	if err != nil {
 		return err

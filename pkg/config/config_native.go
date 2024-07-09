@@ -6,5 +6,5 @@
 package config
 
 type Finch struct {
-	GeneralSettings
+	SharedSettings
 }

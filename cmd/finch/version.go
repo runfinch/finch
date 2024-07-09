@@ -43,7 +43,7 @@ Server:
 {{- end}}
 {{- end}}`
 
-func newVersionCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger, stdOut io.Writer) *cobra.Command {
+func newVersionCommand(limaCmdCreator command.NerdctlCmdCreator, logger flog.Logger, stdOut io.Writer) *cobra.Command {
 	versionCommand := &cobra.Command{
 		Use:   "version",
 		Args:  cobra.NoArgs,
@@ -57,7 +57,7 @@ func newVersionCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger
 }
 
 type versionAction struct {
-	creator command.LimaCmdCreator
+	creator command.NerdctlCmdCreator
 	logger  flog.Logger
 	stdOut  io.Writer
 }
@@ -105,7 +105,7 @@ type NerdctlServerOutput struct {
 	Components []NerdctlComponentsOutput `json:"Components"`
 }
 
-func newVersionAction(creator command.LimaCmdCreator, logger flog.Logger, stdOut io.Writer) *versionAction {
+func newVersionAction(creator command.NerdctlCmdCreator, logger flog.Logger, stdOut io.Writer) *versionAction {
 	return &versionAction{creator: creator, logger: logger, stdOut: stdOut}
 }
 

@@ -72,7 +72,7 @@ func TestLimaCmdCreator_Create(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcd := mocks.NewLimaCmdCreatorSystemDeps(ctrl)
 			tc.mockSvc(logger, cmdCreator, cmd, lcd)
-			command.NewLimaCmdCreator(cmdCreator, logger, mockLimaHomePath, mockLimactlPath, mockQemuBinPath, lcd).Create(mockArgs...)
+			command.NewNerdctlCmdCreator(cmdCreator, logger, mockLimaHomePath, mockLimactlPath, mockQemuBinPath, lcd).Create(mockArgs...)
 		})
 	}
 }
@@ -115,7 +115,7 @@ func TestLimaCmdCreator_CreateWithoutStdio(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcd := mocks.NewLimaCmdCreatorSystemDeps(ctrl)
 			tc.mockSvc(logger, cmdCreator, cmd, lcd)
-			command.NewLimaCmdCreator(cmdCreator, logger, mockLimaHomePath, mockLimactlPath, mockQemuBinPath, lcd).
+			command.NewNerdctlCmdCreator(cmdCreator, logger, mockLimaHomePath, mockLimactlPath, mockQemuBinPath, lcd).
 				CreateWithoutStdio(mockArgs...)
 		})
 	}
@@ -304,7 +304,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			require.NoError(t, err)
 
 			tc.mockSvc(logger, cmdCreator, lcd, ctrl, tc.inOut, stdoutFile)
-			assert.Equal(t, tc.wantErr, command.NewLimaCmdCreator(cmdCreator, logger, mockLimaHomePath, mockLimactlPath, mockQemuBinPath, lcd).
+			assert.Equal(t, tc.wantErr, command.NewNerdctlCmdCreator(cmdCreator, logger, mockLimaHomePath, mockLimactlPath, mockQemuBinPath, lcd).
 				RunWithReplacingStdout(tc.stdoutRs, mockArgs...))
 
 			stdout, err := os.ReadFile(stdoutFilepath)

@@ -6,15 +6,18 @@
 package config
 
 import (
-	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/spf13/afero"
 )
 
+type SystemSettings struct {
+	SharedSystemSettings `yaml:",inline"`
+}
+
 type Finch struct {
-	VMType *limayaml.VMType `yaml:"vmType,omitempty"`
-	GeneralSettings
+	SystemSettings `yaml:",inline"`
+	SharedSettings `yaml:",inline"`
 }
 
 // SupportsWSL2 checks if system supports WSL2 and sets default version to 2.

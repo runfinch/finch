@@ -13,7 +13,7 @@ import (
 	"github.com/runfinch/finch/pkg/lima"
 )
 
-func (nc *nerdctlCommand) assertVMIsRunning(creator command.LimaCmdCreator, logger flog.Logger) error {
+func (nc *nerdctlCommand) assertVMIsRunning(creator command.NerdctlCmdCreator, logger flog.Logger) error {
 	// Extra call to check VM before running nerdctl commands. These are the reasons of not doing message replacing
 	// 1. for the non-help commands, replacing stdout may cause "stdin is not a terminal" error for the commands that need input.
 	// E.g. finch login.

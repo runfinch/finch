@@ -100,7 +100,7 @@ func (m *userDataDiskManager) persistentDiskExists() bool {
 }
 
 func (m *userDataDiskManager) limaDiskExists() bool {
-	cmd := m.lcc.CreateWithoutStdio("disk", "ls", diskName, "--json")
+	cmd := m.ncc.CreateWithoutStdio("disk", "ls", diskName, "--json")
 	out, err := cmd.Output()
 	if err != nil {
 		return false
@@ -158,7 +158,7 @@ func (m *userDataDiskManager) createLimaDisk() error {
 	if err != nil {
 		return fmt.Errorf("failed to get disk size: %w", err)
 	}
-	cmd := m.lcc.CreateWithoutStdio("disk", "create", diskName, "--size", size, "--format", "raw")
+	cmd := m.ncc.CreateWithoutStdio("disk", "create", diskName, "--size", size, "--format", "raw")
 	if logs, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("failed to create disk, debug logs:\n%s", logs)
 	}
@@ -208,7 +208,7 @@ func (m *userDataDiskManager) limaDiskIsLocked() bool {
 }
 
 func (m *userDataDiskManager) unlockLimaDisk() error {
-	cmd := m.lcc.CreateWithoutStdio("disk", "unlock", diskName)
+	cmd := m.ncc.CreateWithoutStdio("disk", "unlock", diskName)
 	if logs, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("failed to unlock disk, debug logs:\n%s", logs)
 	}

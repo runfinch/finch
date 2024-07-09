@@ -88,7 +88,7 @@ func updateNerdctlConfig(fs afero.Fs, homeDir string, rootless bool) error {
 	var cfg Nerdctl
 	cfgBuf, err := afero.ReadFile(fs, cfgPath)
 	if err != nil {
-		return fmt.Errorf("failed to read config file %q: %w", cfgPath, err)
+		return fmt.Errorf("updateEnvironment %q: %w", cfgPath, err)
 	}
 
 	if err := toml.Unmarshal(cfgBuf, &cfg); err != nil {
@@ -122,11 +122,11 @@ func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
 	}
 
 	// rootless hardcoded to false for now to match our finch.yaml file
-	if err := updateNerdctlConfig(nca.fs, homeDir, false); err != nil {
+	if err := updateNerdctlConfig(nFs, homeDir, false); err != nil {
 		return fmt.Errorf("failed to update the nerdctl config file: %w", err)
 	}
 
-	if err := updateEnvironment(nFs, nca.fc, nca.finchDir, homeDir, nca.homeDir); err != nil {
+	if err := updateEnvironment(nFs, nca.fc, nca.finchDir, homeDir, homeDir); err != nil {
 		return fmt.Errorf("failed to update the user's .profile file: %w", err)
 	}
 	return nil

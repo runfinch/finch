@@ -38,7 +38,7 @@ type NerdctlCommandSystemDeps interface {
 }
 
 type nerdctlCommandCreator struct {
-	lcc        command.LimaCmdCreator
+	ncc        command.NerdctlCmdCreator
 	ecc        command.Creator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
@@ -52,14 +52,14 @@ type (
 )
 
 func newNerdctlCommandCreator(
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	ecc command.Creator,
 	systemDeps NerdctlCommandSystemDeps,
 	logger flog.Logger,
 	fs afero.Fs,
 	fc *config.Finch,
 ) *nerdctlCommandCreator {
-	return &nerdctlCommandCreator{lcc: lcc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
+	return &nerdctlCommandCreator{ncc: ncc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
 }
 
 func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.Command {
@@ -70,14 +70,14 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 		// the args passed to nerdctlCommand.run will be empty because
 		// cobra will try to parse `-d alpine` as if alpine is the value of the `-d` flag.
 		DisableFlagParsing: true,
-		RunE:               newNerdctlCommand(ncc.lcc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter,
+		RunE:               newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter,
 	}
 
 	return command
 }
 
 type nerdctlCommand struct {
-	lcc        command.LimaCmdCreator
+	ncc        command.NerdctlCmdCreator
 	ecc        command.Creator
 	systemDeps NerdctlCommandSystemDeps
 	logger     flog.Logger
@@ -86,14 +86,14 @@ type nerdctlCommand struct {
 }
 
 func newNerdctlCommand(
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	ecc command.Creator,
 	systemDeps NerdctlCommandSystemDeps,
 	logger flog.Logger,
 	fs afero.Fs,
 	fc *config.Finch,
 ) *nerdctlCommand {
-	return &nerdctlCommand{lcc: lcc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
+	return &nerdctlCommand{ncc: ncc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
 }
 
 func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
@@ -101,7 +101,7 @@ func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
 }
 
 func (nc *nerdctlCommand) run(cmdName string, args []string) error {
-	err := nc.assertVMIsRunning(nc.lcc, nc.logger)
+	err := nc.assertVMIsRunning(nc.ncc, nc.logger)
 	if err != nil {
 		return err
 	}
@@ -276,10 +276,10 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	limaArgs = append(limaArgs, nerdctlArgs...)
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
-		return nc.lcc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
+		return nc.ncc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, limaArgs...)
 	}
 
-	return nc.lcc.Create(limaArgs...).Run()
+	return nc.ncc.Create(limaArgs...).Run()
 }
 
 // shouldReplaceForHelp returns true if we should replace "nerdctl" with "finch" for the output of the given command.

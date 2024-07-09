@@ -47,7 +47,11 @@ func Test_updateEnvironment(t *testing.T) {
 		{
 			name: "happy path",
 			cfg: &Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			finchDir:      "/finch/dir",
 			homeDir:       "/home/dir",
@@ -71,7 +75,11 @@ export DOCKER_CONFIG="$FINCH_DIR"
 		{
 			name: "happy path, file already exists and already contains expected variables",
 			cfg: &Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			finchDir:      "/finch/dir",
 			homeDir:       "/home/dir",
@@ -108,7 +116,11 @@ export DOCKER_CONFIG="$FINCH_DIR"
 		{
 			name: ".bashrc file doesn't exist",
 			cfg: &Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			finchDir:      "/finch/dir",
 			homeDir:       "/home/dir",

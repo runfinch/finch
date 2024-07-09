@@ -86,11 +86,11 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
 			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			assert.True(t, newNerdctlCommand(lcc, ecc, ncsd, logger, nil, &config.Finch{}).shouldReplaceForHelp(tc.cmdName, tc.args))
+			assert.True(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}).shouldReplaceForHelp(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -116,7 +116,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				_ *mocks.CommandCreator,
 				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -124,7 +124,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 			},
@@ -139,7 +139,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				_ *mocks.CommandCreator,
 				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -147,7 +147,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 			},
@@ -160,7 +160,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			wantErr: errors.New("unrecognized system status"),
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				_ *mocks.CommandCreator,
 				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -168,7 +168,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Broken")
 			},
@@ -181,7 +181,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			wantErr: errors.New("get status error"),
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				_ *mocks.CommandCreator,
 				_ *mocks.NerdctlCommandSystemDeps,
 				_ *mocks.Logger,
@@ -189,7 +189,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
 			},
 		},
@@ -201,12 +201,12 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			ecc := mocks.NewCommandCreator(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
-			tc.mockSvc(t, lcc, ecc, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			tc.mockSvc(t, ncc, ecc, ncsd, logger, ctrl, fs)
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
 		})
 	}
 }

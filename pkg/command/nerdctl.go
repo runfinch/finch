@@ -14,16 +14,10 @@ import (
 	"github.com/runfinch/finch/pkg/system"
 )
 
-const (
-	envKeyLimaHome = "LIMA_HOME"
-	envKeyUnixPath = "PATH"
-	envKeyWinPath  = "Path"
-)
-
-// LimaCmdCreator creates a limactl command.
+// NerdctlCmdCreator creates a limactl command.
 //
-//go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/command_lima_cmd_creator.go -package=mocks -mock_names LimaCmdCreator=LimaCmdCreator . LimaCmdCreator
-type LimaCmdCreator interface {
+//go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/command_nerdctl_cmd_creator.go -package=mocks -mock_names NerdctlCmdCreator=NerdctlCmdCreator . NerdctlCmdCreator
+type NerdctlCmdCreator interface {
 	// Create creates a new Lima command and connects the stdio of it to the stdio of the current process.
 	Create(args ...string) Command
 	// CreateWithoutStdio creates a new Lima command without connecting the stdio of it to the stdio of the current process.
@@ -47,21 +41,21 @@ type Replacement struct {
 	Source, Target string
 }
 
-type limaCmdCreator struct {
+type nerdctlCmdCreator struct {
 	cmdCreator   Creator
 	logger       flog.Logger
-	systemDeps   LimaCmdCreatorSystemDeps
+	systemDeps   NerdctlCmdCreatorSystemDeps
 	limaHomePath string
 	limactlPath  string
 	binPath      string
 }
 
-var _ LimaCmdCreator = (*limaCmdCreator)(nil)
+var _ NerdctlCmdCreator = (*nerdctlCmdCreator)(nil)
 
-// LimaCmdCreatorSystemDeps contains the system dependencies for NewLimaCmdCreator.
+// NerdctlCmdCreatorSystemDeps contains the system dependencies for NewLimaCmdCreator.
 //
-//go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/lima_cmd_creator_system_deps.go -package=mocks -mock_names LimaCmdCreatorSystemDeps=LimaCmdCreatorSystemDeps . LimaCmdCreatorSystemDeps
-type LimaCmdCreatorSystemDeps interface {
+//go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/nerdctl_cmd_creator_system_deps.go -package=mocks -mock_names NerdctlCmdCreatorSystemDeps=NerdctlCmdCreatorSystemDeps . NerdctlCmdCreatorSystemDeps
+type NerdctlCmdCreatorSystemDeps interface {
 	system.EnvironGetter
 	system.StdinGetter
 	system.StdoutGetter
@@ -69,14 +63,14 @@ type LimaCmdCreatorSystemDeps interface {
 	system.EnvGetter
 }
 
-// NewLimaCmdCreator returns a LimaCmdCreator that creates limactl commands based on the provided lima-related paths.
-func NewLimaCmdCreator(
+// NewNerdctlCmdCreator returns a LimaCmdCreator that creates limactl commands based on the provided lima-related paths.
+func NewNerdctlCmdCreator(
 	cmdCreator Creator,
 	logger flog.Logger,
 	limaHomePath, limactlPath string, binPath string,
-	systemDeps LimaCmdCreatorSystemDeps,
-) LimaCmdCreator {
-	return &limaCmdCreator{
+	systemDeps NerdctlCmdCreatorSystemDeps,
+) NerdctlCmdCreator {
+	return &nerdctlCmdCreator{
 		cmdCreator:   cmdCreator,
 		logger:       logger,
 		limaHomePath: limaHomePath,
@@ -86,19 +80,19 @@ func NewLimaCmdCreator(
 	}
 }
 
-func (lcc *limaCmdCreator) Create(args ...string) Command {
-	return lcc.create(lcc.systemDeps.Stdin(), lcc.systemDeps.Stdout(), lcc.systemDeps.Stderr(), args...)
+func (ncc *nerdctlCmdCreator) Create(args ...string) Command {
+	return ncc.create(ncc.systemDeps.Stdin(), ncc.systemDeps.Stdout(), ncc.systemDeps.Stderr(), args...)
 }
 
-func (lcc *limaCmdCreator) CreateWithoutStdio(args ...string) Command {
-	return lcc.create(nil, nil, nil, args...)
+func (ncc *nerdctlCmdCreator) CreateWithoutStdio(args ...string) Command {
+	return ncc.create(nil, nil, nil, args...)
 }
 
-func (lcc *limaCmdCreator) RunWithReplacingStdout(rs []Replacement, args ...string) error {
+func (ncc *nerdctlCmdCreator) RunWithReplacingStdout(rs []Replacement, args ...string) error {
 	var buf bytes.Buffer
-	err := lcc.create(lcc.systemDeps.Stdin(),
+	err := ncc.create(ncc.systemDeps.Stdin(),
 		&buf,
-		lcc.systemDeps.Stderr(),
+		ncc.systemDeps.Stderr(),
 		args...).Run()
 	if err != nil {
 		// Note that at this point, buf may contain something that should be replaced and then written to stdout,
@@ -107,14 +101,14 @@ func (lcc *limaCmdCreator) RunWithReplacingStdout(rs []Replacement, args ...stri
 		// - The control flow is simpler.
 		return err
 	}
-	_, err = lcc.systemDeps.Stdout().Write(lcc.replaceBytes(buf.Bytes(), rs))
+	_, err = ncc.systemDeps.Stdout().Write(ncc.replaceBytes(buf.Bytes(), rs))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (lcc *limaCmdCreator) replaceBytes(s []byte, rs []Replacement) []byte {
+func (ncc *nerdctlCmdCreator) replaceBytes(s []byte, rs []Replacement) []byte {
 	for _, r := range rs {
 		s = bytes.ReplaceAll(s, []byte(r.Source), []byte(r.Target))
 	}

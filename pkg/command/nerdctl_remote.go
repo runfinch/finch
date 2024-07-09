@@ -11,26 +11,32 @@ import (
 	"runtime"
 )
 
-func (lcc *limaCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, args ...string) Command {
-	lcc.logger.Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", args, envKeyLimaHome, lcc.limaHomePath)
-	cmd := lcc.cmdCreator.Create(lcc.limactlPath, args...)
-	limaHomeEnv := fmt.Sprintf("%s=%s", envKeyLimaHome, lcc.limaHomePath)
+const (
+	envKeyLimaHome = "LIMA_HOME"
+	envKeyUnixPath = "PATH"
+	envKeyWinPath  = "Path"
+)
+
+func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, args ...string) Command {
+	ncc.logger.Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", args, envKeyLimaHome, ncc.limaHomePath)
+	cmd := ncc.cmdCreator.Create(ncc.limactlPath, args...)
+	limaHomeEnv := fmt.Sprintf("%s=%s", envKeyLimaHome, ncc.limaHomePath)
 	var pathEnv string
 	var envKeyPath string
 	var path string
 	if runtime.GOOS == "windows" {
 		envKeyPath = envKeyWinPath
-		path = lcc.systemDeps.Env(envKeyPath)
-		path = fmt.Sprintf(`%s\;%s`, lcc.binPath, path)
+		path = ncc.systemDeps.Env(envKeyPath)
+		path = fmt.Sprintf(`%s\;%s`, ncc.binPath, path)
 		pathEnv = fmt.Sprintf("%s=%s", envKeyPath, path)
 	} else {
 		envKeyPath = envKeyUnixPath
-		path = lcc.systemDeps.Env(envKeyPath)
-		path = fmt.Sprintf("%s:%s", lcc.binPath, path)
+		path = ncc.systemDeps.Env(envKeyPath)
+		path = fmt.Sprintf("%s:%s", ncc.binPath, path)
 		pathEnv = fmt.Sprintf("%s=%s", envKeyPath, path)
 	}
 
-	newPathEnv := replaceOrAppend(lcc.systemDeps.Environ(), envKeyLimaHome, limaHomeEnv)
+	newPathEnv := replaceOrAppend(ncc.systemDeps.Environ(), envKeyLimaHome, limaHomeEnv)
 	newPathEnv = replaceOrAppend(newPathEnv, envKeyPath, pathEnv)
 
 	cmd.SetEnv(newPathEnv)

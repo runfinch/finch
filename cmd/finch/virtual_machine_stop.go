@@ -16,7 +16,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newStopVMCommand(limaCmdCreator command.LimaCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *cobra.Command {
+func newStopVMCommand(limaCmdCreator command.NerdctlCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *cobra.Command {
 	stopVMCommand := &cobra.Command{
 		Use:   "stop",
 		Short: "Stop the virtual machine",
@@ -29,12 +29,12 @@ func newStopVMCommand(limaCmdCreator command.LimaCmdCreator, diskManager disk.Us
 }
 
 type stopVMAction struct {
-	creator     command.LimaCmdCreator
+	creator     command.NerdctlCmdCreator
 	diskManager disk.UserDataDiskManager
 	logger      flog.Logger
 }
 
-func newStopVMAction(creator command.LimaCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *stopVMAction {
+func newStopVMAction(creator command.NerdctlCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *stopVMAction {
 	return &stopVMAction{creator: creator, diskManager: diskManager, logger: logger}
 }
 
@@ -59,7 +59,7 @@ func (sva *stopVMAction) run(force bool) error {
 	return sva.stopVM(false)
 }
 
-func (sva *stopVMAction) assertVMIsRunning(creator command.LimaCmdCreator, logger flog.Logger) error {
+func (sva *stopVMAction) assertVMIsRunning(creator command.NerdctlCmdCreator, logger flog.Logger) error {
 	status, err := lima.GetVMStatus(creator, logger, limaInstanceName)
 	if err != nil {
 		return err

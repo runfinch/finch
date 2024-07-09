@@ -12,7 +12,7 @@ import (
 )
 
 func (gsa *generateSupportBundleAction) assertVMExists() error {
-	status, err := lima.GetVMStatus(gsa.lcc, gsa.logger, limaInstanceName)
+	status, err := lima.GetVMStatus(gsa.ncc, gsa.logger, limaInstanceName)
 	if err != nil {
 		return err
 	}

@@ -24,13 +24,13 @@ func TestDisk_NewUserDataDiskManager(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
-	lcc := mocks.NewLimaCmdCreator(ctrl)
+	ncc := mocks.NewLimaCmdCreator(ctrl)
 	ecc := mocks.NewCommandCreator(ctrl)
 	dfs := mocks.NewMockdiskFS(ctrl)
 	finch := fpath.Finch("mock_finch")
 	homeDir := "mock_home"
 
-	NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, &config.Finch{}, nil)
+	NewUserDataDiskManager(ncc, ecc, dfs, finch, homeDir, &config.Finch{}, nil)
 }
 
 func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
@@ -81,19 +81,23 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 		name    string
 		cfg     *config.Finch
 		wantErr error
-		mockSvc func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator)
+		mockSvc func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator)
 	}{
 		{
 			name: "create and save disk",
 			cfg: &config.Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: config.SystemSettings{
+					SharedSystemSettings: config.SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
-				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
-				lcc.EXPECT().CreateWithoutStdio(mockCreateArgs).Return(cmd)
+				ncc.EXPECT().CreateWithoutStdio(mockCreateArgs).Return(cmd)
 				cmd.EXPECT().CombinedOutput().Return(nil, nil)
 
 				dfs.EXPECT().Stat(finch.UserDataDiskPath(homeDir)).Return(nil, fs.ErrNotExist)
@@ -109,11 +113,15 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 		{
 			name: "disk already exists",
 			cfg: &config.Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: config.SystemSettings{
+					SharedSystemSettings: config.SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
-				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
 				dfs.EXPECT().ReadlinkIfPossible(limaPath).Return(finch.UserDataDiskPath(homeDir), nil)
@@ -124,11 +132,15 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 		{
 			name: "disk exists but has not been saved",
 			cfg: &config.Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: config.SystemSettings{
+					SharedSystemSettings: config.SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
-				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
 				// not a link
@@ -147,14 +159,18 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 		{
 			name: "disk does not exist but a persistent disk does",
 			cfg: &config.Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: config.SystemSettings{
+					SharedSystemSettings: config.SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
-				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
-				lcc.EXPECT().CreateWithoutStdio(mockCreateArgs).Return(cmd)
+				ncc.EXPECT().CreateWithoutStdio(mockCreateArgs).Return(cmd)
 				cmd.EXPECT().CombinedOutput().Return(nil, nil)
 
 				dfs.EXPECT().Stat(finch.UserDataDiskPath(homeDir)).Return(nil, nil)
@@ -170,28 +186,36 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 		{
 			name: "disk already exists but is locked",
 			cfg: &config.Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: config.SystemSettings{
+					SharedSystemSettings: config.SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
-				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
 				dfs.EXPECT().ReadlinkIfPossible(limaPath).Return(finch.UserDataDiskPath(homeDir), nil)
 
 				dfs.EXPECT().Stat(lockPath).Return(nil, nil)
-				lcc.EXPECT().CreateWithoutStdio(mockUnlockArgs).Return(cmd)
+				ncc.EXPECT().CreateWithoutStdio(mockUnlockArgs).Return(cmd)
 				cmd.EXPECT().CombinedOutput().Return(nil, nil)
 			},
 		},
 		{
 			name: "disk exists and using vz mode, but disk is the wrong format",
 			cfg: &config.Finch{
-				VMType: pointer.String("vz"),
+				SystemSettings: config.SystemSettings{
+					SharedSystemSettings: config.SharedSystemSettings{
+						VMType: pointer.String("vz"),
+					},
+				},
 			},
 			wantErr: nil,
-			mockSvc: func(lcc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
-				lcc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
+				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
 				ecc.EXPECT().Create(mockQemuImgExePath, mockDiskInfoArgs).Return(cmd)
@@ -222,12 +246,12 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
 			ecc := mocks.NewCommandCreator(ctrl)
 			dfs := mocks.NewMockdiskFS(ctrl)
 			cmd := mocks.NewCommand(ctrl)
-			tc.mockSvc(lcc, dfs, cmd, ecc)
-			dm := NewUserDataDiskManager(lcc, ecc, dfs, finch, homeDir, tc.cfg, nil)
+			tc.mockSvc(ncc, dfs, cmd, ecc)
+			dm := NewUserDataDiskManager(ncc, ecc, dfs, finch, homeDir, tc.cfg, nil)
 			err := dm.EnsureUserDataDisk()
 			assert.Equal(t, tc.wantErr, err)
 		})

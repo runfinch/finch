@@ -36,11 +36,11 @@ func (lca *limaConfigApplier) ConfigureOverrideLimaYaml() error {
 	return nil
 }
 
-func (lca *limaConfigApplier) configureDefaultSnapshotter(limaCfg *limayaml.LimaYAML) error {
+func (lca *limaConfigApplier) configureDefaultSnapshotter(_ *limayaml.LimaYAML) error {
 	return nil
 }
 
-func (lca *limaConfigApplier) provisionSnapshotters(limaCfg *limayaml.LimaYAML) error {
+func (lca *limaConfigApplier) provisionSnapshotters(_ *limayaml.LimaYAML) error {
 	return nil
 }
 

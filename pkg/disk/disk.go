@@ -29,7 +29,7 @@ type diskFS interface {
 }
 
 type userDataDiskManager struct {
-	lcc     command.LimaCmdCreator
+	ncc     command.NerdctlCmdCreator
 	ecc     command.Creator
 	fs      diskFS
 	finch   fpath.Finch
@@ -40,7 +40,7 @@ type userDataDiskManager struct {
 
 // NewUserDataDiskManager is a constructor for UserDataDiskManager.
 func NewUserDataDiskManager(
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	ecc command.Creator,
 	fs diskFS,
 	finch fpath.Finch,
@@ -49,7 +49,7 @@ func NewUserDataDiskManager(
 	logger flog.Logger,
 ) UserDataDiskManager {
 	return &userDataDiskManager{
-		lcc:     lcc,
+		ncc:     ncc,
 		ecc:     ecc,
 		fs:      fs,
 		finch:   finch,

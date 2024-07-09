@@ -30,7 +30,7 @@ const (
 // NewDependencyGroup returns a dependency group that contains all the dependencies required to make vmnet networking work.
 func NewDependencyGroup(
 	execCmdCreator command.Creator,
-	limaCmdCreator command.LimaCmdCreator,
+	limaCmdCreator command.NerdctlCmdCreator,
 	fs afero.Fs,
 	fp path.Finch,
 	logger flog.Logger,
@@ -41,7 +41,7 @@ func NewDependencyGroup(
 
 func newDeps(
 	execCmdCreator command.Creator,
-	limaCmdCreator command.LimaCmdCreator,
+	limaCmdCreator command.NerdctlCmdCreator,
 	fs afero.Fs,
 	fp path.Finch,
 	logger flog.Logger,

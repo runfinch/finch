@@ -16,7 +16,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newStatusVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logger, stdout io.Writer) *cobra.Command {
+func newStatusVMCommand(limaCmdCreator command.NerdctlCmdCreator, logger flog.Logger, stdout io.Writer) *cobra.Command {
 	statusVMCommand := &cobra.Command{
 		Use:   "status",
 		Short: "Status of the virtual machine",
@@ -27,12 +27,12 @@ func newStatusVMCommand(limaCmdCreator command.LimaCmdCreator, logger flog.Logge
 }
 
 type statusVMAction struct {
-	creator command.LimaCmdCreator
+	creator command.NerdctlCmdCreator
 	logger  flog.Logger
 	stdout  io.Writer
 }
 
-func newStatusVMAction(creator command.LimaCmdCreator, logger flog.Logger, stdout io.Writer) *statusVMAction {
+func newStatusVMAction(creator command.NerdctlCmdCreator, logger flog.Logger, stdout io.Writer) *statusVMAction {
 	return &statusVMAction{creator: creator, logger: logger, stdout: stdout}
 }
 

@@ -11,24 +11,24 @@ import (
 	"github.com/runfinch/finch/pkg/support"
 )
 
-func newSupportBundleCommand(logger flog.Logger, builder support.BundleBuilder, lcc command.LimaCmdCreator) *cobra.Command {
+func newSupportBundleCommand(logger flog.Logger, builder support.BundleBuilder, ncc command.NerdctlCmdCreator) *cobra.Command {
 	supportBundleCommand := &cobra.Command{
 		Use:   "support-bundle",
 		Short: "Support bundle management",
 	}
 	supportBundleCommand.AddCommand(
-		newSupportBundleGenerateCommand(logger, builder, lcc),
+		newSupportBundleGenerateCommand(logger, builder, ncc),
 	)
 	return supportBundleCommand
 }
 
-func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleBuilder, lcc command.LimaCmdCreator) *cobra.Command {
+func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleBuilder, ncc command.NerdctlCmdCreator) *cobra.Command {
 	supportBundleGenerateCommand := &cobra.Command{
 		Use:   "generate",
 		Args:  cobra.NoArgs,
 		Short: "Generate support bundle",
 		Long:  "Generates a collection of logs and configs that can be uploaded to a Github issue to help debug issues.",
-		RunE:  newGenerateSupportBundleAction(logger, builder, lcc).runAdapter,
+		RunE:  newGenerateSupportBundleAction(logger, builder, ncc).runAdapter,
 	}
 
 	supportBundleGenerateCommand.Flags().StringArray("include", []string{},
@@ -43,18 +43,18 @@ func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleB
 type generateSupportBundleAction struct {
 	logger  flog.Logger
 	builder support.BundleBuilder
-	lcc     command.LimaCmdCreator
+	ncc     command.NerdctlCmdCreator
 }
 
 func newGenerateSupportBundleAction(
 	logger flog.Logger,
 	builder support.BundleBuilder,
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 ) *generateSupportBundleAction {
 	return &generateSupportBundleAction{
 		logger:  logger,
 		builder: builder,
-		lcc:     lcc,
+		ncc:     ncc,
 	}
 }
 

@@ -111,7 +111,7 @@ var newApp = func(
 		return nil
 	}
 
-	lcc := command.NewLimaCmdCreator(ecc,
+	ncc := command.NewNerdctlCmdCreator(ecc,
 		logger,
 		fp.LimaHomePath(),
 		fp.LimactlPath(),
@@ -125,17 +125,17 @@ var newApp = func(
 		support.NewBundleConfig(fp, finchRootPath),
 		fp,
 		ecc,
-		lcc,
+		ncc,
 		lima,
 	)
 
 	// append nerdctl commands
-	allCommands := initializeNerdctlCommands(lcc, ecc, logger, fs, fc)
+	allCommands := initializeNerdctlCommands(ncc, ecc, logger, fs, fc)
 	// append finch specific commands
 	allCommands = append(allCommands,
-		newVersionCommand(lcc, logger, stdOut),
-		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc, home, finchRootPath),
-		newSupportBundleCommand(logger, supportBundleBuilder, lcc),
+		newVersionCommand(ncc, logger, stdOut),
+		virtualMachineCommands(logger, fp, ncc, ecc, fs, fc, home, finchRootPath),
+		newSupportBundleCommand(logger, supportBundleBuilder, ncc),
 		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
 	)
 
@@ -145,13 +145,13 @@ var newApp = func(
 }
 
 func initializeNerdctlCommands(
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	ecc command.Creator,
 	logger flog.Logger,
 	fs afero.Fs,
 	fc *config.Finch,
 ) []*cobra.Command {
-	nerdctlCommandCreator := newNerdctlCommandCreator(lcc, ecc, system.NewStdLib(), logger, fs, fc)
+	nerdctlCommandCreator := newNerdctlCommandCreator(ncc, ecc, system.NewStdLib(), logger, fs, fc)
 	var allNerdctlCommands []*cobra.Command
 	for cmdName, cmdDescription := range nerdctlCmds {
 		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))

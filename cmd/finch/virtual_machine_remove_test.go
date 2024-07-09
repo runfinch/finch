@@ -69,10 +69,10 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
-			tc.mockSvc(logger, lcc, dm, ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
+			tc.mockSvc(logger, ncc, dm, ctrl)
 
-			cmd := newRemoveVMCommand(lcc, dm, logger)
+			cmd := newRemoveVMCommand(ncc, dm, logger)
 			cmd.SetArgs(tc.args)
 			assert.NoError(t, cmd.Execute())
 		})
@@ -192,10 +192,10 @@ func TestRemoveVMAction_run(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
 
-			tc.mockSvc(logger, lcc, dm, ctrl)
-			err := newRemoveVMAction(lcc, dm, logger).run(tc.force)
+			tc.mockSvc(logger, ncc, dm, ctrl)
+			err := newRemoveVMAction(ncc, dm, logger).run(tc.force)
 			assert.Equal(t, tc.wantErr, err)
 		})
 	}

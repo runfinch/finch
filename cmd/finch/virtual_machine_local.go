@@ -18,7 +18,7 @@ import (
 func virtualMachineCommands(
 	logger flog.Logger,
 	fp path.Finch,
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	ecc command.Creator,
 	fs afero.Fs,
 	fc *config.Finch,

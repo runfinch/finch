@@ -42,13 +42,8 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 		want         error
 	}{
 		{
-			name: "happy path",
-			config: &Finch{
-				Memory:  pointer.String("2GiB"),
-				CPUs:    pointer.Int(4),
-				VMType:  pointer.String("qemu"),
-				Rosetta: pointer.Bool(false),
-			},
+			name:         "happy path",
+			config:       makeConfig("qemu", "2GiB", 4, false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,
@@ -85,11 +80,17 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 		{
 			name: "adds soci script and sets soci as default snapshotter when soci is first in snapshotters array",
 			config: &Finch{
-				Memory:       pointer.String("2GiB"),
-				CPUs:         pointer.Int(4),
-				VMType:       pointer.String("qemu"),
-				Rosetta:      pointer.Bool(false),
-				Snapshotters: []string{"soci"},
+				SystemSettings: SystemSettings{
+					Memory:  pointer.String("2GiB"),
+					CPUs:    pointer.Int(4),
+					Rosetta: pointer.Bool(false),
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
+				SharedSettings: SharedSettings{
+					Snapshotters: []string{"soci"},
+				},
 			},
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
@@ -143,11 +144,17 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 		{
 			name: "doesn't add soci script and doesn't change default snapshotter when snapshotters is not set in config",
 			config: &Finch{
-				Memory:       pointer.String("2GiB"),
-				CPUs:         pointer.Int(4),
-				VMType:       pointer.String("qemu"),
-				Rosetta:      pointer.Bool(false),
-				Snapshotters: []string{},
+				SystemSettings: SystemSettings{
+					Memory:  pointer.String("2GiB"),
+					CPUs:    pointer.Int(4),
+					Rosetta: pointer.Bool(false),
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
+				SharedSettings: SharedSettings{
+					Snapshotters: []string{},
+				},
 			},
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
@@ -191,11 +198,17 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 		{
 			name: "doesn't add soci script when soci is not in snapshotters array",
 			config: &Finch{
-				Memory:       pointer.String("2GiB"),
-				CPUs:         pointer.Int(4),
-				VMType:       pointer.String("qemu"),
-				Rosetta:      pointer.Bool(false),
-				Snapshotters: []string{"overlayfs"},
+				SystemSettings: SystemSettings{
+					Memory:  pointer.String("2GiB"),
+					CPUs:    pointer.Int(4),
+					Rosetta: pointer.Bool(false),
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
+				SharedSettings: SharedSettings{
+					Snapshotters: []string{"overlayfs"},
+				},
 			},
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
@@ -237,11 +250,17 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 		{
 			name: "adds soci script but keeps overlayfs as default when soci is present in snapshotters array but not first element",
 			config: &Finch{
-				Memory:       pointer.String("2GiB"),
-				CPUs:         pointer.Int(4),
-				VMType:       pointer.String("qemu"),
-				Rosetta:      pointer.Bool(false),
-				Snapshotters: []string{"overlayfs", "soci"},
+				SystemSettings: SystemSettings{
+					Memory:  pointer.String("2GiB"),
+					CPUs:    pointer.Int(4),
+					Rosetta: pointer.Bool(false),
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
+				SharedSettings: SharedSettings{
+					Snapshotters: []string{"overlayfs", "soci"},
+				},
 			},
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
@@ -296,11 +315,17 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 		{
 			name: "doesn't add soci script when snapshotter is not set in config",
 			config: &Finch{
-				Memory:       pointer.String("2GiB"),
-				CPUs:         pointer.Int(4),
-				VMType:       pointer.String("qemu"),
-				Rosetta:      pointer.Bool(false),
-				Snapshotters: []string{"soci", "overlayfs"},
+				SystemSettings: SystemSettings{
+					Memory:  pointer.String("2GiB"),
+					CPUs:    pointer.Int(4),
+					Rosetta: pointer.Bool(false),
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
+				SharedSettings: SharedSettings{
+					Snapshotters: []string{"soci", "overlayfs"},
+				},
 			},
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
@@ -352,13 +377,8 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: "updates vmType and removes cross-arch provisioning script and network config",
-			config: &Finch{
-				Memory:  pointer.String("2GiB"),
-				CPUs:    pointer.Int(4),
-				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
-			},
+			name:         "updates vmType and removes cross-arch provisioning script and network config",
+			config:       makeConfig("vz", "2GiB", 4, true),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,
@@ -418,13 +438,8 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: "updates vmType from vz to qemu and adds cross-arch provisioning script",
-			config: &Finch{
-				Memory:  pointer.String("2GiB"),
-				CPUs:    pointer.Int(4),
-				VMType:  pointer.String("qemu"),
-				Rosetta: pointer.Bool(false),
-			},
+			name:         "updates vmType from vz to qemu and adds cross-arch provisioning script",
+			config:       makeConfig("qemu", "2GiB", 4, false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,
@@ -469,13 +484,8 @@ rosetta:
 			want: nil,
 		},
 		{
-			name: "does not update lima config because isInit == false",
-			config: &Finch{
-				Memory:  pointer.String("2GiB"),
-				CPUs:    pointer.Int(4),
-				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(false),
-			},
+			name:         "does not update lima config because isInit == false",
+			config:       makeConfig("vz", "2GiB", 4, false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       false,
@@ -503,13 +513,8 @@ mountType: "reverse-sshfs"`), 0o600)
 			want: nil,
 		},
 		{
-			name: "lima config file does not exist",
-			config: &Finch{
-				Memory:  pointer.String("2GiB"),
-				CPUs:    pointer.Int(4),
-				VMType:  pointer.String("qemu"),
-				Rosetta: pointer.Bool(false),
-			},
+			name:         "lima config file does not exist",
+			config:       makeConfig("qemu", "2GiB", 4, false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,
@@ -546,13 +551,8 @@ mountType: "reverse-sshfs"`), 0o600)
 			want: nil,
 		},
 		{
-			name: "lima config file does not contain valid YAML",
-			config: &Finch{
-				Memory:  pointer.String("2GiB"),
-				CPUs:    pointer.Int(4),
-				VMType:  pointer.String("qemu"),
-				Rosetta: pointer.Bool(false),
-			},
+			name:         "lima config file does not contain valid YAML",
+			config:       makeConfig("qemu", "2GiB", 4, false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,
@@ -591,11 +591,18 @@ mountType: "reverse-sshfs"`), 0o600)
 		{
 			name: "lima config file with additional directories",
 			config: &Finch{
-				Memory:                pointer.String("2GiB"),
-				CPUs:                  pointer.Int(4),
-				AdditionalDirectories: []AdditionalDirectory{{pointer.String("/Volumes")}},
-				VMType:                pointer.String("qemu"),
-				Rosetta:               pointer.Bool(false),
+				SystemSettings: SystemSettings{
+					Memory:                pointer.String("2GiB"),
+					CPUs:                  pointer.Int(4),
+					Rosetta:               pointer.Bool(false),
+					AdditionalDirectories: []AdditionalDirectory{{pointer.String("/Volumes")}},
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
+				SharedSettings: SharedSettings{
+					Snapshotters: []string{"soci", "overlayfs"},
+				},
 			},
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",

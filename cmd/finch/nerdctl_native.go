@@ -20,7 +20,7 @@ func (nc *nerdctlCommand) GetCmdArgs() []string {
 	return []string{""}
 }
 
-func (nc *nerdctlCommand) assertVMIsRunning(creator command.LimaCmdCreator, logger flog.Logger) error {
+func (nc *nerdctlCommand) assertVMIsRunning(creator command.NerdctlCmdCreator, logger flog.Logger) error {
 	return nil
 }
 

@@ -53,7 +53,7 @@ type bundleBuilder struct {
 	config BundleConfig
 	finch  fpath.Finch
 	ecc    command.Creator
-	lcc    command.LimaCmdCreator
+	ncc    command.NerdctlCmdCreator
 	lima   wrapper.LimaWrapper
 }
 
@@ -64,7 +64,7 @@ func NewBundleBuilder(
 	config BundleConfig,
 	finch fpath.Finch,
 	ecc command.Creator,
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	lima wrapper.LimaWrapper,
 ) BundleBuilder {
 	return &bundleBuilder{
@@ -73,7 +73,7 @@ func NewBundleBuilder(
 		config: config,
 		finch:  finch,
 		ecc:    ecc,
-		lcc:    lcc,
+		ncc:    ncc,
 		lima:   lima,
 	}
 }
@@ -228,7 +228,7 @@ func (bb *bundleBuilder) streamFileFromVM(writer *zip.Writer, filename, prefix s
 	errBuf := new(bytes.Buffer)
 
 	_, filePathInVM, _ := strings.Cut(filename, ":")
-	cmd := bb.lcc.CreateWithoutStdio("shell", "finch", "sudo", "cat", filePathInVM)
+	cmd := bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "cat", filePathInVM)
 	cmd.SetStdout(pipeWriter)
 	cmd.SetStderr(errBuf)
 

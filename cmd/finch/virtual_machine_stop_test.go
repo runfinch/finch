@@ -74,10 +74,10 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
-			tc.mockSvc(logger, lcc, ctrl, dm)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
+			tc.mockSvc(logger, ncc, ctrl, dm)
 
-			cmd := newStopVMCommand(lcc, dm, logger)
+			cmd := newStopVMCommand(ncc, dm, logger)
 			cmd.SetArgs(tc.args)
 			err := cmd.Execute()
 			assert.Equal(t, tc.wantErr, err)
@@ -197,10 +197,10 @@ func TestStopVMAction_run(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
 
-			tc.mockSvc(logger, lcc, ctrl, dm)
-			err := newStopVMAction(lcc, dm, logger).run(tc.force)
+			tc.mockSvc(logger, ncc, ctrl, dm)
+			err := newStopVMAction(ncc, dm, logger).run(tc.force)
 			assert.Equal(t, tc.wantErr, err)
 		})
 	}

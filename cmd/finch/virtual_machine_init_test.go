@@ -62,14 +62,14 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 				return groups
 			},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
@@ -78,7 +78,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
-				lcc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
+				ncc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
 					mockBaseYamlFilePath, "--tty=false").Return(command)
 				command.EXPECT().CombinedOutput()
 
@@ -95,14 +95,14 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
-			tc.mockSvc(lcc, logger, lca, dm, ctrl)
+			tc.mockSvc(ncc, logger, lca, dm, ctrl)
 
-			assert.NoError(t, newInitVMAction(lcc, logger, groups, lca, mockBaseYamlFilePath, dm).runAdapter(tc.command, tc.args))
+			assert.NoError(t, newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, dm).runAdapter(tc.command, tc.args))
 		})
 	}
 }
@@ -129,14 +129,14 @@ func TestInitVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
@@ -146,7 +146,7 @@ func TestInitVMAction_run(t *testing.T) {
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
 				command := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
+				ncc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
 					mockBaseYamlFilePath, "--tty=false").Return(command)
 				command.EXPECT().CombinedOutput()
 
@@ -161,14 +161,14 @@ func TestInitVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 			},
@@ -182,14 +182,14 @@ func TestInitVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 			},
@@ -201,14 +201,14 @@ func TestInitVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Broken")
 			},
@@ -220,14 +220,14 @@ func TestInitVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				_ *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
 			},
 		},
@@ -248,14 +248,14 @@ func TestInitVMAction_run(t *testing.T) {
 				return groups
 			},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
@@ -271,7 +271,7 @@ func TestInitVMAction_run(t *testing.T) {
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
 				command := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
+				ncc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
 					mockBaseYamlFilePath, "--tty=false").Return(command)
 				command.EXPECT().CombinedOutput()
 
@@ -288,14 +288,14 @@ func TestInitVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
@@ -310,14 +310,14 @@ func TestInitVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
@@ -329,7 +329,7 @@ func TestInitVMAction_run(t *testing.T) {
 				logs := []byte("stdout + stderr")
 				command := mocks.NewCommand(ctrl)
 				command.EXPECT().CombinedOutput().Return(logs, errors.New("failed to init instance"))
-				lcc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
+				ncc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
 					mockBaseYamlFilePath, "--tty=false").Return(command)
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
@@ -348,14 +348,14 @@ func TestInitVMAction_run(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
-			tc.mockSvc(lcc, logger, lca, dm, ctrl)
+			tc.mockSvc(ncc, logger, lca, dm, ctrl)
 
-			err := newInitVMAction(lcc, logger, groups, lca, mockBaseYamlFilePath, dm).run()
+			err := newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, dm).run()
 			assert.Equal(t, err, tc.wantErr)
 		})
 	}
