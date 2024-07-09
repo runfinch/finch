@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.2](https://github.com/runfinch/finch/compare/v1.2.1...v1.2.2) (2024-07-09)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.30.0 to 1.30.1 ([#1004](https://github.com/runfinch/finch/issues/1004)) ([0174b05](https://github.com/runfinch/finch/commit/0174b05a2cc39971ee45fd92270cb268a918b57b))
+* **deps:** bump golang.org/x/crypto from 0.24.0 to 0.25.0 ([#1016](https://github.com/runfinch/finch/issues/1016)) ([b7c711a](https://github.com/runfinch/finch/commit/b7c711abe4831342dcd3347ce658b9c301d4e191))
+* **deps:** bump golang.org/x/tools from 0.22.0 to 0.23.0 ([#1019](https://github.com/runfinch/finch/issues/1019)) ([81b2446](https://github.com/runfinch/finch/commit/81b2446a3a9f4d13364951e26c2f716a0ab956f7))
+* **deps:** Bump submodules and dependencies ([#1020](https://github.com/runfinch/finch/issues/1020)) ([30d8e69](https://github.com/runfinch/finch/commit/30d8e69d17d5c5989ee40c4f71c17821ba58c973))
+* **deps:** Bump submodules and dependencies ([#1021](https://github.com/runfinch/finch/issues/1021)) ([fd1677b](https://github.com/runfinch/finch/commit/fd1677b4ca6ddf74f3733812a317305e956ee7bb))
+
 ## [1.2.1](https://github.com/runfinch/finch/compare/v1.2.0...v1.2.1) (2024-07-02)
 
 
