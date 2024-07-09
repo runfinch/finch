@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1720541424229,
+  "lastUpdate": 1720542836505,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -53026,6 +53026,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 474,
+            "unit": "allocs/op",
+            "extra": "3 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "81b2446a3a9f4d13364951e26c2f716a0ab956f7",
+          "message": "build(deps): bump golang.org/x/tools from 0.22.0 to 0.23.0 (#1019)\n\nBumps [golang.org/x/tools](https://github.com/golang/tools) from 0.22.0\r\nto 0.23.0.\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/33be3ef892534885002fcfa0ccf4506088a25d59\"><code>33be3ef</code></a>\r\ngo.mod: update golang.org/x dependencies</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/0e7ccc0478c322a6b32fb9f74ebfc42e4f965ee9\"><code>0e7ccc0</code></a>\r\ngopls/internal/golang: provide version info for stdlib in pkgdoc</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/fcf54632603b8795667b76d7c373201e9536ed10\"><code>fcf5463</code></a>\r\ngopls/internal/server: add counters to inform v0.17.0</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/70a59b2f224b125b843a948e205c0792dbff4f22\"><code>70a59b2</code></a>\r\ngopls/doc: respond to Hana's review of CL 583316</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/799a47185df0a37a5e0a95faa9d4b3d693736c5e\"><code>799a471</code></a>\r\ngopls/doc: document all of gopls' features</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/2e239ad1ba11fe5e5daa1763388fdd7584ae7c6d\"><code>2e239ad</code></a>\r\ngopls/internal/golang: provide version info for stdlib fields</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/bc15dd8597ecd98beabdb4616a9341905ac3a6da\"><code>bc15dd8</code></a>\r\ngopls/internal/analysis/fillstruct: use package name (not path) in\r\nUI</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/72edac2ff315a3d7ecf4ef98f13fda6e6af69478\"><code>72edac2</code></a>\r\ninternal/typeparams: fix crash in interface hover with empty type\r\nset</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/c0ae6bbd24adc34e4b2ba9ecd75922847f718b27\"><code>c0ae6bb</code></a>\r\ngopls/internal/golang: splitlines: s/parameter/arguments/ in\r\nCallExpr</li>\r\n<li><a\r\nhref=\"https://github.com/golang/tools/commit/5cc2d0b12cd3eee183bbd2f3a901418f482d0579\"><code>5cc2d0b</code></a>\r\ngopls/internal/golang: splitlines: remove workaround for <a\r\nhref=\"https://redirect.github.com/golang/go/issues/68202\">golang/go#68202</a></li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/golang/tools/compare/v0.22.0...v0.23.0\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org/x/tools&package-manager=go_modules&previous-version=0.22.0&new-version=0.23.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-07-09T12:26:56-04:00",
+          "tree_id": "f9421dfbd8a35f3df4678ec8c9e28f8e1e697b86",
+          "url": "https://github.com/runfinch/finch/commit/81b2446a3a9f4d13364951e26c2f716a0ab956f7"
+        },
+        "date": 1720542835684,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 139957455017,
+            "unit": "ns/op\t         0.1605 %cpu_avg/op\t        28.57 %cpu_peak/op\t       140.0 cpu_seconds/op\t9531219968 disk_bytes/op\t 6280472 B/op\t  131199 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 139957455017,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.1605,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 28.57,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 140,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 9531219968,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 6280472,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 131199,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 24794824887,
+            "unit": "ns/op\t         0.3327 %cpu_avg/op\t        25.00 %cpu_peak/op\t        24.79 cpu_seconds/op\t  18698240 disk_bytes/op\t 1109056 B/op\t   23631 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 24794824887,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.3327,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 25,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 24.79,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 18698240,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1109056,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 23631,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 435090911,
+            "unit": "ns/op\t         0.7061 %cpu_avg/op\t        17.22 %cpu_peak/op\t         0.4350 cpu_seconds/op\t      2730 disk_bytes/op\t   30309 B/op\t     468 allocs/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 435090911,
+            "unit": "ns/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.7061,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 17.22,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.435,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 2730,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 30309,
+            "unit": "B/op",
+            "extra": "3 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 468,
             "unit": "allocs/op",
             "extra": "3 times\n12 procs"
           }
