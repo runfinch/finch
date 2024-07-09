@@ -224,11 +224,11 @@ finch-macos: finch-unix
 
 finch-unix: finch-general
 
-finch-native: GO_BUILD_TAGS += "native"
+finch-native: GO_BUILD_TAGS += native
 finch-native: finch-general
 
 finch-general:
-	$(GO) build -ldflags $(LDFLAGS) -tags $(GO_BUILD_TAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
+	$(GO) build -ldflags $(LDFLAGS) -tags "$(GO_BUILD_TAGS)" -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
 
 .PHONY: release
 release: check-licenses all download-licenses
