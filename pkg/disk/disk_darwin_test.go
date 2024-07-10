@@ -24,7 +24,7 @@ func TestDisk_NewUserDataDiskManager(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
-	ncc := mocks.NewLimaCmdCreator(ctrl)
+	ncc := mocks.NewNerdctlCmdCreator(ctrl)
 	ecc := mocks.NewCommandCreator(ctrl)
 	dfs := mocks.NewMockdiskFS(ctrl)
 	finch := fpath.Finch("mock_finch")
@@ -81,7 +81,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 		name    string
 		cfg     *config.Finch
 		wantErr error
-		mockSvc func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator)
+		mockSvc func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator)
 	}{
 		{
 			name: "create and save disk",
@@ -93,7 +93,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
@@ -120,7 +120,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
@@ -139,7 +139,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
@@ -166,7 +166,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
@@ -193,7 +193,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
@@ -214,7 +214,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.LimaCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
 
@@ -246,7 +246,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ecc := mocks.NewCommandCreator(ctrl)
 			dfs := mocks.NewMockdiskFS(ctrl)
 			cmd := mocks.NewCommand(ctrl)

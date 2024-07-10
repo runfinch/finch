@@ -38,7 +38,7 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 		name    string
 		cmdName string
 		args    []string
-		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller)
+		mockSvc func(*mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller)
 	}{
 		{
 			name:    "with --help flag",
@@ -86,7 +86,7 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
@@ -104,7 +104,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 		fc      *config.Finch
 		args    []string
 		wantErr error
-		mockSvc func(*testing.T, *mocks.LimaCmdCreator, *mocks.CommandCreator, *mocks.NerdctlCommandSystemDeps, *mocks.Logger,
+		mockSvc func(*testing.T, *mocks.NerdctlCmdCreator, *mocks.CommandCreator, *mocks.NerdctlCommandSystemDeps, *mocks.Logger,
 			*gomock.Controller, afero.Fs)
 	}{
 		{
@@ -116,7 +116,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
 				_ *testing.T,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -139,7 +139,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 				limaInstanceName, virtualMachineRootCmd),
 			mockSvc: func(
 				_ *testing.T,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -160,7 +160,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			wantErr: errors.New("unrecognized system status"),
 			mockSvc: func(
 				_ *testing.T,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -181,7 +181,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			wantErr: errors.New("get status error"),
 			mockSvc: func(
 				_ *testing.T,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				_ *mocks.NerdctlCommandSystemDeps,
 				_ *mocks.Logger,
@@ -201,7 +201,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			ecc := mocks.NewCommandCreator(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()

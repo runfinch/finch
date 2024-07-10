@@ -12,6 +12,8 @@ import (
 )
 
 // BundleConfig provides methods that configure what is included in a support bundle.
+//
+//go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_support_config.go -package=mocks -mock_names BundleConfig=BundleConfig . BundleConfig
 type BundleConfig interface {
 	LogFiles() []string
 	ConfigFiles() []string
@@ -23,6 +25,8 @@ type bundleConfig struct {
 }
 
 // NewBundleConfig creates a new bundleConfig.
+//
+//go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_support_config.go -package=mocks -mock_names NewBundleConfig=NewBundleConfig . NewBundleConfig
 func NewBundleConfig(finch fpath.Finch, homeDir string) BundleConfig {
 	return &bundleConfig{
 		finch:   finch,

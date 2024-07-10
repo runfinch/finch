@@ -32,7 +32,7 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 		command *cobra.Command
 		args    []string
 		mockSvc func(
-			*mocks.LimaCmdCreator,
+			*mocks.NerdctlCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			*gomock.Controller,
@@ -45,7 +45,7 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 			},
 			args: []string{},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
@@ -66,7 +66,7 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
 			stdout := bytes.Buffer{}
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 
 			tc.mockSvc(ncc, logger, lca, ctrl)
@@ -84,7 +84,7 @@ func TestStatusVMAction_run(t *testing.T) {
 		wantErr          error
 		wantStatusOutput string
 		mockSvc          func(
-			*mocks.LimaCmdCreator,
+			*mocks.NerdctlCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			*gomock.Controller,
@@ -95,7 +95,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          nil,
 			wantStatusOutput: "Running\n",
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
@@ -111,7 +111,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          nil,
 			wantStatusOutput: "Stopped\n",
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
@@ -127,7 +127,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          nil,
 			wantStatusOutput: "Nonexistent\n",
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
@@ -143,7 +143,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          errors.New("unrecognized system status"),
 			wantStatusOutput: "",
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
@@ -159,7 +159,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          errors.New("get status error"),
 			wantStatusOutput: "",
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
@@ -179,7 +179,7 @@ func TestStatusVMAction_run(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
 			stdout := bytes.Buffer{}
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 
 			tc.mockSvc(ncc, logger, lca, ctrl)

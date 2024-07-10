@@ -36,7 +36,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 		name    string
 		cmd     *cobra.Command
 		args    []string
-		mockSvc func(*mocks.CommandCreator, *mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
+		mockSvc func(*mocks.CommandCreator, *mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
 	}{
 		{
 			name: "happy path",
@@ -44,7 +44,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 				Use: "info",
 			},
 			args: []string{},
-			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.LimaCmdCreator, logger *mocks.Logger,
+			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger,
 				ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -73,7 +73,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			ecc := mocks.NewCommandCreator(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ecc, ncc, logger, ctrl, ncsd)
@@ -92,7 +92,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		fc      *config.Finch
 		args    []string
 		wantErr error
-		mockSvc func(*testing.T, *mocks.CommandCreator, *mocks.LimaCmdCreator, *mocks.Command, *mocks.NerdctlCommandSystemDeps,
+		mockSvc func(*testing.T, *mocks.CommandCreator, *mocks.NerdctlCmdCreator, *mocks.Command, *mocks.NerdctlCommandSystemDeps,
 			*mocks.Logger, *gomock.Controller, afero.Fs)
 	}{
 		{
@@ -104,7 +104,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -143,7 +143,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -178,7 +178,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -215,7 +215,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -252,7 +252,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -290,7 +290,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				t *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -329,7 +329,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				t *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -369,7 +369,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				t *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -408,7 +408,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -430,7 +430,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				ecc *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -468,7 +468,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -502,7 +502,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -536,7 +536,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				ecc *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -573,7 +573,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -610,7 +610,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -645,7 +645,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -678,7 +678,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -711,7 +711,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -745,7 +745,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -779,7 +779,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Command,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -813,7 +813,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			ecc := mocks.NewCommandCreator(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			cmd := mocks.NewCommand(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
@@ -851,7 +851,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 		cmdName string
 		args    []string
 		wantErr error
-		mockSvc func(*testing.T, *mocks.CommandCreator, *mocks.LimaCmdCreator, *mocks.NerdctlCommandSystemDeps,
+		mockSvc func(*testing.T, *mocks.CommandCreator, *mocks.NerdctlCmdCreator, *mocks.NerdctlCommandSystemDeps,
 			*mocks.Logger, *gomock.Controller, afero.Fs)
 	}{
 		{
@@ -862,7 +862,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
@@ -897,7 +897,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
@@ -932,7 +932,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
@@ -967,7 +967,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
@@ -1002,7 +1002,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 			mockSvc: func(
 				_ *testing.T,
 				_ *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
@@ -1036,7 +1036,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 			t.Parallel()
 			ctrl := gomock.NewController(t)
 			ecc := mocks.NewCommandCreator(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
@@ -1057,13 +1057,13 @@ func TestNerdctlCommand_run_CpCommand(t *testing.T) {
 		name    string
 		cmdName string
 		args    []string
-		mockSvc func(*mocks.CommandCreator, *mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
+		mockSvc func(*mocks.CommandCreator, *mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
 	}{
 		{
 			name:    "copy into container",
 			cmdName: "cp",
 			args:    []string{"C:\\workdir\\test", "somecontainer:/tmp"},
-			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.LimaCmdCreator, logger *mocks.Logger,
+			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger,
 				ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -1092,7 +1092,7 @@ func TestNerdctlCommand_run_CpCommand(t *testing.T) {
 			name:    "copy out of container",
 			cmdName: "cp",
 			args:    []string{"somecontainer:/tmp/test", "C:\\workdir\\test"},
-			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.LimaCmdCreator, logger *mocks.Logger,
+			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger,
 				ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -1121,7 +1121,7 @@ func TestNerdctlCommand_run_CpCommand(t *testing.T) {
 			name:    "copy with options",
 			cmdName: "cp",
 			args:    []string{"-L", "somecontainer:/tmp/test", "C:\\workdir\\test"},
-			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.LimaCmdCreator, logger *mocks.Logger,
+			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger,
 				ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -1155,7 +1155,7 @@ func TestNerdctlCommand_run_CpCommand(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			ecc := mocks.NewCommandCreator(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ecc, ncc, logger, ctrl, ncsd)
@@ -1178,13 +1178,13 @@ func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
 		name    string
 		cmdName string
 		args    []string
-		mockSvc func(*mocks.CommandCreator, *mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
+		mockSvc func(*mocks.CommandCreator, *mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
 	}{
 		{
 			name:    "build without options",
 			cmdName: "build",
 			args:    []string{"C:\\workdir\\buildcontext"},
-			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.LimaCmdCreator, logger *mocks.Logger,
+			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger,
 				ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -1213,7 +1213,7 @@ func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
 			name:    "build with file option",
 			cmdName: "build",
 			args:    []string{"-f", "C:\\workdir\\buildcontext", "C:\\workdir\\buildcontext"},
-			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.LimaCmdCreator, logger *mocks.Logger,
+			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger,
 				ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -1242,7 +1242,7 @@ func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
 			name:    "build with secret option",
 			cmdName: "build",
 			args:    []string{"--secret", "src=C:\\workdir\\secret", "C:\\workdir\\buildcontext"},
-			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.LimaCmdCreator, logger *mocks.Logger,
+			mockSvc: func(_ *mocks.CommandCreator, ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger,
 				ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
@@ -1281,7 +1281,7 @@ func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			ecc := mocks.NewCommandCreator(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ecc, ncc, logger, ctrl, ncsd)

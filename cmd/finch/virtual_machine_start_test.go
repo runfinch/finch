@@ -36,7 +36,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 		args    []string
 		groups  func(*gomock.Controller) []*dependency.Group
 		mockSvc func(
-			*mocks.LimaCmdCreator,
+			*mocks.NerdctlCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			*mocks.UserDataDiskManager,
@@ -62,7 +62,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 			},
 			args: []string{},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				dm *mocks.UserDataDiskManager,
@@ -94,7 +94,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 
@@ -115,7 +115,7 @@ func TestStartVMAction_run(t *testing.T) {
 		wantErr error
 		groups  func(*gomock.Controller) []*dependency.Group
 		mockSvc func(
-			*mocks.LimaCmdCreator,
+			*mocks.NerdctlCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			*mocks.UserDataDiskManager,
@@ -137,7 +137,7 @@ func TestStartVMAction_run(t *testing.T) {
 				return groups
 			},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				dm *mocks.UserDataDiskManager,
@@ -167,7 +167,7 @@ func TestStartVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
@@ -187,7 +187,7 @@ func TestStartVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
@@ -206,7 +206,7 @@ func TestStartVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
@@ -225,7 +225,7 @@ func TestStartVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
@@ -246,7 +246,7 @@ func TestStartVMAction_run(t *testing.T) {
 				return nil
 			},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				_ *mocks.UserDataDiskManager,
@@ -277,7 +277,7 @@ func TestStartVMAction_run(t *testing.T) {
 				return groups
 			},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				dm *mocks.UserDataDiskManager,
@@ -319,7 +319,7 @@ func TestStartVMAction_run(t *testing.T) {
 				return groups
 			},
 			mockSvc: func(
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
 				dm *mocks.UserDataDiskManager,
@@ -354,7 +354,7 @@ func TestStartVMAction_run(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 

@@ -31,14 +31,14 @@ func TestPostVMStartInitAction_runAdapter(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *mocks.Command, *mocks.NerdctlConfigApplier)
+		mockSvc func(*mocks.Logger, *mocks.NerdctlCmdCreator, *mocks.Command, *mocks.NerdctlConfigApplier)
 		cmd     *cobra.Command
 		args    []string
 		wantErr error
 	}{
 		{
 			name: "config files are applied after boot",
-			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.NerdctlCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("80"), nil)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
@@ -59,7 +59,7 @@ func TestPostVMStartInitAction_runAdapter(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			command := mocks.NewCommand(ctrl)
 			nca := mocks.NewNerdctlConfigApplier(ctrl)
 			tc.mockSvc(logger, ncc, command, nca)
@@ -75,12 +75,12 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		mockSvc func(*mocks.Logger, *mocks.LimaCmdCreator, *mocks.Command, *mocks.NerdctlConfigApplier)
+		mockSvc func(*mocks.Logger, *mocks.NerdctlCmdCreator, *mocks.Command, *mocks.NerdctlConfigApplier)
 		wantErr error
 	}{
 		{
 			name: "config files are applied after boot",
-			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.NerdctlCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("80"), nil)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
@@ -90,7 +90,7 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 		},
 		{
 			name: "should return an error if sshPortCmd has an error output",
-			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.NerdctlCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return(nil, errors.New("ssh port error"))
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
@@ -99,7 +99,7 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 		},
 		{
 			name: "should print info and return without error if port is 0",
-			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.NerdctlCmdCreator, command *mocks.Command, _ *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("0"), nil)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
@@ -109,7 +109,7 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 		},
 		{
 			name: "should return error if applyNerdctlConfig has an error",
-			mockSvc: func(logger *mocks.Logger, ncc *mocks.LimaCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
+			mockSvc: func(logger *mocks.Logger, ncc *mocks.NerdctlCmdCreator, command *mocks.Command, nca *mocks.NerdctlConfigApplier) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("80"), nil)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
@@ -126,7 +126,7 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			command := mocks.NewCommand(ctrl)
 			nca := mocks.NewNerdctlConfigApplier(ctrl)
 			tc.mockSvc(logger, ncc, command, nca)

@@ -25,7 +25,7 @@ func TestSupport_NewBundleBuilder(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	ecc := mocks.NewCommandCreator(ctrl)
-	ncc := mocks.NewLimaCmdCreator(ctrl)
+	ncc := mocks.NewNerdctlCmdCreator(ctrl)
 	logger := mocks.NewLogger(ctrl)
 	fs := afero.NewMemMapFs()
 	finch := fpath.Finch("mockfinch")
@@ -48,7 +48,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			*mocks.Logger,
 			*mocks.BundleConfig,
 			*mocks.CommandCreator,
-			*mocks.LimaCmdCreator,
+			*mocks.NerdctlCmdCreator,
 			*mocks.Command,
 			*mocks.MockLimaWrapper,
 			afero.Fs,
@@ -62,7 +62,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -108,7 +108,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -151,7 +151,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -193,7 +193,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -235,7 +235,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -278,7 +278,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				ncc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -347,7 +347,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			config := mocks.NewBundleConfig(ctrl)
 			finch := fpath.Finch("mockfinch")
 			ecc := mocks.NewCommandCreator(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lima := mocks.NewMockLimaWrapper(ctrl)
 			cmd := mocks.NewCommand(ctrl)
 

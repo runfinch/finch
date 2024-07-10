@@ -36,13 +36,13 @@ func TestLimaCmdCreator_Create(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		mockSvc func(*mocks.Logger, *mocks.CommandCreator, *mocks.Command, *mocks.LimaCmdCreatorSystemDeps)
+		mockSvc func(*mocks.Logger, *mocks.CommandCreator, *mocks.Command, *mocks.NerdctlCmdCreatorSystemDeps)
 		wantErr error
 	}{
 		{
 			name:    "happy path",
 			wantErr: nil,
-			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator, cmd *mocks.Command, lcd *mocks.LimaCmdCreatorSystemDeps) {
+			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator, cmd *mocks.Command, lcd *mocks.NerdctlCmdCreatorSystemDeps) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
 				cmdCreator.EXPECT().Create(mockLimactlPath, mockArgs).Return(cmd)
 				lcd.EXPECT().Environ().Return([]string{})
@@ -70,7 +70,7 @@ func TestLimaCmdCreator_Create(t *testing.T) {
 			cmdCreator := mocks.NewCommandCreator(ctrl)
 			cmd := mocks.NewCommand(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			lcd := mocks.NewLimaCmdCreatorSystemDeps(ctrl)
+			lcd := mocks.NewNerdctlCmdCreatorSystemDeps(ctrl)
 			tc.mockSvc(logger, cmdCreator, cmd, lcd)
 			command.NewNerdctlCmdCreator(cmdCreator, logger, mockLimaHomePath, mockLimactlPath, mockQemuBinPath, lcd).Create(mockArgs...)
 		})
@@ -82,13 +82,13 @@ func TestLimaCmdCreator_CreateWithoutStdio(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		mockSvc func(*mocks.Logger, *mocks.CommandCreator, *mocks.Command, *mocks.LimaCmdCreatorSystemDeps)
+		mockSvc func(*mocks.Logger, *mocks.CommandCreator, *mocks.Command, *mocks.NerdctlCmdCreatorSystemDeps)
 		wantErr error
 	}{
 		{
 			name:    "happy path",
 			wantErr: nil,
-			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator, cmd *mocks.Command, lcd *mocks.LimaCmdCreatorSystemDeps) {
+			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator, cmd *mocks.Command, lcd *mocks.NerdctlCmdCreatorSystemDeps) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
 				cmdCreator.EXPECT().Create(mockLimactlPath, mockArgs).Return(cmd)
 				lcd.EXPECT().Environ().Return([]string{})
@@ -113,7 +113,7 @@ func TestLimaCmdCreator_CreateWithoutStdio(t *testing.T) {
 			cmdCreator := mocks.NewCommandCreator(ctrl)
 			cmd := mocks.NewCommand(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			lcd := mocks.NewLimaCmdCreatorSystemDeps(ctrl)
+			lcd := mocks.NewNerdctlCmdCreatorSystemDeps(ctrl)
 			tc.mockSvc(logger, cmdCreator, cmd, lcd)
 			command.NewNerdctlCmdCreator(cmdCreator, logger, mockLimaHomePath, mockLimactlPath, mockQemuBinPath, lcd).
 				CreateWithoutStdio(mockArgs...)
@@ -126,7 +126,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 
 	testCases := []struct {
 		name     string
-		mockSvc  func(*mocks.Logger, *mocks.CommandCreator, *mocks.LimaCmdCreatorSystemDeps, *gomock.Controller, string, *os.File)
+		mockSvc  func(*mocks.Logger, *mocks.CommandCreator, *mocks.NerdctlCmdCreatorSystemDeps, *gomock.Controller, string, *os.File)
 		wantErr  error
 		stdoutRs []command.Replacement
 		inOut    string
@@ -139,7 +139,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			inOut:    "s1 s2 ,s3 /s4 s1.s5",
 			outOut:   "t1 s2 ,t3 /s4 t1.s5",
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
-				lcd *mocks.LimaCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
+				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
 			) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
@@ -171,7 +171,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			inOut:    "s1 s2 ,s3 /s4 s1.s5",
 			outOut:   "s3 s3 ,s3 /s4 s3.s5",
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
-				lcd *mocks.LimaCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
+				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
 			) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s",
 					mockArgs, envKeyLimaHome, mockLimaHomePath)
@@ -204,7 +204,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			inOut:    "s1 s2 ,s3 /s4 .s5",
 			outOut:   "s1 s2 ,s3 /s4 .s5",
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
-				lcd *mocks.LimaCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
+				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
 			) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
@@ -236,7 +236,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			inOut:    "source-out",
 			outOut:   "",
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
-				lcd *mocks.LimaCmdCreatorSystemDeps, ctrl *gomock.Controller, _ string, _ *os.File,
+				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, _ string, _ *os.File,
 			) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
@@ -262,7 +262,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			inOut:    "source-out",
 			outOut:   "",
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
-				lcd *mocks.LimaCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, _ *os.File,
+				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, _ *os.File,
 			) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
@@ -297,7 +297,7 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			cmdCreator := mocks.NewCommandCreator(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			lcd := mocks.NewLimaCmdCreatorSystemDeps(ctrl)
+			lcd := mocks.NewNerdctlCmdCreatorSystemDeps(ctrl)
 
 			stdoutFilepath := filepath.Clean(filepath.Join(t.TempDir(), "test"))
 			stdoutFile, err := os.Create(stdoutFilepath)

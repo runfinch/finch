@@ -23,13 +23,13 @@ func TestGetVMStatus(t *testing.T) {
 		name    string
 		want    lima.VMStatus
 		wantErr error
-		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *mocks.Command)
+		mockSvc func(*mocks.NerdctlCmdCreator, *mocks.Logger, *mocks.Command)
 	}{
 		{
 			name:    "running VM",
 			want:    lima.Running,
 			wantErr: nil,
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("Running "), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
@@ -39,7 +39,7 @@ func TestGetVMStatus(t *testing.T) {
 			name:    "stopped VM",
 			want:    lima.Stopped,
 			wantErr: nil,
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("Stopped "), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
@@ -49,7 +49,7 @@ func TestGetVMStatus(t *testing.T) {
 			name:    "nonexistent VM",
 			want:    lima.Nonexistent,
 			wantErr: nil,
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(" "), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
@@ -59,7 +59,7 @@ func TestGetVMStatus(t *testing.T) {
 			name:    "unknown VM status",
 			want:    lima.Unknown,
 			wantErr: errors.New("unrecognized system status"),
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("Broken "), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Broken")
@@ -69,7 +69,7 @@ func TestGetVMStatus(t *testing.T) {
 			name:    "status command returns an error",
 			want:    lima.Unknown,
 			wantErr: errors.New("get status error"),
-			mockSvc: func(creator *mocks.LimaCmdCreator, _ *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, _ *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("Broken "), errors.New("get status error"))
 			},
@@ -82,7 +82,7 @@ func TestGetVMStatus(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			creator := mocks.NewLimaCmdCreator(ctrl)
+			creator := mocks.NewNerdctlCmdCreator(ctrl)
 			statusCmd := mocks.NewCommand(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(creator, logger, statusCmd)
@@ -102,13 +102,13 @@ func TestGetVMType(t *testing.T) {
 		name    string
 		want    lima.VMType
 		wantErr error
-		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *mocks.Command)
+		mockSvc func(*mocks.NerdctlCmdCreator, *mocks.Logger, *mocks.Command)
 	}{
 		{
 			name:    "qemu VM",
 			want:    lima.QEMU,
 			wantErr: nil,
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("qemu"), nil)
 				logger.EXPECT().Debugf("VMType of virtual machine: %s", "qemu")
@@ -118,7 +118,7 @@ func TestGetVMType(t *testing.T) {
 			name:    "vz VM",
 			want:    lima.VZ,
 			wantErr: nil,
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("vz"), nil)
 				logger.EXPECT().Debugf("VMType of virtual machine: %s", "vz")
@@ -128,7 +128,7 @@ func TestGetVMType(t *testing.T) {
 			name:    "wsl VM",
 			want:    lima.WSL,
 			wantErr: nil,
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("wsl2"), nil)
 				logger.EXPECT().Debugf("VMType of virtual machine: %s", "wsl2")
@@ -138,7 +138,7 @@ func TestGetVMType(t *testing.T) {
 			name:    "nonexistent VM",
 			want:    lima.NonexistentVMType,
 			wantErr: nil,
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(" "), nil)
 				logger.EXPECT().Debugf("VMType of virtual machine: %s", "")
@@ -148,7 +148,7 @@ func TestGetVMType(t *testing.T) {
 			name:    "unknown VM type",
 			want:    lima.UnknownVMType,
 			wantErr: errors.New("unrecognized VMType"),
-			mockSvc: func(creator *mocks.LimaCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, logger *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("Broken "), nil)
 				logger.EXPECT().Debugf("VMType of virtual machine: %s", "Broken")
@@ -158,7 +158,7 @@ func TestGetVMType(t *testing.T) {
 			name:    "type command returns an error",
 			want:    lima.UnknownVMType,
 			wantErr: errors.New("get VMType error"),
-			mockSvc: func(creator *mocks.LimaCmdCreator, _ *mocks.Logger, cmd *mocks.Command) {
+			mockSvc: func(creator *mocks.NerdctlCmdCreator, _ *mocks.Logger, cmd *mocks.Command) {
 				creator.EXPECT().CreateWithoutStdio(mockArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("Broken "), errors.New("get VMType error"))
 			},
@@ -171,7 +171,7 @@ func TestGetVMType(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			creator := mocks.NewLimaCmdCreator(ctrl)
+			creator := mocks.NewNerdctlCmdCreator(ctrl)
 			statusCmd := mocks.NewCommand(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(creator, logger, statusCmd)

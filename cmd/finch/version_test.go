@@ -63,7 +63,7 @@ func TestNewVersionCommand(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	logger := mocks.NewLogger(ctrl)
-	ncc := mocks.NewLimaCmdCreator(ctrl)
+	ncc := mocks.NewNerdctlCmdCreator(ctrl)
 	var stdOut bytes.Buffer
 	cmd := newVersionCommand(ncc, logger, &stdOut)
 	assert.Equal(t, cmd.Name(), "version")
@@ -76,7 +76,7 @@ func TestVersionAction_runAdaptor(t *testing.T) {
 		name    string
 		cmd     func(t *testing.T) *cobra.Command
 		args    []string
-		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller)
+		mockSvc func(*mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller)
 	}{
 		{
 			name: "happy path",
@@ -89,7 +89,7 @@ func TestVersionAction_runAdaptor(t *testing.T) {
 				return c
 			},
 			args: []string{},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -113,7 +113,7 @@ func TestVersionAction_runAdaptor(t *testing.T) {
 				return c
 			},
 			args: []string{"--format", "json"},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -135,7 +135,7 @@ func TestVersionAction_runAdaptor(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			var stdOut bytes.Buffer
 			tc.mockSvc(ncc, logger, ctrl)
 
@@ -151,7 +151,7 @@ func TestVersionAction_run(t *testing.T) {
 		name         string
 		wantErr      error
 		cmd          func(t *testing.T) *cobra.Command
-		mockSvc      func(*mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller)
+		mockSvc      func(*mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller)
 		postRunCheck func(t *testing.T, stdout []byte)
 		format       string
 	}{
@@ -166,7 +166,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -214,7 +214,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -239,7 +239,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
@@ -260,7 +260,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -288,7 +288,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -316,7 +316,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -344,7 +344,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -371,7 +371,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -397,7 +397,7 @@ func TestVersionAction_run(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
-			ncc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 
 			tc.mockSvc(ncc, logger, ctrl)
 			var stdOut bytes.Buffer
