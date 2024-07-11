@@ -11,6 +11,7 @@ packageUnsignedExecutables() {
     mkdir -pv ./installer-builder/output/executables/unsigned/package/artifact/SIGNING_METADATA
     cp -a ./installer-builder/templates/entitlements.plist ./installer-builder/output/executables/unsigned/package/artifact/SIGNING_METADATA/entitlements.plist
     cp -a ./installer-builder/templates/qemu.plist ./installer-builder/output/executables/unsigned/package/artifact/SIGNING_METADATA/qemu.plist
+    cp -a ./installer-builder/templates/Info.plist ./installer-builder/darwin/Info.plist
 
     extractExecutables ./installer-builder/output/origin/_output
 
