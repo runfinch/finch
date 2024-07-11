@@ -3,7 +3,7 @@ module github.com/runfinch/finch
 go 1.22.0
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.30.1
+	github.com/aws/aws-sdk-go-v2 v1.30.3
 	github.com/docker/cli v27.0.3+incompatible
 	github.com/docker/docker v27.0.3+incompatible
 	github.com/golang/mock v1.6.0
