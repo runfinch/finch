@@ -60,12 +60,6 @@ extractExecutables() {
             newpath="./installer-builder/output/executables/unsigned/package/artifact/EXECUTABLES_TO_SIGN/$newname"
             cp -a "$1/$file" "$newpath"
             codesign --remove-signature "$newpath"
-            "$(brew --prefix)"/opt/llvm/bin/llvm-objcopy \
-                --keep-undefined \
-                --add-section \
-                __TEXT,__info_plist=./installer-builder/darwin/Info.plist \
-                "$newpath" \
-                "$newpath"
             #qemu needs specific entitlement, handle it separately
             if [[ $file == "qemu-system-x86_64" || $file == "qemu-system-aarch64" ]];
             then
