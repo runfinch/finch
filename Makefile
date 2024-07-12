@@ -64,7 +64,7 @@ all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml co
 
 .PHONY: install.finch-core-dependencies
 install.finch-core-dependencies:
-	OUTDIR=$(OUTDIR) "$(MAKE)" -C $(FINCH_CORE_DIR) install.dependencies
+	OUTDIR=$(OUTDIR) ARCH=$(ARCH) "$(MAKE)" -C $(FINCH_CORE_DIR) install.dependencies
 
 .PHONY: finch.yaml
 finch.yaml: $(OS_OUTDIR)/finch.yaml
