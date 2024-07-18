@@ -43,7 +43,7 @@ jobs:
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg
           aws s3 cp s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/dependency-sources.tar.gz DependenciesSourceCode.tar.gz
       - name: Upload installers and dependency source code to release
-        uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0 # v0.1.15
+        uses: softprops/action-gh-release@fb2d03176f42a1f0dd433ca263f314051d3edd44 # v0.1.15
         with:
           tag_name: ${{ needs.get-tag-name.outputs.tag }}
           files: |
