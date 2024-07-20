@@ -386,25 +386,25 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				deps *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/default.yaml", []byte(`
-		vmType: "qemu"
-		provision:
-		- mode: system
-		  script: |
-		    # cross-arch tools
-		    #!/bin/bash
-		    qemu_pkgs=""
-		    if [ ! -f /usr/bin/qemu-aarch64-static ]; then
-		      qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
-		    elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
-		      qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
-		    elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
-		      qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
-		    fi
+vmType: "qemu"
+provision:
+- mode: system
+	script: |
+	# cross-arch tools
+	#!/bin/bash
+	qemu_pkgs=""
+	if [ ! -f /usr/bin/qemu-aarch64-static ]; then
+		qemu_pkgs="$qemu_pkgs qemu-user-static-aarch64"
+	elif [ ! -f /usr/bin/qemu-aarch64-static ]; then
+		qemu_pkgs="$qemu_pkgs qemu-user-static-arm"
+	elif [ ! -f  /usr/bin/qemu-aarch64-static ]; then
+		qemu_pkgs="$qemu_pkgs qemu-user-static-x86"
+	fi
 
-		    if [[ $qemu_pkgs ]]; then
-		      dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
-		    fi
-		`), 0o600)
+	if [[ $qemu_pkgs ]]; then
+		dnf install -y --setopt=install_weak_deps=False ${qemu_pkgs}
+	fi
+`), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
@@ -427,8 +427,14 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 
 				require.Equal(t, "vz", *limaCfg.VMType)
 				require.Equal(t, "virtiofs", *limaCfg.MountType)
-				require.Equal(t, true, *limaCfg.Rosetta.BinFmt)
-				require.Equal(t, true, *limaCfg.Rosetta.Enabled)
+				arch := runtime.GOARCH
+				if arch == "arm64" {
+					require.Equal(t, true, *limaCfg.Rosetta.BinFmt)
+					require.Equal(t, true, *limaCfg.Rosetta.Enabled)
+				} else if arch == "amd64" {
+					require.Equal(t, false, *limaCfg.Rosetta.BinFmt)
+					require.Equal(t, false, *limaCfg.Rosetta.Enabled)
+				}
 				require.Len(t, limaCfg.Provision, 0)
 			},
 			want: nil,

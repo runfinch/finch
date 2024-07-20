@@ -44,6 +44,7 @@ func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limayaml
 		case "qemu":
 			{
 				limaCfg.MountType = pointer.String("reverse-sshfs")
+				userModeEmulationInstallationScript(limaCfg)
 			}
 		default:
 			return nil, fmt.Errorf("unsupported vm type \"%s\" for macOS", *lca.cfg.VMType)
@@ -52,7 +53,6 @@ func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limayaml
 		limaCfg.Rosetta.Enabled = pointer.Bool(false)
 		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
 		limaCfg.VMType = lca.cfg.VMType
-		userModeEmulationInstallationScript(limaCfg)
 	}
 
 	return limaCfg, nil
