@@ -137,6 +137,7 @@ var newApp = func(
 		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc, home, finchRootPath),
 		newSupportBundleCommand(logger, supportBundleBuilder, lcc),
 		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
+		newSystemCommand(lcc, logger),
 	)
 
 	rootCmd.AddCommand(allCommands...)
