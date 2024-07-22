@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1721410168497,
+  "lastUpdate": 1721661183195,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -57964,6 +57964,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
             "value": 294,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4e7fdfdb1deaa409d9ef81d6c2003cbc69720a49",
+          "message": "ci(deps): bump softprops/action-gh-release from 2.0.7 to 2.0.8 (#1038)\n\nBumps\r\n[softprops/action-gh-release](https://github.com/softprops/action-gh-release)\r\nfrom 2.0.7 to 2.0.8.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/softprops/action-gh-release/releases\">softprops/action-gh-release's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v2.0.8</h2>\r\n<!-- raw HTML omitted -->\r\n<h2>What's Changed</h2>\r\n<h3>Other Changes 🔄</h3>\r\n<ul>\r\n<li>chore(deps): bump prettier from 2.8.0 to 3.3.3 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/480\">softprops/action-gh-release#480</a></li>\r\n<li>chore(deps): bump <code>@​types/node</code> from 20.14.9 to 20.14.11\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/483\">softprops/action-gh-release#483</a></li>\r\n<li>chore(deps): bump <code>@​octokit/plugin-throttling</code> from\r\n9.3.0 to 9.3.1 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/484\">softprops/action-gh-release#484</a></li>\r\n<li>chore(deps): bump glob from 10.4.2 to 11.0.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/477\">softprops/action-gh-release#477</a></li>\r\n<li>refactor: write jest config in ts by <a\r\nhref=\"https://github.com/chenrui333\"><code>@​chenrui333</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/485\">softprops/action-gh-release#485</a></li>\r\n<li>chore(deps): bump <code>@​actions/github</code> from 5.1.1 to 6.0.0\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/470\">softprops/action-gh-release#470</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/softprops/action-gh-release/compare/v2...v2.0.8\">https://github.com/softprops/action-gh-release/compare/v2...v2.0.8</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md\">softprops/action-gh-release's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2>2.0.8</h2>\r\n<h3>Other Changes 🔄</h3>\r\n<ul>\r\n<li>chore(deps): bump prettier from 2.8.0 to 3.3.3 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/480\">softprops/action-gh-release#480</a></li>\r\n<li>chore(deps): bump <code>@​types/node</code> from 20.14.9 to 20.14.11\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/483\">softprops/action-gh-release#483</a></li>\r\n<li>chore(deps): bump <code>@​octokit/plugin-throttling</code> from\r\n9.3.0 to 9.3.1 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/484\">softprops/action-gh-release#484</a></li>\r\n<li>chore(deps): bump glob from 10.4.2 to 11.0.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/477\">softprops/action-gh-release#477</a></li>\r\n<li>refactor: write jest config in ts by <a\r\nhref=\"https://github.com/chenrui333\"><code>@​chenrui333</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/485\">softprops/action-gh-release#485</a></li>\r\n<li>chore(deps): bump <code>@​actions/github</code> from 5.1.1 to 6.0.0\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/470\">softprops/action-gh-release#470</a></li>\r\n</ul>\r\n<h2>2.0.7</h2>\r\n<h3>Bug fixes 🐛</h3>\r\n<ul>\r\n<li>Fix missing update release body by <a\r\nhref=\"https://github.com/FirelightFlagboy\"><code>@​FirelightFlagboy</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/365\">softprops/action-gh-release#365</a></li>\r\n</ul>\r\n<h3>Other Changes 🔄</h3>\r\n<ul>\r\n<li>Bump <code>@​octokit/plugin-retry</code> from 4.0.3 to 7.1.1 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/443\">softprops/action-gh-release#443</a></li>\r\n<li>Bump typescript from 4.9.5 to 5.5.2 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/467\">softprops/action-gh-release#467</a></li>\r\n<li>Bump <code>@​types/node</code> from 20.14.6 to 20.14.8 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/469\">softprops/action-gh-release#469</a></li>\r\n<li>Bump <code>@​types/node</code> from 20.14.8 to 20.14.9 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/473\">softprops/action-gh-release#473</a></li>\r\n<li>Bump typescript from 5.5.2 to 5.5.3 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/472\">softprops/action-gh-release#472</a></li>\r\n<li>Bump ts-jest from 29.1.5 to 29.2.2 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/479\">softprops/action-gh-release#479</a></li>\r\n<li>docs: document that existing releases are updated by <a\r\nhref=\"https://github.com/jvanbruegge\"><code>@​jvanbruegge</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/474\">softprops/action-gh-release#474</a></li>\r\n</ul>\r\n<h2>2.0.6</h2>\r\n<ul>\r\n<li>maintenance release with updated dependencies</li>\r\n</ul>\r\n<h2>2.0.5</h2>\r\n<ul>\r\n<li>Factor in file names with spaces when upserting files <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/446\">#446</a>\r\nvia <a\r\nhref=\"https://github.com/MystiPanda\"><code>@​MystiPanda</code></a></li>\r\n<li>Improvements to error handling <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/449\">#449</a>\r\nvia <a href=\"https://github.com/till\"><code>@​till</code></a></li>\r\n</ul>\r\n<h2>2.0.4</h2>\r\n<ul>\r\n<li>Minor follow up to <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/417\">#417</a>.\r\n<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/425\">#425</a></li>\r\n</ul>\r\n<h2>2.0.3</h2>\r\n<ul>\r\n<li>Declare <code>make_latest</code> as an input field in\r\n<code>action.yml</code> <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/419\">#419</a></li>\r\n</ul>\r\n<h2>2.0.2</h2>\r\n<ul>\r\n<li>Revisit approach to <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/384\">#384</a>\r\nmaking unresolved pattern failures opt-in <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/417\">#417</a></li>\r\n</ul>\r\n<h2>2.0.1</h2>\r\n<ul>\r\n<li>Add support for make_latest property <a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/pull/304\">#304</a>\r\nvia <a\r\nhref=\"https://github.com/samueljseay\"><code>@​samueljseay</code></a></li>\r\n</ul>\r\n<!-- raw HTML omitted -->\r\n</blockquote>\r\n<p>... (truncated)</p>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/c062e08bd532815e2082a85e87e3ef29c3e6d191\"><code>c062e08</code></a>\r\nrelease 2.0.8</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/380635c4add9f3686733a9aee43912f1f16604d3\"><code>380635c</code></a>\r\nchore(deps): bump <code>@​actions/github</code> from 5.1.1 to 6.0.0 (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/470\">#470</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/20adb4259cc911c7d3ef4d10da2f13ca8ca2834c\"><code>20adb42</code></a>\r\nrefactor: write jest config in ts (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/485\">#485</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/f808f15ba8f7c201fa6f1f90fd6bb18127b9ddb0\"><code>f808f15</code></a>\r\nchore(deps): bump glob from 10.4.2 to 11.0.0 (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/477\">#477</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/61452410498f83c1b46c544ed23ed73f060138c4\"><code>6145241</code></a>\r\nchore(deps): bump <code>@​octokit/plugin-throttling</code> from 9.3.0 to\r\n9.3.1 (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/484\">#484</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/4ac522d0bd78af302662418619bc832457bdd0b9\"><code>4ac522d</code></a>\r\nchore(deps): bump <code>@​types/node</code> from 20.14.9 to 20.14.11 (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/483\">#483</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/25849b132669d3a5d6adf884362acdb69262f262\"><code>25849b1</code></a>\r\nchore(deps): bump prettier from 2.8.0 to 3.3.3 (<a\r\nhref=\"https://redirect.github.com/softprops/action-gh-release/issues/480\">#480</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/62060560e321d3dcfb1ae338d2512fbd98ab3f24\"><code>6206056</code></a>\r\nchore: update dependabot commit msg</li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/39aadf190d216edf1be66954a199b7c8983f1d09\"><code>39aadf1</code></a>\r\nchore: run <code>frizbee actions .github/workflows/</code></li>\r\n<li><a\r\nhref=\"https://github.com/softprops/action-gh-release/commit/6f3ab653231297c6e8410125a22784df62214f4e\"><code>6f3ab65</code></a>\r\nchore: update dist file</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/softprops/action-gh-release/compare/fb2d03176f42a1f0dd433ca263f314051d3edd44...c062e08bd532815e2082a85e87e3ef29c3e6d191\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=softprops/action-gh-release&package-manager=github_actions&previous-version=2.0.7&new-version=2.0.8)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-07-22T11:07:28-04:00",
+          "tree_id": "9db48adf72619183ddde7e09f3f788bcf7f57f7e",
+          "url": "https://github.com/runfinch/finch/commit/4e7fdfdb1deaa409d9ef81d6c2003cbc69720a49"
+        },
+        "date": 1721661182471,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 87119957750,
+            "unit": "ns/op\t         0.2814 %cpu_avg/op\t        33.33 %cpu_peak/op\t        87.12 cpu_seconds/op\t3826475008 disk_bytes/op\t 3889256 B/op\t   82114 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 87119957750,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.2814,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 87.12,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 3826475008,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3889256,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 82114,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 20131756416,
+            "unit": "ns/op\t         0.4064 %cpu_avg/op\t        25.00 %cpu_peak/op\t        20.13 cpu_seconds/op\t  44113920 disk_bytes/op\t  908192 B/op\t   19058 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 20131756416,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4064,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 25,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 20.13,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 44113920,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 908192,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 19058,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 259422531,
+            "unit": "ns/op\t         0.7395 %cpu_avg/op\t        14.32 %cpu_peak/op\t         0.2594 cpu_seconds/op\t     12288 disk_bytes/op\t   21944 B/op\t     290 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 259422531,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.7395,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 14.32,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2594,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 12288,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21944,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 290,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
           }
