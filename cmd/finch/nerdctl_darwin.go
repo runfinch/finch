@@ -16,6 +16,10 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 )
 
+func convertToWSLPath(_ NerdctlCommandSystemDeps, _ string) (string, error) {
+	return "", nil
+}
+
 var aliasMap = map[string]string{}
 
 var argHandlerMap = map[string]map[string]argHandler{}

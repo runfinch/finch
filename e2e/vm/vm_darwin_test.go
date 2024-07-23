@@ -96,3 +96,8 @@ var resetDisks = func(_ *option.Option, installed bool) {
 	}
 	gomega.Expect(os.RemoveAll(dataDiskDir)).ShouldNot(gomega.HaveOccurred())
 }
+
+var shutdownWSL = func() error {
+	// no-op on darwin
+	return nil
+}

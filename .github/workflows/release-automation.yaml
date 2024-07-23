@@ -12,7 +12,7 @@ jobs:
     outputs:
       tag: ${{ steps.latest-tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
             fetch-depth: 0
       - name: 'Get the latest tag'
@@ -35,11 +35,6 @@ jobs:
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
   
-  release-homebrew:
-    needs: upload-pkg-and-dependency-source-code-to-release
-    secrets: inherit
-    uses: ./.github/workflows/release-homebrew.yaml
-
   build-and-test-finch-msi:
     needs: get-latest-tag
     uses: ./.github/workflows/build-and-test-msi.yaml

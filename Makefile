@@ -7,12 +7,17 @@ PREFIX ?= $(CURDIR)/_output
 DEST := $(shell echo "$(DESTDIR)/$(PREFIX)" | sed 's:///*:/:g; s://*$$::')
 BINDIR ?= /usr/local/bin
 OUTDIR ?= $(CURDIR)/_output
+OS_OUTDIR ?= $(OUTDIR)/os
+
+OUTPUT_DIRECTORIES := $(OUTDIR) $(OS_OUTDIR)
+$(OUTPUT_DIRECTORIES):
+	@mkdir -p $@
+
 PACKAGE := github.com/runfinch/finch
 BINARYNAME := finch
 LIMA_FILENAME := lima
 LIMA_EXTENSION := .tar.gz
 
-LIMA_HOME := $(DEST)/lima/data
 # Created by the CLI after installation, only used in uninstall step
 LIMA_VDE_SUDOERS_FILE := /etc/sudoers.d/finch-lima
 # Final installation prefix for vde created by CLI after installation, only used in uninstall step
@@ -20,9 +25,8 @@ VDE_INSTALL ?= /opt/finch
 UNAME := $(shell uname -m)
 ARCH ?= $(UNAME)
 SUPPORTED_ARCH = false
-CORE_VDE_PREFIX ?= $(OUTDIR)/dependencies/vde/opt/finch
 LICENSEDIR := $(OUTDIR)/license-files
-VERSION := $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
 GITCOMMIT := $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 LDFLAGS = "-w -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
 MIN_MACOS_VERSION ?= 11.0
@@ -30,9 +34,6 @@ MIN_MACOS_VERSION ?= 11.0
 GOOS ?= $(shell $(GO) env GOOS)
 ifeq ($(GOOS),windows)
 BINARYNAME := $(addsuffix .exe, $(BINARYNAME))
-sha = sha256sum
-else
-sha = shasum -a 256
 endif
 
 .DEFAULT_GOAL := all
@@ -42,131 +43,31 @@ REGISTRY ?= ""
 ifneq (,$(findstring arm64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = aarch64
-	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/40/Cloud/aarch64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-40-1.14.aarch64-20240514214641.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/aarch64/lima-and-qemu.macos-aarch64.1715678889.tar.gz
 else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
-	# From https://dl.fedoraproject.org/pub/fedora/linux/releases/40/Cloud/x86_64/images/
-	FINCH_OS_BASENAME ?= Fedora-Cloud-Base-40-1.14.x86_64-20240514214655.qcow2
-	LIMA_URL ?= https://deps.runfinch.com/x86-64/lima-and-qemu.macos-x86_64.1715678889.tar.gz
-	FINCH_ROOTFS_URL ?= https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1715724303.tar.gz
-	FINCH_ROOTFS_BASENAME := $(notdir $(FINCH_ROOTFS_URL))
 endif
-
-FINCH_OS_HASH := `$(sha) $(OUTDIR)/os/$(FINCH_OS_BASENAME) | cut -d ' ' -f 1`
-FINCH_OS_DIGEST := "sha256:$(FINCH_OS_HASH)"
-FINCH_OS_IMAGE_LOCATION_ROOT ?= $(DEST)
-FINCH_OS_IMAGE_LOCATION ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_OS_BASENAME)
-
-# TODO: Windows PoC extracting rootfs...
-FINCH_ROOTFS_HASH := `$(sha) $(OUTDIR)/os/$(FINCH_ROOTFS_BASENAME) | cut -d ' ' -f 1`
-FINCH_ROOTFS_DIGEST := "sha256:$(FINCH_ROOTFS_HASH)"
-FINCH_ROOTFS_LOCATION_ROOT ?= $(DEST)/
-FINCH_ROOTFS_LOCATION ?= $(FINCH_ROOTFS_LOCATION_ROOT)os/$(FINCH_ROOTFS_BASENAME)
 
 .PHONY: arch-test
 arch-test:
 	@if [ $(SUPPORTED_ARCH) != "true" ]; then echo "Unsupported architecture: $(ARCH)"; exit "1"; fi
 
-.PHONY: all
-ifeq ($(GOOS),windows)
-all: arch-test finch finch-core-local finch.windows.yaml networks.yaml config.yaml
-else ifeq ($(GOOS),darwin)
-all: arch-test finch finch-core finch.yaml networks.yaml config.yaml lima-and-qemu
-else ifeq ($(GOOS),linux)
-all: finch
-endif
-
-.PHONY: all-local
-all-local: arch-test networks.yaml config.yaml lima-and-qemu local-core finch.yaml
-
-.PHONY: finch-core
-finch-core:
-	cd deps/finch-core && \
-		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
-		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		"$(MAKE)"
-
-	mkdir -p _output
-	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
-	rm -rf $(OUTDIR)/lima-template
-
-.PHONY: finch-core-local
-finch-core-local:
-	cd deps/finch-core && \
-		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
-		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
-		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		"$(MAKE)" all lima
-
-	mkdir -p _output
-	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
-	rm -rf $(OUTDIR)/lima-template
-
-.PHONY: local-core
-local-core:
-	cd deps/finch-core && \
-		FINCH_OS_x86_URL="$(FINCH_OS_x86_URL)" \
-		FINCH_OS_AARCH64_URL="$(FINCH_OS_AARCH64_URL)" \
-		VDE_TEMP_PREFIX=$(CORE_VDE_PREFIX) \
-		"$(MAKE)" lima lima-socket-vmnet
-
-	mkdir -p _output
-	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
-	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C  $(OUTDIR)/lima
-	cd deps/finch-core/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)
-	cd deps/finch-core/src/lima/_output && tar -cf - * | tar -xvf - -C $(OUTDIR)/lima
-	rm -rf $(OUTDIR)/lima-template
-
-.PHONY: lima-and-qemu
-lima-and-qemu: networks.yaml
-	mkdir -p $(OUTDIR)/downloads
-	# download artifacts
-	curl -L $(LIMA_URL) > $(OUTDIR)/downloads/lima-and-qemu.tar.gz
-
-	# Untar LIMA
-	tar -xvf $(OUTDIR)/downloads/lima-and-qemu.tar.gz -C $(OUTDIR)/lima/
-
-	# Delete downloads
-	rm -rf $(OUTDIR)/downloads
-
-
-FINCH_IMAGE_LOCATION ?=
-FINCH_IMAGE_DIGEST ?=
-ifeq ($(GOOS),windows)
-    # Because the path in windows /C:/<some-path> is not an Absolute path, prefix with file:/ which is handled by lima https://github.com/lima-vm/lima/blob/da1260dc87fb30345c3ee7bfb131c29646e26d10/pkg/downloader/downloader.go#L266
-	FINCH_IMAGE_LOCATION := "file:/$(FINCH_ROOTFS_LOCATION)"
-	FINCH_IMAGE_DIGEST := $(FINCH_ROOTFS_DIGEST)
+BUILD_OS ?= $(OS)
+FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
+ifeq ($(BUILD_OS), Windows_NT)
+include Makefile.windows
 else
-	FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION)
-	FINCH_IMAGE_DIGEST := $(FINCH_OS_DIGEST)
+include Makefile.darwin
 endif
-.PHONY: finch.yaml
-finch.yaml: finch-core
-	mkdir -p $(OUTDIR)/os
-	# merge the appropriate YAMLs
-	cd finch.yaml.d && yq eval-all '. as $$item ireduce ({}; . *+ $$item)' mac.yaml common.yaml > ../finch.yaml
-	cp finch.yaml $(OUTDIR)/os
-	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
-	# this sed command uses the alternative separator of "|" because the image location uses "/"
-	sed -i.bak -e "s|<finch_image_location>|$(FINCH_IMAGE_LOCATION)|g" $(OUTDIR)/os/finch.yaml
-	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" $(OUTDIR)/os/finch.yaml
-	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" $(OUTDIR)/os/finch.yaml
 
-# TODO: Windows PoC - clean this up / consolidate
+all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml
+
+.PHONY: install.finch-core-dependencies
+install.finch-core-dependencies:
+	OUTDIR=$(OUTDIR) ARCH=$(ARCH) "$(MAKE)" -C $(FINCH_CORE_DIR) install.dependencies
+
 .PHONY: finch.yaml
-finch.windows.yaml: finch-core-local
-	mkdir -p $(OUTDIR)/os
-	# merge the appropriate YAMLs
-	cd finch.yaml.d && yq eval-all '. as $$item ireduce ({}; . *+ $$item)' windows.yaml common.yaml > ../finch.windows.yaml
-	cp finch.windows.yaml $(OUTDIR)/os/finch.yaml
-	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
-	# this sed command uses the alternative separator of "|" because the image location uses "/"
-	sed -i.bak -e "s|<finch_image_location>|$(FINCH_IMAGE_LOCATION)|g" $(OUTDIR)/os/finch.yaml
-	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" $(OUTDIR)/os/finch.yaml
-	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" $(OUTDIR)/os/finch.yaml
+finch.yaml: $(OS_OUTDIR)/finch.yaml
 
 .PHONY: networks.yaml
 networks.yaml:
@@ -287,7 +188,7 @@ download-licenses:
 	curl https://raw.githubusercontent.com/golangci/golangci-lint-action/master/LICENSE --output "$(LICENSEDIR)/github.com/golangci/golangci-lint-action/LICENSE"
 	mkdir -p "$(LICENSEDIR)/github.com/avto-dev/markdown-lint"
 	curl https://raw.githubusercontent.com/avto-dev/markdown-lint/master/LICENSE --output "$(LICENSEDIR)/github.com/avto-dev/markdown-lint/LICENSE"
-	mkdir -p "$(LICENSEDIR)"/github.com/ludeeus/action-shellcheck"
+	mkdir -p "$(LICENSEDIR)/github.com/ludeeus/action-shellcheck"
 	curl https://raw.githubusercontent.com/ludeeus/action-shellcheck/blob/2.0.0/LICENSE --output "$(LICENSEDIR)/github.com/ludeeus/action-shellcheck/LICENSE"
 
     ### dependencies in ci.yaml - end ###
@@ -409,7 +310,7 @@ mdlint-ctr:
 ifeq ($(GOOS),windows)
 clean:
 	-@rm -rf $(OUTDIR) 2>/dev/null || true
-	-@rm -rf ./deps/finch-core/_output || true
+	-@"$(MAKE)" -C $(FINCH_CORE_DIR) clean
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true
@@ -422,8 +323,7 @@ clean:
 	-sudo rm -rf "/private/var/run/finch-lima"
 	-sudo rm -rf "/private/etc/sudoers.d/finch-lima"
 	-@rm -rf $(OUTDIR) 2>/dev/null || true
-	-@rm -rf ./deps/finch-core/_output || true
-	-@rm -rf ./deps/finch-core/downloads/os/$(FINCH_OS_BASENAME) || true
+	-@$(MAKE) -C $(FINCH_CORE_DIR) clean
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true

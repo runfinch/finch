@@ -3,9 +3,9 @@ module github.com/runfinch/finch
 go 1.22.0
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.27.2
-	github.com/docker/cli v26.1.4+incompatible
-	github.com/docker/docker v26.1.4+incompatible
+	github.com/aws/aws-sdk-go-v2 v1.30.3
+	github.com/docker/cli v27.1.0+incompatible
+	github.com/docker/docker v27.0.3+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
 	github.com/lima-vm/lima v0.22.0
@@ -13,23 +13,23 @@ require (
 	github.com/onsi/gomega v1.33.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.6
-	github.com/runfinch/common-tests v0.7.22
+	github.com/runfinch/common-tests v0.7.23
 	github.com/shirou/gopsutil/v3 v3.24.5
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/afero v1.11.0
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
 	github.com/tc-hib/go-winres v0.3.3
 	github.com/xorcare/pointer v1.2.2
-	golang.org/x/crypto v0.24.0
+	golang.org/x/crypto v0.25.0
 	golang.org/x/exp v0.0.0-20230810033253-352e893a4cad
-	golang.org/x/tools v0.22.0
+	golang.org/x/tools v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.30.1
+	k8s.io/apimachinery v0.30.3
 )
 
 require (
-	github.com/aws/smithy-go v1.20.2 // indirect
+	github.com/aws/smithy-go v1.20.3 // indirect
 	github.com/containerd/containerd v1.7.16 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
@@ -55,7 +55,7 @@ require (
 	github.com/urfave/cli/v2 v2.25.7 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/image v0.12.0 // indirect
+	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240227224415-6ceb2ff114de // indirect
 	google.golang.org/grpc v1.63.2 // indirect
@@ -81,9 +81,9 @@ require (
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/mod v0.18.0 // indirect
-	golang.org/x/net v0.26.0 // indirect
-	golang.org/x/sys v0.21.0
+	golang.org/x/mod v0.19.0 // indirect
+	golang.org/x/net v0.27.0 // indirect
+	golang.org/x/sys v0.22.0
 	golang.org/x/text v0.16.0
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect

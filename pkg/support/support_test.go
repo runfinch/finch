@@ -76,8 +76,6 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
-				ecc.EXPECT().Create("uname", "-m").Return(cmd)
-				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -122,8 +120,6 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
-				ecc.EXPECT().Create("uname", "-m").Return(cmd)
-				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -165,8 +161,6 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
-				ecc.EXPECT().Create("uname", "-m").Return(cmd)
-				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -207,8 +201,6 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
-				ecc.EXPECT().Create("uname", "-m").Return(cmd)
-				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -249,8 +241,6 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
-				ecc.EXPECT().Create("uname", "-m").Return(cmd)
-				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -292,8 +282,6 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
 				}
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
-				ecc.EXPECT().Create("uname", "-m").Return(cmd)
-				cmd.EXPECT().Output().Return([]byte("arch\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",

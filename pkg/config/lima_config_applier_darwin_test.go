@@ -8,6 +8,7 @@ package config
 
 import (
 	"fmt"
+	"runtime"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -106,16 +107,21 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
-				deps.EXPECT().Arch()
+				deps.EXPECT().Arch().Return(runtime.GOARCH)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, "")
+				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, runtime.GOARCH)
 				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+				sociShaSum := sociAMD64Sha256Sum
+				if runtime.GOARCH == "arm64" {
+					sociShaSum = sociARM64Sha256Sum
+				}
 				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
-					sociDownloadURL,
 					sociFileName,
+					sociDownloadURL,
+					sociShaSum,
 					sociServiceDownloadURL)
 
 				buf, err := afero.ReadFile(fs, "/override.yaml")
@@ -276,16 +282,21 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
-				deps.EXPECT().Arch()
+				deps.EXPECT().Arch().Return(runtime.GOARCH)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, "")
+				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, runtime.GOARCH)
 				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+				sociShaSum := sociAMD64Sha256Sum
+				if runtime.GOARCH == "arm64" {
+					sociShaSum = sociARM64Sha256Sum
+				}
 				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
-					sociDownloadURL,
 					sociFileName,
+					sociDownloadURL,
+					sociShaSum,
 					sociServiceDownloadURL)
 
 				buf, err := afero.ReadFile(fs, "/override.yaml")
@@ -341,16 +352,21 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
-				deps.EXPECT().Arch()
+				deps.EXPECT().Arch().Return(runtime.GOARCH)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, "")
+				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, runtime.GOARCH)
 				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+				sociShaSum := sociAMD64Sha256Sum
+				if runtime.GOARCH == "arm64" {
+					sociShaSum = sociARM64Sha256Sum
+				}
 				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
-					sociDownloadURL,
 					sociFileName,
+					sociDownloadURL,
+					sociShaSum,
 					sociServiceDownloadURL)
 
 				buf, err := afero.ReadFile(fs, "/override.yaml")
@@ -412,7 +428,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
-				deps.EXPECT().Arch().Return("arm64")
+				deps.EXPECT().Arch().Return(runtime.GOARCH)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")

@@ -20,6 +20,8 @@ import (
 
 const (
 	sociVersion                              = "0.5.0"
+	sociAMD64Sha256Sum                       = "768f73dbd2c772386df1d12d0a371e9cbcefebea4856623335a2e8ea5170691c"
+	sociARM64Sha256Sum                       = "9238e00426ec67a725d511e232476248f2379d66a4ccab224a50ad4c56a0292e"
 	snapshotterProvisioningScriptHeader      = "# snapshotter provisioning script"
 	sociInstallationProvisioningScriptHeader = snapshotterProvisioningScriptHeader + ": soci"
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
@@ -30,9 +32,17 @@ const (
 if [ ! -f /usr/local/bin/soci ]; then
 	# download soci
 	set -e
+
+	# pull release tarball
+	release_tarball="%s"
 	curl --retry 2 --retry-max-time 120 -OL "%s"
+
+	# validate shasum
+	(sha256sum "${release_tarball}" | cut -d ' ' -f 1 | grep -xq "^%s$") || \
+	  (echo "error: shasum verification failed for SOCI release tarball" && rm -f "${release_tarball}" && exit 1)
+
 	# move to usr/local/bin
-	tar -C /usr/local/bin -xvf %s ./soci ./soci-snapshotter-grpc
+	tar -C /usr/local/bin -xvf ${release_tarball} ./soci ./soci-snapshotter-grpc
 
 	# install as a systemd service
 	curl --retry 2 --retry-max-time 120 -OL "%s"
@@ -210,11 +220,16 @@ func (lca *limaConfigApplier) provisionSnapshotters(limaCfg *limayaml.LimaYAML) 
 }
 
 func (lca *limaConfigApplier) provisionSociSnapshotter(limaCfg *limayaml.LimaYAML) {
-	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, lca.systemDeps.Arch())
+	arch := lca.systemDeps.Arch()
+	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, arch)
 	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
+	sociSha256Sum := sociAMD64Sha256Sum
+	if arch == "arm64" {
+		sociSha256Sum = sociARM64Sha256Sum
+	}
 	sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
 	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader,
-		sociDownloadURL, sociFileName, sociServiceDownloadURL)
+		sociFileName, sociDownloadURL, sociSha256Sum, sociServiceDownloadURL)
 	limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
 		Mode:   "system",
 		Script: sociInstallationScript,

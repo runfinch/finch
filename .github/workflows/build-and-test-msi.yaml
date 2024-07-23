@@ -3,6 +3,10 @@ name: Build, test and upload .msi to S3
 # TODO: add scheduler and tests
 on:
   workflow_dispatch:
+    inputs:
+      ref_name:
+        required: true
+        type: string
   workflow_call:
     inputs:
       ref_name:
@@ -56,14 +60,14 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.eol lf
       - name: Set up Python
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
         with:
           python-version: '3.x'
       - name: Install AWS CLI
         run: |
           python -m pip install --upgrade pip
           pip install awscli
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
@@ -92,7 +96,7 @@ jobs:
           cd deps/finch-core && make clean
       - name: Build project
         run: |
-          make FINCH_ROOTFS_LOCATION_ROOT=/__INSTALLFOLDER__
+          make FINCH_OS_IMAGE_LOCATION_ROOT=__INSTALLFOLDER__
       - name: generate and download signed msi
         run: |
           $version="${{ needs.get-tag-name.outputs.version }}"
@@ -168,14 +172,14 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.eol lf
       - name: Set up Python
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
         with:
           python-version: '3.x'
       - name: Install AWS CLI
         run: |
           python -m pip install --upgrade pip
           pip install awscli
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
@@ -195,6 +199,9 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Remove Finch VM
         run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
           wsl --shutdown
           wsl --unregister lima-finch
@@ -237,6 +244,9 @@ jobs:
             make test-e2e-vm
       - name: Remove Finch VM
         run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
           wsl --shutdown
           Start-Sleep -s 10

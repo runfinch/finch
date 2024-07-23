@@ -24,6 +24,7 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima/wrapper"
 	fpath "github.com/runfinch/finch/pkg/path"
+	"github.com/runfinch/finch/pkg/system"
 	"github.com/runfinch/finch/pkg/version"
 )
 
@@ -277,11 +278,7 @@ func (bb *bundleBuilder) getPlatformData() (*PlatformData, error) {
 	platform.Os = os
 
 	// populate arch
-	arch, err := bb.getArch()
-	if err != nil {
-		return nil, err
-	}
-	platform.Arch = arch
+	platform.Arch = bb.getArch()
 
 	// populate Finch version
 	platform.Finch = getFinchVersion()
@@ -305,16 +302,8 @@ func (bb *bundleBuilder) getOSVersion() (string, error) {
 	return os, nil
 }
 
-func (bb *bundleBuilder) getArch() (string, error) {
-	cmd := bb.ecc.Create("uname", "-m")
-	out, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-
-	arch := strings.TrimSuffix(string(out), "\n")
-
-	return arch, nil
+func (bb *bundleBuilder) getArch() string {
+	return system.NewStdLib().Arch()
 }
 
 func getFinchVersion() string {

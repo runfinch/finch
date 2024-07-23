@@ -1,0 +1,37 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# For Finch on macOS, the base OS location and digest are set
+# based on the values set in deps/finch-core/deps/full-os.conf
+-include $(FINCH_CORE_DIR)/deps/full-os.conf
+ifeq ($(ARCH),x86_64)
+FINCH_OS_BASENAME=$(X86_64_ARTIFACT)
+FINCH_OS_DIGEST=$(X86_64_512_DIGEST)
+else
+FINCH_OS_BASENAME=$(AARCH64_ARTIFACT)
+FINCH_OS_DIGEST=$(AARCH64_512_DIGEST)
+endif
+
+# This variable is used to generate release builds, where the OS image path should be overwritten
+# to /Applications/Finch/...
+FINCH_OS_IMAGE_LOCATION_ROOT ?= $(DEST)
+FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_OS_BASENAME)
+FINCH_IMAGE_DIGEST := "sha512:$(FINCH_OS_DIGEST)"
+
+.PHONY: finch.yaml
+finch.yaml: $(OS_OUTDIR)/finch.yaml
+
+$(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/mac.yaml
+	# merge the appropriate YAMLs into a temporary finch.yaml file on the current working directory
+	cd finch.yaml.d && yq eval-all '. as $$item ireduce ({}; . *+ $$item)' mac.yaml common.yaml > ../finch.yaml.temp
+
+	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
+	# this sed command uses the alternative separator of "|" because the image location uses "/"
+	sed -i.bak -e "s|<finch_image_location>|$(FINCH_IMAGE_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" finch.yaml.temp
+	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" finch.yaml.temp
+
+	# Replacement was successful, so cleanup .bak
+	@rm finch.yaml.temp.bak
+
+	mv finch.yaml.temp $@

@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"golang.org/x/exp/slices"
@@ -233,15 +234,23 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	passedEnvs := []string{
 		"COSIGN_PASSWORD", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY",
-		"AWS_SESSION_TOKEN",
+		"AWS_SESSION_TOKEN", "COMPOSE_FILE",
 	}
 
 	var passedEnvArgs []string
 	for _, e := range passedEnvs {
 		v, b := nc.systemDeps.LookupEnv(e)
-		if b {
-			passedEnvArgs = append(passedEnvArgs, fmt.Sprintf("%s=%s", e, v))
+		if !b {
+			continue
 		}
+		if runtime.GOOS == "windows" && e == "COMPOSE_FILE" {
+			wslPath, err := convertToWSLPath(nc.systemDeps, v)
+			if err != nil {
+				return err
+			}
+			v = wslPath
+		}
+		passedEnvArgs = append(passedEnvArgs, fmt.Sprintf("%s=%s", e, v))
 	}
 
 	var additionalEnv []string

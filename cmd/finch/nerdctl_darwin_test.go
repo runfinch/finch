@@ -48,6 +48,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "info").Return(c)
 				c.EXPECT().Run()
@@ -114,6 +115,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "build", "-t", "demo", ".").Return(c)
 				c.EXPECT().Run()
@@ -143,6 +145,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				logger.EXPECT().SetLevel(flog.Debug)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "pull", "test:tag").Return(c)
 				c.EXPECT().Run()
@@ -174,6 +177,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("ARG3")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "-e", "ARG1=val1", "alpine:latest", "env").Return(c)
@@ -206,6 +210,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("ARG3").Return("val3", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "-e", "ARG3=val3", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
@@ -238,6 +243,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("ARG3").Return("val3", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "-e", "ARG3=val3", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
@@ -272,6 +278,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				ncc.EXPECT().
 					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "--rm", "-e", "ARG1=val1", "alpine:latest", "env").
 					Return(c)
@@ -308,6 +315,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG2")
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				ncc.EXPECT().
 					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "--rm", "-e", "ARG1=val1", "alpine:latest", "env").
 					Return(c)
@@ -343,6 +351,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("ARG2").Return("val2", true)
 				ncsd.EXPECT().LookupEnv("NOTSETARG")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				ncc.EXPECT().
 					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run", "--rm", "-e", "ARG2=val2", "alpine:latest", "env").
 					Return(c)
@@ -393,6 +402,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				logger.EXPECT().Debugf(`Resolving special IP "host-gateway" to %q for host %q`, "192.168.5.2", "name")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "--add-host", "name:192.168.5.2", "alpine:latest").Return(c)
@@ -422,6 +432,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "--add-host", "name:0.0.0.0", "alpine:latest").Return(c)
@@ -451,6 +462,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "--add-host", "alpine:latest").Return(c)
@@ -481,6 +493,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				logger.EXPECT().Debugf(`Resolving special IP "host-gateway" to %q for host %q`, "192.168.5.2", "name")
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "--add-host=name:192.168.5.2", "alpine:latest").Return(c)
@@ -510,6 +523,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
@@ -543,6 +557,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "-v", "/tmp:/tmp1/tmp2:rro", "--volume", "/tmp:/tmp1:rprivate,rro", "-v=/tmp:/tmp1/tmp2/tmp3/tmp4:rro",
@@ -576,6 +591,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
 					"--rm", "-v", "/tmp:/tmp1/tmp2:rro", "--volume", "/tmp:/tmp1:rprivate,rro",
@@ -606,6 +622,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				ncc.EXPECT().RunWithReplacingStdout(
 					testStdoutRs, "shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "pull", "test:tag", "--help").Return(nil)
 			},
@@ -633,6 +650,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				ncc.EXPECT().RunWithReplacingStdout(
 					testStdoutRs, "shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "pull", "test:tag", "--help").
 					Return(fmt.Errorf("failed to replace"))
@@ -661,6 +679,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
 					"push", "--sign=cosign", "test:tag").Return(c)
@@ -690,6 +709,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
 					"pull", "--verify=cosign", "test:tag").Return(c)
@@ -719,6 +739,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test",
 					nerdctlCmdName, "pull", "test:tag").Return(c)
@@ -752,6 +773,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", true)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
 				ecc.EXPECT().Create(
@@ -813,6 +835,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
 				ecc.EXPECT().Create(
@@ -871,6 +894,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", true)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
 				ecc.EXPECT().Create(
@@ -925,6 +949,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", true)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
 				ecc.EXPECT().Create(
