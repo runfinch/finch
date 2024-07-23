@@ -612,12 +612,13 @@ mountType: "reverse-sshfs"`), 0o600)
 				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
-				_ *mocks.LimaConfigApplierSystemDeps,
+				deps *mocks.LimaConfigApplierSystemDeps,
 			) {
 				err := afero.WriteFile(fs, "/lima.yaml", []byte("memory: 4GiB\ncpus: 8"), 0o600)
 				require.NoError(t, err)
 				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
 				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				deps.EXPECT().Arch()
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")

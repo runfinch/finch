@@ -8,7 +8,7 @@ import (
 
 const nerdctlRootfulCfgPath = "/etc/finch/nerdctl/nerdctl.toml"
 
-func nerdctlFs(hostFs afero.Fs, _ string, _ string) (afero.Fs, error) {
+func (nca *nerdctlConfigApplier) nerdctlFs(hostFs afero.Fs, _ string, _ string) (afero.Fs, error) {
 	return hostFs, nil
 }
 

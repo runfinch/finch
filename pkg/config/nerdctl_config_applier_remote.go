@@ -16,16 +16,14 @@ import (
 
 const nerdctlRootfulCfgPath = "/etc/nerdctl/nerdctl.toml"
 
-func nerdctlFs(hostFs afero.Fs, privateKeyPath string, remoteAddr string) (afero.Fs, error) {
+func (nca *nerdctlConfigApplier) nerdctlFs(hostFs afero.Fs, privateKeyPath string, remoteAddr string) (afero.Fs, error) {
 	user := "root"
 	sshCfg, err := fssh.NewClientConfig(hostFs, user, privateKeyPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssh client config: %w", err)
 	}
 
-	dialer := fssh.NewDialer()
-
-	sshClient, err := dialer.Dial("tcp", remoteAddr, sshCfg)
+	sshClient, err := nca.dialer.Dial("tcp", remoteAddr, sshCfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup ssh client: %w", err)
 	}

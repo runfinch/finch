@@ -111,7 +111,7 @@ func updateNerdctlConfig(fs afero.Fs, homeDir string, rootless bool) error {
 
 // Apply updates the nerdctl config.
 func (nca *nerdctlConfigApplier) Apply(remoteAddr string) error {
-	nFs, err := nerdctlFs(nca.fs, nca.privateKeyPath, remoteAddr)
+	nFs, err := nca.nerdctlFs(nca.fs, nca.privateKeyPath, remoteAddr)
 	if err != nil {
 		return fmt.Errorf("failed to get nerdctlFs: %w", err)
 	}

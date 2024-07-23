@@ -259,11 +259,11 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			mockSvc: func(_ *testing.T, _ afero.Fs, _ *mocks.Dialer) {
 			},
 			want: fmt.Errorf(
-				"failed to create ssh client config: %w",
-				fmt.Errorf(
+				"failed to get nerdctlFs: %w",
+				fmt.Errorf("failed to create ssh client config: %w", fmt.Errorf(
 					"failed to open private key file: %w",
 					&fs.PathError{Op: "open", Path: privateKeyPath, Err: errors.New("file does not exist")},
-				),
+				)),
 			),
 		},
 		{
@@ -276,7 +276,8 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 
 				d.EXPECT().Dial("tcp", "deadbeef", gomock.Any()).Return(nil, fmt.Errorf("some error"))
 			},
-			want: fmt.Errorf("failed to setup ssh client: %w", fmt.Errorf("some error")),
+			want: fmt.Errorf("failed to get nerdctlFs: %w",
+				fmt.Errorf("failed to setup ssh client: %w", fmt.Errorf("some error"))),
 		},
 	}
 
