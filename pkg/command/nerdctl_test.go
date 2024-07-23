@@ -304,8 +304,15 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			require.NoError(t, err)
 
 			tc.mockSvc(logger, cmdCreator, lcd, ctrl, tc.inOut, stdoutFile)
-			assert.Equal(t, tc.wantErr, command.NewNerdctlCmdCreator(cmdCreator, logger, mockLimaHomePath, mockLimactlPath, mockQemuBinPath, lcd).
-				RunWithReplacingStdout(tc.stdoutRs, mockArgs...))
+			assert.Equal(t, tc.wantErr,
+				command.NewNerdctlCmdCreator(
+					cmdCreator,
+					logger,
+					mockLimaHomePath,
+					mockLimactlPath,
+					mockQemuBinPath,
+					lcd,
+				).RunWithReplacingStdout(tc.stdoutRs, mockArgs...))
 
 			stdout, err := os.ReadFile(stdoutFilepath)
 			require.NoError(t, err)

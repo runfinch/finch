@@ -15,11 +15,3 @@ func (m *userDataDiskManager) EnsureUserDataDisk() error {
 func (m *userDataDiskManager) DetachUserDataDisk() error {
 	return nil
 }
-
-func (m *userDataDiskManager) createDisk(_ string) error {
-	return nil
-}
-
-func (m *userDataDiskManager) attachDisk(_ string) error {
-	return nil
-}

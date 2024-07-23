@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 //go:build (darwin || windows) && !native
 
 package config
@@ -11,8 +14,19 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/afero/sftpfs"
 
+	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/fssh"
 )
+
+type limaConfigApplier struct {
+	cfg                    *Finch
+	cmdCreator             command.Creator
+	fs                     afero.Fs
+	limaDefaultConfigPath  string
+	limaOverrideConfigPath string
+	systemDeps             LimaConfigApplierSystemDeps
+	finchConfigPath        string
+}
 
 const nerdctlRootfulCfgPath = "/etc/nerdctl/nerdctl.toml"
 
@@ -118,4 +132,15 @@ func getHomeDir(localFs afero.Fs, remoteFs afero.Fs, limaInstanceDir string, cfg
 	}
 
 	return "/home/" + user + ".linux", nil
+}
+
+func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd string) (string, error) {
+	if !strings.Contains(profStr, cmd) {
+		profBufWithCmd := fmt.Sprintf("%s\n%s", profStr, cmd)
+		if err := afero.WriteFile(fs, profileFilePath, []byte(profBufWithCmd), 0o600); err != nil {
+			return "", fmt.Errorf("failed to write to profile file: %w", err)
+		}
+		return profBufWithCmd, nil
+	}
+	return profStr, nil
 }

@@ -41,8 +41,7 @@ type SharedSettings struct {
 }
 
 // Nerdctl is a copy from github.com/containerd/nerdctl/cmd/nerdctl/main.go
-// TODO: make PR to nerdctl repo to move this config out of the main package
-// so it can be imported on macOS.
+// TODO: this should be importable on macOS once nerdctl v2 is released.
 type Nerdctl struct {
 	Debug            bool     `toml:"debug,omitempty"`
 	DebugFull        bool     `toml:"debug_full1,omitempty"`
@@ -160,22 +159,4 @@ func Load(
 	}
 
 	return defCfg, nil
-}
-
-// loadFinchConfig Load Finch's configuration from a YAML file.
-func loadFinchConfig(fs afero.Fs, finchConfigPath string, logger flog.Logger, systemDeps LoadSystemDeps, mem fmemory.Memory) (*Finch, error) {
-	b, err := afero.ReadFile(fs, finchConfigPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read config file: %w", err)
-	}
-
-	var cfg Finch
-	if err := yaml.Unmarshal(b, &cfg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
-	}
-	if err := validate(&cfg, logger, systemDeps, mem); err != nil {
-		return nil, fmt.Errorf("failed to validate config file: %w", err)
-	}
-
-	return &cfg, nil
 }

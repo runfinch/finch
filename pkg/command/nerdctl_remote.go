@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"io"
 	"runtime"
+	"slices"
+	"strings"
 )
 
 const (
@@ -44,4 +46,15 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 	cmd.SetStdout(stdout)
 	cmd.SetStderr(stderr)
 	return cmd
+}
+
+func replaceOrAppend(orig []string, varName, newVar string) []string {
+	envIdx := slices.IndexFunc(orig, func(envVar string) bool {
+		return strings.HasPrefix(envVar, fmt.Sprintf("%s=", varName))
+	})
+
+	if envIdx != -1 {
+		return slices.Replace(orig, envIdx, envIdx+1, newVar)
+	}
+	return append(orig, newVar)
 }

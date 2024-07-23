@@ -16,14 +16,14 @@ import (
 )
 
 func virtualMachineCommands(
-	logger flog.Logger,
-	fp path.Finch,
-	ncc command.NerdctlCmdCreator,
-	ecc command.Creator,
-	fs afero.Fs,
-	fc *config.Finch,
-	home string,
-	finchRootPath string,
+	_ flog.Logger,
+	_ path.Finch,
+	_ command.NerdctlCmdCreator,
+	_ command.Creator,
+	_ afero.Fs,
+	_ *config.Finch,
+	_ string,
+	_ string,
 ) *cobra.Command {
 	return &cobra.Command{}
 }

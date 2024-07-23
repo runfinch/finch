@@ -20,10 +20,14 @@ func (nc *nerdctlCommand) GetCmdArgs() []string {
 	return []string{""}
 }
 
-func (nc *nerdctlCommand) assertVMIsRunning(creator command.NerdctlCmdCreator, logger flog.Logger) error {
+func (nc *nerdctlCommand) assertVMIsRunning(_ command.NerdctlCmdCreator, _ flog.Logger) error {
 	return nil
 }
 
-func resolveIP(host string, logger flog.Logger, _ command.Creator) (string, error) {
+func resolveIP(_ string, _ flog.Logger, _ command.Creator) (string, error) {
 	return "0.0.0.0", nil
+}
+
+func convertToWSLPath(_ NerdctlCommandSystemDeps, _ string) (string, error) {
+	return "", nil
 }

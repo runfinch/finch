@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"path"
-	"strings"
 
 	toml "github.com/pelletier/go-toml"
 	"github.com/spf13/afero"
@@ -51,17 +50,6 @@ func NewNerdctlApplier(
 		limaInstancePath: limaInstancePath,
 		fc:               fc,
 	}
-}
-
-func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd string) (string, error) {
-	if !strings.Contains(profStr, cmd) {
-		profBufWithCmd := fmt.Sprintf("%s\n%s", profStr, cmd)
-		if err := afero.WriteFile(fs, profileFilePath, []byte(profBufWithCmd), 0o600); err != nil {
-			return "", fmt.Errorf("failed to write to profile file: %w", err)
-		}
-		return profBufWithCmd, nil
-	}
-	return profStr, nil
 }
 
 // updateNerdctlConfig reads from the nerdctl config and updates values.

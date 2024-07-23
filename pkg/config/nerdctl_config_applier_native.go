@@ -1,10 +1,25 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 //go:build linux || native
 
 package config
 
 import (
 	"github.com/spf13/afero"
+
+	"github.com/runfinch/finch/pkg/command"
 )
+
+type limaConfigApplier struct {
+	_               *Finch
+	_               command.Creator
+	_               afero.Fs
+	_               string
+	_               string
+	_               LimaConfigApplierSystemDeps
+	finchConfigPath string
+}
 
 const nerdctlRootfulCfgPath = "/etc/finch/nerdctl/nerdctl.toml"
 

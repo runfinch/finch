@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/spf13/afero"
+	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
@@ -92,4 +93,22 @@ func ModifyFinchConfig(fs afero.Fs, logger flog.Logger, finchConfigPath string, 
 	}
 
 	return isConfigUpdated, nil
+}
+
+// loadFinchConfig Load Finch's configuration from a YAML file.
+func loadFinchConfig(fs afero.Fs, finchConfigPath string, logger flog.Logger, systemDeps LoadSystemDeps, mem fmemory.Memory) (*Finch, error) {
+	b, err := afero.ReadFile(fs, finchConfigPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read config file: %w", err)
+	}
+
+	var cfg Finch
+	if err := yaml.Unmarshal(b, &cfg); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
+	}
+	if err := validate(&cfg, logger, systemDeps, mem); err != nil {
+		return nil, fmt.Errorf("failed to validate config file: %w", err)
+	}
+
+	return &cfg, nil
 }

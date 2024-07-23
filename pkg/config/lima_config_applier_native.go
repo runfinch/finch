@@ -6,7 +6,6 @@
 package config
 
 import (
-	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -34,17 +33,6 @@ func (lca *limaConfigApplier) ConfigureDefaultLimaYaml() error {
 // ConfigureOverrideLimaYaml will create a override.yaml at the path if it does not exist.
 func (lca *limaConfigApplier) ConfigureOverrideLimaYaml() error {
 	return nil
-}
-
-func (lca *limaConfigApplier) configureDefaultSnapshotter(_ *limayaml.LimaYAML) error {
-	return nil
-}
-
-func (lca *limaConfigApplier) provisionSnapshotters(_ *limayaml.LimaYAML) error {
-	return nil
-}
-
-func (lca *limaConfigApplier) provisionSociSnapshotter(limaCfg *limayaml.LimaYAML) {
 }
 
 func (lca *limaConfigApplier) GetFinchConfigPath() string {
