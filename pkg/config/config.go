@@ -85,13 +85,6 @@ type NerdctlConfigApplier interface {
 	Apply(remoteAddr string) error
 }
 
-// // NerdctlConfigApplierSystemDeps provides system dependencies.
-// //
-// //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_nerdctl_config_applier_system_deps.go -package=mocks -mock_names NerdctlConfigApplierSystemDeps=NerdctlConfigApplierSystemDeps . NerdctlConfigApplierSystemDeps
-// type NerdctlConfigApplierSystemDeps interface {
-// 	system.UserHomeDir
-// }
-
 // LoadSystemDeps contains the system dependencies for Load.
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_load_system_deps.go -package=mocks -mock_names LoadSystemDeps=LoadSystemDeps . LoadSystemDeps
