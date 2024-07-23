@@ -7,8 +7,6 @@ package config
 
 import (
 	"github.com/runfinch/finch/pkg/command"
-	"github.com/runfinch/finch/pkg/flog"
-	"github.com/spf13/afero"
 )
 
 // SystemSettings represents the system configuration specifc to Windows.
@@ -25,9 +23,4 @@ type Finch struct {
 // SupportsWSL2 checks if system supports WSL2 and sets default version to 2.
 func SupportsWSL2(cmdCreator command.Creator) error {
 	return cmdCreator.Create("wsl", "--set-default-version", "2").Run()
-}
-
-// ModifyFinchConfig Modify Finch's configuration from user inputs.
-func ModifyFinchConfig(_ afero.Fs, _ flog.Logger, _ string, _ VMConfigOpts) (bool, error) {
-	return true, nil
 }
