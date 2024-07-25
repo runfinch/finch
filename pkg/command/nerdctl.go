@@ -48,7 +48,7 @@ type nerdctlCmdCreator struct {
 
 var _ NerdctlCmdCreator = (*nerdctlCmdCreator)(nil)
 
-// NerdctlCmdCreatorSystemDeps contains the system dependencies for NewLimaCmdCreator.
+// NerdctlCmdCreatorSystemDeps contains the system dependencies for NewNerdctlCmdCreator.
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/nerdctl_cmd_creator_system_deps.go -package=mocks -mock_names NerdctlCmdCreatorSystemDeps=NerdctlCmdCreatorSystemDeps . NerdctlCmdCreatorSystemDeps
 type NerdctlCmdCreatorSystemDeps interface {
@@ -59,7 +59,9 @@ type NerdctlCmdCreatorSystemDeps interface {
 	system.EnvGetter
 }
 
-// NewNerdctlCmdCreator returns a LimaCmdCreator that creates limactl commands based on the provided lima-related paths.
+// NewNerdctlCmdCreator returns a NerdctlCmdCreator that creates nerdctl commands.
+// In "remote" mode, it uses limactl commands, configured to use binaries at lima-related paths and then executes nerdctl.
+// In "native" mode, it directly executes nerdctl from the user's PATH.
 func NewNerdctlCmdCreator(
 	cmdCreator Creator,
 	logger flog.Logger,
