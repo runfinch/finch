@@ -111,13 +111,7 @@ var newApp = func(
 		return nil
 	}
 
-	ncc := command.NewNerdctlCmdCreator(ecc,
-		logger,
-		fp.LimaHomePath(),
-		fp.LimactlPath(),
-		fp.QEMUBinDir(),
-		system.NewStdLib(),
-	)
+	ncc := nerdctlCmdCreator(ecc, logger, fp)
 	lima := wrapper.NewLimaWrapper()
 	supportBundleBuilder := support.NewBundleBuilder(
 		logger,
