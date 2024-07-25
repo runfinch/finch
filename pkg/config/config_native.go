@@ -7,5 +7,5 @@ package config
 
 // Finch represents the configuration file for Finch CLI.
 type Finch struct {
-	SharedSettings
+	SharedSettings `yaml:",inline"`
 }
