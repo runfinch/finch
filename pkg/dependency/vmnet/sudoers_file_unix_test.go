@@ -1,8 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//go:build !windows
-// +build !windows
+//go:build darwin && !native
 
 // Ensures that output of `lima sudoers` is output to the correct directory.
 // This is necessary for networking to work without prompting the user
