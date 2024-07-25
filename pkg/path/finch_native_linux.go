@@ -12,12 +12,12 @@ import (
 
 // FinchRootDir returns the path to the Finch root directory, which is $HOME on UNIX.
 func (Finch) FinchRootDir(_ FinchFinderDeps) (string, error) {
-	return filepath.Join("etc", "finch"), nil
+	return filepath.Join("/", "etc", "finch"), nil
 }
 
 // FinchDir returns the path to the Finch config directory.
 func (Finch) FinchDir(rootDir string) string {
-	return filepath.Join(rootDir)
+	return rootDir
 }
 
 // ConfigFilePath returns the path to Finch config file.
