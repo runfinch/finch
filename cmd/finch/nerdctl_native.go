@@ -6,9 +6,13 @@
 package main
 
 import (
+	"golang.org/x/exp/slices"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
 )
+
+const nerdctlCmdName = ""
 
 var aliasMap = map[string]string{}
 
@@ -20,14 +24,31 @@ func (nc *nerdctlCommand) GetCmdArgs() []string {
 	return []string{""}
 }
 
-func (nc *nerdctlCommand) assertVMIsRunning(_ command.NerdctlCmdCreator, _ flog.Logger) error {
-	return nil
-}
+func (nc *nerdctlCommand) run(cmdName string, args []string) error {
+	var additionalEnv []string
+	switch cmdName {
+	case "image":
+		if slices.Contains(args, "build") || slices.Contains(args, "pull") || slices.Contains(args, "push") {
+			ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+		}
+	case "container":
+		if slices.Contains(args, "run") {
+			ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+		}
+	case "build", "pull", "push", "run":
+		ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
+	}
 
-func resolveIP(_ string, _ flog.Logger, _ command.Creator) (string, error) {
-	return "0.0.0.0", nil
-}
+	if nc.shouldReplaceForHelp(cmdName, args) {
+		return nc.ncc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, args...)
+	}
 
-func convertToWSLPath(_ NerdctlCommandSystemDeps, _ string) (string, error) {
-	return "", nil
+	// eat the debug arg, and set the log level to avoid nerdctl parsing this flag
+	dbgIdx := slices.Index(args, "--debug")
+	if dbgIdx >= 0 {
+		args = append(args[:dbgIdx], args[dbgIdx+1:]...)
+		nc.logger.SetLevel(flog.Debug)
+	}
+
+	return nc.ncc.Create(append([]string{cmdName}, args...)...).Run()
 }
