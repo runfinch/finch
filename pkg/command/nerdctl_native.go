@@ -12,6 +12,14 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 )
 
+type nerdctlCmdCreator struct {
+	cmdCreator         Creator
+	logger             flog.Logger
+	systemDeps         NerdctlCmdCreatorSystemDeps
+	nerdctlConfigPath  string
+	buildkitSocketPath string
+}
+
 // NewNerdctlCmdCreator returns a NerdctlCmdCreator that creates nerdctl commands.
 // In "remote" mode, it uses limactl commands, configured to use binaries at lima-related paths and then executes nerdctl.
 // In "native" mode, it directly executes nerdctl from the user's PATH.

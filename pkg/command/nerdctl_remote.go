@@ -21,6 +21,15 @@ const (
 	envKeyWinPath  = "Path"
 )
 
+type nerdctlCmdCreator struct {
+	cmdCreator   Creator
+	logger       flog.Logger
+	systemDeps   NerdctlCmdCreatorSystemDeps
+	limaHomePath string
+	limactlPath  string
+	binPath      string
+}
+
 // NewNerdctlCmdCreator returns a NerdctlCmdCreator that creates nerdctl commands.
 // In "remote" mode, it uses limactl commands, configured to use binaries at lima-related paths and then executes nerdctl.
 // In "native" mode, it directly executes nerdctl from the user's PATH.

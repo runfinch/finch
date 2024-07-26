@@ -12,18 +12,6 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 )
 
-const nerdctlCmdName = ""
-
-var aliasMap = map[string]string{}
-
-var argHandlerMap = map[string]map[string]argHandler{}
-
-var commandHandlerMap = map[string]commandHandler{}
-
-func (nc *nerdctlCommand) GetCmdArgs() []string {
-	return []string{""}
-}
-
 func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	var additionalEnv []string
 	switch cmdName {

@@ -6,11 +6,12 @@
 package main
 
 import (
+	"github.com/spf13/afero"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/system"
-	"github.com/spf13/afero"
 )
 
 func nerdctlCmdCreator(ecc command.Creator, logger flog.Logger, fp path.Finch, _ string) command.NerdctlCmdCreator {

@@ -6,17 +6,27 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"path/filepath"
 	"runtime"
 	"strings"
+
+	"golang.org/x/exp/slices"
+
+	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
-	"golang.org/x/exp/slices"
 )
 
 const nerdctlCmdName = "nerdctl"
+
+type (
+	argHandler     func(systemDeps NerdctlCommandSystemDeps, args []string, index int) error
+	commandHandler func(systemDeps NerdctlCommandSystemDeps, args []string) error
+)
 
 func (nc *nerdctlCommand) assertVMIsRunning(creator command.NerdctlCmdCreator, logger flog.Logger) error {
 	// Extra call to check VM before running nerdctl commands. These are the reasons of not doing message replacing
@@ -227,4 +237,90 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	}
 
 	return nc.ncc.Create(limaArgs...).Run()
+}
+
+func argIsEnv(arg string) bool {
+	if strings.HasPrefix(arg, "-e") || (strings.HasPrefix(arg, "--env") && !strings.HasPrefix(arg, "--env-file")) {
+		return true
+	}
+	return false
+}
+
+func handleEnv(systemDeps NerdctlCommandSystemDeps, arg, arg2 string) (bool, string) {
+	var (
+		envVar string
+		skip   bool
+	)
+	switch arg {
+	case "-e", "--env":
+		skip = true
+		envVar = arg2
+	default:
+		// flag and value are in the same string
+		if strings.HasPrefix(arg, "-e") {
+			envVar = arg[2:]
+		} else {
+			// only other case is "--env="; skip that prefix
+			envVar = arg[6:]
+		}
+	}
+
+	if strings.Contains(envVar, "=") {
+		return skip, envVar
+	}
+	// if no value was provided we need to check the OS environment
+	// for a value and only set if it exists in the current env
+	if val, ok := systemDeps.LookupEnv(envVar); ok {
+		return skip, fmt.Sprintf("%s=%s", envVar, val)
+	}
+	// no value found; do not set the variable in the env
+	return skip, ""
+}
+
+func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 string) (bool, []string, error) {
+	var (
+		filename string
+		skip     bool
+	)
+
+	switch arg {
+	case "--env-file":
+		skip = true
+		filename = arg2
+	default:
+		filename = arg[11:]
+	}
+
+	file, err := fs.Open(filepath.Clean(filename))
+	if err != nil {
+		return false, []string{}, err
+	}
+	defer file.Close() //nolint:errcheck // We did not write to the file, and the file will be closed when the CLI process exits anyway.
+
+	scanner := bufio.NewScanner(file)
+
+	var envs []string
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if len(line) == 0 {
+			continue
+		}
+		switch {
+		case strings.HasPrefix(line, "#"):
+			// ignore comments
+			continue
+		case !strings.Contains(line, "="):
+			// only has the variable name; need to lookup value
+			if val, ok := systemDeps.LookupEnv(line); ok {
+				envs = append(envs, fmt.Sprintf("%s=%s", line, val))
+			}
+		default:
+			// contains a name and value
+			envs = append(envs, line)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return skip, []string{}, err
+	}
+	return skip, envs, nil
 }

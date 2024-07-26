@@ -6,7 +6,6 @@ package command
 import (
 	"bytes"
 
-	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/system"
 )
 
@@ -35,17 +34,6 @@ type NerdctlCmdCreator interface {
 // Replacement contains source string to be replaced by target string.
 type Replacement struct {
 	Source, Target string
-}
-
-type nerdctlCmdCreator struct {
-	cmdCreator         Creator
-	logger             flog.Logger
-	systemDeps         NerdctlCmdCreatorSystemDeps
-	limaHomePath       string
-	limactlPath        string
-	binPath            string
-	nerdctlConfigPath  string
-	buildkitSocketPath string
 }
 
 var _ NerdctlCmdCreator = (*nerdctlCmdCreator)(nil)
