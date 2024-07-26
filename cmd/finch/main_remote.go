@@ -10,9 +10,10 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/system"
+	"github.com/spf13/afero"
 )
 
-func nerdctlCmdCreator(ecc command.Creator, logger flog.Logger, fp path.Finch) command.NerdctlCmdCreator {
+func nerdctlCmdCreator(ecc command.Creator, logger flog.Logger, fp path.Finch, _ string) command.NerdctlCmdCreator {
 	return command.NewNerdctlCmdCreator(ecc,
 		logger,
 		fp.LimaHomePath(),
@@ -20,4 +21,8 @@ func nerdctlCmdCreator(ecc command.Creator, logger flog.Logger, fp path.Finch) c
 		fp.QEMUBinDir(),
 		system.NewStdLib(),
 	)
+}
+
+func configureNerdctl(_ afero.Fs) error {
+	return nil
 }

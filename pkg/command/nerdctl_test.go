@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build (darwin || windows) && !native
+
 // Package command_test is not named as command to avoid circular dependency (command <-> mocks).
 package command_test
 

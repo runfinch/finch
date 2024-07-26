@@ -11,6 +11,8 @@ import (
 	"runtime"
 	"slices"
 	"strings"
+
+	"github.com/runfinch/finch/pkg/flog"
 )
 
 const (
@@ -18,6 +20,27 @@ const (
 	envKeyUnixPath = "PATH"
 	envKeyWinPath  = "Path"
 )
+
+// NewNerdctlCmdCreator returns a NerdctlCmdCreator that creates nerdctl commands.
+// In "remote" mode, it uses limactl commands, configured to use binaries at lima-related paths and then executes nerdctl.
+// In "native" mode, it directly executes nerdctl from the user's PATH.
+func NewNerdctlCmdCreator(
+	cmdCreator Creator,
+	logger flog.Logger,
+	limaHomePath,
+	limactlPath string,
+	binPath string,
+	systemDeps NerdctlCmdCreatorSystemDeps,
+) NerdctlCmdCreator {
+	return &nerdctlCmdCreator{
+		cmdCreator:   cmdCreator,
+		logger:       logger,
+		limaHomePath: limaHomePath,
+		limactlPath:  limactlPath,
+		binPath:      binPath,
+		systemDeps:   systemDeps,
+	}
+}
 
 func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, args ...string) Command {
 	ncc.logger.Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", args, envKeyLimaHome, ncc.limaHomePath)

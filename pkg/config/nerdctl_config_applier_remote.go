@@ -14,19 +14,8 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/afero/sftpfs"
 
-	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/fssh"
 )
-
-type limaConfigApplier struct {
-	cfg                    *Finch
-	cmdCreator             command.Creator
-	fs                     afero.Fs
-	limaDefaultConfigPath  string
-	limaOverrideConfigPath string
-	systemDeps             LimaConfigApplierSystemDeps
-	finchConfigPath        string
-}
 
 const nerdctlRootfulCfgPath = "/etc/nerdctl/nerdctl.toml"
 

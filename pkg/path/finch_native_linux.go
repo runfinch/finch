@@ -25,6 +25,16 @@ func (Finch) ConfigFilePath(rootDir string) string {
 	return filepath.Join(rootDir, "finch.yaml")
 }
 
+// NerdctlConfigFilePath returns the path to Finch config file.
+func (Finch) NerdctlConfigFilePath(rootDir string) string {
+	return filepath.Join(rootDir, "nerdctl", "nerdctl.toml")
+}
+
+// BuildkitSocketPath returns the path to Finch config file.
+func (Finch) BuildkitSocketPath(rootDir string) string {
+	return filepath.Join(rootDir, "buildkit", "buildkitd.toml")
+}
+
 // FindFinch finds the installation path of Finch.
 func FindFinch(deps FinchFinderDeps) (Finch, error) {
 	exe, err := deps.Executable()

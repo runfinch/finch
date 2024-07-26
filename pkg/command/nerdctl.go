@@ -38,12 +38,14 @@ type Replacement struct {
 }
 
 type nerdctlCmdCreator struct {
-	cmdCreator   Creator
-	logger       flog.Logger
-	systemDeps   NerdctlCmdCreatorSystemDeps
-	limaHomePath string
-	limactlPath  string
-	binPath      string
+	cmdCreator         Creator
+	logger             flog.Logger
+	systemDeps         NerdctlCmdCreatorSystemDeps
+	limaHomePath       string
+	limactlPath        string
+	binPath            string
+	nerdctlConfigPath  string
+	buildkitSocketPath string
 }
 
 var _ NerdctlCmdCreator = (*nerdctlCmdCreator)(nil)
@@ -57,25 +59,6 @@ type NerdctlCmdCreatorSystemDeps interface {
 	system.StdoutGetter
 	system.StderrGetter
 	system.EnvGetter
-}
-
-// NewNerdctlCmdCreator returns a NerdctlCmdCreator that creates nerdctl commands.
-// In "remote" mode, it uses limactl commands, configured to use binaries at lima-related paths and then executes nerdctl.
-// In "native" mode, it directly executes nerdctl from the user's PATH.
-func NewNerdctlCmdCreator(
-	cmdCreator Creator,
-	logger flog.Logger,
-	limaHomePath, limactlPath string, binPath string,
-	systemDeps NerdctlCmdCreatorSystemDeps,
-) NerdctlCmdCreator {
-	return &nerdctlCmdCreator{
-		cmdCreator:   cmdCreator,
-		logger:       logger,
-		limaHomePath: limaHomePath,
-		limactlPath:  limactlPath,
-		binPath:      binPath,
-		systemDeps:   systemDeps,
-	}
 }
 
 func (ncc *nerdctlCmdCreator) Create(args ...string) Command {

@@ -111,7 +111,7 @@ var newApp = func(
 		return nil
 	}
 
-	ncc := nerdctlCmdCreator(ecc, logger, fp)
+	ncc := nerdctlCmdCreator(ecc, logger, fp, finchRootPath)
 	lima := wrapper.NewLimaWrapper()
 	supportBundleBuilder := support.NewBundleBuilder(
 		logger,
@@ -134,6 +134,10 @@ var newApp = func(
 	)
 
 	rootCmd.AddCommand(allCommands...)
+
+	if err := configureNerdctl(fs); err != nil {
+		logger.Fatal(err)
+	}
 
 	return rootCmd
 }
