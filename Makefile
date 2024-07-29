@@ -55,11 +55,6 @@ arch-test:
 
 BUILD_OS ?= $(OS)
 FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
-ifeq ($(BUILD_OS), Windows_NT)
-include Makefile.windows
-else ifeq ($(UNAME_S), Darwin)
-include Makefile.darwin
-endif
 
 ifeq ($(UNAME_S),Linux)
 	# On Linux, which only supports native mode, set NATIVE_BUILD to true
@@ -72,10 +67,21 @@ ifeq ($(UNAME_S),Linux)
 	endif
 endif
 
+# if still not defined, then set to false
+ifndef $(NATIVE_BUILD)
+	NATIVE_BUILD = false
+endif
+
 ifeq ($(NATIVE_BUILD),true)
 all: finch
 else ifeq ($(NATIVE_BUILD),false)
 all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml
+endif
+
+ifeq ($(BUILD_OS), Windows_NT)
+include Makefile.windows
+else ifeq ($(UNAME_S), Darwin)
+include Makefile.darwin
 endif
 
 .PHONY: install.finch-core-dependencies
