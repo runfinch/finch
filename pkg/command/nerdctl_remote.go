@@ -8,16 +8,12 @@ package command
 import (
 	"fmt"
 	"io"
-	"runtime"
-	"slices"
-	"strings"
 
 	"github.com/runfinch/finch/pkg/flog"
 )
 
 const (
 	envKeyLimaHome = "LIMA_HOME"
-	envKeyUnixPath = "PATH"
 	envKeyWinPath  = "Path"
 )
 
@@ -55,20 +51,10 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 	ncc.logger.Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", args, envKeyLimaHome, ncc.limaHomePath)
 	cmd := ncc.cmdCreator.Create(ncc.limactlPath, args...)
 	limaHomeEnv := fmt.Sprintf("%s=%s", envKeyLimaHome, ncc.limaHomePath)
-	var pathEnv string
-	var envKeyPath string
-	var path string
-	if runtime.GOOS == "windows" {
-		envKeyPath = envKeyWinPath
-		path = ncc.systemDeps.Env(envKeyPath)
-		path = fmt.Sprintf(`%s\;%s`, ncc.binPath, path)
-		pathEnv = fmt.Sprintf("%s=%s", envKeyPath, path)
-	} else {
-		envKeyPath = envKeyUnixPath
-		path = ncc.systemDeps.Env(envKeyPath)
-		path = fmt.Sprintf("%s:%s", ncc.binPath, path)
-		pathEnv = fmt.Sprintf("%s=%s", envKeyPath, path)
-	}
+
+	path := ncc.systemDeps.Env(envKeyPath)
+	path = fmt.Sprintf(`%s%s%s`, ncc.binPath, envKeyPathJoiner, path)
+	pathEnv := fmt.Sprintf("%s=%s", envKeyPath, path)
 
 	newPathEnv := replaceOrAppend(ncc.systemDeps.Environ(), envKeyLimaHome, limaHomeEnv)
 	newPathEnv = replaceOrAppend(newPathEnv, envKeyPath, pathEnv)
@@ -78,15 +64,4 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 	cmd.SetStdout(stdout)
 	cmd.SetStderr(stderr)
 	return cmd
-}
-
-func replaceOrAppend(orig []string, varName, newVar string) []string {
-	envIdx := slices.IndexFunc(orig, func(envVar string) bool {
-		return strings.HasPrefix(envVar, fmt.Sprintf("%s=", varName))
-	})
-
-	if envIdx != -1 {
-		return slices.Replace(orig, envIdx, envIdx+1, newVar)
-	}
-	return append(orig, newVar)
 }

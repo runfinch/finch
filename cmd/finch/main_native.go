@@ -20,6 +20,7 @@ func nerdctlCmdCreator(ecc command.Creator, logger flog.Logger, fp path.Finch, f
 		logger,
 		fp.NerdctlConfigFilePath(finchRootPath),
 		fp.BuildkitSocketPath(finchRootPath),
+		fp.FinchDependencyBinDir(),
 		system.NewStdLib(),
 	)
 }

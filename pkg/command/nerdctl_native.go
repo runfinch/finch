@@ -18,6 +18,7 @@ type nerdctlCmdCreator struct {
 	systemDeps         NerdctlCmdCreatorSystemDeps
 	nerdctlConfigPath  string
 	buildkitSocketPath string
+	binPath            string
 }
 
 // NewNerdctlCmdCreator returns a NerdctlCmdCreator that creates nerdctl commands.
@@ -28,6 +29,7 @@ func NewNerdctlCmdCreator(
 	logger flog.Logger,
 	nerdctlConfigPath string,
 	buildkitSocketPath string,
+	binPath string,
 	systemDeps NerdctlCmdCreatorSystemDeps,
 ) NerdctlCmdCreator {
 	return &nerdctlCmdCreator{
@@ -35,6 +37,7 @@ func NewNerdctlCmdCreator(
 		logger:             logger,
 		nerdctlConfigPath:  nerdctlConfigPath,
 		buildkitSocketPath: buildkitSocketPath,
+		binPath:            binPath,
 		systemDeps:         systemDeps,
 	}
 }
@@ -43,8 +46,14 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 	ncc.logger.Debugf("Creating nerdctl command: ARGUMENTS: %v", args)
 	cmd := ncc.cmdCreator.Create("nerdctl", args...)
 
+	path := ncc.systemDeps.Env(envKeyPath)
+	path = fmt.Sprintf("%s:%s", ncc.binPath, path)
+	pathEnv := fmt.Sprintf("%s=%s", envKeyPath, path)
+
+	newPathEnv := replaceOrAppend(ncc.systemDeps.Environ(), envKeyPath, pathEnv)
+
 	env := append(
-		ncc.systemDeps.Environ(),
+		newPathEnv,
 		fmt.Sprintf("NERDCTL_TOML=%s", ncc.nerdctlConfigPath),
 		fmt.Sprintf("BUILDKIT_HOST=%s", ncc.buildkitSocketPath),
 	)

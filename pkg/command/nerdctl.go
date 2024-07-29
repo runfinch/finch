@@ -5,6 +5,9 @@ package command
 
 import (
 	"bytes"
+	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/runfinch/finch/pkg/system"
 )
@@ -82,4 +85,15 @@ func (ncc *nerdctlCmdCreator) replaceBytes(s []byte, rs []Replacement) []byte {
 		s = bytes.ReplaceAll(s, []byte(r.Source), []byte(r.Target))
 	}
 	return s
+}
+
+func replaceOrAppend(orig []string, varName, newVar string) []string {
+	envIdx := slices.IndexFunc(orig, func(envVar string) bool {
+		return strings.HasPrefix(envVar, fmt.Sprintf("%s=", varName))
+	})
+
+	if envIdx != -1 {
+		return slices.Replace(orig, envIdx, envIdx+1, newVar)
+	}
+	return append(orig, newVar)
 }
