@@ -122,13 +122,13 @@ uninstall: uninstall.finch
 
 .PHONY: finch
 ifeq ($(GOOS),windows)
-finch: finch-windows finch-general
+finch: finch-windows finch-all
 else ifeq ($(GOOS),darwin)
 finch: finch-macos
 else ifeq ($(NATIVE_BUILD),true)
 finch: finch-native
 else
-finch: finch-general
+finch: finch-all
 endif
 
 finch-windows:
@@ -139,12 +139,12 @@ finch-macos: export CGO_CFLAGS := -mmacosx-version-min=$(MIN_MACOS_VERSION)
 finch-macos: export CGO_LDFLAGS := -mmacosx-version-min=$(MIN_MACOS_VERSION)
 finch-macos: finch-unix
 
-finch-unix: finch-general
+finch-unix: finch-all
 
 finch-native: GO_BUILD_TAGS += native
-finch-native: finch-general
+finch-native: finch-all
 
-finch-general:
+finch-all:
 	$(GO) build -ldflags $(LDFLAGS) -tags "$(GO_BUILD_TAGS)" -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
 
 .PHONY: release
