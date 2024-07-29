@@ -22,8 +22,9 @@ LIMA_EXTENSION := .tar.gz
 LIMA_VDE_SUDOERS_FILE := /etc/sudoers.d/finch-lima
 # Final installation prefix for vde created by CLI after installation, only used in uninstall step
 VDE_INSTALL ?= /opt/finch
-UNAME := $(shell uname -m)
-ARCH ?= $(UNAME)
+UNAME_M := $(shell uname -m)
+UNAME_S := $(shell uname -s)
+ARCH ?= $(UNAME_M)
 SUPPORTED_ARCH = false
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
@@ -56,11 +57,26 @@ BUILD_OS ?= $(OS)
 FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
 ifeq ($(BUILD_OS), Windows_NT)
 include Makefile.windows
-else
+else ifeq ($(UNAME_S), Darwin)
 include Makefile.darwin
 endif
 
+ifeq ($(UNAME_S),Linux)
+	# On Linux, which only supports native mode, set NATIVE_BUILD to true
+	# unless it was explicitly set to false
+	ifneq ($(NATIVE_BUILD),false)
+		NATIVE_BUILD = true
+	endif
+	ifndef $(NATIVE_BUILD)
+		NATIVE_BUILD = true
+	endif
+endif
+
+ifeq ($(NATIVE_BUILD),true)
+all: finch
+else ifeq ($(NATIVE_BUILD),false)
 all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml
+endif
 
 .PHONY: install.finch-core-dependencies
 install.finch-core-dependencies:
@@ -109,7 +125,7 @@ ifeq ($(GOOS),windows)
 finch: finch-windows finch-general
 else ifeq ($(GOOS),darwin)
 finch: finch-macos
-else ifeq ($(GOOS),linux)
+else ifeq ($(NATIVE_BUILD),true)
 finch: finch-native
 else
 finch: finch-general
