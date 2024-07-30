@@ -70,6 +70,8 @@ else ifeq ($(BUILD_OS), Linux)
 # set by the environment
 NATIVE_BUILD ?= true
 endif
+# if not set at this point, default it to false
+NATIVE_BUILD ?= false
 
 ifeq ($(NATIVE_BUILD),true)
 all: finch
