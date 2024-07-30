@@ -11,8 +11,8 @@ import (
 )
 
 func (va *versionAction) printVersion(format string) error {
-	limaArgs := []string{"version", "--format", "json"}
-	out, err := va.creator.CreateWithoutStdio(limaArgs...).Output()
+	nerdctlArgs := []string{"version", "--format", "json"}
+	out, err := va.creator.CreateWithoutStdio(nerdctlArgs...).Output()
 	if err != nil {
 		return fmt.Errorf("failed to create the nerdctl version command: %w", err)
 	}
