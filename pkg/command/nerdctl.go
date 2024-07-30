@@ -12,7 +12,7 @@ import (
 	"github.com/runfinch/finch/pkg/system"
 )
 
-// NerdctlCmdCreator creates a limactl command.
+// NerdctlCmdCreator creates a nerdctl command.
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/command_nerdctl_cmd_creator.go -package=mocks -mock_names NerdctlCmdCreator=NerdctlCmdCreator . NerdctlCmdCreator
 type NerdctlCmdCreator interface {
