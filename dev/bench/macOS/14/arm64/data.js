@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1721780103107,
+  "lastUpdate": 1722367628365,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -33846,6 +33846,174 @@ window.BENCHMARK_DATA = {
             "value": 375,
             "unit": "allocs/op",
             "extra": "4 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d5a58a84972e6595aa73dcb0d7352d23b81eb952",
+          "message": "ci(deps): bump golangci/golangci-lint-action from 6.0.1 to 6.1.0 (#1049)\n\nBumps\r\n[golangci/golangci-lint-action](https://github.com/golangci/golangci-lint-action)\r\nfrom 6.0.1 to 6.1.0.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/golangci/golangci-lint-action/releases\">golangci/golangci-lint-action's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v6.1.0</h2>\r\n<!-- raw HTML omitted -->\r\n<h2>What's Changed</h2>\r\n<h3>Changes</h3>\r\n<ul>\r\n<li>feat: allow to skip golangci-lint installation by <a\r\nhref=\"https://github.com/ldez\"><code>@​ldez</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1079\">golangci/golangci-lint-action#1079</a></li>\r\n</ul>\r\n<h3>Documentation</h3>\r\n<ul>\r\n<li>docs: add Go workspace examples by <a\r\nhref=\"https://github.com/ldez\"><code>@​ldez</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1064\">golangci/golangci-lint-action#1064</a></li>\r\n</ul>\r\n<h3>Dependencies</h3>\r\n<ul>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.12.8 to 20.12.11\r\nby <a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a>\r\nin <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1041\">golangci/golangci-lint-action#1041</a></li>\r\n<li>build(deps-dev): bump <code>@​typescript-eslint/eslint-plugin</code>\r\nfrom 7.8.0 to 7.9.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1042\">golangci/golangci-lint-action#1042</a></li>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.12.11 to\r\n20.12.12 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1043\">golangci/golangci-lint-action#1043</a></li>\r\n<li>build(deps-dev): bump <code>@​typescript-eslint/parser</code> from\r\n7.8.0 to 7.9.0 by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1044\">golangci/golangci-lint-action#1044</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group with 2 updates by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1047\">golangci/golangci-lint-action#1047</a></li>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.12.12 to 20.14.0\r\nin the dependencies group by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1051\">golangci/golangci-lint-action#1051</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group across 1 directory\r\nwith 3 updates by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1053\">golangci/golangci-lint-action#1053</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group with 3 updates by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1061\">golangci/golangci-lint-action#1061</a></li>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.14.0 to 20.14.2\r\nin the dependencies group by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1062\">golangci/golangci-lint-action#1062</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group with 3 updates by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1063\">golangci/golangci-lint-action#1063</a></li>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.14.2 to 20.14.8\r\nin the dependencies group by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1066\">golangci/golangci-lint-action#1066</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group with 3 updates by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1065\">golangci/golangci-lint-action#1065</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group with 2 updates by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1067\">golangci/golangci-lint-action#1067</a></li>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.14.8 to 20.14.9\r\nin the dependencies group by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1068\">golangci/golangci-lint-action#1068</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group with 4 updates by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1071\">golangci/golangci-lint-action#1071</a></li>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.14.9 to 20.14.10\r\nin the dependencies group by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1072\">golangci/golangci-lint-action#1072</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group with 3 updates by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1073\">golangci/golangci-lint-action#1073</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group with 3 updates by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1074\">golangci/golangci-lint-action#1074</a></li>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.14.10 to\r\n20.14.11 in the dependencies group by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1075\">golangci/golangci-lint-action#1075</a></li>\r\n<li>build(deps-dev): bump the dev-dependencies group with 3 updates by\r\n<a href=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in\r\n<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1077\">golangci/golangci-lint-action#1077</a></li>\r\n<li>build(deps): bump <code>@​types/node</code> from 20.14.11 to 22.0.0\r\nin the dependencies group by <a\r\nhref=\"https://github.com/dependabot\"><code>@​dependabot</code></a> in <a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/pull/1078\">golangci/golangci-lint-action#1078</a></li>\r\n</ul>\r\n<p><strong>Full Changelog</strong>: <a\r\nhref=\"https://github.com/golangci/golangci-lint-action/compare/v6.0.1...v6.1.0\">https://github.com/golangci/golangci-lint-action/compare/v6.0.1...v6.1.0</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/aaa42aa0628b4ae2578232a66b541047968fac86\"><code>aaa42aa</code></a>\r\nfeat: allow to skip golangci-lint installation (<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/issues/1079\">#1079</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/9ec89731c3231147ae014c73448ce9a7240d661b\"><code>9ec8973</code></a>\r\nbuild(deps): bump <code>@​types/node</code> from 20.14.11 to 22.0.0 in\r\nthe dependencies gro...</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/58838cffc6bda5bd2ec1d112b85e698357d129ab\"><code>58838cf</code></a>\r\nbuild(deps-dev): bump the dev-dependencies group with 3 updates (<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/issues/1077\">#1077</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/9f3ba2c3a8aadb9f3c42d252c4c227a6b0d98539\"><code>9f3ba2c</code></a>\r\nbuild(deps): bump <code>@​types/node</code> from 20.14.10 to 20.14.11 in\r\nthe dependencies g...</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/2bd7a04e9163c07aaa1d5eabf703d7380133d655\"><code>2bd7a04</code></a>\r\nbuild(deps-dev): bump the dev-dependencies group with 3 updates (<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/issues/1074\">#1074</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/db819a10bda59ee2a8f342af52c07e329576a0f5\"><code>db819a1</code></a>\r\nbuild(deps-dev): bump the dev-dependencies group with 3 updates (<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/issues/1073\">#1073</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/d09fb0808ae08b4310fe3140992ba2475deac1c0\"><code>d09fb08</code></a>\r\nbuild(deps): bump <code>@​types/node</code> from 20.14.9 to 20.14.10 in\r\nthe dependencies gr...</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/605617a3e2eaed801714e186af8a440496363f8d\"><code>605617a</code></a>\r\nbuild(deps-dev): bump the dev-dependencies group with 4 updates (<a\r\nhref=\"https://redirect.github.com/golangci/golangci-lint-action/issues/1071\">#1071</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/66f63c74bb4cdd7d445cb7c8c18dee38449cb1c5\"><code>66f63c7</code></a>\r\nchore: generate</li>\r\n<li><a\r\nhref=\"https://github.com/golangci/golangci-lint-action/commit/2c01d264abe04570211ba8d3c6d3aa17eced3c80\"><code>2c01d26</code></a>\r\nfix: home dir on Windows</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/golangci/golangci-lint-action/compare/a4f60bb28d35aeee14e6880718e0c85ff1882e64...aaa42aa0628b4ae2578232a66b541047968fac86\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golangci/golangci-lint-action&package-manager=github_actions&previous-version=6.0.1&new-version=6.1.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-07-30T15:11:23-04:00",
+          "tree_id": "c44e5b7c1aff4995d824e8e536d76b8609c9bfe6",
+          "url": "https://github.com/runfinch/finch/commit/d5a58a84972e6595aa73dcb0d7352d23b81eb952"
+        },
+        "date": 1722367627589,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 82422114542,
+            "unit": "ns/op\t         0.2850 %cpu_avg/op\t        33.33 %cpu_peak/op\t        82.42 cpu_seconds/op\t3298574336 disk_bytes/op\t 3690528 B/op\t   77723 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 82422114542,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.285,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 33.33,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 82.42,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 3298574336,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3690528,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 77723,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 20190558500,
+            "unit": "ns/op\t         0.4600 %cpu_avg/op\t        40.00 %cpu_peak/op\t        20.19 cpu_seconds/op\t   4509696 disk_bytes/op\t  910728 B/op\t   19109 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 20190558500,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.46,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 40,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 20.19,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 4509696,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 910728,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 19109,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 246990242,
+            "unit": "ns/op\t         0.6492 %cpu_avg/op\t         6.944 %cpu_peak/op\t         0.2469 cpu_seconds/op\t     13926 disk_bytes/op\t   21425 B/op\t     277 allocs/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 246990242,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.6492,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 6.944,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2469,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 13926,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 21425,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 277,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
           }
         ]
       }
