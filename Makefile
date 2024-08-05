@@ -61,22 +61,17 @@ endif
 
 FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
 
+remote-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml
+
 ifeq ($(BUILD_OS), Windows_NT)
 include Makefile.windows
+all: remote-all
 else ifeq ($(BUILD_OS), Darwin)
 include Makefile.darwin
+all: remote-all
 else ifeq ($(BUILD_OS), Linux)
-# on Linux, set NATIVE_BUILD unless it was otherwise
-# set by the environment
-NATIVE_BUILD ?= true
-endif
-# if not set at this point, default it to false
-NATIVE_BUILD ?= false
-
-ifeq ($(NATIVE_BUILD),true)
+# on Linux, we only need to build "finch"
 all: finch
-else ifeq ($(NATIVE_BUILD),false)
-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml
 endif
 
 .PHONY: install.finch-core-dependencies

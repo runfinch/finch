@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//go:build (darwin || windows) && !native
+//go:build darwin || windows
 
 // Package path contains functions to find/calculate path used in the project.
 package path

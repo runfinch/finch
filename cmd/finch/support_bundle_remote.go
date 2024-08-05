@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//go:build (darwin || windows) && !native
+//go:build darwin || windows
 
 package main
 
@@ -11,7 +11,7 @@ import (
 	"github.com/runfinch/finch/pkg/lima"
 )
 
-func (gsa *generateSupportBundleAction) assertVMExists() error {
+func (gsa *generateSupportBundleAction) canCreateBundle() error {
 	status, err := lima.GetVMStatus(gsa.ncc, gsa.logger, limaInstanceName)
 	if err != nil {
 		return err

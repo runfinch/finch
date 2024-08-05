@@ -71,7 +71,7 @@ func (gsa *generateSupportBundleAction) runAdapter(cmd *cobra.Command, _ []strin
 }
 
 func (gsa *generateSupportBundleAction) run(additionalFiles []string, excludeFiles []string) error {
-	err := gsa.assertVMExists()
+	err := gsa.canCreateBundle()
 	if err != nil {
 		return err
 	}

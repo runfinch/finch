@@ -16,11 +16,8 @@ import (
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
-	"github.com/runfinch/finch/pkg/lima/wrapper"
 	"github.com/runfinch/finch/pkg/path"
-	"github.com/runfinch/finch/pkg/support"
 	"github.com/runfinch/finch/pkg/system"
-	"github.com/runfinch/finch/pkg/version"
 )
 
 const finchRootCmd = "finch"
@@ -79,67 +76,6 @@ func xmain(logger flog.Logger,
 		finchRootPath,
 		ecc,
 	).Execute()
-}
-
-var newApp = func(
-	logger flog.Logger,
-	fp path.Finch,
-	fs afero.Fs,
-	fc *config.Finch,
-	stdOut io.Writer,
-	home,
-	finchRootPath string,
-	ecc command.Creator,
-) *cobra.Command {
-	usage := fmt.Sprintf("%v <command>", finchRootCmd)
-	rootCmd := &cobra.Command{
-		Use:           usage,
-		Short:         "Finch: open-source container development tool",
-		SilenceUsage:  true,
-		SilenceErrors: true,
-		Version:       version.Version,
-	}
-	// TODO: Decide when to forward --debug to the dependencies
-	// (e.g. nerdctl for container commands and limactl for VM commands).
-	rootCmd.PersistentFlags().Bool("debug", false, "running under debug mode")
-	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
-		// running commands under debug mode will print out debug logs
-		debugMode, _ := cmd.Flags().GetBool("debug")
-		if debugMode {
-			logger.SetLevel(flog.Debug)
-		}
-		return nil
-	}
-
-	ncc := nerdctlCmdCreator(ecc, logger, fp, finchRootPath)
-	lima := wrapper.NewLimaWrapper()
-	supportBundleBuilder := support.NewBundleBuilder(
-		logger,
-		fs,
-		support.NewBundleConfig(fp, finchRootPath),
-		fp,
-		ecc,
-		ncc,
-		lima,
-	)
-
-	// append nerdctl commands
-	allCommands := initializeNerdctlCommands(ncc, ecc, logger, fs, fc)
-	// append finch specific commands
-	allCommands = append(allCommands,
-		newVersionCommand(ncc, logger, stdOut),
-		virtualMachineCommands(logger, fp, ncc, ecc, fs, fc, home, finchRootPath),
-		newSupportBundleCommand(logger, supportBundleBuilder, ncc),
-		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
-	)
-
-	rootCmd.AddCommand(allCommands...)
-
-	if err := configureNerdctl(fs); err != nil {
-		logger.Fatal(err)
-	}
-
-	return rootCmd
 }
 
 func initializeNerdctlCommands(

@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin || windows
+
 // Package disk manages the persistent disk used to save containerd user data
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_disk_disk.go -package=mocks -mock_names UserDataDiskManager=UserDataDiskManager,diskFS=MockdiskFS -source=disk.go .
