@@ -1,0 +1,9 @@
+# Fail third party dependency usage if not covered by the curated set of pre-approved licenses.
+#
+# List was generated from guidance set forth by Amazon open source usage policies.
+allow-licenses:
+  - 'Apache-2.0'
+  - 'BSD-2-Clause'
+  - 'BSD-3-Clause'
+  - 'ISC'
+  - 'MIT'
