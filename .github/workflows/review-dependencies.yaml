@@ -1,0 +1,24 @@
+name: Review dependencies
+
+on:
+  pull_request:
+    branches: ['main', 'release/**']
+    paths:
+      - 'go.*'
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Write permissions needed to comment review results on PR.
+      # Pwn request risk mitigated by using pull_request workflow trigger
+      # and external contributor workflow runs require maintainer approval.
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/dependency-review-action@5a2ce3f5b92ee19cbb1541a4984c76d921601d7c # v4.3.4
+        with:
+          config-file: './.github/dependency-review-config.yml'
+          comment-summary-in-pr: always

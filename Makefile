@@ -219,6 +219,13 @@ download-licenses:
 
     ### dependencies in release-please.yaml - end ###
 
+    ### dependencies in review-dependencies.yaml - start ###
+
+	mkdir -p "$(LICENSEDIR)/github.com/actions/dependency-review-action"
+	curl https://github.com/actions/dependency-review-action/main/LICENSE --output "$(LICENSEDIR)/github.com/actions/dependency-review-action/LICENSE"
+
+    ### dependencies in review-dependencies.yaml - end ###
+
     ### system-level dependencies - start ###
 
 	mkdir -p "$(LICENSEDIR)/github.com/lima-vm/lima"
