@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1722965545308,
+  "lastUpdate": 1722965848628,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -35022,6 +35022,174 @@ window.BENCHMARK_DATA = {
             "value": 285,
             "unit": "allocs/op",
             "extra": "5 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "66ceee43089998266812efdc759fd4b57c504bde",
+          "message": "build(deps): bump github.com/onsi/gomega from 1.33.1 to 1.34.1 (#1048)\n\nBumps [github.com/onsi/gomega](https://github.com/onsi/gomega) from\r\n1.33.1 to 1.34.1.\r\n<details>\r\n<summary>Release notes</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/onsi/gomega/releases\">github.com/onsi/gomega's\r\nreleases</a>.</em></p>\r\n<blockquote>\r\n<h2>v1.34.1</h2>\r\n<h2>1.34.1</h2>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>Use slices from exp/slices to keep golang 1.20 compat [5e71dcd]</li>\r\n</ul>\r\n<h2>v1.34.0</h2>\r\n<h2>1.34.0</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>Add RoundTripper method to ghttp.Server [c549e0d]</li>\r\n</ul>\r\n<h3>Fixes</h3>\r\n<ul>\r\n<li>fix incorrect handling of nil slices in HaveExactElements (fixes <a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/771\">#771</a>)\r\n[878940c]</li>\r\n<li>issue_765 - fixed bug in Hopcroft-Karp algorithm [ebadb67]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>bump ginkgo [8af2ece]</li>\r\n<li>Fix typo in docs [123a071]</li>\r\n<li>Bump github.com/onsi/ginkgo/v2 from 2.17.2 to 2.17.3 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/756\">#756</a>)\r\n[0e69083]</li>\r\n<li>Bump google.golang.org/protobuf from 1.33.0 to 1.34.1 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/755\">#755</a>)\r\n[2675796]</li>\r\n<li>Bump golang.org/x/net from 0.24.0 to 0.25.0 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/754\">#754</a>)\r\n[4160c0f]</li>\r\n<li>Bump github-pages from 230 to 231 in /docs (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/748\">#748</a>)\r\n[892c303]</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a\r\nhref=\"https://github.com/onsi/gomega/blob/master/CHANGELOG.md\">github.com/onsi/gomega's\r\nchangelog</a>.</em></p>\r\n<blockquote>\r\n<h2>1.34.1</h2>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>Use slices from exp/slices to keep golang 1.20 compat [5e71dcd]</li>\r\n</ul>\r\n<h2>1.34.0</h2>\r\n<h3>Features</h3>\r\n<ul>\r\n<li>Add RoundTripper method to ghttp.Server [c549e0d]</li>\r\n</ul>\r\n<h3>Fixes</h3>\r\n<ul>\r\n<li>fix incorrect handling of nil slices in HaveExactElements (fixes <a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/771\">#771</a>)\r\n[878940c]</li>\r\n<li>issue_765 - fixed bug in Hopcroft-Karp algorithm [ebadb67]</li>\r\n</ul>\r\n<h3>Maintenance</h3>\r\n<ul>\r\n<li>bump ginkgo [8af2ece]</li>\r\n<li>Fix typo in docs [123a071]</li>\r\n<li>Bump github.com/onsi/ginkgo/v2 from 2.17.2 to 2.17.3 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/756\">#756</a>)\r\n[0e69083]</li>\r\n<li>Bump google.golang.org/protobuf from 1.33.0 to 1.34.1 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/755\">#755</a>)\r\n[2675796]</li>\r\n<li>Bump golang.org/x/net from 0.24.0 to 0.25.0 (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/754\">#754</a>)\r\n[4160c0f]</li>\r\n<li>Bump github-pages from 230 to 231 in /docs (<a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/748\">#748</a>)\r\n[892c303]</li>\r\n</ul>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/fa057b845528c9336265d6df77e21d827f268c7d\"><code>fa057b8</code></a>\r\nv1.34.1</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/5e71dcd56a0fbef9afebe5922242772b83bf31a7\"><code>5e71dcd</code></a>\r\nUse slices from exp/slices to keep golang 1.20 compat</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/32e5498ab3b29bca44b5178a21073187bb0ae8db\"><code>32e5498</code></a>\r\nv1.34.0</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/cb3fa6a593fc3bd7693dcb1855ea4643875596e1\"><code>cb3fa6a</code></a>\r\nrun go mod tidy and wonder why go get doesnt just run it for me in the\r\nfirst ...</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/8af2ece8247f1be7b3595a0af472752c12215c58\"><code>8af2ece</code></a>\r\nbump ginkgo</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/878940cf2a236aea525f81e80a147d2be6cc38e3\"><code>878940c</code></a>\r\nfix incorrect handling of nil slices in HaveExactElements (fixes <a\r\nhref=\"https://redirect.github.com/onsi/gomega/issues/771\">#771</a>)</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/f5bec80718b411ff0d1a07306b8a6b1cf2a00b89\"><code>f5bec80</code></a>\r\nclean up bipartitegraph tests</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/ebadb6778a63ea433c408cae730d96c23e896217\"><code>ebadb67</code></a>\r\nissue_765 - fixed bug in Hopcroft-Karp algorithm</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/123a07101709b7dd894807a99a747c62c6e68b75\"><code>123a071</code></a>\r\nFix typo in docs</li>\r\n<li><a\r\nhref=\"https://github.com/onsi/gomega/commit/c549e0d8f3c75dc469b2ef55ad6ddd59d5e351af\"><code>c549e0d</code></a>\r\nAdd RoundTripper method to ghttp.Server</li>\r\n<li>Additional commits viewable in <a\r\nhref=\"https://github.com/onsi/gomega/compare/v1.33.1...v1.34.1\">compare\r\nview</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility\r\nscore](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=github.com/onsi/gomega&package-manager=go_modules&previous-version=1.33.1&new-version=1.34.1)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't\r\nalter it yourself. You can also trigger a rebase manually by commenting\r\n`@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits\r\nthat have been made to it\r\n- `@dependabot merge` will merge this PR after your CI passes on it\r\n- `@dependabot squash and merge` will squash and merge this PR after\r\nyour CI passes on it\r\n- `@dependabot cancel merge` will cancel a previously requested merge\r\nand block automerging\r\n- `@dependabot reopen` will reopen this PR if it is closed\r\n- `@dependabot close` will close this PR and stop Dependabot recreating\r\nit. You can achieve the same result by closing it manually\r\n- `@dependabot show <dependency name> ignore conditions` will show all\r\nof the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop\r\nDependabot creating any more for this major version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop\r\nDependabot creating any more for this minor version (unless you reopen\r\nthe PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop\r\nDependabot creating any more for this dependency (unless you reopen the\r\nPR or upgrade to it yourself)\r\n\r\n\r\n</details>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2024-08-06T12:32:37-04:00",
+          "tree_id": "c2309a0a91045d4c15003971083dd0a8c028c263",
+          "url": "https://github.com/runfinch/finch/commit/66ceee43089998266812efdc759fd4b57c504bde"
+        },
+        "date": 1722965848002,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 82832446750,
+            "unit": "ns/op\t         0.3025 %cpu_avg/op\t        42.86 %cpu_peak/op\t        82.83 cpu_seconds/op\t3299487744 disk_bytes/op\t 3706088 B/op\t   78066 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 82832446750,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.3025,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 42.86,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 82.83,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 3299487744,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3706088,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 78066,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 19834717792,
+            "unit": "ns/op\t         0.4382 %cpu_avg/op\t        42.86 %cpu_peak/op\t        19.83 cpu_seconds/op\t  44048384 disk_bytes/op\t  893848 B/op\t   18738 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 19834717792,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4382,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 42.86,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 19.83,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 44048384,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 893848,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 18738,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 268064542,
+            "unit": "ns/op\t         0.8694 %cpu_avg/op\t        12.50 %cpu_peak/op\t         0.2680 cpu_seconds/op\t     12288 disk_bytes/op\t   22322 B/op\t     299 allocs/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 268064542,
+            "unit": "ns/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 0.8694,
+            "unit": "%cpu_avg/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 12.5,
+            "unit": "%cpu_peak/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.268,
+            "unit": "cpu_seconds/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 12288,
+            "unit": "disk_bytes/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22322,
+            "unit": "B/op",
+            "extra": "4 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 299,
+            "unit": "allocs/op",
+            "extra": "4 times\n8 procs"
           }
         ]
       }
