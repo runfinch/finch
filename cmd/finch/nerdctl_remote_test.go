@@ -11,10 +11,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/runfinch/finch/pkg/config"
-	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/runfinch/finch/pkg/config"
+	"github.com/runfinch/finch/pkg/mocks"
 )
 
 func TestNerdctlCommand_withVMErrors(t *testing.T) {

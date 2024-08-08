@@ -12,9 +12,9 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 )
 
-const (
-	EnvKeyLimaHome = "LIMA_HOME"
-)
+// EnvKeyLimaHome is the name of the environment variable that Lima uses to set the "lima home" path.
+// This is exported to facilitate unit testing, since it uses a different package (command_test).
+const EnvKeyLimaHome = "LIMA_HOME"
 
 type nerdctlCmdCreator struct {
 	cmdCreator   Creator
