@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin || windows
+
 package main
 
 import (
@@ -10,13 +12,12 @@ import (
 	"runtime"
 	"testing"
 
-	"gopkg.in/yaml.v3"
-
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/version"
+	"gopkg.in/yaml.v3"
 
 	"github.com/golang/mock/gomock"
 	"github.com/spf13/afero"
@@ -25,24 +26,21 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const configStr = `
+const remoteConfigStr = `
 memory: 4GiB
 cpus: 8
 `
 
-//nolint:paralleltest // It may not be a good idea to run main() with other tests in parallel.
-func TestMainFunc(_ *testing.T) {
-	main()
+type xmainTestCases []struct {
+	name    string
+	mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
+	wantErr error
 }
 
 func TestXmain(t *testing.T) {
 	t.Parallel()
 
-	testCases := []struct {
-		name    string
-		mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
-		wantErr error
-	}{
+	testCases := xmainTestCases{
 		{
 			name: "failed to find the finch path from path.FindFinch",
 			wantErr: fmt.Errorf("failed to find the installation path of Finch: %w",
@@ -60,11 +58,7 @@ func TestXmain(t *testing.T) {
 		},
 	}
 
-	darwinTestCases := []struct {
-		name    string
-		mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
-		wantErr error
-	}{
+	darwinTestCases := xmainTestCases{
 		{
 			name:    "happy path",
 			wantErr: nil,
@@ -75,7 +69,7 @@ func TestXmain(t *testing.T) {
 				loadCfgDeps *mocks.LoadSystemDeps,
 				mem *mocks.Memory,
 			) {
-				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
+				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(remoteConfigStr), 0o600))
 
 				// called additionally in FinchRootDir
 				ffd.EXPECT().GetUserHome().Return("/home", nil).Times(2)
@@ -112,11 +106,7 @@ func TestXmain(t *testing.T) {
 		},
 	}
 
-	windowsTestCases := []struct {
-		name    string
-		mockSvc func(*mocks.Logger, *mocks.FinchFinderDeps, afero.Fs, *mocks.LoadSystemDeps, *mocks.Memory)
-		wantErr error
-	}{
+	windowsTestCases := xmainTestCases{
 		{
 			name:    "happy path",
 			wantErr: nil,
@@ -127,7 +117,7 @@ func TestXmain(t *testing.T) {
 				_ *mocks.LoadSystemDeps,
 				_ *mocks.Memory,
 			) {
-				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(configStr), 0o600))
+				require.NoError(t, afero.WriteFile(fs, "/home/.finch/finch.yaml", []byte(remoteConfigStr), 0o600))
 
 				ffd.EXPECT().GetUserHome().Return("/home", nil)
 				ffd.EXPECT().Env("LOCALAPPDATA").Return("/home/")
@@ -161,9 +151,10 @@ func TestXmain(t *testing.T) {
 		},
 	}
 
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		testCases = append(testCases, windowsTestCases...)
-	} else {
+	case "darwin":
 		testCases = append(testCases, darwinTestCases...)
 	}
 	for _, tc := range testCases {
@@ -195,7 +186,7 @@ func TestNewApp(t *testing.T) {
 	stdOut := os.Stdout
 	ecc := mocks.NewCommandCreator(ctrl)
 
-	require.NoError(t, afero.WriteFile(fs, "/real/config.yaml", []byte(configStr), 0o600))
+	require.NoError(t, afero.WriteFile(fs, "/real/config.yaml", []byte(remoteConfigStr), 0o600))
 
 	cmd := newApp(l, fp, fs, &config.Finch{}, stdOut, "", "", ecc)
 

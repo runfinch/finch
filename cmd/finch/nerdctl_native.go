@@ -21,7 +21,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	}
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
-		return nc.ncc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, args...)
+		return nc.ncc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, append([]string{cmdName}, args...)...)
 	}
 
 	return nc.ncc.Create(append([]string{cmdName}, args...)...).Run()

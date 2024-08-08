@@ -6,46 +6,35 @@
 package path
 
 import (
-	"fmt"
 	"path/filepath"
 )
 
-// FinchRootDir returns the path to the Finch root directory, which is $HOME on UNIX.
-func (Finch) FinchRootDir(_ FinchFinderDeps) (string, error) {
-	return filepath.Join("/", "etc", "finch"), nil
+func NewFinchPath() Finch {
+	return Finch(filepath.Join("/", "etc", "finch"))
 }
 
 // FinchDir returns the path to the Finch config directory.
-func (Finch) FinchDir(rootDir string) string {
-	return rootDir
+func (fp Finch) FinchDir() string {
+	return string(fp)
 }
 
 // ConfigFilePath returns the path to Finch config file.
-func (Finch) ConfigFilePath(rootDir string) string {
-	return filepath.Join(rootDir, "finch.yaml")
+func (fp Finch) ConfigFilePath() string {
+	return filepath.Join(string(fp), "finch.yaml")
 }
 
 // NerdctlConfigFilePath returns the path to Finch config file.
-func (Finch) NerdctlConfigFilePath(rootDir string) string {
-	return filepath.Join(rootDir, "nerdctl", "nerdctl.toml")
+func (fp Finch) NerdctlConfigFilePath() string {
+	return filepath.Join(string(fp), "nerdctl", "nerdctl.toml")
 }
 
 // BuildkitSocketPath returns the path to the Buildkit socket file.
-func (Finch) BuildkitSocketPath(rootDir string) string {
-	return filepath.Join(rootDir, "buildkit", "buildkitd.toml")
+func (fp Finch) BuildkitSocketPath() string {
+	return filepath.Join(string(fp), "buildkit", "buildkitd.toml")
 }
 
 // FinchDependencyBinDir returns the path to Finch's local helper or dependency binaries.
 // Currently used for vended version of BuildKit.
 func (Finch) FinchDependencyBinDir() string {
 	return filepath.Join("/", "usr", "libexec", "finch")
-}
-
-// FindFinch finds the installation path of Finch.
-func FindFinch(deps FinchFinderDeps) (Finch, error) {
-	exe, err := deps.Executable()
-	if err != nil {
-		return "", fmt.Errorf("failed to locate the executable that starts this process: %w", err)
-	}
-	return Finch(exe), nil
 }

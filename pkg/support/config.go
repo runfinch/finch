@@ -3,9 +3,12 @@
 
 package support
 
-import (
-	fpath "github.com/runfinch/finch/pkg/path"
-)
+import fpath "github.com/runfinch/finch/pkg/path"
+
+type bundleConfig struct {
+	finch   fpath.Finch
+	rootDir string
+}
 
 // BundleConfig provides methods that configure what is included in a support bundle.
 //
@@ -15,15 +18,10 @@ type BundleConfig interface {
 	ConfigFiles() []string
 }
 
-type bundleConfig struct {
-	finch   fpath.Finch
-	homeDir string
-}
-
 // NewBundleConfig creates a new bundleConfig.
-func NewBundleConfig(finch fpath.Finch, homeDir string) BundleConfig {
+func NewBundleConfig(finch fpath.Finch, rootDir string) BundleConfig {
 	return &bundleConfig{
 		finch:   finch,
-		homeDir: homeDir,
+		rootDir: rootDir,
 	}
 }
