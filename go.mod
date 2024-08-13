@@ -25,7 +25,7 @@ require (
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
 	golang.org/x/tools v0.24.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.30.3
+	k8s.io/apimachinery v0.31.0
 )
 
 require (
@@ -59,11 +59,11 @@ require (
 	golang.org/x/sync v0.8.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240227224415-6ceb2ff114de // indirect
 	google.golang.org/grpc v1.63.2 // indirect
-	google.golang.org/protobuf v1.34.1 // indirect
+	google.golang.org/protobuf v1.34.2 // indirect
 )
 
 require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
@@ -77,7 +77,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/otiai10/copy v1.14.0 // indirect
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
-	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.opencensus.io v0.24.0 // indirect
@@ -87,5 +87,5 @@ require (
 	golang.org/x/text v0.17.0
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
-	k8s.io/klog/v2 v2.120.1 // indirect
+	k8s.io/klog/v2 v2.130.1 // indirect
 )
