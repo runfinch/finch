@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.2.3](https://github.com/runfinch/finch/compare/v1.2.2...v1.2.3) (2024-08-13)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.30.1 to 1.30.3 ([#1028](https://github.com/runfinch/finch/issues/1028)) ([dcb3865](https://github.com/runfinch/finch/commit/dcb38650fa4c0038cabecb3fb17b3c8b03ca63a3))
+* **deps:** bump github.com/docker/cli from 27.0.3+incompatible to 27.1.0+incompatible ([#1041](https://github.com/runfinch/finch/issues/1041)) ([187dd56](https://github.com/runfinch/finch/commit/187dd5659b0a1f9a9644bcbb6bac6cd972a5d698))
+* **deps:** bump github.com/docker/cli from 27.1.0+incompatible to 27.1.1+incompatible ([#1045](https://github.com/runfinch/finch/issues/1045)) ([9e9dec8](https://github.com/runfinch/finch/commit/9e9dec89b3c58c2c3f36ac5c7f026cdddc510734))
+* **deps:** bump github.com/docker/docker from 27.0.3+incompatible to 27.1.0+incompatible ([#1042](https://github.com/runfinch/finch/issues/1042)) ([942b639](https://github.com/runfinch/finch/commit/942b639659f35f43cb740d81c30e46f85b6d0912))
+* **deps:** bump github.com/docker/docker from 27.1.0+incompatible to 27.1.1+incompatible ([#1044](https://github.com/runfinch/finch/issues/1044)) ([d33cb5d](https://github.com/runfinch/finch/commit/d33cb5d7fb31218fc001bec8d58c8224852622b3))
+* **deps:** bump github.com/onsi/ginkgo/v2 from 2.19.0 to 2.19.1 ([#1046](https://github.com/runfinch/finch/issues/1046)) ([39bba35](https://github.com/runfinch/finch/commit/39bba35ddfb75d02bacdfac36bb3fffb511dc273))
+* **deps:** bump github.com/onsi/ginkgo/v2 from 2.19.1 to 2.20.0 ([#1057](https://github.com/runfinch/finch/issues/1057)) ([221a935](https://github.com/runfinch/finch/commit/221a935a28ac72b7365633abf88d93940d40e285))
+* **deps:** bump github.com/onsi/gomega from 1.33.1 to 1.34.1 ([#1048](https://github.com/runfinch/finch/issues/1048)) ([66ceee4](https://github.com/runfinch/finch/commit/66ceee43089998266812efdc759fd4b57c504bde))
+* **deps:** bump golang.org/x/crypto from 0.25.0 to 0.26.0 ([#1054](https://github.com/runfinch/finch/issues/1054)) ([2ecab35](https://github.com/runfinch/finch/commit/2ecab35866f2f3d99ba3cf32d6b3f337341cce20))
+* **deps:** bump golang.org/x/sys from 0.22.0 to 0.23.0 ([#1051](https://github.com/runfinch/finch/issues/1051)) ([c6402ab](https://github.com/runfinch/finch/commit/c6402ab9471419ed37a744950a38447e155470d2))
+* **deps:** bump golang.org/x/sys from 0.23.0 to 0.24.0 ([#1059](https://github.com/runfinch/finch/issues/1059)) ([9529346](https://github.com/runfinch/finch/commit/9529346e95c48056c71ee7e09cd6ce10044044f8))
+* **deps:** bump golang.org/x/tools from 0.23.0 to 0.24.0 ([#1056](https://github.com/runfinch/finch/issues/1056)) ([3a34c79](https://github.com/runfinch/finch/commit/3a34c79996f49a3eb609615c02b5fe4bdbb266fc))
+* **deps:** bump k8s.io/apimachinery from 0.30.2 to 0.30.3 ([#1036](https://github.com/runfinch/finch/issues/1036)) ([0c5686e](https://github.com/runfinch/finch/commit/0c5686e86fffde80f7428036aa443fc6629694ae))
+* **deps:** Bump submodules and dependencies ([#1027](https://github.com/runfinch/finch/issues/1027)) ([966b8d2](https://github.com/runfinch/finch/commit/966b8d2e5e189dc89d5e1a07beed42cb0de26363))
+* **deps:** Bump submodules and dependencies ([#1035](https://github.com/runfinch/finch/issues/1035)) ([4fe6fcf](https://github.com/runfinch/finch/commit/4fe6fcfca0da292521929033f7067e309ec32971))
+* **fix:** pass arch to finch-core install.dependencies target ([#1034](https://github.com/runfinch/finch/issues/1034)) ([fa5078f](https://github.com/runfinch/finch/commit/fa5078f2d5f2fcc12b039fe37331cfb18b191f09))
+
+
+### Bug Fixes
+
+* remove llvm copy to fix build errors ([#1030](https://github.com/runfinch/finch/issues/1030)) ([5104857](https://github.com/runfinch/finch/commit/51048575d4c325fb215c8e1a1a226052c473d3d2))
+* typo causing error while downloading license ([#1033](https://github.com/runfinch/finch/issues/1033)) ([2452614](https://github.com/runfinch/finch/commit/2452614189f1b41ba32f7824e6874716418c3028))
+
 ## [1.2.2](https://github.com/runfinch/finch/compare/v1.2.1...v1.2.2) (2024-07-09)
 
 
