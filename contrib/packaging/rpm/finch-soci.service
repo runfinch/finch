@@ -1,0 +1,12 @@
+[Unit]
+Description=soci-snapshotter-grpc (for Finch)
+PartOf=finch.service
+Requires=finch-soci.socket
+After=finch-soci.socket
+Documentation=https://github.com/awslabs/soci-snapshotter
+
+[Service]
+ExecStart=/usr/libexec/finch/soci-snapshotter-grpc --config /etc/finch/soci/soci-snapshotter-grpc.toml --root /var/lib/finch/soci
+
+[Install]
+WantedBy=multi-user.target

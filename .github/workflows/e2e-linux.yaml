@@ -1,0 +1,104 @@
+name: e2e-linux
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+        required: true
+      arch:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      runner-type:
+        type: string
+        required: true
+      test-command:
+        type: string
+        required: true
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  # This is required for actions/checkout
+  contents: read
+
+jobs:
+  test:
+    runs-on:
+      [
+        "self-hosted",
+        "${{ inputs.os }}",
+        "${{ inputs.arch }}",
+        "${{ inputs.version }}",
+        "${{ inputs.runner-type }}",
+      ]
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        # checkout uses node version 20, which doesn't run on AL2
+        if: ${{ ! (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - name: Check repo out manually
+        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
+        run: |
+          pwd
+          echo "${GITHUB_WORKSPACE}"
+          ls -lah
+          git clone https://github.com/${GITHUB_REPOSITORY}.git .
+          git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/prh/*"
+          git config --add remote.origin.fetch "+refs/pull/*/merge:refs/remotes/origin/prm/*"
+          git fetch origin
+          git checkout ${GITHUB_SHA}
+      - name: Set output variables
+        id: vars
+        run: |
+          has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
+          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        # this action requires node20, skip on AL2
+        if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: credhelper-test
+          aws-region: ${{ secrets.REGION }}
+      - name: Clean up previous files
+        if: always()
+        run: |
+          sudo systemctl stop finch.service || true
+          sudo systemctl stop finch-buildkit.service || true
+          sudo systemctl stop finch-soci.service || true
+          sudo sudo rpm -e runfinch-finch || true
+          sudo systemctl daemon-reload
+          sudo rm -rf /etc/finch
+          sudo rm -rf /var/finch
+          sudo rm -rf /var/containerd
+          sudo rm -rf /var/soci-snapshotter
+          sudo rm -rf ./_output
+      - name: Build project
+        run: |
+          ./contrib/packaging/rpm/build.sh --local
+      - name: Install Finch
+        run: |
+          sudo rpm -i ./_output/packages/$(ls -t ./_output/packages/ | grep runfinch-finch | head -1)
+          sudo systemctl daemon-reload
+          sudo systemctl start finch.service
+          sudo systemctl start finch-buildkit.service
+          sudo systemctl start finch-soci.service
+      - name: Run e2e tests
+        run: |
+          git status
+          git clean -f -d
+          # required by one of the tests which uses SSH_AUTH_SOCK
+          eval "$(ssh-agent -s)"
+          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make ${{ inputs.test-command }}
+      - name: Clean up repo AL2
+        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && always() ) }}
+        run: |
+          rm -rf "${GITHUB_WORKSPACE}"

@@ -1,0 +1,105 @@
+name: e2e-windows
+on:
+  workflow_call:
+    inputs:
+      arch:
+        type: string
+        required: true
+      runner-type:
+        type: string
+        required: true
+      test-command:
+        type: string
+        required: true
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  # This is required for actions/checkout
+  contents: read
+
+jobs:
+  test:
+    timeout-minutes: 180
+    runs-on:
+      [
+        "self-hosted",
+        "windows",
+        "${{ inputs.arch }}",
+        "${{ inputs.version }}",
+        "${{ inputs.runner-type }}",
+      ]
+    steps:
+      - name: Configure git CRLF settings
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - name: Cleanup previous checkouts
+        run: |
+          takeown /F C:\actions-runner\_work\finch /R
+          Remove-Item C:\actions-runner\_work\finch\finch -Recurse -Force -ErrorAction Ignore
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - name: Set output variables
+        id: vars
+        run: |
+          $has_creds="${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]'}}"
+          echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        if: env.has_creds == 'true'
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: credhelper-test
+          aws-region: ${{ secrets.REGION }}
+      - name: Remove Finch VM
+        run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+      - name: Clean up previous files
+        run: |
+          Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
+          make clean
+          cd deps/finch-core && make clean
+      - name: Build project
+        run: |
+          git status
+          make
+      - name: Run e2e tests
+        run: |
+          # set path to use newer ssh version
+          $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
+          $env:Path = $newPath
+
+          # set networking config option to allow for VM/container -> host communication
+          echo "[experimental]`nnetworkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
+
+          git status
+          git clean -f -d
+          make ${{ inputs.test-command }}
+      - name: Remove Finch VM and Clean Up Previous Environment
+        if: ${{ always() }}
+        run: |
+          # We want these cleanup commands to always run, ignore errors so the step completes.
+          $ErrorActionPreference = 'Ignore'
+          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
+          wsl --list --verbose
+          wsl --shutdown
+          wsl --unregister lima-finch
+          wsl --list --verbose
+          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          make clean
+          cd deps/finch-core && make clean
+          exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore

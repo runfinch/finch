@@ -55,7 +55,7 @@ var newApp = func(
 	ncc := command.NewNerdctlCmdCreator(ecc,
 		logger,
 		fp.NerdctlConfigFilePath(finchRootPath),
-		fp.BuildkitSocketPath(finchRootPath),
+		fp.BuildkitSocketPath(),
 		fp.FinchDependencyBinDir(),
 		system.NewStdLib(),
 	)

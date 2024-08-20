@@ -4,3 +4,5 @@ deps/
 docs/cmd/*completion*.md
 # finch_logs.md has issues with the list not being surrounded by newlines
 docs/cmd/finch_logs.md
+# build artifacts
+contrib/packaging/rpm/rpmbuild

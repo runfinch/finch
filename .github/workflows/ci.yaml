@@ -6,16 +6,16 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-      - 'contrib/**'
-      - '.github/CODEOWNERS'
+      - "**.md"
+      - "contrib/**"
+      - ".github/CODEOWNERS"
   pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-      - 'contrib/**'
-      - '.github/CODEOWNERS'
+    paths:
+      - '**.go'
+      - 'contrib/packaging/**'
+      - '!contrib/hello-finch/**'
+      - '!.github/CODEOWNERS'
+  workflow_dispatch:
 permissions:
   id-token: write
   contents: write
@@ -141,154 +141,58 @@ jobs:
           go-version-file: go.mod
           cache: true
       - run: make check-licenses
-  e2e-tests:
+  # macos-e2e-tests:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       arch: ["X64", "arm64"]
+  #       version: ["13", "14"]
+  #       runner-type: ["test"]
+  #       test-command: ["test-e2e-vm-serial", "test-e2e-container"]
+  #   uses: ./.github/workflows/e2e-macos.yaml
+  #   secrets: inherit
+  #   with:
+  #     arch: ${{ matrix.arch }}
+  #     version: ${{ matrix.version }}
+  #     runner-type: ${{ matrix.runner-type }}
+  #     test-command: ${{ matrix.test-command }}
+  # windows-e2e-tests:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       arch: ["X64"]
+  #       runner-type: ["test"]
+  #       test-command: ["test-e2e-vm-serial", "test-e2e-container"]
+  #   uses: ./.github/workflows/e2e-windows.yaml
+  #   secrets: inherit
+  #   with:
+  #     arch: ${{ matrix.arch }}
+  #     runner-type: ${{ matrix.runner-type }}
+  #     test-command: ${{ matrix.test-command }}
+  linux-e2e-tests:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          [
-            [self-hosted, macos, amd64, 13, test],
-            [self-hosted, macos, amd64, 14, test],
-            [self-hosted, macos, arm64, 13, test],
-            [self-hosted, macos, arm64, 14, test],
-          ]
-        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-        with:
-          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: recursive
-      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
-        with:
-          go-version-file: go.mod
-          cache: true
-      - name: Set output variables
-        id: vars
-        run: |
-          has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
-          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        if: ${{ steps.vars.outputs.has_creds == true }}
-        with:
-          role-to-assume: ${{ secrets.ROLE }}
-          role-session-name: credhelper-test
-          aws-region: ${{ secrets.REGION }}
-      - name: Clean up previous files
-        run: |
-          sudo rm -rf /opt/finch
-          sudo rm -rf ~/.finch
-          sudo rm -rf ./_output
-          if pgrep '^qemu-system'; then
-            sudo pkill '^qemu-system'
-          fi
-          if pgrep '^socket_vmnet'; then
-            sudo pkill '^socket_vmnet'
-          fi
-      - name: Install Rosetta 2
-        run: echo "A" | softwareupdate --install-rosetta || true
-      - run: brew install lz4 automake autoconf libtool yq
-        shell: zsh {0}
-      - name: Build project
-        run: |
-          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          make
-        shell: zsh {0}
-      - run: |
-          git status
-          git clean -f -d
-          REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ matrix.test-command }}
-        shell: zsh {0}
-  windows-e2e-tests:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [[self-hosted, windows, amd64, test]]
-        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 180
-    steps:
-      - name: Configure git CRLF settings
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
-      - name: Cleanup previous checkouts
-        run: |
-          takeown /F C:\actions-runner\_work\finch /R
-          Remove-Item C:\actions-runner\_work\finch\finch -Recurse -Force -ErrorAction Ignore
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-        with:
-          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: recursive
-      - name: Set output variables
-        id: vars
-        run: |
-          $has_creds="${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]'}}"
-          echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-          exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        if: env.has_creds == 'true'
-        with:
-          role-to-assume: ${{ secrets.ROLE }}
-          role-session-name: credhelper-test
-          aws-region: ${{ secrets.REGION }}
-      - name: Remove Finch VM
-        run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
-      - name: Clean up previous files
-        run: |
-          Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
-          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
-          make clean
-          cd deps/finch-core && make clean
-      - name: Build project
-        run: |
-          git status
-          make
-      - name: Run e2e tests
-        run: |
-          # set path to use newer ssh version
-          $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
-          $env:Path = $newPath
+        arch: ["X64"]
+        os: ["amazonlinux"]
+        version: ["2023", "2"]
+        runner-type: ["test"]
+        test-command: ["test-e2e-container"]
+    uses: ./.github/workflows/e2e-linux.yaml
+    secrets: inherit
+    with:
+      os: ${{ matrix.os }}
+      arch: ${{ matrix.arch }}
+      version: ${{ matrix.version }}
+      runner-type: ${{ matrix.runner-type }}
+      test-command: ${{ matrix.test-command }}
 
-          # set networking config option to allow for VM/container -> host communication
-          echo "[experimental]`nnetworkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
-
-          git status
-          git clean -f -d
-          make ${{ matrix.test-command }}
-      - name: Remove Finch VM and Clean Up Previous Environment
-        if: ${{ always() }}
-        run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
-          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
-          make clean
-          cd deps/finch-core && make clean
-          exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
   mdlint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: avto-dev/markdown-lint@04d43ee9191307b50935a753da3b775ab695eceb # v1.5.0
         with:
-          args: '**/*.md'
+          args: "**/*.md"
           # CHANGELOG.md is only updated by release-please bot.
-          ignore: 'CHANGELOG.md'
+          ignore: "CHANGELOG.md"

@@ -1,0 +1,11 @@
+[Unit]
+Description=Finch
+Documentation=https://runfinch.com
+After=network.target local-fs.target finch-buildkit.service
+
+[Service]
+ExecStart=/usr/bin/true
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

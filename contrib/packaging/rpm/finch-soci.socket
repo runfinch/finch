@@ -1,0 +1,11 @@
+[Unit]
+Description=SOCI snapshotter (for Finch)
+PartOf=finch.service
+Documentation=https://github.com/awslabs/soci-snapshotter
+
+[Socket]
+ListenStream=/var/lib/finch/soci/soci-snapshotter-grpc.sock
+SocketMode=0660
+
+[Install]
+WantedBy=sockets.target
