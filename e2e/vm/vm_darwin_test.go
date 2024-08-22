@@ -70,6 +70,7 @@ func TestVM(t *testing.T) {
 		testSupportBundle(o)
 		testCredHelper(o, *e2e.Installed, *e2e.Registry)
 		testSoci(o, *e2e.Installed)
+		testPlatform(o)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)
