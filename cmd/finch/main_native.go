@@ -77,6 +77,7 @@ var newApp = func(
 		newVersionCommand(ncc, logger, stdOut),
 		newSupportBundleCommand(logger, supportBundleBuilder, ncc),
 		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
+		newPlatformCommand(ncc, logger),
 	)
 
 	rootCmd.AddCommand(allCommands...)
