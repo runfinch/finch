@@ -8,8 +8,6 @@ package vm
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -31,29 +29,15 @@ const (
 var testSoci = func(o *option.Option, installed bool) {
 	ginkgo.Describe("SOCI", func() {
 		var limactlO *option.Option
-		var fpath, realFinchPath, limactlPath, limaHomePathEnv, wd, vmType string
+		var vmType string
 		var err error
 		var port int
 
 		ginkgo.BeforeEach(func() {
 			// Find lima paths. limactl is used to shell into the Finch VM and verify
 			// mounted snapshots match the expected SOCI snapshotter behavior.
-			if installed {
-				fpath, err = exec.LookPath("finch")
-				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-				realFinchPath, err = filepath.EvalSymlinks(fpath)
-				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-				limactlPath = filepath.Join(realFinchPath, "../../lima/bin/limactl")
-				limaHomePathEnv = "LIMA_HOME=" + filepath.Join(realFinchPath, "../../lima/data")
-			} else {
-				wd, err = os.Getwd()
-				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-				limactlPath = filepath.Join(wd, "../../_output/lima/bin/limactl")
-				limaHomePathEnv = "LIMA_HOME=" + filepath.Join(wd, "../../_output/lima/data")
-			}
 
-			limactlO, err = option.New([]string{limactlPath},
-				option.Env([]string{limaHomePathEnv}))
+			limactlO, err = limaCtlOpt(installed)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			if runtime.GOOS == "windows" {
 				vmType = "wsl2"
