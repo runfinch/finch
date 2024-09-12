@@ -191,3 +191,27 @@ var nerdctlCmds = map[string]string{
 	"volume":    "Manage volumes",
 	"wait":      "Block until one or more containers stop, then print their exit codes",
 }
+
+var cmdFlagSetMap = map[string]map[string]sets.Set[string]{
+	"container run": {
+		"shortBoolFlags": sets.New[string]("-d", "-i", "-t"),
+		"longBoolFlags": sets.New[string](
+			"--detach", "--init", "--interactive", "--oom-kill-disable",
+			"--privileged", "--read-only", "--rm", "--rootfs", "--tty"),
+		"shortArgFlags": sets.New[string]("-e", "-h", "-m", "-u", "-w", "-p", "-l", "-v"),
+	},
+	"exec": {
+		"shortBoolFlags": sets.New[string]("-d", "-i", "-t"),
+		"longBoolFlags": sets.New[string](
+			"--detach", "--init", "--interactive", "--oom-kill-disable",
+			"--privileged", "--read-only", "--rm", "--rootfs", "--tty"),
+		"shortArgFlags": sets.New[string]("-e", "-h", "-m", "-u", "-w", "-p", "-l", "-v"),
+	},
+	"compose": {
+		"shortBoolFlags": sets.New[string]("-d", "-i", "-t"),
+		"longBoolFlags": sets.New[string](
+			"--detach", "--init", "--interactive", "--oom-kill-disable",
+			"--privileged", "--read-only", "--rm", "--rootfs", "--tty"),
+		"shortArgFlags": sets.New[string]("-e", "-h", "-m", "-u", "-w", "-p", "-l", "-v"),
+	},
+}
