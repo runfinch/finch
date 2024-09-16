@@ -10,12 +10,13 @@ import (
 	"os"
 	"testing"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/version"
-	"gopkg.in/yaml.v3"
 
 	"github.com/golang/mock/gomock"
 	"github.com/spf13/afero"

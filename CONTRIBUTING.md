@@ -108,7 +108,7 @@ This section describes how one can develop Finch CLI locally, build it, and then
 
 We use [golangci-lint](https://github.com/golangci/golangci-lint).
 
-To integrate it into your IDE, please check out the [official documentation](https://golangci-lint.run/usage/integrations/).
+To integrate it into your IDE, please check out the [official documentation](https://golangci-lint.run/welcome/integrations/).
 
 For more details, see [`.golangci.yaml`](./.golangci.yaml) and the `lint` target in [`Makefile`](./Makefile).
 
@@ -184,6 +184,8 @@ Then run `make` to build the binary. The binary in `_output` can be directly use
 ```
 
 You can run `make install` to make finch binary globally accessible.
+
+NOTE: If your build environment experiences issues with downloading dependencies from the Go proxy servers, then you may want to set the environment variable `export GOPROXY=direct`
 
 ### Unit Testing
 

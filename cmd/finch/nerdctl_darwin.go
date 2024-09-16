@@ -20,7 +20,9 @@ func convertToWSLPath(_ NerdctlCommandSystemDeps, _ string) (string, error) {
 	return "", nil
 }
 
-var aliasMap = map[string]string{}
+var aliasMap = map[string]string{
+	"run": "container run",
+}
 
 var argHandlerMap = map[string]map[string]argHandler{}
 

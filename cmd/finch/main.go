@@ -7,6 +7,7 @@ package main
 import (
 	"os"
 
+	"github.com/containerd/nerdctl/v2/pkg/errutil"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
@@ -26,6 +27,7 @@ func main() {
 	mem := fmemory.NewMemory()
 	stdOut := os.Stdout
 	if err := xmain(logger, stdLib, fs, stdLib, mem, stdOut); err != nil {
+		errutil.HandleExitCoder(err)
 		logger.Fatal(err)
 	}
 }
