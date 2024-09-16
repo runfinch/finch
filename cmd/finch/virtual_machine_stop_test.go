@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin || windows
+
 package main
 
 import (
@@ -26,14 +28,14 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		mockSvc func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager)
+		mockSvc func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager)
 		args    []string
 		wantErr error
 	}{
 		{
 			name: "should stop the instance",
 			args: []string{},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -53,7 +55,7 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 			args: []string{
 				"--force",
 			},
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
 				command := mocks.NewCommand(ctrl)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				creator.EXPECT().CreateWithoutStdio("stop", "--force", limaInstanceName).Return(command)
@@ -72,10 +74,10 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
-			tc.mockSvc(logger, lcc, ctrl, dm)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
+			tc.mockSvc(logger, ncc, ctrl, dm)
 
-			cmd := newStopVMCommand(lcc, dm, logger)
+			cmd := newStopVMCommand(ncc, dm, logger)
 			cmd.SetArgs(tc.args)
 			err := cmd.Execute()
 			assert.Equal(t, tc.wantErr, err)
@@ -89,13 +91,13 @@ func TestStopVMAction_run(t *testing.T) {
 	testCases := []struct {
 		name    string
 		wantErr error
-		mockSvc func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager)
+		mockSvc func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager)
 		force   bool
 	}{
 		{
 			name:    "should stop the instance",
 			wantErr: nil,
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -113,7 +115,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "stopped VM",
 			wantErr: fmt.Errorf("the instance %q is already stopped", limaInstanceName),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -124,7 +126,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "nonexistent VM",
 			wantErr: fmt.Errorf("the instance %q does not exist", limaInstanceName),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
@@ -135,7 +137,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "unknown VM status",
 			wantErr: errors.New("unrecognized system status"),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
@@ -146,7 +148,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "status command returns an error",
 			wantErr: errors.New("get status error"),
-			mockSvc: func(_ *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
+			mockSvc: func(_ *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, _ *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
@@ -156,7 +158,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "should print error if virtual machine failed to stop",
 			wantErr: errors.New("error"),
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
 				getVMStatusC := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -175,7 +177,7 @@ func TestStopVMAction_run(t *testing.T) {
 		{
 			name:    "should force stop virtual machine",
 			wantErr: nil,
-			mockSvc: func(logger *mocks.Logger, creator *mocks.LimaCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
+			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, ctrl *gomock.Controller, dm *mocks.UserDataDiskManager) {
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("stop", "--force", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
@@ -195,10 +197,10 @@ func TestStopVMAction_run(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			dm := mocks.NewUserDataDiskManager(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 
-			tc.mockSvc(logger, lcc, ctrl, dm)
-			err := newStopVMAction(lcc, dm, logger).run(tc.force)
+			tc.mockSvc(logger, ncc, ctrl, dm)
+			err := newStopVMAction(ncc, dm, logger).run(tc.force)
 			assert.Equal(t, tc.wantErr, err)
 		})
 	}

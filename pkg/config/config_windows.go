@@ -9,6 +9,17 @@ import (
 	"github.com/runfinch/finch/pkg/command"
 )
 
+// SystemSettings represents the system configuration specifc to Windows.
+type SystemSettings struct {
+	SharedSystemSettings `yaml:",inline"`
+}
+
+// Finch represents the configuration file for Finch CLI.
+type Finch struct {
+	SystemSettings `yaml:",inline"`
+	SharedSettings `yaml:",inline"`
+}
+
 // SupportsWSL2 checks if system supports WSL2 and sets default version to 2.
 func SupportsWSL2(cmdCreator command.Creator) error {
 	return cmdCreator.Create("wsl", "--set-default-version", "2").Run()

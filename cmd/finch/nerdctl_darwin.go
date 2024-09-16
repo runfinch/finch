@@ -28,6 +28,10 @@ var argHandlerMap = map[string]map[string]argHandler{}
 
 var commandHandlerMap = map[string]commandHandler{}
 
+func (nc *nerdctlCommand) GetCmdArgs() []string {
+	return []string{"shell", limaInstanceName, "sudo", "-E"}
+}
+
 func resolveIP(host string, logger flog.Logger, _ command.Creator) (string, error) {
 	parts := strings.SplitN(host, ":", 2)
 	// If the IP Address is a string called "host-gateway", replace this value with the IP address that can be used to

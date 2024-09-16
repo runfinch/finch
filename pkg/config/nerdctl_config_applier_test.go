@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin || windows
+
 package config
 
 import (
@@ -45,7 +47,11 @@ func Test_updateEnvironment(t *testing.T) {
 		{
 			name: "happy path",
 			cfg: &Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			finchDir:      "/finch/dir",
 			homeDir:       "/home/dir",
@@ -69,7 +75,11 @@ export DOCKER_CONFIG="$FINCH_DIR"
 		{
 			name: "happy path, file already exists and already contains expected variables",
 			cfg: &Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			finchDir:      "/finch/dir",
 			homeDir:       "/home/dir",
@@ -106,7 +116,11 @@ export DOCKER_CONFIG="$FINCH_DIR"
 		{
 			name: ".bashrc file doesn't exist",
 			cfg: &Finch{
-				VMType: pointer.String("qemu"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
 			},
 			finchDir:      "/finch/dir",
 			homeDir:       "/home/dir",
@@ -244,12 +258,10 @@ func TestNerdctlConfigApplier_Apply(t *testing.T) {
 			remoteAddr: "",
 			mockSvc: func(_ *testing.T, _ afero.Fs, _ *mocks.Dialer) {
 			},
-			want: fmt.Errorf(
-				"failed to create ssh client config: %w",
-				fmt.Errorf(
-					"failed to open private key file: %w",
-					&fs.PathError{Op: "open", Path: privateKeyPath, Err: errors.New("file does not exist")},
-				),
+			want: fmt.Errorf("failed to create ssh client config: %w", fmt.Errorf(
+				"failed to open private key file: %w",
+				&fs.PathError{Op: "open", Path: privateKeyPath, Err: errors.New("file does not exist")},
+			),
 			),
 		},
 		{

@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin || windows
+
 package main
 
 import (
@@ -19,7 +21,7 @@ import (
 )
 
 func newStartVMCommand(
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	logger flog.Logger,
 	optionalDepGroups []*dependency.Group,
 	lca config.LimaConfigApplier,
@@ -31,13 +33,13 @@ func newStartVMCommand(
 	return &cobra.Command{
 		Use:      "start",
 		Short:    "Start the virtual machine",
-		RunE:     newStartVMAction(lcc, logger, optionalDepGroups, lca, dm).runAdapter,
-		PostRunE: newPostVMStartInitAction(logger, lcc, fs, privateKeyPath, nca).runAdapter,
+		RunE:     newStartVMAction(ncc, logger, optionalDepGroups, lca, dm).runAdapter,
+		PostRunE: newPostVMStartInitAction(logger, ncc, fs, privateKeyPath, nca).runAdapter,
 	}
 }
 
 type startVMAction struct {
-	creator             command.LimaCmdCreator
+	creator             command.NerdctlCmdCreator
 	logger              flog.Logger
 	optionalDepGroups   []*dependency.Group
 	limaConfigApplier   config.LimaConfigApplier
@@ -45,7 +47,7 @@ type startVMAction struct {
 }
 
 func newStartVMAction(
-	creator command.LimaCmdCreator,
+	creator command.NerdctlCmdCreator,
 	logger flog.Logger,
 	optionalDepGroups []*dependency.Group,
 	lca config.LimaConfigApplier,
@@ -98,7 +100,7 @@ func (sva *startVMAction) run() error {
 	return nil
 }
 
-func (sva *startVMAction) assertVMIsStopped(creator command.LimaCmdCreator, logger flog.Logger) error {
+func (sva *startVMAction) assertVMIsStopped(creator command.NerdctlCmdCreator, logger flog.Logger) error {
 	status, err := lima.GetVMStatus(creator, logger, limaInstanceName)
 	if err != nil {
 		return err

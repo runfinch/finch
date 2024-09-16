@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin
+
 package config
 
 import (
@@ -9,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,6 +20,15 @@ import (
 
 	"github.com/runfinch/finch/pkg/mocks"
 )
+
+func makeConfig(vmType limayaml.VMType, memory string, cpus int, rosetta bool) *Finch {
+	fc := Finch{}
+	fc.VMType = pointer.String(vmType)
+	fc.Memory = pointer.String(memory)
+	fc.CPUs = pointer.Int(cpus)
+	fc.Rosetta = pointer.Bool(rosetta)
+	return &fc
+}
 
 func TestLoad(t *testing.T) {
 	t.Parallel()
@@ -92,12 +104,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want: &Finch{
-				Memory:  pointer.String("4GiB"),
-				CPUs:    pointer.Int(8),
-				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(false),
-			},
+			want:    makeConfig("vz", "4GiB", 8, false),
 			wantErr: nil,
 		},
 		{
@@ -118,12 +125,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want: &Finch{
-				Memory:  pointer.String("3GiB"),
-				CPUs:    pointer.Int(2),
-				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(false),
-			},
+			want:    makeConfig("vz", "3GiB", 2, false),
 			wantErr: nil,
 		},
 		{
@@ -144,12 +146,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want: &Finch{
-				Memory:  pointer.String("2GiB"),
-				CPUs:    pointer.Int(2),
-				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(true),
-			},
+			want:    makeConfig("vz", "2GiB", 2, true),
 			wantErr: nil,
 		},
 		{
@@ -170,12 +167,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want: &Finch{
-				Memory:  pointer.String("3GiB"),
-				CPUs:    pointer.Int(2),
-				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(false),
-			},
+			want:    makeConfig("vz", "3GiB", 2, false),
 			wantErr: nil,
 		},
 		{
@@ -196,12 +188,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want: &Finch{
-				Memory:  pointer.String("3GiB"),
-				CPUs:    pointer.Int(2),
-				VMType:  pointer.String("vz"),
-				Rosetta: pointer.Bool(false),
-			},
+			want:    makeConfig("vz", "3GiB", 2, false),
 			wantErr: nil,
 		},
 	}
@@ -238,9 +225,11 @@ cpus: 8
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			want: &Finch{
-				Memory: pointer.String("4GiB"),
-				CPUs:   pointer.Int(8),
-				VMType: pointer.String("wsl2"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("wsl2"),
+					},
+				},
 			},
 			wantErr: nil,
 		},
@@ -258,7 +247,11 @@ cpus: 8
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(""), 0o600))
 			},
 			want: &Finch{
-				VMType: pointer.String("wsl2"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("wsl2"),
+					},
+				},
 			},
 			wantErr: nil,
 		},
@@ -273,11 +266,17 @@ cpus: 8
 				_ *mocks.CommandCreator,
 				_ *gomock.Controller,
 			) {
-				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("memory: 2GiB"), 0o600))
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("snapshotters:\n  - soci"), 0o600))
 			},
 			want: &Finch{
-				Memory: pointer.String("2GiB"),
-				VMType: pointer.String("wsl2"),
+				SharedSettings: SharedSettings{
+					Snapshotters: []string{"soci"},
+				},
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("wsl2"),
+					},
+				},
 			},
 			wantErr: nil,
 		},
@@ -295,7 +294,11 @@ cpus: 8
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("unknownField: 2GiB"), 0o600))
 			},
 			want: &Finch{
-				VMType: pointer.String("wsl2"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("wsl2"),
+					},
+				},
 			},
 			wantErr: nil,
 		},
@@ -313,7 +316,11 @@ cpus: 8
 				l.EXPECT().Infof("Using default values due to missing config file at %q", "/config.yaml")
 			},
 			want: &Finch{
-				VMType: pointer.String("wsl2"),
+				SystemSettings: SystemSettings{
+					SharedSystemSettings: SharedSystemSettings{
+						VMType: pointer.String("wsl2"),
+					},
+				},
 			},
 			wantErr: nil,
 		},
@@ -363,8 +370,10 @@ func Test_writeConfig(t *testing.T) {
 		{
 			name: "happy path",
 			cfg: &Finch{
-				CPUs:   pointer.Int(4),
-				Memory: pointer.String("4GiB"),
+				SystemSettings: SystemSettings{
+					CPUs:   pointer.Int(4),
+					Memory: pointer.String("4GiB"),
+				},
 			},
 			path:    "/config.yaml",
 			mockSvc: func(_ *testing.T, _ afero.Fs) {},
@@ -639,8 +648,10 @@ func Test_loadFinchConfig(t *testing.T) {
 				mem.EXPECT().TotalMemory().Return(uint64(6_442_450_944))
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(2),
-				Memory: pointer.String("6GiB"),
+				SystemSettings: SystemSettings{
+					CPUs:   pointer.Int(2),
+					Memory: pointer.String("6GiB"),
+				},
 			},
 			errMsg: "",
 		},
@@ -689,8 +700,10 @@ func Test_loadFinchConfig(t *testing.T) {
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			want: &Finch{
-				CPUs:   pointer.Int(2),
-				Memory: pointer.String("6GiB"),
+				SystemSettings: SystemSettings{
+					CPUs:   pointer.Int(2),
+					Memory: pointer.String("6GiB"),
+				},
 			},
 			errMsg: "",
 		},

@@ -24,7 +24,7 @@ func dependencies(
 	fc *config.Finch,
 	fp path.Finch,
 	fs afero.Fs,
-	_ command.LimaCmdCreator,
+	_ command.NerdctlCmdCreator,
 	logger flog.Logger,
 	finchDir string,
 ) []*dependency.Group {

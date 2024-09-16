@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin || windows
+
 package main
 
 import (
@@ -30,7 +32,7 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 		command *cobra.Command
 		args    []string
 		mockSvc func(
-			*mocks.LimaCmdCreator,
+			*mocks.NerdctlCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			*gomock.Controller,
@@ -43,13 +45,13 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 			},
 			args: []string{},
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 			},
@@ -64,12 +66,12 @@ func TestStatusVMAction_runAdapter(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
 			stdout := bytes.Buffer{}
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 
-			tc.mockSvc(lcc, logger, lca, ctrl)
+			tc.mockSvc(ncc, logger, lca, ctrl)
 
-			assert.NoError(t, newStatusVMAction(lcc, logger, &stdout).runAdapter(tc.command, tc.args))
+			assert.NoError(t, newStatusVMAction(ncc, logger, &stdout).runAdapter(tc.command, tc.args))
 		})
 	}
 }
@@ -82,7 +84,7 @@ func TestStatusVMAction_run(t *testing.T) {
 		wantErr          error
 		wantStatusOutput string
 		mockSvc          func(
-			*mocks.LimaCmdCreator,
+			*mocks.NerdctlCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
 			*gomock.Controller,
@@ -93,13 +95,13 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          nil,
 			wantStatusOutput: "Running\n",
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 			},
@@ -109,13 +111,13 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          nil,
 			wantStatusOutput: "Stopped\n",
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
 			},
@@ -125,13 +127,13 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          nil,
 			wantStatusOutput: "Nonexistent\n",
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 			},
@@ -141,13 +143,13 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          errors.New("unrecognized system status"),
 			wantStatusOutput: "",
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Broken")
 			},
@@ -157,13 +159,13 @@ func TestStatusVMAction_run(t *testing.T) {
 			wantErr:          errors.New("get status error"),
 			wantStatusOutput: "",
 			mockSvc: func(
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
 				ctrl *gomock.Controller,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
 			},
 		},
@@ -177,12 +179,12 @@ func TestStatusVMAction_run(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)
 			stdout := bytes.Buffer{}
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
 
-			tc.mockSvc(lcc, logger, lca, ctrl)
+			tc.mockSvc(ncc, logger, lca, ctrl)
 
-			err := newStatusVMAction(lcc, logger, &stdout).run()
+			err := newStatusVMAction(ncc, logger, &stdout).run()
 			assert.Equal(t, err, tc.wantErr)
 			assert.Equal(t, tc.wantStatusOutput, stdout.String())
 		})

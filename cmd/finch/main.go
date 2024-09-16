@@ -17,11 +17,8 @@ import (
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
-	"github.com/runfinch/finch/pkg/lima/wrapper"
 	"github.com/runfinch/finch/pkg/path"
-	"github.com/runfinch/finch/pkg/support"
 	"github.com/runfinch/finch/pkg/system"
-	"github.com/runfinch/finch/pkg/version"
 )
 
 const finchRootCmd = "finch"
@@ -83,77 +80,14 @@ func xmain(logger flog.Logger,
 	).Execute()
 }
 
-var newApp = func(
-	logger flog.Logger,
-	fp path.Finch,
-	fs afero.Fs,
-	fc *config.Finch,
-	stdOut io.Writer,
-	home,
-	finchRootPath string,
-	ecc command.Creator,
-) *cobra.Command {
-	usage := fmt.Sprintf("%v <command>", finchRootCmd)
-	rootCmd := &cobra.Command{
-		Use:           usage,
-		Short:         "Finch: open-source container development tool",
-		SilenceUsage:  true,
-		SilenceErrors: true,
-		Version:       version.Version,
-	}
-	// TODO: Decide when to forward --debug to the dependencies
-	// (e.g. nerdctl for container commands and limactl for VM commands).
-	rootCmd.PersistentFlags().Bool("debug", false, "running under debug mode")
-	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
-		// running commands under debug mode will print out debug logs
-		debugMode, _ := cmd.Flags().GetBool("debug")
-		if debugMode {
-			logger.SetLevel(flog.Debug)
-		}
-		return nil
-	}
-
-	lcc := command.NewLimaCmdCreator(ecc,
-		logger,
-		fp.LimaHomePath(),
-		fp.LimactlPath(),
-		fp.QEMUBinDir(),
-		system.NewStdLib(),
-	)
-	lima := wrapper.NewLimaWrapper()
-	supportBundleBuilder := support.NewBundleBuilder(
-		logger,
-		fs,
-		support.NewBundleConfig(fp, finchRootPath),
-		fp,
-		ecc,
-		lcc,
-		lima,
-	)
-
-	// append nerdctl commands
-	allCommands := initializeNerdctlCommands(lcc, ecc, logger, fs, fc)
-	// append finch specific commands
-	allCommands = append(allCommands,
-		newVersionCommand(lcc, logger, stdOut),
-		virtualMachineCommands(logger, fp, lcc, ecc, fs, fc, home, finchRootPath),
-		newSupportBundleCommand(logger, supportBundleBuilder, lcc),
-		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
-	)
-
-	rootCmd.AddCommand(allCommands...)
-
-	return rootCmd
-}
-
 func initializeNerdctlCommands(
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	ecc command.Creator,
 	logger flog.Logger,
 	fs afero.Fs,
 	fc *config.Finch,
 ) []*cobra.Command {
-	nerdctlCommandCreator := newNerdctlCommandCreator(lcc, ecc, system.NewStdLib(), logger, fs, fc)
+	nerdctlCommandCreator := newNerdctlCommandCreator(ncc, ecc, system.NewStdLib(), logger, fs, fc)
 	var allNerdctlCommands []*cobra.Command
 	for cmdName, cmdDescription := range nerdctlCmds {
 		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))

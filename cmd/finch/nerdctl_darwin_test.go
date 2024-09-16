@@ -31,7 +31,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 		name    string
 		cmd     *cobra.Command
 		args    []string
-		mockSvc func(*mocks.LimaCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
+		mockSvc func(*mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller, *mocks.NerdctlCommandSystemDeps)
 	}{
 		{
 			name: "happy path",
@@ -39,9 +39,9 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 				Use: "info",
 			},
 			args: []string{},
-			mockSvc: func(lcc *mocks.LimaCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller, ncsd *mocks.NerdctlCommandSystemDeps) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
@@ -50,7 +50,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "info").Return(c)
+				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "info").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -62,13 +62,13 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			tc.mockSvc(lcc, logger, ctrl, ncsd)
+			tc.mockSvc(ncc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(lcc, ecc, ncsd, logger, nil, &config.Finch{}).runAdapter(tc.cmd, tc.args))
+			assert.NoError(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}).runAdapter(tc.cmd, tc.args))
 		})
 	}
 }
@@ -83,7 +83,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 		wantErr error
 		mockSvc func(
 			t *testing.T,
-			lcc *mocks.LimaCmdCreator,
+			ncc *mocks.NerdctlCmdCreator,
 			ecc *mocks.CommandCreator,
 			ncsd *mocks.NerdctlCommandSystemDeps,
 			logger *mocks.Logger,
@@ -99,7 +99,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -107,7 +107,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
@@ -117,7 +117,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "pull", "test:tag").Return(c)
+				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "pull", "test:tag").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -129,7 +129,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -137,7 +137,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
@@ -145,7 +145,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
-				lcc.EXPECT().RunWithReplacingStdout(
+				ncc.EXPECT().RunWithReplacingStdout(
 					testStdoutRs, "shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "pull", "test:tag", "--help").Return(nil)
 			},
 		},
@@ -157,7 +157,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			wantErr: fmt.Errorf("failed to replace"),
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -165,7 +165,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
@@ -173,7 +173,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
-				lcc.EXPECT().RunWithReplacingStdout(
+				ncc.EXPECT().RunWithReplacingStdout(
 					testStdoutRs, "shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "pull", "test:tag", "--help").
 					Return(fmt.Errorf("failed to replace"))
 			},
@@ -186,7 +186,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -194,7 +194,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
@@ -203,7 +203,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
+				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
 					"pull", "--verify=cosign", "test:tag").Return(c)
 				c.EXPECT().Run()
 			},
@@ -216,7 +216,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -224,7 +224,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
@@ -233,7 +233,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test",
+				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test",
 					nerdctlCmdName, "pull", "test:tag").Return(c)
 				c.EXPECT().Run()
 			},
@@ -242,13 +242,15 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			name:    "with ECR credential helper and environment set",
 			cmdName: "pull",
 			fc: &config.Finch{
-				CredsHelpers: []string{"ecr-login"},
+				SharedSettings: config.SharedSettings{
+					CredsHelpers: []string{"ecr-login"},
+				},
 			},
 			args:    []string{"test:tag"},
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				ecc *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -256,7 +258,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", true)
@@ -281,7 +283,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 `), nil)
 
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell",
+				ncc.EXPECT().Create("shell",
 					limaInstanceName,
 					"sudo",
 					"-E",
@@ -302,13 +304,15 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			name:    "with ECR credential helper, no environment set",
 			cmdName: "pull",
 			fc: &config.Finch{
-				CredsHelpers: []string{"ecr-login"},
+				SharedSettings: config.SharedSettings{
+					CredsHelpers: []string{"ecr-login"},
+				},
 			},
 			args:    []string{"test:tag"},
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				ecc *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -316,7 +320,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", false)
@@ -341,7 +345,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 `), nil)
 
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell",
+				ncc.EXPECT().Create("shell",
 					limaInstanceName,
 					"sudo",
 					"-E",
@@ -359,13 +363,15 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			name:    "with ECR credential helper, aws command fails but environment is used",
 			cmdName: "pull",
 			fc: &config.Finch{
-				CredsHelpers: []string{"ecr-login"},
+				SharedSettings: config.SharedSettings{
+					CredsHelpers: []string{"ecr-login"},
+				},
 			},
 			args:    []string{"test:tag"},
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				ecc *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -373,7 +379,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", true)
@@ -394,7 +400,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				logger.EXPECT().Debugln("failed to run `aws configure` command")
 
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell",
+				ncc.EXPECT().Create("shell",
 					limaInstanceName,
 					"sudo",
 					"-E",
@@ -412,13 +418,15 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			name:    "with ECR credential helper, aws command fails but returns unexpected response",
 			cmdName: "pull",
 			fc: &config.Finch{
-				CredsHelpers: []string{"ecr-login"},
+				SharedSettings: config.SharedSettings{
+					CredsHelpers: []string{"ecr-login"},
+				},
 			},
 			args:    []string{"test:tag"},
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				ecc *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -426,7 +434,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", true)
@@ -448,7 +456,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 					"This may result in a broken ecr-credential helper experience.")
 
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell",
+				ncc.EXPECT().Create("shell",
 					limaInstanceName,
 					"sudo",
 					"-E",
@@ -470,14 +478,14 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
-			tc.mockSvc(t, lcc, ecc, ncsd, logger, ctrl, fs)
+			tc.mockSvc(t, ncc, ecc, ncsd, logger, ctrl, fs)
 
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -493,7 +501,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 		wantErr error
 		mockSvc func(
 			t *testing.T,
-			lcc *mocks.LimaCmdCreator,
+			lcc *mocks.NerdctlCmdCreator,
 			ecc *mocks.CommandCreator,
 			ncsd *mocks.NerdctlCommandSystemDeps,
 			logger *mocks.Logger,
@@ -511,7 +519,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -544,7 +552,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -575,7 +583,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -612,7 +620,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -648,7 +656,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -680,7 +688,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -718,7 +726,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -755,7 +763,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -787,7 +795,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				t *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -824,7 +832,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				t *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -864,7 +872,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				t *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -901,7 +909,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: &os.PathError{Op: "open", Path: envFilePath, Err: afero.ErrFileNotFound},
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -922,7 +930,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -953,7 +961,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -983,7 +991,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: errors.New("run cmd error"),
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -1013,7 +1021,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -1044,7 +1052,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -1078,7 +1086,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -1112,7 +1120,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -1147,7 +1155,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -1178,7 +1186,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			lcc := mocks.NewNerdctlCmdCreator(ctrl)
 			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
@@ -1200,7 +1208,7 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 		wantErr error
 		mockSvc func(
 			t *testing.T,
-			lcc *mocks.LimaCmdCreator,
+			lcc *mocks.NerdctlCmdCreator,
 			ecc *mocks.CommandCreator,
 			ncsd *mocks.NerdctlCommandSystemDeps,
 			logger *mocks.Logger,
@@ -1216,7 +1224,7 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -1245,7 +1253,7 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -1276,7 +1284,7 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(
 				_ *testing.T,
-				lcc *mocks.LimaCmdCreator,
+				lcc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
 				ncsd *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
@@ -1306,7 +1314,7 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			lcc := mocks.NewNerdctlCmdCreator(ctrl)
 			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)

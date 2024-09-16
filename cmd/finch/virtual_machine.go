@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin || windows
+
 package main
 
 import (
@@ -28,7 +30,7 @@ const (
 )
 
 func newVirtualMachineCommand(
-	limaCmdCreator command.LimaCmdCreator,
+	limaCmdCreator command.NerdctlCmdCreator,
 	logger flog.Logger,
 	optionalDepGroups []*dependency.Group,
 	lca config.LimaConfigApplier,
@@ -57,7 +59,7 @@ func newVirtualMachineCommand(
 
 // Used by the actions that call VM start to ensure that the in-VM config file options are applied after boot.
 type postVMStartInitAction struct {
-	creator        command.LimaCmdCreator
+	creator        command.NerdctlCmdCreator
 	logger         flog.Logger
 	fs             afero.Fs
 	privateKeyPath string
@@ -66,7 +68,7 @@ type postVMStartInitAction struct {
 
 func newPostVMStartInitAction(
 	logger flog.Logger,
-	creator command.LimaCmdCreator,
+	creator command.NerdctlCmdCreator,
 	fs afero.Fs,
 	privateKeyPath string,
 	nca config.NerdctlConfigApplier,
@@ -99,7 +101,7 @@ func (p *postVMStartInitAction) run() error {
 func virtualMachineCommands(
 	logger flog.Logger,
 	fp path.Finch,
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	ecc command.Creator,
 	fs afero.Fs,
 	fc *config.Finch,
@@ -107,9 +109,9 @@ func virtualMachineCommands(
 	finchRootPath string,
 ) *cobra.Command {
 	return newVirtualMachineCommand(
-		lcc,
+		ncc,
 		logger,
-		dependencies(ecc, fc, fp, fs, lcc, logger, fp.FinchDir(finchRootPath)),
+		dependencies(ecc, fc, fp, fs, ncc, logger, fp.FinchDir(finchRootPath)),
 		config.NewLimaApplier(
 			fc,
 			ecc,
@@ -130,6 +132,6 @@ func virtualMachineCommands(
 		),
 		fp,
 		fs,
-		disk.NewUserDataDiskManager(lcc, ecc, &afero.OsFs{}, fp, finchRootPath, fc, logger),
+		disk.NewUserDataDiskManager(ncc, ecc, &afero.OsFs{}, fp, finchRootPath, fc, logger),
 	)
 }

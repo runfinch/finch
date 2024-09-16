@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin || windows
+
 package config
 
 import (
@@ -163,15 +165,9 @@ func (lca *limaConfigApplier) ConfigureOverrideLimaYaml() error {
 	}
 	var limaCfg limayaml.LimaYAML
 
-	limaCfg.CPUs = lca.cfg.CPUs
-	limaCfg.Memory = lca.cfg.Memory
-	limaCfg.Mounts = []limayaml.Mount{}
-	for _, ad := range lca.cfg.AdditionalDirectories {
-		limaCfg.Mounts = append(limaCfg.Mounts, limayaml.Mount{
-			Location: *ad.Path, Writable: pointer.Bool(true),
-		})
-	}
-
+	lca.configureCPUs(&limaCfg)
+	lca.configureMemory(&limaCfg)
+	lca.configureMounts(&limaCfg)
 	if *lca.cfg.VMType != "wsl2" && len(limaCfg.AdditionalDisks) == 0 {
 		limaCfg.AdditionalDisks = append(limaCfg.AdditionalDisks, limayaml.Disk{
 			Name: "finch",

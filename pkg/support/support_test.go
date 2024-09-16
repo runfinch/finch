@@ -25,14 +25,14 @@ func TestSupport_NewBundleBuilder(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	ecc := mocks.NewCommandCreator(ctrl)
-	lcc := mocks.NewLimaCmdCreator(ctrl)
+	ncc := mocks.NewNerdctlCmdCreator(ctrl)
 	logger := mocks.NewLogger(ctrl)
 	fs := afero.NewMemMapFs()
 	finch := fpath.Finch("mockfinch")
 	lima := mocks.NewMockLimaWrapper(ctrl)
 
 	config := NewBundleConfig(finch, "mockhome")
-	NewBundleBuilder(logger, fs, config, finch, ecc, lcc, lima)
+	NewBundleBuilder(logger, fs, config, finch, ecc, ncc, lima)
 }
 
 func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
@@ -48,7 +48,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			*mocks.Logger,
 			*mocks.BundleConfig,
 			*mocks.CommandCreator,
-			*mocks.LimaCmdCreator,
+			*mocks.NerdctlCmdCreator,
 			*mocks.Command,
 			*mocks.MockLimaWrapper,
 			afero.Fs,
@@ -62,7 +62,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -106,7 +106,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -147,7 +147,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -187,7 +187,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -227,7 +227,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.LimaCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -268,7 +268,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				lcc *mocks.LimaCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
@@ -300,7 +300,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 
 				var catWriter io.Writer
 				waitChan := make(chan int)
-				lcc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "cat", "extra1").Return(cmd)
+				ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "cat", "extra1").Return(cmd)
 				cmd.EXPECT().SetStdout(gomock.Any()).Do(func(writer io.Writer) {
 					catWriter = writer
 				})
@@ -335,7 +335,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			config := mocks.NewBundleConfig(ctrl)
 			finch := fpath.Finch("mockfinch")
 			ecc := mocks.NewCommandCreator(ctrl)
-			lcc := mocks.NewLimaCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lima := mocks.NewMockLimaWrapper(ctrl)
 			cmd := mocks.NewCommand(ctrl)
 
@@ -345,7 +345,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				config: config,
 				finch:  finch,
 				ecc:    ecc,
-				lcc:    lcc,
+				ncc:    ncc,
 				lima:   lima,
 			}
 
@@ -366,7 +366,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			tc.mockSvc(logger, config, ecc, lcc, cmd, lima, fs)
+			tc.mockSvc(logger, config, ecc, ncc, cmd, lima, fs)
 
 			zipFile, err := builder.GenerateSupportBundle(tc.include, tc.exclude)
 			assert.NoError(t, err)

@@ -22,12 +22,11 @@ LIMA_EXTENSION := .tar.gz
 LIMA_VDE_SUDOERS_FILE := /etc/sudoers.d/finch-lima
 # Final installation prefix for vde created by CLI after installation, only used in uninstall step
 VDE_INSTALL ?= /opt/finch
-UNAME := $(shell uname -m)
-ARCH ?= $(UNAME)
+ARCH ?= $(shell uname -m)
 SUPPORTED_ARCH = false
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
-GITCOMMIT := $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
+GITCOMMIT ?= $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 LDFLAGS = "-w -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
 MIN_MACOS_VERSION ?= 11.0
 
@@ -52,15 +51,28 @@ endif
 arch-test:
 	@if [ $(SUPPORTED_ARCH) != "true" ]; then echo "Unsupported architecture: $(ARCH)"; exit "1"; fi
 
+# OS will be set on Windows (to Windows_NT), and undefined otherwise unless
+# it is explicity specified on the commandline.
+# On Unix (or, not-Windows), query OS and set it using uname -s
 BUILD_OS ?= $(OS)
-FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
-ifeq ($(BUILD_OS), Windows_NT)
-include Makefile.windows
-else
-include Makefile.darwin
+ifeq ($(BUILD_OS),)
+BUILD_OS = $(shell uname -s)
 endif
 
-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml
+FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
+
+remote-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml
+
+ifeq ($(BUILD_OS), Windows_NT)
+include Makefile.windows
+all: remote-all
+else ifeq ($(BUILD_OS), Darwin)
+include Makefile.darwin
+all: remote-all
+else ifeq ($(BUILD_OS), Linux)
+# on Linux, we only need to build "finch"
+all: finch
+endif
 
 .PHONY: install.finch-core-dependencies
 install.finch-core-dependencies:
@@ -106,11 +118,13 @@ uninstall: uninstall.finch
 
 .PHONY: finch
 ifeq ($(GOOS),windows)
-finch: finch-windows finch-general
+finch: finch-windows finch-all
 else ifeq ($(GOOS),darwin)
 finch: finch-macos
+else ifeq ($(NATIVE_BUILD),true)
+finch: finch-native
 else
-finch: finch-unix
+finch: finch-all
 endif
 
 finch-windows:
@@ -121,10 +135,13 @@ finch-macos: export CGO_CFLAGS := -mmacosx-version-min=$(MIN_MACOS_VERSION)
 finch-macos: export CGO_LDFLAGS := -mmacosx-version-min=$(MIN_MACOS_VERSION)
 finch-macos: finch-unix
 
-finch-unix: finch-general
+finch-unix: finch-all
 
-finch-general:
-	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
+finch-native: GO_BUILD_TAGS += native
+finch-native: finch-all
+
+finch-all:
+	$(GO) build -ldflags $(LDFLAGS) -tags "$(GO_BUILD_TAGS)" -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
 
 .PHONY: release
 release: check-licenses all download-licenses

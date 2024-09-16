@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//go:build !windows
+//go:build darwin
 
 package vmnet
 
@@ -21,13 +21,13 @@ import (
 type sudoersFile struct {
 	fs             afero.Fs
 	execCmdCreator command.Creator
-	limaCmdCreator command.LimaCmdCreator
+	limaCmdCreator command.NerdctlCmdCreator
 	l              flog.Logger
 }
 
 var _ dependency.Dependency = (*sudoersFile)(nil)
 
-func newSudoersFile(fs afero.Fs, execCmdCreator command.Creator, limaCmdCreator command.LimaCmdCreator, l flog.Logger) *sudoersFile {
+func newSudoersFile(fs afero.Fs, execCmdCreator command.Creator, limaCmdCreator command.NerdctlCmdCreator, l flog.Logger) *sudoersFile {
 	return &sudoersFile{
 		fs:             fs,
 		execCmdCreator: execCmdCreator,

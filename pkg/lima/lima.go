@@ -36,7 +36,7 @@ const (
 )
 
 // GetVMStatus returns the Lima VM status.
-func GetVMStatus(creator command.LimaCmdCreator, logger flog.Logger, instanceName string) (VMStatus, error) {
+func GetVMStatus(creator command.NerdctlCmdCreator, logger flog.Logger, instanceName string) (VMStatus, error) {
 	args := []string{"ls", "-f", "{{.Status}}", instanceName}
 	cmd := creator.CreateWithoutStdio(args...)
 	out, err := cmd.Output()
@@ -48,7 +48,7 @@ func GetVMStatus(creator command.LimaCmdCreator, logger flog.Logger, instanceNam
 }
 
 // GetVMType returns the Lima VMType for a running instance.
-func GetVMType(creator command.LimaCmdCreator, logger flog.Logger, instanceName string) (VMType, error) {
+func GetVMType(creator command.NerdctlCmdCreator, logger flog.Logger, instanceName string) (VMType, error) {
 	args := []string{"ls", "-f", "{{.VMType}}", instanceName}
 	cmd := creator.CreateWithoutStdio(args...)
 	out, err := cmd.Output()

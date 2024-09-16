@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//go:build !windows
+//go:build darwin
 
 // Package vmnet handles installation and configuration of dependencies needed for Lima's managed networking
 // and port-forwarding to work, with minimal user interaction.
@@ -30,7 +30,7 @@ const (
 // NewDependencyGroup returns a dependency group that contains all the dependencies required to make vmnet networking work.
 func NewDependencyGroup(
 	execCmdCreator command.Creator,
-	limaCmdCreator command.LimaCmdCreator,
+	limaCmdCreator command.NerdctlCmdCreator,
 	fs afero.Fs,
 	fp path.Finch,
 	logger flog.Logger,
@@ -41,7 +41,7 @@ func NewDependencyGroup(
 
 func newDeps(
 	execCmdCreator command.Creator,
-	limaCmdCreator command.LimaCmdCreator,
+	limaCmdCreator command.NerdctlCmdCreator,
 	fs afero.Fs,
 	fp path.Finch,
 	logger flog.Logger,

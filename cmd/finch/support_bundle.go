@@ -4,34 +4,31 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"
-	"github.com/runfinch/finch/pkg/lima"
 	"github.com/runfinch/finch/pkg/support"
 )
 
-func newSupportBundleCommand(logger flog.Logger, builder support.BundleBuilder, lcc command.LimaCmdCreator) *cobra.Command {
+func newSupportBundleCommand(logger flog.Logger, builder support.BundleBuilder, ncc command.NerdctlCmdCreator) *cobra.Command {
 	supportBundleCommand := &cobra.Command{
 		Use:   "support-bundle",
 		Short: "Support bundle management",
 	}
 	supportBundleCommand.AddCommand(
-		newSupportBundleGenerateCommand(logger, builder, lcc),
+		newSupportBundleGenerateCommand(logger, builder, ncc),
 	)
 	return supportBundleCommand
 }
 
-func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleBuilder, lcc command.LimaCmdCreator) *cobra.Command {
+func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleBuilder, ncc command.NerdctlCmdCreator) *cobra.Command {
 	supportBundleGenerateCommand := &cobra.Command{
 		Use:   "generate",
 		Args:  cobra.NoArgs,
 		Short: "Generate support bundle",
 		Long:  "Generates a collection of logs and configs that can be uploaded to a Github issue to help debug issues.",
-		RunE:  newGenerateSupportBundleAction(logger, builder, lcc).runAdapter,
+		RunE:  newGenerateSupportBundleAction(logger, builder, ncc).runAdapter,
 	}
 
 	supportBundleGenerateCommand.Flags().StringArray("include", []string{},
@@ -46,18 +43,18 @@ func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleB
 type generateSupportBundleAction struct {
 	logger  flog.Logger
 	builder support.BundleBuilder
-	lcc     command.LimaCmdCreator
+	ncc     command.NerdctlCmdCreator
 }
 
 func newGenerateSupportBundleAction(
 	logger flog.Logger,
 	builder support.BundleBuilder,
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 ) *generateSupportBundleAction {
 	return &generateSupportBundleAction{
 		logger:  logger,
 		builder: builder,
-		lcc:     lcc,
+		ncc:     ncc,
 	}
 }
 
@@ -74,7 +71,7 @@ func (gsa *generateSupportBundleAction) runAdapter(cmd *cobra.Command, _ []strin
 }
 
 func (gsa *generateSupportBundleAction) run(additionalFiles []string, excludeFiles []string) error {
-	err := gsa.assertVMExists()
+	err := gsa.canCreateBundle()
 	if err != nil {
 		return err
 	}
@@ -88,18 +85,4 @@ func (gsa *generateSupportBundleAction) run(additionalFiles []string, excludeFil
 	gsa.logger.Info("Please ensure there is no sensitive information in the bundle before uploading.")
 	gsa.logger.Info("By default, this bundle contains basic logs and configs for Finch.")
 	return nil
-}
-
-func (gsa *generateSupportBundleAction) assertVMExists() error {
-	status, err := lima.GetVMStatus(gsa.lcc, gsa.logger, limaInstanceName)
-	if err != nil {
-		return err
-	}
-	switch status {
-	case lima.Nonexistent:
-		return fmt.Errorf("cannot create support bundle for nonexistent VM, run `finch %s init` to create a new instance",
-			virtualMachineRootCmd)
-	default:
-		return nil
-	}
 }

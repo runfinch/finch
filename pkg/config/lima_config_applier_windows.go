@@ -26,3 +26,15 @@ func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limayaml
 	}
 	return limaCfg, nil
 }
+
+func (lca *limaConfigApplier) configureCPUs(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+	return limaCfg
+}
+
+func (lca *limaConfigApplier) configureMemory(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+	return limaCfg
+}
+
+func (lca *limaConfigApplier) configureMounts(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+	return limaCfg
+}

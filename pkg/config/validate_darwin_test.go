@@ -28,8 +28,10 @@ func TestValidate(t *testing.T) {
 		{
 			name: "happy path",
 			cfg: &Finch{
-				CPUs:   pointer.Int(4),
-				Memory: pointer.String("4GiB"),
+				SystemSettings: SystemSettings{
+					CPUs:   pointer.Int(4),
+					Memory: pointer.String("4GiB"),
+				},
 			},
 			mockSvc: func(_ *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
 				deps.EXPECT().NumCPU().Return(8)
@@ -41,8 +43,10 @@ func TestValidate(t *testing.T) {
 		{
 			name: "config specifies less CPUs than required",
 			cfg: &Finch{
-				CPUs:   pointer.Int(0),
-				Memory: pointer.String("0GiB"),
+				SystemSettings: SystemSettings{
+					CPUs:   pointer.Int(0),
+					Memory: pointer.String("0GiB"),
+				},
 			},
 			mockSvc: func(_ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {},
 			err:     errors.New("specified number of CPUs (0) must be greater than 0"),
@@ -50,8 +54,10 @@ func TestValidate(t *testing.T) {
 		{
 			name: "config specifies less memory than required",
 			cfg: &Finch{
-				CPUs:   pointer.Int(1),
-				Memory: pointer.String("0GiB"),
+				SystemSettings: SystemSettings{
+					CPUs:   pointer.Int(1),
+					Memory: pointer.String("0GiB"),
+				},
 			},
 			mockSvc: func(_ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {},
 			err:     errors.New("specified amount of memory (0GiB) must be greater than 0GiB"),
@@ -59,8 +65,10 @@ func TestValidate(t *testing.T) {
 		{
 			name: "config specifies more CPUs than available",
 			cfg: &Finch{
-				CPUs:   pointer.Int(4),
-				Memory: pointer.String("4GiB"),
+				SystemSettings: SystemSettings{
+					CPUs:   pointer.Int(4),
+					Memory: pointer.String("4GiB"),
+				},
 			},
 			mockSvc: func(l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
 				deps.EXPECT().NumCPU().Return(1)
@@ -77,8 +85,10 @@ func TestValidate(t *testing.T) {
 		{
 			name: "config specifies more memory than available",
 			cfg: &Finch{
-				CPUs:   pointer.Int(4),
-				Memory: pointer.String("4GiB"),
+				SystemSettings: SystemSettings{
+					CPUs:   pointer.Int(4),
+					Memory: pointer.String("4GiB"),
+				},
 			},
 			mockSvc: func(l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
 				deps.EXPECT().NumCPU().Return(8)

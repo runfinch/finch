@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build darwin || windows
+
 package main
 
 import (
@@ -19,7 +21,7 @@ import (
 )
 
 func newInitVMCommand(
-	lcc command.LimaCmdCreator,
+	ncc command.NerdctlCmdCreator,
 	logger flog.Logger,
 	optionalDepGroups []*dependency.Group,
 	lca config.LimaConfigApplier,
@@ -32,8 +34,8 @@ func newInitVMCommand(
 	initVMCommand := &cobra.Command{
 		Use:      "init",
 		Short:    "Initialize the virtual machine",
-		RunE:     newInitVMAction(lcc, logger, optionalDepGroups, lca, baseYamlFilePath, diskManager).runAdapter,
-		PostRunE: newPostVMStartInitAction(logger, lcc, fs, privateKeyPath, nca).runAdapter,
+		RunE:     newInitVMAction(ncc, logger, optionalDepGroups, lca, baseYamlFilePath, diskManager).runAdapter,
+		PostRunE: newPostVMStartInitAction(logger, ncc, fs, privateKeyPath, nca).runAdapter,
 	}
 
 	return initVMCommand
@@ -41,7 +43,7 @@ func newInitVMCommand(
 
 type initVMAction struct {
 	baseYamlFilePath  string
-	creator           command.LimaCmdCreator
+	creator           command.NerdctlCmdCreator
 	logger            flog.Logger
 	optionalDepGroups []*dependency.Group
 	limaConfigApplier config.LimaConfigApplier
@@ -49,7 +51,7 @@ type initVMAction struct {
 }
 
 func newInitVMAction(
-	creator command.LimaCmdCreator,
+	creator command.NerdctlCmdCreator,
 	logger flog.Logger,
 	optionalDepGroups []*dependency.Group,
 	lca config.LimaConfigApplier,
