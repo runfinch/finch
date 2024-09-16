@@ -5,16 +5,23 @@
 package credhelper
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
+	"slices"
 
+	"github.com/docker/cli/cli/config/configfile"
+	"github.com/docker/cli/cli/config/types"
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
 	"github.com/runfinch/finch/pkg/flog"
+	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/path"
+	"github.com/runfinch/finch/pkg/system"
 )
 
 const (
@@ -95,4 +102,65 @@ func newDeps(
 	}
 
 	return deps
+}
+
+// RefreshConfigFile refreshes config.json according to finch.yaml.
+func RefreshConfigFile(fs afero.Fs, logger flog.Logger, finchConfigPath, configJSONPath string) error {
+	systemDeps := system.NewStdLib()
+	mem := fmemory.NewMemory()
+
+	finchCfg, err := config.LoadFinchConfig(fs, finchConfigPath, logger, systemDeps, mem)
+	if err != nil {
+		return err
+	}
+	if slices.Contains(finchCfg.CredsHelpers, "ecr-login") {
+		return nil
+	}
+
+	fileExists, err := afero.Exists(fs, configJSONPath)
+	if err != nil {
+		return err
+	}
+	if !fileExists {
+		return nil
+	}
+
+	fileRead, err := fs.Open(configJSONPath)
+	if err != nil {
+		return err
+	}
+	defer fileRead.Close() //nolint:errcheck // closing the file
+
+	var cfg configfile.ConfigFile
+
+	bytes, _ := afero.ReadAll(fileRead)
+	err = json.Unmarshal(bytes, &cfg)
+	if err != nil {
+		return err
+	}
+	if cfg.CredentialsStore == "" {
+		return nil
+	}
+
+	cfg.CredentialsStore = ""
+	if cfg.AuthConfigs == nil {
+		cfg.AuthConfigs = map[string]types.AuthConfig{}
+	}
+
+	finalCfgBytes, err := json.Marshal(&cfg)
+	if err != nil {
+		return err
+	}
+
+	file, err := fs.OpenFile(configJSONPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o600)
+	if err != nil {
+		return err
+	}
+	_, err = file.Write(finalCfgBytes)
+	if err != nil {
+		return err
+	}
+	defer file.Close() //nolint:errcheck // closing the file
+
+	return nil
 }

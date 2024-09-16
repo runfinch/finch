@@ -9,4 +9,7 @@ import (
 	"path/filepath"
 )
 
-var finchConfigFilePath = filepath.Join(os.Getenv("LOCALAPPDATA"), ".finch", "finch.yaml")
+var (
+	finchConfigFilePath = filepath.Join(os.Getenv("LOCALAPPDATA"), ".finch", "finch.yaml")
+	finchConfigJSONPath = filepath.Join(os.Getenv("LOCALAPPDATA"), ".finch", "config.json")
+)

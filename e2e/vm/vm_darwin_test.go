@@ -64,7 +64,7 @@ func TestVM(t *testing.T) {
 		testVMLifecycle(o)
 		testAdditionalDisk(o, *e2e.Installed)
 		testConfig(o, *e2e.Installed)
-		testFinchConfigFile(o)
+		testFinchConfigFile(o, *e2e.Installed)
 		testVersion(o)
 		testNonDefaultOptions(o, *e2e.Installed)
 		testSupportBundle(o)

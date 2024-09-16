@@ -20,8 +20,18 @@ import (
 
 // testFinchConfigFile makes sure that DOCKER_CONFIG is properly set to ~/.finch so that related information
 // is written to ~/.finch/config.json file.
-var testFinchConfigFile = func(o *option.Option) {
+var testFinchConfigFile = func(o *option.Option, installed bool) {
 	ginkgo.Describe("finch config file", func() {
+		var vmType string
+
+		ginkgo.BeforeEach(func() {
+			if runtime.GOOS == "windows" {
+				vmType = "wsl2"
+			} else {
+				vmType = "vz"
+			}
+		})
+
 		ginkgo.It("should store login credentials", func() {
 			filename := "htpasswd"
 			registryImage := "public.ecr.aws/docker/library/registry:2"
@@ -73,6 +83,15 @@ var testFinchConfigFile = func(o *option.Option) {
 			configContent, err = os.ReadFile(filepath.Clean(configPath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(string(configContent)).ShouldNot(gomega.ContainSubstring(registry))
+		})
+
+		ginkgo.It("should refresh config.json if creds_helpers is not set in finch.yaml, but config.json is configured with credsStore", func() {
+			resetVM(o)
+			resetDisks(o, installed)
+			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nvmType: %s\nrosetta: true", vmType)))
+			writeFile(finchConfigJSONPath, []byte(`{"credsStore":"ecr-login"}`))
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
+			gomega.Expect(string(readFile(finchConfigJSONPath))).Should(gomega.Equal(`{"auths":{}}`))
 		})
 	})
 }

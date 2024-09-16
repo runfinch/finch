@@ -6,6 +6,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/runfinch/finch/pkg/dependency"
@@ -13,14 +14,16 @@ import (
 	"github.com/runfinch/finch/pkg/mocks"
 
 	"github.com/golang/mock/gomock"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewStartVMCommand(t *testing.T) {
 	t.Parallel()
 
-	cmd := newStartVMCommand(nil, nil, nil, nil, nil, nil, "", nil)
+	cmd := newStartVMCommand(nil, nil, nil, nil, nil, nil, "", nil, "")
 	assert.Equal(t, cmd.Name(), "start")
 }
 
@@ -37,9 +40,12 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
+			afero.Fs,
 			*mocks.UserDataDiskManager,
 			*gomock.Controller,
+			string,
 		)
+		finchDir string
 	}{
 		{
 			name:    "should start instance",
@@ -63,9 +69,15 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
 				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
+				finchDir string,
 			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -82,6 +94,7 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 				logger.EXPECT().Info("Starting existing Finch virtual machine...")
 				logger.EXPECT().Info("Finch virtual machine started successfully")
 			},
+			finchDir: "/.finch",
 		},
 	}
 
@@ -94,12 +107,13 @@ func TestStartVMAction_runAdapter(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
+			fs := afero.NewMemMapFs()
 			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
-			tc.mockSvc(lcc, logger, lca, dm, ctrl)
+			tc.mockSvc(lcc, logger, lca, fs, dm, ctrl, tc.finchDir)
 
-			err := newStartVMAction(lcc, logger, groups, lca, dm).runAdapter(tc.command, tc.args)
+			err := newStartVMAction(lcc, logger, groups, lca, fs, dm, tc.finchDir).runAdapter(tc.command, tc.args)
 			assert.Equal(t, tc.wantErr, err)
 		})
 	}
@@ -116,9 +130,12 @@ func TestStartVMAction_run(t *testing.T) {
 			*mocks.LimaCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
+			afero.Fs,
 			*mocks.UserDataDiskManager,
 			*gomock.Controller,
+			string,
 		)
+		finchDir string
 	}{
 		{
 			name:    "should start instance if instance exists",
@@ -138,9 +155,15 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
 				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
+				finchDir string,
 			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -157,6 +180,56 @@ func TestStartVMAction_run(t *testing.T) {
 				logger.EXPECT().Info("Starting existing Finch virtual machine...")
 				logger.EXPECT().Info("Finch virtual machine started successfully")
 			},
+			finchDir: "/.finch",
+		},
+		{
+			name:    "should refresh config.json based on finch.yaml and start VM",
+			wantErr: nil,
+			groups: func(ctrl *gomock.Controller) []*dependency.Group {
+				dep := mocks.NewDependency(ctrl)
+				deps := dependency.NewGroup([]dependency.Dependency{dep}, "", "")
+				groups := []*dependency.Group{deps}
+
+				dep.EXPECT().Installed().Return(false)
+				dep.EXPECT().RequiresRoot().Return(false)
+				dep.EXPECT().Install().Return(nil)
+
+				return groups
+			},
+			mockSvc: func(
+				lcc *mocks.LimaCmdCreator,
+				logger *mocks.Logger,
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+				dm *mocks.UserDataDiskManager,
+				ctrl *gomock.Controller,
+				finchDir string,
+			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				data = `{"credsStore":"ecr-login"}`
+				configJSONPath := filepath.Join(finchDir, "config.json")
+				require.NoError(t, afero.WriteFile(fs, configJSONPath, []byte(data), 0o600))
+
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+
+				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
+
+				dm.EXPECT().EnsureUserDataDisk().Return(nil)
+
+				command := mocks.NewCommand(ctrl)
+				command.EXPECT().CombinedOutput()
+				lcc.EXPECT().CreateWithoutStdio("start", limaInstanceName).Return(command)
+
+				logger.EXPECT().Info("Starting existing Finch virtual machine...")
+				logger.EXPECT().Info("Finch virtual machine started successfully")
+			},
+			finchDir: "/.finch",
 		},
 		{
 			name:    "running VM",
@@ -168,14 +241,21 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
+				fs afero.Fs,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
+				finchDir string,
 			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 			},
+			finchDir: "/.finch",
 		},
 		{
 			name: "nonexistent VM",
@@ -188,14 +268,21 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
+				fs afero.Fs,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
+				finchDir string,
 			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 			},
+			finchDir: "/.finch",
 		},
 		{
 			name:    "unknown VM status",
@@ -207,14 +294,21 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
+				fs afero.Fs,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
+				finchDir string,
 			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Broken")
 			},
+			finchDir: "/.finch",
 		},
 		{
 			name:    "status command returns an error",
@@ -226,13 +320,20 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				_ *mocks.Logger,
 				_ *mocks.LimaConfigApplier,
+				fs afero.Fs,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
+				finchDir string,
 			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
 			},
+			finchDir: "/.finch",
 		},
 		{
 			// TODO: split this test case up:
@@ -247,9 +348,15 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
 				_ *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
+				finchDir string,
 			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -257,6 +364,7 @@ func TestStartVMAction_run(t *testing.T) {
 
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(errors.New("load config fails"))
 			},
+			finchDir: "/.finch",
 		},
 		{
 			// should succeed even if some optional dependencies fail to be installed
@@ -278,9 +386,15 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
 				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
+				finchDir string,
 			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -303,6 +417,7 @@ func TestStartVMAction_run(t *testing.T) {
 					),
 				)
 			},
+			finchDir: "/.finch",
 		},
 		{
 			name:    "should print out error if instance fails to start",
@@ -320,9 +435,15 @@ func TestStartVMAction_run(t *testing.T) {
 				lcc *mocks.LimaCmdCreator,
 				logger *mocks.Logger,
 				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
 				dm *mocks.UserDataDiskManager,
 				ctrl *gomock.Controller,
+				finchDir string,
 			) {
+				data := "cpus: 2\nmemory: 6GiB"
+				finchConfigPath := filepath.Join(finchDir, "finch.yaml")
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
 				getVMStatusC := mocks.NewCommand(ctrl)
 				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
@@ -342,6 +463,7 @@ func TestStartVMAction_run(t *testing.T) {
 				logger.EXPECT().Errorf("Finch virtual machine failed to start, debug logs:\n%s", logs)
 				logger.EXPECT().SetFormatter(flog.Text)
 			},
+			finchDir: "/.finch",
 		},
 	}
 
@@ -354,12 +476,13 @@ func TestStartVMAction_run(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			lcc := mocks.NewLimaCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
+			fs := afero.NewMemMapFs()
 			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
-			tc.mockSvc(lcc, logger, lca, dm, ctrl)
+			tc.mockSvc(lcc, logger, lca, fs, dm, ctrl, tc.finchDir)
 
-			err := newStartVMAction(lcc, logger, groups, lca, dm).run()
+			err := newStartVMAction(lcc, logger, groups, lca, fs, dm, tc.finchDir).run()
 			assert.Equal(t, err, tc.wantErr)
 		})
 	}
