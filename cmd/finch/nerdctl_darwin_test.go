@@ -179,6 +179,36 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			},
 		},
 		{
+			name:    "with COSIGN_PASSWORD env var and --sign=cosign",
+			cmdName: "push",
+			fc:      &config.Finch{},
+			args:    []string{"--sign=cosign", "test:tag"},
+			wantErr: nil,
+			mockSvc: func(
+				_ *testing.T,
+				ncc *mocks.NerdctlCmdCreator,
+				_ *mocks.CommandCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				_ afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				c := mocks.NewCommand(ctrl)
+				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
+					"push", "--sign=cosign", "test:tag").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
 			name:    "with COSIGN_PASSWORD env var and --verify=cosign",
 			cmdName: "pull",
 			fc:      &config.Finch{},
@@ -1314,14 +1344,14 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 			t.Parallel()
 
 			ctrl := gomock.NewController(t)
-			lcc := mocks.NewNerdctlCmdCreator(ctrl)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
-			tc.mockSvc(t, lcc, ecc, ncsd, logger, ctrl, fs)
+			tc.mockSvc(t, ncc, ecc, ncsd, logger, ctrl, fs)
 
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
 		})
 	}
 }

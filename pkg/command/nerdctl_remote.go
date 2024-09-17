@@ -12,10 +12,9 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 )
 
-const (
-	envKeyLimaHome = "LIMA_HOME"
-	envKeyWinPath  = "Path"
-)
+// EnvKeyLimaHome is the name of the environment variable that Lima uses to set the "lima home" path.
+// This is exported to facilitate unit testing, since it uses a different package (command_test).
+const EnvKeyLimaHome = "LIMA_HOME"
 
 type nerdctlCmdCreator struct {
 	cmdCreator   Creator
@@ -48,16 +47,16 @@ func NewNerdctlCmdCreator(
 }
 
 func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, args ...string) Command {
-	ncc.logger.Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", args, envKeyLimaHome, ncc.limaHomePath)
+	ncc.logger.Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", args, EnvKeyLimaHome, ncc.limaHomePath)
 	cmd := ncc.cmdCreator.Create(ncc.limactlPath, args...)
-	limaHomeEnv := fmt.Sprintf("%s=%s", envKeyLimaHome, ncc.limaHomePath)
+	limaHomeEnv := fmt.Sprintf("%s=%s", EnvKeyLimaHome, ncc.limaHomePath)
 
-	path := ncc.systemDeps.Env(envKeyPath)
-	path = fmt.Sprintf(`%s%s%s`, ncc.binPath, envKeyPathJoiner, path)
-	pathEnv := fmt.Sprintf("%s=%s", envKeyPath, path)
+	path := ncc.systemDeps.Env(EnvKeyPath)
+	path = fmt.Sprintf(`%s%s%s`, ncc.binPath, EnvKeyPathJoiner, path)
+	pathEnv := fmt.Sprintf("%s=%s", EnvKeyPath, path)
 
-	newPathEnv := replaceOrAppend(ncc.systemDeps.Environ(), envKeyLimaHome, limaHomeEnv)
-	newPathEnv = replaceOrAppend(newPathEnv, envKeyPath, pathEnv)
+	newPathEnv := replaceOrAppend(ncc.systemDeps.Environ(), EnvKeyLimaHome, limaHomeEnv)
+	newPathEnv = replaceOrAppend(newPathEnv, EnvKeyPath, pathEnv)
 
 	cmd.SetEnv(newPathEnv)
 	cmd.SetStdin(stdin)

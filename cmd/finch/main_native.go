@@ -15,6 +15,7 @@ import (
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
+	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/lima/wrapper"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/support"
@@ -22,14 +23,43 @@ import (
 	"github.com/runfinch/finch/pkg/version"
 )
 
+func xmain(logger flog.Logger,
+	_ path.FinchFinderDeps,
+	fs afero.Fs,
+	loadCfgDeps config.LoadSystemDeps,
+	mem fmemory.Memory,
+	stdOut io.Writer,
+) error {
+	fp := path.NewFinchPath()
+	ecc := command.NewExecCmdCreator()
+	fc, err := config.Load(
+		fs,
+		fp.ConfigFilePath(),
+		logger,
+		loadCfgDeps,
+		mem,
+		ecc,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to load config: %w", err)
+	}
+
+	return newApp(
+		logger,
+		fp,
+		fs,
+		fc,
+		stdOut,
+		ecc,
+	).Execute()
+}
+
 var newApp = func(
 	logger flog.Logger,
 	fp path.Finch,
 	fs afero.Fs,
 	fc *config.Finch,
 	stdOut io.Writer,
-	_,
-	finchRootPath string,
 	ecc command.Creator,
 ) *cobra.Command {
 	usage := fmt.Sprintf("%v <command>", finchRootCmd)
@@ -54,7 +84,7 @@ var newApp = func(
 
 	ncc := command.NewNerdctlCmdCreator(ecc,
 		logger,
-		fp.NerdctlConfigFilePath(finchRootPath),
+		fp.NerdctlConfigFilePath(),
 		fp.BuildkitSocketPath(),
 		fp.FinchDependencyBinDir(),
 		system.NewStdLib(),
@@ -63,7 +93,7 @@ var newApp = func(
 	supportBundleBuilder := support.NewBundleBuilder(
 		logger,
 		fs,
-		support.NewBundleConfig(fp, finchRootPath),
+		support.NewBundleConfig(fp, fp.FinchDir()),
 		fp,
 		ecc,
 		ncc,

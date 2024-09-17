@@ -5,9 +5,9 @@ go 1.22.0
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.5
 	github.com/containerd/cgroups v1.1.0
-	github.com/containerd/nerdctl/v2 v2.0.0-rc.1
-	github.com/docker/cli v27.2.0+incompatible
-	github.com/docker/docker v27.2.0+incompatible
+	github.com/containerd/nerdctl/v2 v2.0.0-rc.2
+	github.com/docker/cli v27.2.1+incompatible
+	github.com/docker/docker v27.2.1+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
 	github.com/lima-vm/lima v0.23.2
@@ -23,18 +23,18 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/tc-hib/go-winres v0.3.3
 	github.com/xorcare/pointer v1.2.2
-	golang.org/x/crypto v0.26.0
+	golang.org/x/crypto v0.27.0
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
-	golang.org/x/tools v0.24.0
+	golang.org/x/tools v0.25.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.31.0
+	k8s.io/apimachinery v0.31.1
 )
 
 require (
 	github.com/aws/smithy-go v1.20.4 // indirect
 	github.com/containerd/cgroups/v3 v3.0.3 // indirect
 	github.com/containerd/containerd v1.7.21 // indirect
-	github.com/containerd/containerd/v2 v2.0.0-rc.3 // indirect
+	github.com/containerd/containerd/v2 v2.0.0-rc.4 // indirect
 	github.com/containerd/errdefs v0.1.0 // indirect
 	github.com/containerd/go-cni v1.1.10 // indirect
 	github.com/containerd/log v0.1.0 // indirect
@@ -97,10 +97,10 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/wk8/go-ordered-map v1.0.0
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/mod v0.20.0 // indirect
-	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/mod v0.21.0 // indirect
+	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sys v0.25.0
-	golang.org/x/text v0.17.0
+	golang.org/x/text v0.18.0
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect

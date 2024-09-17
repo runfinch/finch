@@ -26,6 +26,6 @@ func (bc *bundleConfig) LogFiles() []string {
 func (bc *bundleConfig) ConfigFiles() []string {
 	return []string{
 		path.Join(bc.finch.LimaInstancePath(), "lima.yaml"),
-		bc.finch.ConfigFilePath(bc.homeDir),
+		bc.finch.ConfigFilePath(bc.rootDir),
 	}
 }
