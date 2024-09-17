@@ -17,6 +17,8 @@ on:
       - 'contrib/**'
       - '.github/CODEOWNERS'
   pull_request:
+    branches:
+      - main
     paths:
       - '**.md'
       - 'contrib/**'
