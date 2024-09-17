@@ -147,10 +147,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: ["X64", "arm64"]
         version: ["13", "14"]
-        runner-type: ["test"]
         test-command: ["test-e2e-vm-serial", "test-e2e-container"]
+        arch: ["X64", "arm64"]
+        runner-type: ["test"]
     uses: ./.github/workflows/e2e-macos.yaml
     secrets: inherit
     with:
@@ -162,9 +162,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        test-command: ["test-e2e-vm-serial", "test-e2e-container"]
         arch: ["X64"]
         runner-type: ["test"]
-        test-command: ["test-e2e-vm-serial", "test-e2e-container"]
     uses: ./.github/workflows/e2e-windows.yaml
     secrets: inherit
     with:
@@ -175,11 +175,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: ["X64"]
         os: ["amazonlinux"]
+        arch: ["X64"]
         version: ["2023", "2"]
-        runner-type: ["test"]
         test-command: ["test-e2e-container"]
+        runner-type: ["test"]
     uses: ./.github/workflows/e2e-linux.yaml
     secrets: inherit
     with:
