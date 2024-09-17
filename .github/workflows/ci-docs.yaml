@@ -67,10 +67,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Skipping CI for docs & contrib files"
-  check-licenses:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Skipping CI for docs & contrib files"
   e2e-tests:
     strategy:
       matrix:
