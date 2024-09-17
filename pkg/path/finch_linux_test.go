@@ -44,7 +44,7 @@ func TestFinch_BuildkitSocketPath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.BuildkitSocketPath()
-	assert.Equal(t, res, filepath.Join("mock_finch", "buildkit", "buildkitd.toml"))
+	assert.Equal(t, res, filepath.Join("/", "var", "lib", "finch", "buildkit", "buildkitd.sock"))
 }
 
 func TestFinch_FinchDependencyBinDir(t *testing.T) {
