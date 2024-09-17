@@ -50,7 +50,7 @@ License: ASL 2.0
 Summary: The Finch CLI is an open source client for container development tool
 
 %if %{defined build_latest}
-Source0: https://github.com/pendo324/finch/archive/refs/heads/%{latest_branch}.tar.gz
+Source0: https://github.com/runfinch/finch/archive/refs/heads/%{latest_branch}.tar.gz
 %else
 %if %{defined build_local}
 Source0: finch-%{finch_release}.tar.gz
@@ -80,6 +80,16 @@ Source3000: https://%{cosign_package}/archive/%{cosign_commit}/%{cosign_src}.tar
 # Runtime requirements
 Requires: containerd nerdctl cni-plugins
 
+Provides: finch = %{finch_rpm_version}
+# License: ASL 2.0
+Provides: bundled(finch-daemon) = %{finch_daemon_rpm_version}
+# License: ASL 2.0
+Provides: bundled(buildctl) = %{buildkit_rpm_version}
+# License: ASL 2.0
+Provides: bundled(buildkitd) = %{buildkit_rpm_version}
+# License: ASL 2.0
+Provides: bundled(cosign) = %{cosign_rpm_version}
+
 # Compilation requirements
 BuildRequires: golang >= 1.22.3, git, make
 %if 0%{?amzn} > 2
@@ -95,31 +105,11 @@ even more options to reason about and choose from, Finch aims to help
 promote other projects by making it easy to install and use them,
 while offering a simple native client to tie it all together.
 
-%package buildkit
-License: ASL 2.0
-Version: %{buildkit_rpm_version}
-Summary: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit 
-
-%description buildkit
-BuildKit is a toolkit for converting source code to build artifacts
-in an efficient, expressive and repeatable manner.
-
-%package soci-snapshotter
-License: ASL 2.0
-Version: %{soci_rpm_version}
-Summary:  A containerd snapshotter plugin which enables standard OCI images to be lazily loaded without requiring a build-time conversion step. 
-
-%description soci-snapshotter
-SOCI Snapshotter is a containerd snapshotter plugin. It enables
-standard OCI images to be lazily loaded without requiring a
-build-time conversion step. "SOCI" is short for "Seekable OCI",
-and is pronounced "so-CHEE".
-
 %prep
 # %setup -D -T -c -b 0 -n finch-%{finch_commit}
 %setup -c
 %if %{defined build_latest}
-mv "finch-%{latest_branch}" "finch-%{finch_commit}"
+mv "finch-%{latest_branch}" "%{finch_src}"
 %endif
 
 # extract buildkit
