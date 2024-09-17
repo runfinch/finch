@@ -26,14 +26,14 @@ import (
 const (
 	mockLimaHomePath = "/lima/home"
 	mockLimactlPath  = "/lima/bin/limactl"
-	envKeyLimaHome   = "LIMA_HOME"
 	mockQemuBinPath  = "/lima/bin"
 	mockSystemPath   = "/usr/bin"
+	finalPath        = mockQemuBinPath + command.EnvKeyPathJoiner + mockSystemPath
 )
 
 var mockArgs = []string{"shell", "finch"}
 
-func TestLimaCmdCreator_Create(t *testing.T) {
+func TestNerdctlCmdCreator_Create(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
@@ -45,16 +45,16 @@ func TestLimaCmdCreator_Create(t *testing.T) {
 			name:    "happy path",
 			wantErr: nil,
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator, cmd *mocks.Command, lcd *mocks.NerdctlCmdCreatorSystemDeps) {
-				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
+				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, command.EnvKeyLimaHome, mockLimaHomePath)
 				cmdCreator.EXPECT().Create(mockLimactlPath, mockArgs).Return(cmd)
 				lcd.EXPECT().Environ().Return([]string{})
 				lcd.EXPECT().Stdin().Return(nil)
 				lcd.EXPECT().Stdout().Return(nil)
 				lcd.EXPECT().Stderr().Return(nil)
-				lcd.EXPECT().Env(envKeyPath).Return(mockSystemPath)
+				lcd.EXPECT().Env(command.EnvKeyPath).Return(mockSystemPath)
 				cmd.EXPECT().SetEnv([]string{
-					fmt.Sprintf("%s=%s", envKeyLimaHome, mockLimaHomePath),
-					fmt.Sprintf("%s=%s", envKeyPath, finalPath),
+					fmt.Sprintf("%s=%s", command.EnvKeyLimaHome, mockLimaHomePath),
+					fmt.Sprintf("%s=%s", command.EnvKeyPath, finalPath),
 				})
 				cmd.EXPECT().SetStdin(nil)
 				cmd.EXPECT().SetStdout(nil)
@@ -79,7 +79,7 @@ func TestLimaCmdCreator_Create(t *testing.T) {
 	}
 }
 
-func TestLimaCmdCreator_CreateWithoutStdio(t *testing.T) {
+func TestNerdctlCmdCreator_CreateWithoutStdio(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
@@ -91,13 +91,13 @@ func TestLimaCmdCreator_CreateWithoutStdio(t *testing.T) {
 			name:    "happy path",
 			wantErr: nil,
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator, cmd *mocks.Command, lcd *mocks.NerdctlCmdCreatorSystemDeps) {
-				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
+				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, command.EnvKeyLimaHome, mockLimaHomePath)
 				cmdCreator.EXPECT().Create(mockLimactlPath, mockArgs).Return(cmd)
 				lcd.EXPECT().Environ().Return([]string{})
-				lcd.EXPECT().Env(envKeyPath).Return(mockSystemPath)
+				lcd.EXPECT().Env(command.EnvKeyPath).Return(mockSystemPath)
 				cmd.EXPECT().SetEnv([]string{
-					fmt.Sprintf("%s=%s", envKeyLimaHome, mockLimaHomePath),
-					fmt.Sprintf("%s=%s", envKeyPath, finalPath),
+					fmt.Sprintf("%s=%s", command.EnvKeyLimaHome, mockLimaHomePath),
+					fmt.Sprintf("%s=%s", command.EnvKeyPath, finalPath),
 				})
 				cmd.EXPECT().SetStdin(nil)
 				cmd.EXPECT().SetStdout(nil)
@@ -123,7 +123,7 @@ func TestLimaCmdCreator_CreateWithoutStdio(t *testing.T) {
 	}
 }
 
-func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
+func TestNerdctlCmdCreator_RunWithReplacingStdout(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
@@ -143,16 +143,16 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
 				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
 			) {
-				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
+				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, command.EnvKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
 				cmdCreator.EXPECT().Create(mockLimactlPath, mockArgs).Return(cmd)
 				lcd.EXPECT().Environ().Return([]string{})
 				lcd.EXPECT().Stdin().Return(nil)
 				lcd.EXPECT().Stderr().Return(nil)
-				lcd.EXPECT().Env(envKeyPath).Return(mockSystemPath)
+				lcd.EXPECT().Env(command.EnvKeyPath).Return(mockSystemPath)
 				cmd.EXPECT().SetEnv([]string{
-					fmt.Sprintf("%s=%s", envKeyLimaHome, mockLimaHomePath),
-					fmt.Sprintf("%s=%s", envKeyPath, finalPath),
+					fmt.Sprintf("%s=%s", command.EnvKeyLimaHome, mockLimaHomePath),
+					fmt.Sprintf("%s=%s", command.EnvKeyPath, finalPath),
 				})
 				cmd.EXPECT().SetStdin(nil)
 				var stdoutBuf *bytes.Buffer
@@ -176,16 +176,16 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
 			) {
 				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s",
-					mockArgs, envKeyLimaHome, mockLimaHomePath)
+					mockArgs, command.EnvKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
 				cmdCreator.EXPECT().Create(mockLimactlPath, mockArgs).Return(cmd)
 				lcd.EXPECT().Environ().Return([]string{})
 				lcd.EXPECT().Stdin().Return(nil)
 				lcd.EXPECT().Stderr().Return(nil)
-				lcd.EXPECT().Env(envKeyPath).Return(mockSystemPath)
+				lcd.EXPECT().Env(command.EnvKeyPath).Return(mockSystemPath)
 				cmd.EXPECT().SetEnv([]string{
-					fmt.Sprintf("%s=%s", envKeyLimaHome, mockLimaHomePath),
-					fmt.Sprintf("%s=%s", envKeyPath, finalPath),
+					fmt.Sprintf("%s=%s", command.EnvKeyLimaHome, mockLimaHomePath),
+					fmt.Sprintf("%s=%s", command.EnvKeyPath, finalPath),
 				})
 				cmd.EXPECT().SetStdin(nil)
 				var stdoutBuf *bytes.Buffer
@@ -208,16 +208,16 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
 				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, f *os.File,
 			) {
-				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
+				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, command.EnvKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
 				cmdCreator.EXPECT().Create(mockLimactlPath, mockArgs).Return(cmd)
 				lcd.EXPECT().Environ().Return([]string{})
 				lcd.EXPECT().Stdin().Return(nil)
 				lcd.EXPECT().Stderr().Return(nil)
-				lcd.EXPECT().Env(envKeyPath).Return(mockSystemPath)
+				lcd.EXPECT().Env(command.EnvKeyPath).Return(mockSystemPath)
 				cmd.EXPECT().SetEnv([]string{
-					fmt.Sprintf("%s=%s", envKeyLimaHome, mockLimaHomePath),
-					fmt.Sprintf("%s=%s", envKeyPath, finalPath),
+					fmt.Sprintf("%s=%s", command.EnvKeyLimaHome, mockLimaHomePath),
+					fmt.Sprintf("%s=%s", command.EnvKeyPath, finalPath),
 				})
 				cmd.EXPECT().SetStdin(nil)
 				var stdoutBuf *bytes.Buffer
@@ -240,16 +240,16 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
 				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, _ string, _ *os.File,
 			) {
-				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
+				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, command.EnvKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
 				cmdCreator.EXPECT().Create(mockLimactlPath, mockArgs).Return(cmd)
 				lcd.EXPECT().Environ().Return([]string{})
 				lcd.EXPECT().Stdin().Return(nil)
 				lcd.EXPECT().Stderr().Return(nil)
-				lcd.EXPECT().Env(envKeyPath).Return(mockSystemPath)
+				lcd.EXPECT().Env(command.EnvKeyPath).Return(mockSystemPath)
 				cmd.EXPECT().SetEnv([]string{
-					fmt.Sprintf("%s=%s", envKeyLimaHome, mockLimaHomePath),
-					fmt.Sprintf("%s=%s", envKeyPath, finalPath),
+					fmt.Sprintf("%s=%s", command.EnvKeyLimaHome, mockLimaHomePath),
+					fmt.Sprintf("%s=%s", command.EnvKeyPath, finalPath),
 				})
 				cmd.EXPECT().SetStdin(nil)
 				cmd.EXPECT().SetStdout(gomock.Any())
@@ -266,16 +266,16 @@ func TestLimaCmdCreator_RunWithReplacingStdout(t *testing.T) {
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator,
 				lcd *mocks.NerdctlCmdCreatorSystemDeps, ctrl *gomock.Controller, inOut string, _ *os.File,
 			) {
-				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, envKeyLimaHome, mockLimaHomePath)
+				logger.EXPECT().Debugf("Creating limactl command: ARGUMENTS: %v, %s: %s", mockArgs, command.EnvKeyLimaHome, mockLimaHomePath)
 				cmd := mocks.NewCommand(ctrl)
 				cmdCreator.EXPECT().Create(mockLimactlPath, mockArgs).Return(cmd)
 				lcd.EXPECT().Environ().Return([]string{})
 				lcd.EXPECT().Stdin().Return(nil)
 				lcd.EXPECT().Stderr().Return(nil)
-				lcd.EXPECT().Env(envKeyPath).Return(mockSystemPath)
+				lcd.EXPECT().Env(command.EnvKeyPath).Return(mockSystemPath)
 				cmd.EXPECT().SetEnv([]string{
-					fmt.Sprintf("%s=%s", envKeyLimaHome, mockLimaHomePath),
-					fmt.Sprintf("%s=%s", envKeyPath, finalPath),
+					fmt.Sprintf("%s=%s", command.EnvKeyLimaHome, mockLimaHomePath),
+					fmt.Sprintf("%s=%s", command.EnvKeyPath, finalPath),
 				})
 				cmd.EXPECT().SetStdin(nil)
 				var stdoutBuf *bytes.Buffer

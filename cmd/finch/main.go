@@ -5,8 +5,6 @@
 package main
 
 import (
-	"fmt"
-	"io"
 	"os"
 
 	"github.com/containerd/nerdctl/v2/pkg/errutil"
@@ -17,7 +15,6 @@ import (
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
-	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/system"
 )
 
@@ -33,51 +30,6 @@ func main() {
 		errutil.HandleExitCoder(err)
 		logger.Fatal(err)
 	}
-}
-
-func xmain(logger flog.Logger,
-	ffd path.FinchFinderDeps,
-	fs afero.Fs,
-	loadCfgDeps config.LoadSystemDeps,
-	mem fmemory.Memory,
-	stdOut io.Writer,
-) error {
-	fp, err := path.FindFinch(ffd)
-	if err != nil {
-		return fmt.Errorf("failed to find the installation path of Finch: %w", err)
-	}
-
-	home, err := ffd.GetUserHome()
-	if err != nil {
-		return fmt.Errorf("failed to get user home directory: %w", err)
-	}
-	finchRootPath, err := fp.FinchRootDir(ffd)
-	if err != nil {
-		return fmt.Errorf("failed to get finch root path: %w", err)
-	}
-	ecc := command.NewExecCmdCreator()
-	fc, err := config.Load(
-		fs,
-		fp.ConfigFilePath(finchRootPath),
-		logger,
-		loadCfgDeps,
-		mem,
-		ecc,
-	)
-	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
-	}
-
-	return newApp(
-		logger,
-		fp,
-		fs,
-		fc,
-		stdOut,
-		home,
-		finchRootPath,
-		ecc,
-	).Execute()
 }
 
 func initializeNerdctlCommands(

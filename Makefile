@@ -148,7 +148,7 @@ release: check-licenses all download-licenses
 
 .PHONY: coverage
 coverage:
-	go test $(shell go list ./... | grep -v e2e) -coverprofile=test-coverage.out
+	go test $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks) -coverprofile=test-coverage.out
 	go tool cover -html=test-coverage.out
 
 .PHONY: download-licenses
@@ -252,7 +252,7 @@ check-licenses:
 
 .PHONY: test-unit
 test-unit:
-	go test $(shell go list ./... | grep -v e2e) -shuffle on
+	go test $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks) -shuffle on
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
 #

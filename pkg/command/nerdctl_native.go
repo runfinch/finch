@@ -12,6 +12,15 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 )
 
+// EnvKeyNerdctlTOML is the name of the environment variable used to configure the path that
+// nerdctl uses to load it's config file.
+// EnvKeyBuildkitHost is the path to the socket which nerdctl will use for buildkit commands.
+// These are exported to facilitate unit testing, since it uses a different package (command_test).
+const (
+	EnvKeyNerdctlTOML  = "NERDCTL_TOML"
+	EnvKeyBuildkitHost = "BUILDKIT_HOST"
+)
+
 type nerdctlCmdCreator struct {
 	cmdCreator         Creator
 	logger             flog.Logger
@@ -46,19 +55,18 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 	ncc.logger.Debugf("Creating nerdctl command: ARGUMENTS: %v", args)
 	cmd := ncc.cmdCreator.Create("nerdctl", args...)
 
-	path := ncc.systemDeps.Env(envKeyPath)
+	path := ncc.systemDeps.Env(EnvKeyPath)
 	path = fmt.Sprintf("%s:%s", ncc.binPath, path)
-	pathEnv := fmt.Sprintf("%s=%s", envKeyPath, path)
+	pathEnv := fmt.Sprintf("%s=%s", EnvKeyPath, path)
 
-	newPathEnv := replaceOrAppend(ncc.systemDeps.Environ(), envKeyPath, pathEnv)
-
-	env := append(
+	newPathEnv := replaceOrAppend(ncc.systemDeps.Environ(), EnvKeyPath, pathEnv)
+	newPathEnv = append(
 		newPathEnv,
-		fmt.Sprintf("NERDCTL_TOML=%s", ncc.nerdctlConfigPath),
-		fmt.Sprintf("BUILDKIT_HOST=unix://%s", ncc.buildkitSocketPath),
+		fmt.Sprintf("%s=%s", EnvKeyNerdctlTOML, ncc.nerdctlConfigPath),
+		fmt.Sprintf("%s=%s", EnvKeyBuildkitHost, ncc.buildkitSocketPath),
 	)
 
-	cmd.SetEnv(env)
+	cmd.SetEnv(newPathEnv)
 	cmd.SetStdin(stdin)
 	cmd.SetStdout(stdout)
 	cmd.SetStderr(stderr)
