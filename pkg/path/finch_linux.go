@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 )
 
+// NewFinchPath returns the path to the Finch root directory.
 func NewFinchPath() Finch {
 	return Finch(filepath.Join("/", "etc", "finch"))
 }
@@ -30,11 +31,16 @@ func (fp Finch) NerdctlConfigFilePath() string {
 
 // BuildkitSocketPath returns the path to the Buildkit socket file.
 func (fp Finch) BuildkitSocketPath() string {
-	return filepath.Join(string(fp), "buildkit", "buildkitd.toml")
+	return filepath.Join(fp.FinchRuntimeDataDir(), "buildkit", "buildkitd.sock")
 }
 
 // FinchDependencyBinDir returns the path to Finch's local helper or dependency binaries.
 // Currently used for vended version of BuildKit.
 func (Finch) FinchDependencyBinDir() string {
 	return filepath.Join("/", "usr", "libexec", "finch")
+}
+
+// FinchRuntimeDataDir returns the path to Finch's runtime data directory, used for state of running programs.
+func (Finch) FinchRuntimeDataDir() string {
+	return filepath.Join("/", "var", "lib", "finch")
 }
