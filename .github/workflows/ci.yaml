@@ -176,7 +176,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["amazonlinux"]
-        arch: ["X64"]
+        arch: ["X64", "arm64"]
         version: ["2023", "2"]
         test-command: ["test-e2e-container"]
         runner-type: ["test"]
