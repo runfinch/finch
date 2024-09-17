@@ -249,7 +249,7 @@ func TestBinaries_Install(t *testing.T) {
 				l.EXPECT().Infof("Installing %s credential helper", "ecr")
 				creator.EXPECT().Create("curl", "--retry", "5", "--retry-max-time", "30", "--url",
 					"https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com"+
-						"/0.7.0/linux-arm64/docker-credential-ecr-login", "--output",
+						"/0.9.0/linux-arm64/docker-credential-ecr-login", "--output",
 					filepath.Join("mock_prefix", "cred-helpers", "docker-credential-ecr-login")).Return(cmd)
 			},
 			want: nil,
@@ -287,11 +287,11 @@ func TestBinaries_Install(t *testing.T) {
 			tc.mockSvc(l, cmd, creator, mFs)
 
 			credHelperURL := "https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com" +
-				"/0.7.0/linux-arm64/docker-credential-ecr-login"
+				"/0.9.0/linux-arm64/docker-credential-ecr-login"
 
 			hc := helperConfig{
 				"docker-credential-ecr-login", credHelperURL,
-				"sha256:ec5c04babea79b08dffb0c8acb67b9e28dc05be0fe9bd4df2e234d75516061d7",
+				"sha256:76aa3bb223d4e64dd4456376334273f27830c8d818efe278ab6ea81cb0844420",
 				"mock_prefix/cred-helpers/",
 				"mock_prefix/.finch/",
 			}
