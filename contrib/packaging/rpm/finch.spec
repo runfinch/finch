@@ -211,7 +211,7 @@ fi
 %doc finch-%{finch_commit}/README.md
 %{_bindir}/finch
 %config(noreplace) %{_sysconfdir}/finch/finch.yaml
-%config(noreplace) %{_sysconfdir}/finch/nerdctl.toml
+%config(noreplace) %{_sysconfdir}/finch/nerdctl/nerdctl.toml
 %{_unitdir}/finch.service
 
 # buildkit
