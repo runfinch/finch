@@ -75,7 +75,7 @@ jobs:
           sudo systemctl stop containerd.service
           sudo systemctl daemon-reload
           sudo rm -rf /etc/finch
-          sudo rm -rf /var/finch
+          sudo rm -rf /var/lib/finch
           sudo rm -rf /var/lib/containerd
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
