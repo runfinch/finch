@@ -1,0 +1,11 @@
+[Unit]
+Description=BuildKit (for Finch)
+PartOf=finch.service
+Documentation=https://github.com/moby/buildkit
+
+[Socket]
+ListenStream=/var/lib/finch/buildkit/buildkitd.sock
+SocketMode=0660
+
+[Install]
+WantedBy=sockets.target

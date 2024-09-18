@@ -4,6 +4,7 @@ go 1.22.0
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.5
+	github.com/containerd/cgroups v1.1.0
 	github.com/containerd/nerdctl/v2 v2.0.0-rc.2
 	github.com/docker/cli v27.2.1+incompatible
 	github.com/docker/docker v27.2.1+incompatible
@@ -31,31 +32,43 @@ require (
 
 require (
 	github.com/aws/smithy-go v1.20.4 // indirect
+	github.com/containerd/cgroups/v3 v3.0.3 // indirect
 	github.com/containerd/containerd v1.7.21 // indirect
+	github.com/containerd/containerd/v2 v2.0.0-rc.4 // indirect
 	github.com/containerd/errdefs v0.1.0 // indirect
+	github.com/containerd/go-cni v1.1.10 // indirect
+	github.com/containerd/log v0.1.0 // indirect
+	github.com/containerd/plugin v0.1.0 // indirect
+	github.com/containernetworking/cni v1.2.3 // indirect
+	github.com/containernetworking/plugins v1.5.1 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
+	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/docker/docker-credential-helpers v0.8.2 // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
+	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/licenseclassifier/v2 v2.0.0 // indirect
 	github.com/google/pprof v0.0.0-20240827171923-fa2c70bbbfe5 // indirect
 	github.com/lima-vm/go-qcow2reader v0.1.2 // indirect
 	github.com/lufia/plan9stats v0.0.0-20231016141302-07b5767bb0ed // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
+	github.com/moby/sys/userns v0.1.0 // indirect
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
+	github.com/opencontainers/runtime-spec v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/power-devops/perfstat v0.0.0-20221212215047-62379fc7944b // indirect
+	github.com/rootless-containers/rootlesskit/v2 v2.3.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/tc-hib/winres v0.2.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.13 // indirect
 	github.com/tklauser/numcpus v0.7.0 // indirect
-	github.com/urfave/cli/v2 v2.25.7 // indirect
-	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
+	github.com/urfave/cli/v2 v2.27.4 // indirect
+	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect

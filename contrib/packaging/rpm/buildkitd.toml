@@ -1,0 +1,8 @@
+root = "/var/lib/finch/buildkit"
+
+[worker.oci]
+  enabled = false
+
+[worker.containerd]
+  enabled = true
+  namespace = "finch"

@@ -20,9 +20,13 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		nc.logger.SetLevel(flog.Debug)
 	}
 
+	cmdArgs := append([]string{cmdName}, args...)
 	if nc.shouldReplaceForHelp(cmdName, args) {
-		return nc.ncc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, append([]string{cmdName}, args...)...)
+		return nc.ncc.RunWithReplacingStdout(
+			[]command.Replacement{{Source: "nerdctl", Target: "finch"}},
+			cmdArgs...,
+		)
 	}
 
-	return nc.ncc.Create(append([]string{cmdName}, args...)...).Run()
+	return nc.ncc.Create(cmdArgs...).Run()
 }

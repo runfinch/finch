@@ -22,6 +22,7 @@ on:
     paths:
       - '**.md'
       - 'contrib/**'
+      - '!contrib/packaging/**'
       - '.github/CODEOWNERS'
 
 jobs:

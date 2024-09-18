@@ -13,3 +13,4 @@ tools_bin/
 test-coverage.*
 *.syso
 msi-builder/build/
+contrib/packaging/rpm/rpmbuild
