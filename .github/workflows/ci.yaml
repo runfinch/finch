@@ -163,7 +163,7 @@ jobs:
       fail-fast: false
       matrix:
         test-command: ["test-e2e-vm-serial", "test-e2e-container"]
-        arch: ["X64"]
+        arch: ["amd64"]
         runner-type: ["test"]
     uses: ./.github/workflows/e2e-windows.yaml
     secrets: inherit
