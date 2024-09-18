@@ -234,32 +234,14 @@ fi
 # nerdctl
 %{_libexecdir}/finch/nerdctl
 
-%pre
-# Stop the agent before the upgrade
-STATUS="$(systemctl is-active --quiet finch.service)"
-if [ "${STATUS}" = "active" ]; then
-  systemctl stop finch.service
-  systemctl daemon-reload
-fi
+%post
+%systemd_post finch
 
 %preun
-# Stop the agent after uninstall
-STATUS="$(systemctl is-active --quiet finch.service)"
-if [ "${STATUS}" = "active" ]; then
-  systemctl stop finch.service
-  systemctl daemon-reload
-fi
-ENABLED="$(systemctl is-enabled --quiet finch.service)"
-if [ "${ENABLED}" = "enabled" ]; then
-  systemctl disable finch.service
-fi
-systemctl daemon-reload
+%systemd_preun finch
 
-%posttrans
-# Start the agent after initial install or upgrade
-systemctl enable finch.service
-systemctl start finch.service
-systemctl daemon-reload
+%postun
+%systemd_postun_with_restart finch
 
 %changelog
 * Fri Jul 26 2024 Justin Alvarez <alvajus@amazon.com> - 

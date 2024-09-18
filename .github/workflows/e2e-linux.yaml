@@ -47,9 +47,6 @@ jobs:
       - name: Check repo out manually
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
-          pwd
-          echo "${GITHUB_WORKSPACE}"
-          ls -lah
           git clone https://github.com/${GITHUB_REPOSITORY}.git .
           git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/prh/*"
           git config --add remote.origin.fetch "+refs/pull/*/merge:refs/remotes/origin/prm/*"
@@ -75,10 +72,11 @@ jobs:
           sudo systemctl stop finch-buildkit.service || true
           sudo systemctl stop finch-soci.service || true
           sudo sudo rpm -e runfinch-finch || true
+          sudo systemctl stop containerd.service
           sudo systemctl daemon-reload
           sudo rm -rf /etc/finch
           sudo rm -rf /var/finch
-          sudo rm -rf /var/containerd
+          sudo rm -rf /var/lib/containerd
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
       - name: Build project
@@ -88,6 +86,7 @@ jobs:
         run: |
           sudo rpm -i ./_output/packages/$(ls -t ./_output/packages/ | grep runfinch-finch | head -1)
           sudo systemctl daemon-reload
+          sudo systemctl start containerd.service
           sudo systemctl start finch.service
           sudo systemctl start finch-buildkit.service
           sudo systemctl start finch-soci.service

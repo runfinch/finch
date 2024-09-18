@@ -68,7 +68,7 @@ func TestContainer(t *testing.T) {
 			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Hybrid, DefaultHostGatewayIP: hostIP})
 		case "darwin":
 			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified, DefaultHostGatewayIP: "192.168.5.2"})
-		default:
+		case "linux":
 			fmt.Printf("getCGroupMode(): %d\n", getCGroupMode())
 			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: getCGroupMode(), DefaultHostGatewayIP: ncdefaults.HostGatewayIP()})
 		}
