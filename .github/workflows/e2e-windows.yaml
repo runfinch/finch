@@ -27,7 +27,6 @@ jobs:
         "self-hosted",
         "windows",
         "${{ inputs.arch }}",
-        "${{ inputs.version }}",
         "${{ inputs.runner-type }}",
       ]
     steps:
