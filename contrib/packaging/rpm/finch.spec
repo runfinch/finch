@@ -154,13 +154,16 @@ install -d %{buildroot}%{_unitdir}
 install -d %{buildroot}%{_sharedstatedir}/finch/nerdctl
 install -p %{finch_src}/_output/bin/finch %{buildroot}%{_bindir}
 install -D -p -m 0644 %{S:1} %{buildroot}%{_unitdir}/finch.service
+install -d -p -m 0755 %{buildroot}%{_sysconfdir}/finch
 install -D -p -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/finch/finch.yaml
-install -D -p -m 0644 %{S:3} %{buildroot}%{_sysconfdir}/finch/nerdctl.toml
+install -d -p -m 0755 %{buildroot}%{_sysconfdir}/finch/nerdctl/
+install -D -p -m 0644 %{S:3} %{buildroot}%{_sysconfdir}/finch/nerdctl/nerdctl.toml
 
 # install buildkit
 install -d %{buildroot}%{_sharedstatedir}/finch/buildkit
 install -D -p %{buildkit_src}/_output/buildkitd %{buildroot}%{_libexecdir}/finch/buildkitd
 install -D -p %{buildkit_src}/_output/buildctl %{buildroot}%{_libexecdir}/finch/buildctl
+install -d -p -m 0755 %{buildroot}%{_sysconfdir}/finch/buildkit/
 install -D -p -m 0644 %{S:4} %{buildroot}%{_sysconfdir}/finch/buildkit/buildkitd.toml
 install -D -p -m 0644 %{S:5} %{buildroot}%{_unitdir}/finch-buildkit.service
 install -D -p -m 0644 %{S:6} %{buildroot}%{_unitdir}/finch-buildkit.socket
