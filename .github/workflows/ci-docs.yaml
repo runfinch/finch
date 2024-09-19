@@ -107,10 +107,10 @@ jobs:
       matrix:
         os:
           [
-            [amazonlinux, X64, 2, test-e2e-container, test],
-            [amazonlinux, X64, 2023, test-e2e-container, test],
-            [amazonlinux, arm64, 2, test-e2e-container, test],
-            [amazonlinux, arm64, 2023, test-e2e-container, test],
+            [amazonlinux, X64, 2, test],
+            [amazonlinux, X64, 2023, test],
+            [amazonlinux, arm64, 2, test],
+            [amazonlinux, arm64, 2023, test],
           ]
     uses: ./.github/workflows/e2e-docs.yaml
     with:

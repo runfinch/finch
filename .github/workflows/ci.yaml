@@ -185,7 +185,6 @@ jobs:
         os: ['amazonlinux']
         arch: ['X64', 'arm64']
         version: ['2023', '2']
-        test-command: ['test-e2e-container']
         runner-type: ['test']
     uses: ./.github/workflows/e2e-linux.yaml
     secrets: inherit
@@ -194,7 +193,6 @@ jobs:
       arch: ${{ matrix.arch }}
       version: ${{ matrix.version }}
       runner-type: ${{ matrix.runner-type }}
-      test-command: ${{ matrix.test-command }}
 
   mdlint:
     runs-on: ubuntu-latest
