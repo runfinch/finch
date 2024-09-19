@@ -1,0 +1,11 @@
+name: e2e-docs
+on:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip
+        run: |
+          echo "Skipping CI for docs & contrib files"

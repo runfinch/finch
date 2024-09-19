@@ -91,17 +91,13 @@ jobs:
             [14, test-e2e-vm-serial, X64, test],
             [14, test-e2e-vm-serial, arm64, test],
           ]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Skipping CI for docs & contrib files"
+    uses: ./.github/workflows/e2e-docs.yaml
   windows-e2e-tests:
     strategy:
       matrix:
         os:
           [[test-e2e-container, amd64, test], [test-e2e-vm-serial, amd64, test]]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Skipping CI for docs & contrib files"
+    uses: ./.github/workflows/e2e-docs.yaml
   linux-e2e-tests:
     strategy:
       matrix:
@@ -112,9 +108,7 @@ jobs:
             [amazonlinux, arm64, 2, test-e2e-container, test],
             [amazonlinux, arm64, 2023, test-e2e-container, test],
           ]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Skipping CI for docs & contrib files"
+    uses: ./.github/workflows/e2e-docs.yaml
   mdlint:
     runs-on: ubuntu-latest
     steps:
