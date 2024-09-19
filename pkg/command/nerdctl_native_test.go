@@ -18,6 +18,7 @@ import (
 const (
 	mockNerdctlConfigPath  = "/etc/finch/nerdctl.toml"
 	mockBuildkitSocketPath = "/etc/finch/buildkit"
+	mockDockerConfigPath   = "/etc/finch/docker"
 	mockFinchBinPath       = "/usr/lib/usrexec/finch"
 	mockSystemPath         = "/usr/bin"
 	finalPath              = mockFinchBinPath + command.EnvKeyPathJoiner + mockSystemPath
@@ -47,6 +48,7 @@ func TestLimaCmdCreator_Create(t *testing.T) {
 				cmd.EXPECT().SetEnv([]string{
 					fmt.Sprintf("%s=%s", command.EnvKeyPath, finalPath),
 					fmt.Sprintf("%s=%s", command.EnvKeyNerdctlTOML, mockNerdctlConfigPath),
+					fmt.Sprintf("%s=%s", command.EnvKeyDockerConfig, mockDockerConfigPath),
 					fmt.Sprintf("%s=unix://%s", command.EnvKeyBuildkitHost, mockBuildkitSocketPath),
 				})
 				cmd.EXPECT().SetStdin(nil)
@@ -72,6 +74,7 @@ func TestLimaCmdCreator_Create(t *testing.T) {
 				logger,
 				mockNerdctlConfigPath,
 				mockBuildkitSocketPath,
+				mockDockerConfigPath,
 				mockFinchBinPath,
 				lcd,
 			).Create(mockArgs...)

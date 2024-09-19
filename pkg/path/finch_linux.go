@@ -34,6 +34,11 @@ func (fp Finch) BuildkitSocketPath() string {
 	return filepath.Join(fp.FinchRuntimeDataDir(), "buildkit", "buildkitd.sock")
 }
 
+// DockerConfigPath returns the path to the docker config file.
+func (fp Finch) DockerConfigPath() string {
+	return filepath.Join(string(fp), "docker")
+}
+
 // FinchDependencyBinDir returns the path to Finch's local helper or dependency binaries.
 // Currently used for vended version of BuildKit.
 func (Finch) FinchDependencyBinDir() string {

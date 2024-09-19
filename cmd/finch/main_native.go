@@ -86,6 +86,7 @@ var newApp = func(
 		logger,
 		fp.NerdctlConfigFilePath(),
 		fp.BuildkitSocketPath(),
+		fp.DockerConfigPath(),
 		fp.FinchDependencyBinDir(),
 		system.NewStdLib(),
 	)
