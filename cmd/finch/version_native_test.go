@@ -87,7 +87,7 @@ func TestVersionAction_runAdaptor(t *testing.T) {
 				return c
 			},
 			args: []string{},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("version", "--format", "json").Return(command)
 				//nolint: lll	// Version output format is larger than 500
@@ -105,7 +105,7 @@ func TestVersionAction_runAdaptor(t *testing.T) {
 				return c
 			},
 			args: []string{"--format", "json"},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("version", "--format", "json").Return(command)
 				//nolint: lll	// Version output format is larger than 500
@@ -152,7 +152,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("version", "--format", "json").Return(command)
 				command.EXPECT().Output().Return([]byte(nerdctlMockVersion), nil)
@@ -194,7 +194,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("version", "--format", "json").Return(command)
 				command.EXPECT().Output().Return([]byte(nerdctlMockVersion), nil)
@@ -216,7 +216,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("version", "--format", "json").Return(command)
 				command.EXPECT().Output().Return([]byte(nerdctlMockVersion), nil)
@@ -238,7 +238,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("version", "--format", "json").Return(command)
 				command.EXPECT().Output().Return([]byte(nerdctlMockVersion), nil)
@@ -260,7 +260,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("version", "--format", "json").Return(command)
 				command.EXPECT().Output().Return([]byte(nerdctlMockVersion), nil)
@@ -281,7 +281,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("version", "--format", "json").Return(command)
 				command.EXPECT().Output().Return([]byte(nerdctlMockVersion), nil)

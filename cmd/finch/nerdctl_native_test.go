@@ -87,8 +87,8 @@ func TestNerdctlCommand_run(t *testing.T) {
 				_ *testing.T,
 				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
-				logger *mocks.Logger,
+				_ *mocks.NerdctlCommandSystemDeps,
+				_ *mocks.Logger,
 				ctrl *gomock.Controller,
 				_ afero.Fs,
 			) {
@@ -107,7 +107,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				_ *testing.T,
 				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
+				_ *mocks.NerdctlCommandSystemDeps,
 				logger *mocks.Logger,
 				ctrl *gomock.Controller,
 				_ afero.Fs,
@@ -128,9 +128,9 @@ func TestNerdctlCommand_run(t *testing.T) {
 				_ *testing.T,
 				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
-				logger *mocks.Logger,
-				ctrl *gomock.Controller,
+				_ *mocks.NerdctlCommandSystemDeps,
+				_ *mocks.Logger,
+				_ *gomock.Controller,
 				_ afero.Fs,
 			) {
 				ncc.EXPECT().RunWithReplacingStdout(
@@ -147,9 +147,9 @@ func TestNerdctlCommand_run(t *testing.T) {
 				_ *testing.T,
 				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
-				logger *mocks.Logger,
-				ctrl *gomock.Controller,
+				_ *mocks.NerdctlCommandSystemDeps,
+				_ *mocks.Logger,
+				_ *gomock.Controller,
 				_ afero.Fs,
 			) {
 				ncc.EXPECT().RunWithReplacingStdout(

@@ -372,7 +372,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				ncc *mocks.NerdctlCmdCreator,
+				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				_ afero.Fs,
