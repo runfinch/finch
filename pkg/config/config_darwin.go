@@ -25,7 +25,6 @@ type SystemSettings struct {
 	Memory                *string               `yaml:"memory,omitempty"`
 	AdditionalDirectories []AdditionalDirectory `yaml:"additional_directories,omitempty"`
 	Rosetta               *bool                 `yaml:"rosetta,omitempty"`
-	Mode                  *string               `yaml:"mode,omitempty"`
 	SharedSystemSettings  `yaml:",inline"`
 }
 

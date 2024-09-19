@@ -6,6 +6,9 @@
 package main
 
 import (
+	"fmt"
+	"strings"
+
 	"golang.org/x/exp/slices"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -13,6 +16,14 @@ import (
 )
 
 func (nc *nerdctlCommand) run(cmdName string, args []string) error {
+
+	var (
+		hasCmdHandler, hasArgHandler bool
+		cmdHandler                   commandHandler
+		aMap                         map[string]argHandler
+		err                          error
+	)
+
 	// eat the debug arg, and set the log level to avoid nerdctl parsing this flag
 	dbgIdx := slices.Index(args, "--debug")
 	if dbgIdx >= 0 {
@@ -20,7 +31,52 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		nc.logger.SetLevel(flog.Debug)
 	}
 
+	alias, hasAlias := aliasMap[cmdName]
+	if hasAlias {
+		cmdHandler, hasCmdHandler = commandHandlerMap[alias]
+		aMap, hasArgHandler = argHandlerMap[alias]
+	} else {
+		cmdHandler, hasCmdHandler = commandHandlerMap[cmdName]
+		aMap, hasArgHandler = argHandlerMap[cmdName]
+
+		if !hasArgHandler && len(args) > 0 {
+			// for commands like image build, container run
+			key := fmt.Sprintf("%s %s", cmdName, args[0])
+			cmdHandler, hasCmdHandler = commandHandlerMap[key]
+			aMap, hasArgHandler = argHandlerMap[key]
+		}
+	}
+
+	// First check if the command has a command handler
+	if hasCmdHandler {
+		err := cmdHandler(nc.systemDeps, nc.fc, &cmdName, &args)
+		if err != nil {
+			return err
+		}
+	}
+
+	for i, arg := range args {
+		// Check if individual argument (and possibly following value) requires manipulation-in-place handling
+		if hasArgHandler {
+			// Check if argument for the command needs handling, sometimes it can be --file=<filename>
+			b, _, _ := strings.Cut(arg, "=")
+			h, ok := aMap[b]
+			if ok {
+				err = h(nc.systemDeps, nc.fc, args, i)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	//  TODO: Extra manipulation if overwriting cmdName with alias
+	//splitName := strings.Split(cmdName, " ")
+	//cmdArgs := append([]string{splitName[0]}, splitName[1:]...)
+	//cmdArgs = append(cmdArgs, args...)
+
 	cmdArgs := append([]string{cmdName}, args...)
+
 	if nc.shouldReplaceForHelp(cmdName, args) {
 		return nc.ncc.RunWithReplacingStdout(
 			[]command.Replacement{{Source: "nerdctl", Target: "finch"}},
@@ -30,3 +86,9 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	return nc.ncc.Create(cmdArgs...).Run()
 }
+
+var osAliasMap = map[string]string{}
+
+var osArgHandlerMap = map[string]map[string]argHandler{}
+
+var osCommandHandlerMap = map[string]commandHandler{}

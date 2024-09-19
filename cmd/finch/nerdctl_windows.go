@@ -12,8 +12,49 @@ import (
 	dockerops "github.com/docker/docker/opts"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 )
+
+var osAliasMap = map[string]string{
+	"save": "image save",
+	"load": "image load",
+}
+
+var osCommandHandlerMap = map[string]commandHandler{
+	"container cp": cpHandler,
+	"image build":  imageBuildHandler,
+}
+
+var osArgHandlerMap = map[string]map[string]argHandler{
+	"image build": {
+		"-f":        handleFilePath,
+		"--file":    handleFilePath,
+		"--iidfile": handleFilePath,
+		"-o":        handleOutputOption,
+		"--output":  handleOutputOption,
+		"--secret":  handleSecretOption,
+	},
+	"image save": {
+		"-o":       handleFilePath,
+		"--output": handleFilePath,
+	},
+	"image load": {
+		"-i":      handleFilePath,
+		"--input": handleFilePath,
+	},
+	"container run": {
+		"--label-file": handleFilePath,
+		"--cosign-key": handleFilePath,
+		"--cidfile":    handleFilePath,
+		"-v":           handleVolume,
+		"--volume":     handleVolume,
+		"--mount":      handleBindMounts,
+	},
+	"compose": {
+		"--file": handleFilePath,
+	},
+}
 
 func (nc *nerdctlCommand) GetCmdArgs() []string {
 	wd, err := nc.systemDeps.GetWd()
@@ -46,7 +87,7 @@ func convertToWSLPath(systemDeps NerdctlCommandSystemDeps, winPath string) (stri
 }
 
 // substitutes wsl path for the provided option in place for nerdctl args.
-func handleFilePath(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+func handleFilePath(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
 
 	// If --filename="<filepath> then we need to cut <filepath> and convert that to wsl path
@@ -72,7 +113,7 @@ func handleFilePath(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string
 }
 
 // hanldes -v/--volumes option. For anonymous volumes and named volumes this is no-op. For bind mounts path is converted to wsl path.
-func handleVolume(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+func handleVolume(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
 	var (
 		v      string
@@ -129,7 +170,9 @@ func handleVolume(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, 
 }
 
 // translates source path of the bind mount to wslpath for --mount option.
-func handleBindMounts(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+//
+//	and removes the consistency key-value entity from --mount
+func handleBindMounts(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
 	var (
 		v      string
@@ -146,13 +189,15 @@ func handleBindMounts(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []stri
 		}
 	}
 
+	// e.g. --mount type=bind,source="$(pwd)"/target,target=/app,readonly
+	// e.g. --mount type=bind,source=/Users/stchew/projs/arbtest_devcontainers_extensions,
+	//                     target=/workspaces/arbtest_devcontainers_extensions,consistency=cached
 	// https://docs.docker.com/storage/bind-mounts/#choose-the--v-or---mount-flag  order does not matter, so convert to a map
 	entries := strings.Split(v, ",")
 	m := make(map[string]string)
 	ro := []string{}
 	for _, e := range entries {
 		parts := strings.Split(e, "=")
-		// eg --mount type=bind,source="$(pwd)"/target,target=/app,readonly
 		if len(parts) < 2 {
 			ro = append(ro, parts...)
 		} else {
@@ -163,6 +208,11 @@ func handleBindMounts(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []stri
 	if m["type"] != "bind" {
 		return nil
 	}
+
+	// Remove 'consistency' key-value pair
+	delete(m, "consistency")
+
+	// Handle src/source path
 	var k string
 	path, ok := m["src"]
 	if !ok {
@@ -197,7 +247,7 @@ func handleBindMounts(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []stri
 }
 
 // handles --output/-o for build command.
-func handleOutputOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+func handleOutputOption(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
 	var (
 		v      string
@@ -244,7 +294,7 @@ func handleOutputOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []st
 }
 
 // handles --secret option for build command.
-func handleSecretOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string, index int) error {
+func handleSecretOption(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
 	var (
 		v      string
@@ -290,8 +340,8 @@ func handleSecretOption(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []st
 }
 
 // cp command handler, takes command arguments and converts hostpath to wsl path in place. It ignores all other arguments.
-func cpHandler(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string) error {
-	for i, arg := range nerdctlCmdArgs {
+func cpHandler(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, _ *string, nerdctlCmdArgs *[]string) error {
+	for i, arg := range *nerdctlCmdArgs {
 		// -L and --follow-symlink don't have to be processed
 		if strings.HasPrefix(arg, "-") || arg == "cp" {
 			continue
@@ -307,76 +357,33 @@ func cpHandler(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string) err
 		if err != nil {
 			return err
 		}
-		nerdctlCmdArgs[i] = wslPath
+		(*nerdctlCmdArgs)[i] = wslPath
 	}
 	return nil
 }
 
 // this is the handler for image build command. It translates build context to wsl path.
-func imageBuildHandler(systemDeps NerdctlCommandSystemDeps, nerdctlCmdArgs []string) error {
+func imageBuildHandler(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, _ *string, nerdctlCmdArgs *[]string) error {
 	var err error
-	argLen := len(nerdctlCmdArgs) - 1
+	argLen := len(*nerdctlCmdArgs) - 1
 	// -h/--help don't have buildcontext, just return
-	for _, a := range nerdctlCmdArgs {
+	for _, a := range *nerdctlCmdArgs {
 		if a == "--help" || a == "-h" {
 			return nil
 		}
 	}
-	if nerdctlCmdArgs[argLen] != "--debug" {
-		nerdctlCmdArgs[argLen], err = convertToWSLPath(systemDeps, nerdctlCmdArgs[argLen])
+	if (*nerdctlCmdArgs)[argLen] != "--debug" {
+		(*nerdctlCmdArgs)[argLen], err = convertToWSLPath(systemDeps, (*nerdctlCmdArgs)[argLen])
 		if err != nil {
 			return err
 		}
 	} else {
-		nerdctlCmdArgs[argLen-1], err = convertToWSLPath(systemDeps, nerdctlCmdArgs[argLen-1])
+		(*nerdctlCmdArgs)[argLen-1], err = convertToWSLPath(systemDeps, (*nerdctlCmdArgs)[argLen-1])
 		if err != nil {
 			return err
 		}
 	}
 	return nil
-}
-
-var aliasMap = map[string]string{
-	"build": "image build",
-	"save":  "image save",
-	"load":  "image load",
-	"cp":    "container cp",
-	"run":   "container run",
-}
-
-var argHandlerMap = map[string]map[string]argHandler{
-	"image build": {
-		"-f":        handleFilePath,
-		"--file":    handleFilePath,
-		"--iidfile": handleFilePath,
-		"-o":        handleOutputOption,
-		"--output":  handleOutputOption,
-		"--secret":  handleSecretOption,
-	},
-	"image save": {
-		"-o":       handleFilePath,
-		"--output": handleFilePath,
-	},
-	"image load": {
-		"-i":      handleFilePath,
-		"--input": handleFilePath,
-	},
-	"container run": {
-		"--label-file": handleFilePath,
-		"--cosign-key": handleFilePath,
-		"--cidfile":    handleFilePath,
-		"-v":           handleVolume,
-		"--volume":     handleVolume,
-		"--mount":      handleBindMounts,
-	},
-	"compose": {
-		"--file": handleFilePath,
-	},
-}
-
-var commandHandlerMap = map[string]commandHandler{
-	"container cp": cpHandler,
-	"image build":  imageBuildHandler,
 }
 
 func mapToString(m map[string]string) string {

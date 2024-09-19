@@ -31,7 +31,7 @@ func (fp Finch) NerdctlConfigFilePath() string {
 
 // BuildkitSocketPath returns the path to the Buildkit socket file.
 func (fp Finch) BuildkitSocketPath() string {
-	return filepath.Join(string(fp), "buildkit", "buildkitd.toml")
+	return filepath.Join(fp.FinchRuntimeDataDir(), "buildkit", "buildkitd.sock")
 }
 
 // FinchDependencyBinDir returns the path to Finch's local helper or dependency binaries.
