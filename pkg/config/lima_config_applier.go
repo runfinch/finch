@@ -43,7 +43,7 @@ if [ ! -f /usr/local/bin/soci ]; then
 	  (echo "error: shasum verification failed for SOCI release tarball" && rm -f "${release_tarball}" && exit 1)
 
 	# move to usr/local/bin
-	tar -C /usr/local/bin -xvf ${release_tarball} ./soci ./soci-snapshotter-grpc
+	tar -C /usr/local/bin -xvf ${release_tarball} soci soci-snapshotter-grpc
 
 	# install as a systemd service
 	curl --retry 2 --retry-max-time 120 -OL "%s"
