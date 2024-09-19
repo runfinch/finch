@@ -92,12 +92,16 @@ jobs:
             [14, test-e2e-vm-serial, arm64, test],
           ]
     uses: ./.github/workflows/e2e-docs.yaml
+    with:
+      os: ${{ matrix.os }}
   windows-e2e-tests:
     strategy:
       matrix:
         os:
           [[test-e2e-container, amd64, test], [test-e2e-vm-serial, amd64, test]]
     uses: ./.github/workflows/e2e-docs.yaml
+    with:
+      os: ${{ matrix.os }}
   linux-e2e-tests:
     strategy:
       matrix:
@@ -109,6 +113,8 @@ jobs:
             [amazonlinux, arm64, 2023, test-e2e-container, test],
           ]
     uses: ./.github/workflows/e2e-docs.yaml
+    with:
+      os: ${{ matrix.os }}
   mdlint:
     runs-on: ubuntu-latest
     steps:
