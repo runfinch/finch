@@ -192,12 +192,16 @@ var nerdctlCmds = map[string]string{
 	"wait":      "Block until one or more containers stop, then print their exit codes",
 }
 
+var dockerCompatCmds = map[string]string{
+	"buildx": "build version",
+}
+
 var cmdFlagSetMap = map[string]map[string]sets.Set[string]{
 	"container run": {
 		"shortBoolFlags": sets.New[string]("-d", "-i", "-t"),
 		"longBoolFlags": sets.New[string](
 			"--detach", "--init", "--interactive", "--oom-kill-disable",
-			"--privileged", "--read-only", "--rm", "--rootfs", "--tty"),
+			"--privileged", "--read-only", "--rm", "--rootfs", "--tty", "--sig-proxy"),
 		"shortArgFlags": sets.New[string]("-e", "-h", "-m", "-u", "-w", "-p", "-l", "-v"),
 	},
 	"exec": {

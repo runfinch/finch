@@ -11,6 +11,7 @@ import (
 
 // SystemSettings represents the system configuration specifc to Windows.
 type SystemSettings struct {
+	Mode                 *string `yaml:"mode,omitempty"`
 	SharedSystemSettings `yaml:",inline"`
 }
 

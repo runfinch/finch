@@ -12,6 +12,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	orderedmap "github.com/wk8/go-ordered-map"
 	"golang.org/x/exp/slices"
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -19,6 +20,7 @@ import (
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
 )
@@ -70,6 +72,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	}
 
 	switch cmdName {
+
 	case "container run", "exec", "compose":
 		// check if an option flag is present; immediately following the command
 		switch {
@@ -103,6 +106,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 					arg = args[i]
 				}
 			}
+			arg = handleCache(nc.fc, arg)
 			// parsing arguments from the command line
 			// may pre-fetch and consume the next argument;
 			// the loop variable will skip any pre-consumed args
@@ -116,7 +120,6 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				cmdArgs = append(cmdArgs, arg)
 				continue
 			}
-
 			switch {
 			case arg == "--debug":
 				nc.logger.SetLevel(flog.Debug)
@@ -146,6 +149,11 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				}
 				skip = shouldSkip
 				fileEnvs = append(fileEnvs, addEnvs...)
+				// This is a docker specific command which alias for --output=type=docker. This should only applied for build args.
+			// On a long term this run command potentially needs to be refactored, currently it is too hacky the way it handles the args.
+			case arg == "--load":
+				nc.logger.Info("found --load converting to --output flag")
+				nerdctlArgs = handleLoad(nc.fc, nerdctlArgs)
 			case argIsEnv(arg):
 				// exact match to either -e or --env
 				// or arg begins with -e or --env
@@ -156,7 +164,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				if addEnv != "" {
 					envs = append(envs, addEnv)
 				}
-			case shortFlagBoolSet.Has(arg) || longFlagBoolSet.Has(arg):
+			case longFlagBoolSet.Has(strings.Split(arg, "=")[0]) || longFlagBoolSet.Has(arg):
 				// exact match to a short flag: -?
 				// or exact match to: --<long_flag>
 				nerdctlArgs = append(nerdctlArgs, arg)
@@ -247,6 +255,9 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				nc.logger.SetLevel(flog.Debug)
 			case arg == "--help":
 				nerdctlArgs = append(nerdctlArgs, arg)
+			case arg == "--load":
+				nc.logger.Info("found --load converting to --output flag")
+				nerdctlArgs = handleLoad(nc.fc, nerdctlArgs)
 			default:
 				nerdctlArgs = append(nerdctlArgs, arg)
 			}
@@ -302,6 +313,16 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	if nc.shouldReplaceForHelp(cmdName, args) {
 		return nc.ncc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, runArgs...)
 	}
+
+	// Handle buildx version and build commands.
+	skipCmd, runArgs := handleBuildx(nc.fc, runArgs)
+	if skipCmd {
+		return nil
+	}
+
+	runArgs = handleDockerCompatInspect(nc.fc, runArgs)
+
+	nc.logger.Info("Running nerdctl command args ", runArgs, "  end")
 
 	return nc.ncc.Create(runArgs...).Run()
 }
@@ -500,4 +521,130 @@ func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 s
 		return skip, []string{}, err
 	}
 	return skip, envs, nil
+}
+
+func handleCache(fc *config.Finch, arg string) string {
+	// Hack to handle consistency params during mounts. This is assuming no other commands or env variable will have the word consistency.
+	if fc.Mode == nil || *fc.Mode != "dockercompat" || runtime.GOOS != "darwin" {
+		return arg
+	}
+
+	if strings.Contains(arg, "consistency") {
+		arg = strings.Replace(arg, ",consistency=cache", "", 1)
+		arg = strings.Replace(arg, ",consistency=delegated", "", 1)
+		arg = strings.Replace(arg, ",consistency=consistent", "", 1)
+	}
+	return arg
+}
+
+func handleLoad(fc *config.Finch, args []string) []string {
+	if fc.Mode == nil || *fc.Mode != "dockercompat" || args == nil {
+		return args
+	}
+
+	if *fc.Mode == "dockercompat" {
+		logrus.Warn("appending --output-type!!")
+		logrus.Warn("args before appending", args)
+		args = append(args, "--output=type=docker")
+		logrus.Warn("args after appending", args)
+	}
+
+	return args
+}
+
+func handleDockerCompatInspect(fc *config.Finch, args []string) []string {
+
+	if fc.Mode == nil || *fc.Mode != "dockercompat" {
+		return args
+	}
+
+	newArgList := []string{}
+	isInspect := false
+	inspectIndex := -1
+	skipNext := false
+	inspectType := ""
+
+	for idx, arg := range args {
+		if skipNext {
+			skipNext = false
+			continue
+		}
+		if arg == "inspect" {
+			isInspect = true
+			inspectIndex = idx
+			newArgList = append(newArgList, arg)
+		}
+
+		if strings.Contains(arg, "--type") && (idx < len(args)+1) && isInspect {
+			if strings.Contains(arg, "=") {
+				inspectType = strings.Split(arg, "=")[1]
+			} else {
+				inspectType = args[idx+1]
+			}
+			if arg == "--type" {
+				skipNext = true
+			}
+			continue
+		}
+		newArgList = append(newArgList, arg)
+
+	}
+
+	if !isInspect {
+		return args
+	}
+
+	switch inspectType {
+	case "container":
+		newArgList = append(newArgList[:inspectIndex], append([]string{inspectType}, append([]string{newArgList[inspectIndex+1]}, append([]string{"--mode=dockercompat"}, newArgList[inspectIndex+2:]...)...)...)...)
+	case "":
+		break
+	default:
+		newArgList = append(newArgList[:inspectIndex], append([]string{inspectType}, newArgList[inspectIndex+1:]...)...)
+	}
+
+	return newArgList
+}
+
+func handleBuildx(fc *config.Finch, limaArgs []string) (bool, []string) {
+	logrus.Warn("handling buildx")
+
+	buildx := false
+	skipCmd := true
+	var newLimaArgs []string
+	buildxSubcommands := []string{"bake", "create", "debug", "du", "imagetools", "inspect", "ls", "prune", "rm", "stop", "use", "version"}
+
+	if fc.Mode == nil || *fc.Mode != "dockercompat" {
+		return !skipCmd, limaArgs
+	}
+
+	for idx, arg := range limaArgs {
+		logrus.Warnf("looking at arg %s at index %d", arg, idx)
+		if arg == "buildx" {
+			buildx = true
+			newLimaArgs = append(newLimaArgs, "build")
+			logrus.Warn("buildx is not supported. using standard buildkit instead...")
+		}
+
+		if buildx {
+
+			buildxWarnMsg := "buildx %s command is not supported."
+
+			if arg == "build" {
+				logrus.Warnf("found build")
+				continue
+			} else if slices.Contains(buildxSubcommands, arg) {
+				logrus.Warnf(buildxWarnMsg, arg)
+				return skipCmd, nil
+			}
+
+			logrus.Warnf("appending build")
+			newLimaArgs = append(newLimaArgs, arg)
+
+		} else {
+			newLimaArgs = append(newLimaArgs, arg)
+		}
+	}
+
+	return !skipCmd, newLimaArgs
 }

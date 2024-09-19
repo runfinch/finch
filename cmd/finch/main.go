@@ -44,5 +44,12 @@ func initializeNerdctlCommands(
 	for cmdName, cmdDescription := range nerdctlCmds {
 		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))
 	}
+
+	if fc.Mode != nil && *fc.Mode == "dockercompat" {
+		for cmdName, cmdDescription := range dockerCompatCmds {
+			allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))
+		}
+	}
+
 	return allNerdctlCommands
 }
