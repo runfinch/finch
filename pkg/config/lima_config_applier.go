@@ -20,9 +20,9 @@ import (
 )
 
 const (
-	sociVersion                              = "0.5.0"
-	sociAMD64Sha256Sum                       = "768f73dbd2c772386df1d12d0a371e9cbcefebea4856623335a2e8ea5170691c"
-	sociARM64Sha256Sum                       = "9238e00426ec67a725d511e232476248f2379d66a4ccab224a50ad4c56a0292e"
+	sociVersion                              = "0.7.0"
+	sociAMD64Sha256Sum                       = "8766cdd479272dcc86299e70a0f7a9343f940c98285c1491bb3c3cdc05b26f47"
+	sociARM64Sha256Sum                       = "731d846b0884840feeba5dcc0f10d0b326d843d991b2ba1bee7ad2c90c225032"
 	snapshotterProvisioningScriptHeader      = "# snapshotter provisioning script"
 	sociInstallationProvisioningScriptHeader = snapshotterProvisioningScriptHeader + ": soci"
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
