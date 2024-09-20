@@ -5,18 +5,25 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "**.md"
-      - "contrib/**"
-      - ".github/CODEOWNERS"
+    paths:
+      - '**.go'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/ci.yaml'
+      - '.github/workflows/e2e-*.yaml'
+      - 'contrib/packaging/**'
+      - '!contrib/hello-finch/**'
   pull_request:
     branches:
       - main
     paths:
-      - "**.go"
-      - "contrib/packaging/**"
-      - "!contrib/hello-finch/**"
-      - "!.github/CODEOWNERS"
+      - '**.go'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/ci.yaml'
+      - '.github/workflows/e2e-*.yaml'
+      - 'contrib/packaging/**'
+      - '!contrib/hello-finch/**'
   workflow_dispatch:
 permissions:
   id-token: write
@@ -147,10 +154,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["13", "14"]
-        test-command: ["test-e2e-vm-serial", "test-e2e-container"]
-        arch: ["X64", "arm64"]
-        runner-type: ["test"]
+        version: ['13', '14']
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+        arch: ['X64', 'arm64']
+        runner-type: ['test']
     uses: ./.github/workflows/e2e-macos.yaml
     secrets: inherit
     with:
@@ -162,9 +169,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test-command: ["test-e2e-vm-serial", "test-e2e-container"]
-        arch: ["amd64"]
-        runner-type: ["test"]
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+        arch: ['amd64']
+        runner-type: ['test']
     uses: ./.github/workflows/e2e-windows.yaml
     secrets: inherit
     with:
@@ -175,10 +182,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["amazonlinux"]
-        arch: ["X64", "arm64"]
-        version: ["2023", "2"]
-        runner-type: ["test"]
+        os: ['amazonlinux']
+        arch: ['X64', 'arm64']
+        version: ['2023', '2']
+        runner-type: ['test']
     uses: ./.github/workflows/e2e-linux.yaml
     secrets: inherit
     with:
@@ -193,6 +200,6 @@ jobs:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: avto-dev/markdown-lint@04d43ee9191307b50935a753da3b775ab695eceb # v1.5.0
         with:
-          args: "**/*.md"
+          args: '**/*.md'
           # CHANGELOG.md is only updated by release-please bot.
-          ignore: "CHANGELOG.md"
+          ignore: 'CHANGELOG.md'
