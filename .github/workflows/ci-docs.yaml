@@ -17,8 +17,9 @@ on:
       - 'contrib/**'
       - '!contrib/packaging/**'
       - '.github/**'
-      - '!.github/workflows/ci.yaml'
-      - '!.github/workflows/e2e-*.yaml'
+      - '!.github/workflows/e2e-macos.yaml'
+      - '!.github/workflows/e2e-windows.yaml'
+      - '!.github/workflows/e2e-linux.yaml'
   pull_request:
     branches:
       - main
@@ -27,8 +28,9 @@ on:
       - 'contrib/**'
       - '!contrib/packaging/**'
       - '.github/**'
-      - '!.github/workflows/ci.yaml'
-      - '!.github/workflows/e2e-*.yaml'
+      - '!.github/workflows/e2e-macos.yaml'
+      - '!.github/workflows/e2e-windows.yaml'
+      - '!.github/workflows/e2e-linux.yaml'
 
 jobs:
   git-secrets:
@@ -80,41 +82,26 @@ jobs:
   macos-e2e-tests:
     strategy:
       matrix:
-        os:
-          [
-            [13, test-e2e-container, X64, test],
-            [13, test-e2e-container, arm64, test],
-            [13, test-e2e-vm-serial, X64, test],
-            [13, test-e2e-vm-serial, arm64, test],
-            [14, test-e2e-container, X64, test],
-            [14, test-e2e-container, arm64, test],
-            [14, test-e2e-vm-serial, X64, test],
-            [14, test-e2e-vm-serial, arm64, test],
-          ]
+        version: ['13', '14']
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+        arch: ['X64', 'arm64']
+        runner-type: ['test']
     uses: ./.github/workflows/e2e-docs.yaml
-    with:
-      os: ${{ matrix.os }}
   windows-e2e-tests:
     strategy:
       matrix:
-        os:
-          [[test-e2e-container, amd64, test], [test-e2e-vm-serial, amd64, test]]
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+        arch: ['amd64']
+        runner-type: ['test']
     uses: ./.github/workflows/e2e-docs.yaml
-    with:
-      os: ${{ matrix.os }}
   linux-e2e-tests:
     strategy:
       matrix:
-        os:
-          [
-            [amazonlinux, X64, 2, test],
-            [amazonlinux, X64, 2023, test],
-            [amazonlinux, arm64, 2, test],
-            [amazonlinux, arm64, 2023, test],
-          ]
+        os: ['amazonlinux']
+        arch: ['X64', 'arm64']
+        version: ['2023', '2']
+        runner-type: ['test']
     uses: ./.github/workflows/e2e-docs.yaml
-    with:
-      os: ${{ matrix.os }}
   mdlint:
     runs-on: ubuntu-latest
     steps:

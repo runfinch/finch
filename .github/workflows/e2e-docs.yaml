@@ -1,13 +1,10 @@
 name: e2e-docs
 on:
   workflow_call:
-    inputs:
-      os:
-        type: string
-        required: true
+
 jobs:
   test:
-    runs-on: ['self-hosted', '${{ fromJson(inputs.os) }}']
+    runs-on: ubuntu-latest
     steps:
       - name: Skip
         run: |
