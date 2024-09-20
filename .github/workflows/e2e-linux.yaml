@@ -14,9 +14,6 @@ on:
       runner-type:
         type: string
         required: true
-      test-command:
-        type: string
-        required: true
 
 permissions:
   # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
@@ -96,7 +93,7 @@ jobs:
           git clean -f -d
           # required by one of the tests which uses SSH_AUTH_SOCK
           eval "$(ssh-agent -s)"
-          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make ${{ inputs.test-command }}
+          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-container
       - name: Clean up repo AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && always() ) }}
         run: |

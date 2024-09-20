@@ -1,0 +1,14 @@
+name: e2e-docs
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+        required: true
+jobs:
+  test:
+    runs-on: ['self-hosted', '${{ fromJson(inputs.os) }}']
+    steps:
+      - name: Skip
+        run: |
+          echo "Skipping CI for docs & contrib files"
