@@ -9,8 +9,9 @@ on:
       - '**.go'
       - 'go.mod'
       - 'go.sum'
-      - '.github/workflows/ci.yaml'
-      - '.github/workflows/e2e-*.yaml'
+      - '.github/workflows/e2e-macos.yaml'
+      - '.github/workflows/e2e-windows.yaml'
+      - '.github/workflows/e2e-linux.yaml'
       - 'contrib/packaging/**'
       - '!contrib/hello-finch/**'
   pull_request:
@@ -20,8 +21,9 @@ on:
       - '**.go'
       - 'go.mod'
       - 'go.sum'
-      - '.github/workflows/ci.yaml'
-      - '.github/workflows/e2e-*.yaml'
+      - '.github/workflows/e2e-macos.yaml'
+      - '.github/workflows/e2e-windows.yaml'
+      - '.github/workflows/e2e-linux.yaml'
       - 'contrib/packaging/**'
       - '!contrib/hello-finch/**'
   workflow_dispatch:
