@@ -20,6 +20,7 @@ import (
 const (
 	EnvKeyNerdctlTOML  = "NERDCTL_TOML"
 	EnvKeyBuildkitHost = "BUILDKIT_HOST"
+	EnvKeyDockerConfig = "DOCKER_CONFIG"
 )
 
 type nerdctlCmdCreator struct {
@@ -28,6 +29,7 @@ type nerdctlCmdCreator struct {
 	systemDeps         NerdctlCmdCreatorSystemDeps
 	nerdctlConfigPath  string
 	buildkitSocketPath string
+	dockerConfigPath   string
 	binPath            string
 }
 
@@ -39,6 +41,7 @@ func NewNerdctlCmdCreator(
 	logger flog.Logger,
 	nerdctlConfigPath string,
 	buildkitSocketPath string,
+	dockerConfigPath string,
 	binPath string,
 	systemDeps NerdctlCmdCreatorSystemDeps,
 ) NerdctlCmdCreator {
@@ -47,6 +50,7 @@ func NewNerdctlCmdCreator(
 		logger:             logger,
 		nerdctlConfigPath:  nerdctlConfigPath,
 		buildkitSocketPath: buildkitSocketPath,
+		dockerConfigPath:   dockerConfigPath,
 		binPath:            binPath,
 		systemDeps:         systemDeps,
 	}
@@ -65,6 +69,7 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 	newPathEnv = append(
 		newPathEnv,
 		fmt.Sprintf("%s=%s", EnvKeyNerdctlTOML, ncc.nerdctlConfigPath),
+		fmt.Sprintf("%s=%s", EnvKeyDockerConfig, ncc.dockerConfigPath),
 		fmt.Sprintf("%s=unix://%s", EnvKeyBuildkitHost, ncc.buildkitSocketPath),
 	)
 
