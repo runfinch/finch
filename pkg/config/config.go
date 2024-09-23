@@ -137,7 +137,7 @@ func Load(
 				return nil, fmt.Errorf("failed to ensure %q directory: %w", cfgPath, err)
 			}
 			if err := writeConfig(defCfg, fs, cfgPath); err != nil {
-				return nil, err
+				log.Warnf("Could not save default values to %q: %w", cfgPath, err)
 			}
 			return defCfg, nil
 		}

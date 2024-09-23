@@ -6,8 +6,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -41,7 +43,11 @@ func xmain(logger flog.Logger,
 		ecc,
 	)
 	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
+		if errors.Is(err, os.ErrPermission) {
+			logger.Warnf("Failed to load config, using default values. Are you running as root? (%s)", err)
+		} else {
+			return fmt.Errorf("failed to load config: %w", err)
+		}
 	}
 
 	return newApp(
