@@ -160,7 +160,7 @@ type bufReader interface {
 }
 
 func (bb *bundleBuilder) copyFileFromVMOrLocal(writer *zip.Writer, filename, zipPath string) error {
-	if isFileFromVM(filename) {
+	if runtime.GOOS != "linux" && isFileFromVM(filename) {
 		return bb.streamFileFromVM(writer, filename, zipPath)
 	}
 	return bb.copyInFile(writer, filename, zipPath)
@@ -288,11 +288,21 @@ func (bb *bundleBuilder) getPlatformData() (*PlatformData, error) {
 
 func (bb *bundleBuilder) getOSVersion() (string, error) {
 	var cmd command.Command
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		cmd = bb.ecc.Create("cmd", "/c", "ver")
-	} else {
+	case "darwin":
 		cmd = bb.ecc.Create("sw_vers", "-productVersion")
+	case "linux":
+		cmd = bb.ecc.Create("uname", "-r")
+	default:
+		cmd = nil
 	}
+
+	if cmd == nil {
+		return "unknown", nil
+	}
+
 	out, err := cmd.Output()
 	if err != nil {
 		return "", err

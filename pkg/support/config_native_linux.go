@@ -13,6 +13,6 @@ func (bc *bundleConfig) LogFiles() []string {
 
 func (bc *bundleConfig) ConfigFiles() []string {
 	return []string{
-		bc.rootDir,
+		bc.finch.ConfigFilePath(),
 	}
 }

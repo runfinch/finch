@@ -1,8 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//go:build darwin || windows
-
 package vm
 
 import (
@@ -11,6 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -315,6 +314,9 @@ var testSupportBundle = func(o *option.Option) {
 			gomega.Expect(bundleExists).Should(gomega.BeTrue())
 		})
 		ginkgo.It("Should fail to generate a support bundle when the VM is nonexistent", func() {
+			if runtime.GOOS == "linux" {
+				ginkgo.Skip("No VM on Linux")
+			}
 			command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
 			time.Sleep(1 * time.Second)
 			command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()

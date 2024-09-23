@@ -4,6 +4,8 @@
 package main
 
 import (
+	"runtime"
+
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -31,9 +33,12 @@ func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleB
 		RunE:  newGenerateSupportBundleAction(logger, builder, ncc).runAdapter,
 	}
 
-	supportBundleGenerateCommand.Flags().StringArray("include", []string{},
-		//nolint:lll // usage string
-		`additional files to include in the support bundle, specified by absolute or relative path. to include a file from the VM, prefix the file path with "vm:"`)
+	includeUsage := "additional files to include in the support bundle, specified by absolute or relative path."
+	if runtime.GOOS != "linux" {
+		includeUsage += `To include a file from the VM, prefix the file path with "vm:"`
+	}
+
+	supportBundleGenerateCommand.Flags().StringArray("include", []string{}, includeUsage)
 	supportBundleGenerateCommand.Flags().StringArray("exclude", []string{},
 		//nolint:lll // usage string
 		"files to exclude from the support bundle. if you specify a base name, all files matching that base name will be excluded. if you specify an absolute or relative path, only exact matches will be excluded")

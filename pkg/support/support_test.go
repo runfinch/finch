@@ -42,7 +42,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 		Username: "mockuser",
 	}
 
-	testCases := []struct {
+	type testcases []struct {
 		name    string
 		mockSvc func(
 			*mocks.Logger,
@@ -55,7 +55,9 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 		)
 		include []string
 		exclude []string
-	}{
+	}
+
+	testCases := testcases{
 		{
 			name: "Generate support bundle",
 			mockSvc: func(
@@ -70,11 +72,17 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				if runtime.GOOS == "windows" {
+				switch runtime.GOOS {
+				case "windows":
 					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
-				} else {
+				case "darwin":
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				case "linux":
+					ecc.EXPECT().Create("uname", "-r").Return(cmd)
+				default:
+					cmd = nil
 				}
+
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
@@ -114,11 +122,17 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				if runtime.GOOS == "windows" {
+				switch runtime.GOOS {
+				case "windows":
 					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
-				} else {
+				case "darwin":
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				case "linux":
+					ecc.EXPECT().Create("uname", "-r").Return(cmd)
+				default:
+					cmd = nil
 				}
+
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
@@ -155,11 +169,17 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				if runtime.GOOS == "windows" {
+				switch runtime.GOOS {
+				case "windows":
 					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
-				} else {
+				case "darwin":
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				case "linux":
+					ecc.EXPECT().Create("uname", "-r").Return(cmd)
+				default:
+					cmd = nil
 				}
+
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
@@ -195,11 +215,17 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				if runtime.GOOS == "windows" {
+				switch runtime.GOOS {
+				case "windows":
 					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
-				} else {
+				case "darwin":
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				case "linux":
+					ecc.EXPECT().Create("uname", "-r").Return(cmd)
+				default:
+					cmd = nil
 				}
+
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
@@ -235,11 +261,17 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				if runtime.GOOS == "windows" {
+				switch runtime.GOOS {
+				case "windows":
 					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
-				} else {
+				case "darwin":
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				case "linux":
+					ecc.EXPECT().Create("uname", "-r").Return(cmd)
+				default:
+					cmd = nil
 				}
+
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
@@ -262,6 +294,9 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			include: []string{"extra1"},
 			exclude: []string{"extra1"},
 		},
+	}
+
+	hasVMTestCases := testcases{
 		{
 			name: "Generate support bundle with a VM file included",
 			mockSvc: func(
@@ -276,11 +311,17 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
 				logger.EXPECT().Debugln("Gathering platform data...")
 
-				if runtime.GOOS == "windows" {
+				switch runtime.GOOS {
+				case "windows":
 					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
-				} else {
+				case "darwin":
 					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				case "linux":
+					ecc.EXPECT().Create("uname", "-r").Return(cmd)
+				default:
+					cmd = nil
 				}
+
 				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
 
 				config.EXPECT().LogFiles().Return([]string{
@@ -322,6 +363,64 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			},
 			include: []string{"vm:extra1"},
 		},
+	}
+
+	npVMTestCases := testcases{
+		{
+			name: "Generate support bundle with a VM file included",
+			mockSvc: func(
+				logger *mocks.Logger,
+				config *mocks.BundleConfig,
+				ecc *mocks.CommandCreator,
+				_ *mocks.NerdctlCmdCreator,
+				cmd *mocks.Command,
+				lima *mocks.MockLimaWrapper,
+				_ afero.Fs,
+			) {
+				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
+				logger.EXPECT().Debugln("Gathering platform data...")
+
+				switch runtime.GOOS {
+				case "windows":
+					ecc.EXPECT().Create("cmd", "/c", "ver").Return(cmd)
+				case "darwin":
+					ecc.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+				case "linux":
+					ecc.EXPECT().Create("uname", "-r").Return(cmd)
+				default:
+					cmd = nil
+				}
+
+				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
+
+				config.EXPECT().LogFiles().Return([]string{
+					"log1",
+				})
+
+				config.EXPECT().ConfigFiles().Return([]string{
+					"config1",
+				})
+
+				logger.EXPECT().Debugln("Copying in log files...")
+				logger.EXPECT().Debugf("Copying %s...", "log1")
+				logger.EXPECT().Debugln("Copying in config files...")
+				logger.EXPECT().Debugf("Copying %s...", "config1")
+				logger.EXPECT().Debugln("Copying in additional files...")
+				logger.EXPECT().Debugf("Copying %s...", "vm:extra1")
+
+				// hard to write a matcher for the second argument
+				logger.EXPECT().Warnf("Could not add additional file %s. Error: %s", "vm:extra1", gomock.Any())
+
+				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+			},
+			include: []string{"vm:extra1"},
+		},
+	}
+
+	if runtime.GOOS == "windows" || runtime.GOOS == "darwin" {
+		testCases = append(testCases, hasVMTestCases...)
+	} else {
+		testCases = append(testCases, npVMTestCases...)
 	}
 
 	for _, tc := range testCases {
