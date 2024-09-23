@@ -44,7 +44,7 @@ func xmain(logger flog.Logger,
 	)
 	if err != nil {
 		if errors.Is(err, os.ErrPermission) {
-			logger.Warnf("Failed to load config, using default values. Are you running as root? (%s)", err)
+			logger.Warnf("Failed to load config, using default values. You may need to be root or use sudo. (%s)", err)
 		} else {
 			return fmt.Errorf("failed to load config: %w", err)
 		}
