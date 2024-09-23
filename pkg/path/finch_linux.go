@@ -34,12 +34,6 @@ func (fp Finch) BuildkitSocketPath() string {
 	return filepath.Join(fp.FinchRuntimeDataDir(), "buildkit", "buildkitd.sock")
 }
 
-// DockerConfigDir returns the path to the docker config file.
-// nerdctl uses ${DOCKER_CONFIG}/config.json for authentication with image registries.
-func (fp Finch) DockerConfigDir() string {
-	return filepath.Join(string(fp), "docker")
-}
-
 // FinchDependencyBinDir returns the path to Finch's local helper or dependency binaries.
 // Currently used for vended version of BuildKit.
 func (Finch) FinchDependencyBinDir() string {
