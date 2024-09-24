@@ -13,6 +13,9 @@ on:
       - '.github/workflows/e2e-windows.yaml'
       - '.github/workflows/e2e-linux.yaml'
       - 'contrib/packaging/**'
+      - 'deps/**'
+      - 'finch.yaml.d/**'
+      - 'winres'
       - '!contrib/hello-finch/**'
   pull_request:
     branches:
@@ -25,6 +28,9 @@ on:
       - '.github/workflows/e2e-windows.yaml'
       - '.github/workflows/e2e-linux.yaml'
       - 'contrib/packaging/**'
+      - 'deps/**'
+      - 'finch.yaml.d/**'
+      - 'winres'
       - '!contrib/hello-finch/**'
   workflow_dispatch:
 permissions:
