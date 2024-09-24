@@ -1,5 +1,53 @@
 # Changelog
 
+## [1.3.0](https://github.com/runfinch/finch/compare/v1.2.3...v1.3.0) (2024-09-24)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.30.3 to 1.30.4 ([#1064](https://github.com/runfinch/finch/issues/1064)) ([51089f6](https://github.com/runfinch/finch/commit/51089f68e287d66586f5599444e5803e27bdbb7e))
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.30.4 to 1.30.5 ([#1083](https://github.com/runfinch/finch/issues/1083)) ([e4d4640](https://github.com/runfinch/finch/commit/e4d46407d42f403f1576385b69e34de3ed7d57f8))
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.30.5 to 1.31.0 ([#1108](https://github.com/runfinch/finch/issues/1108)) ([b412103](https://github.com/runfinch/finch/commit/b4121038c148b8671701935d32e8c7926f606010))
+* **deps:** bump github.com/containerd/nerdctl/v2 from 2.0.0-rc.1 to 2.0.0-rc.2 ([#1091](https://github.com/runfinch/finch/issues/1091)) ([51c006d](https://github.com/runfinch/finch/commit/51c006dfb9fa1dc3c54bad6cb422c68b69af474e))
+* **deps:** bump github.com/docker/cli from 27.1.2+incompatible to 27.2.0+incompatible ([#1074](https://github.com/runfinch/finch/issues/1074)) ([87bc728](https://github.com/runfinch/finch/commit/87bc7286ba018838a86a699356b3cfbbdc91e606))
+* **deps:** bump github.com/docker/cli from 27.2.0+incompatible to 27.2.1+incompatible ([#1088](https://github.com/runfinch/finch/issues/1088)) ([0de5d1d](https://github.com/runfinch/finch/commit/0de5d1db37660ec992c23117bde8c345f9dda09b))
+* **deps:** Bump github.com/docker/cli from 27.2.1+incompatible to 27.3.1+incompatible ([#1106](https://github.com/runfinch/finch/issues/1106)) ([397c71c](https://github.com/runfinch/finch/commit/397c71c38b0514dc27fdd49298199d4f9cdb0f43))
+* **deps:** bump github.com/docker/docker from 27.1.1+incompatible to 27.1.2+incompatible ([#1061](https://github.com/runfinch/finch/issues/1061)) ([801f825](https://github.com/runfinch/finch/commit/801f8254b6c0070b37d3d1fef0d80e2270b8c6b2))
+* **deps:** bump github.com/docker/docker from 27.1.2+incompatible to 27.2.0+incompatible ([#1073](https://github.com/runfinch/finch/issues/1073)) ([726dc07](https://github.com/runfinch/finch/commit/726dc072fb4669d29b294c86d8c916d228680403))
+* **deps:** Bump github.com/docker/docker from 27.2.1+incompatible to 27.3.1+incompatible ([#1105](https://github.com/runfinch/finch/issues/1105)) ([aa0c15a](https://github.com/runfinch/finch/commit/aa0c15a2d575ff027f7471023cc478318f634f2a))
+* **deps:** bump github.com/lima-vm/lima from 0.22.0 to 0.23.1 ([#1066](https://github.com/runfinch/finch/issues/1066)) ([09d7355](https://github.com/runfinch/finch/commit/09d73552047e83b3bafcbbafab3e9efdbf93ea64))
+* **deps:** bump github.com/lima-vm/lima from 0.23.1 to 0.23.2 ([#1077](https://github.com/runfinch/finch/issues/1077)) ([0a02a4b](https://github.com/runfinch/finch/commit/0a02a4b1d8189d33894f0a49bc4412739169373c))
+* **deps:** bump github.com/onsi/ginkgo/v2 from 2.20.0 to 2.20.2 ([#1075](https://github.com/runfinch/finch/issues/1075)) ([81af756](https://github.com/runfinch/finch/commit/81af756115cd698b375d6a78b8fc2331c26216ab))
+* **deps:** bump github.com/onsi/gomega from 1.34.1 to 1.34.2 ([#1076](https://github.com/runfinch/finch/issues/1076)) ([e04a072](https://github.com/runfinch/finch/commit/e04a072aede5e289faf986adc6423a63bbd61c11))
+* **deps:** bump golang.org/x/sys from 0.24.0 to 0.25.0 ([#1084](https://github.com/runfinch/finch/issues/1084)) ([9ace518](https://github.com/runfinch/finch/commit/9ace5180006a7677ad03ab0dda21506e93022a6e))
+* **deps:** bump golang.org/x/text from 0.17.0 to 0.18.0 ([#1082](https://github.com/runfinch/finch/issues/1082)) ([52b1ba3](https://github.com/runfinch/finch/commit/52b1ba3cbc4a9896633cb2c15b10d838e4e4c4dc))
+* **deps:** bump golang.org/x/tools from 0.24.0 to 0.25.0 ([#1090](https://github.com/runfinch/finch/issues/1090)) ([c382e22](https://github.com/runfinch/finch/commit/c382e2236ff3cff97d924a5a61682b9a0a491b76))
+* **deps:** bump k8s.io/apimachinery from 0.30.3 to 0.31.0 ([#1060](https://github.com/runfinch/finch/issues/1060)) ([2c22e72](https://github.com/runfinch/finch/commit/2c22e7277a0940ba65126d01b6ea201bbb5f4840))
+* **deps:** bump k8s.io/apimachinery from 0.31.0 to 0.31.1 ([#1093](https://github.com/runfinch/finch/issues/1093)) ([35bc4dc](https://github.com/runfinch/finch/commit/35bc4dc05c1f8f5fb2ef0a9ba8a8fe1f5a42c8f3))
+* **deps:** Bump submodules and dependencies ([#1111](https://github.com/runfinch/finch/issues/1111)) ([53f608f](https://github.com/runfinch/finch/commit/53f608f34e94e36ec249103dce05c0b2cd75f446))
+* **deps:** update nerdctl-full and soci versions ([#1097](https://github.com/runfinch/finch/issues/1097)) ([a4b9679](https://github.com/runfinch/finch/commit/a4b9679334ee4a5b353962260fa72e6a7d245e2d))
+* **linux:** add Linux packaging and e2e tests ([#1071](https://github.com/runfinch/finch/issues/1071)) ([985570e](https://github.com/runfinch/finch/commit/985570eed4b28ab7adae0350164fe9697d4e725a))
+
+
+### Features
+
+* add exit status code to finch ([5fa30f4](https://github.com/runfinch/finch/commit/5fa30f45f7ff20605905d456d5dda1c177172527))
+* Add exit status code to finch ([#1068](https://github.com/runfinch/finch/issues/1068)) ([5fa30f4](https://github.com/runfinch/finch/commit/5fa30f45f7ff20605905d456d5dda1c177172527))
+* add Linux support ([#1023](https://github.com/runfinch/finch/issues/1023)) ([82f698b](https://github.com/runfinch/finch/commit/82f698bba086ebcc5112f3ecdc5d6f6344ebc3f2))
+
+
+### Bug Fixes
+
+* allow finch commands to run using default config ([#1109](https://github.com/runfinch/finch/issues/1109)) ([4b57a00](https://github.com/runfinch/finch/commit/4b57a00181bb5f085d60b7f89fd9899e79cde7e0))
+* Improve CLI parsing for Image Args ([#1072](https://github.com/runfinch/finch/issues/1072)) ([6d49ac7](https://github.com/runfinch/finch/commit/6d49ac7fcc080302938a96630327c20eb9491a00))
+* **linux:** DOCKER_CONFIG path ([#1102](https://github.com/runfinch/finch/issues/1102)) ([5b45b75](https://github.com/runfinch/finch/commit/5b45b756460a85a0dcc0a9986336a92c9b74ff7e))
+* **linux:** support bundles ([#1101](https://github.com/runfinch/finch/issues/1101)) ([f32a97f](https://github.com/runfinch/finch/commit/f32a97f4e5ab846c1868cba3c81835a9c4e935a8))
+
+
+### Reverts
+
+* **linux:** DOCKER_CONFIG path ([#1102](https://github.com/runfinch/finch/issues/1102)) ([#1110](https://github.com/runfinch/finch/issues/1110)) ([839221c](https://github.com/runfinch/finch/commit/839221c16136954643fb7f923594d78f9a423c97))
+
 ## [1.2.3](https://github.com/runfinch/finch/compare/v1.2.2...v1.2.3) (2024-08-13)
 
 
