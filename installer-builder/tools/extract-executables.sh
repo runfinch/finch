@@ -36,7 +36,7 @@ updateQEMUEntitlement() {
 
 #$1: the file object
 extractExecutables() {
-    for file in $(ls -a "$1")
+    for file in $(ls -1a "$1")
     do
         if [ -d "$1/$file" ];
         then
@@ -44,7 +44,7 @@ extractExecutables() {
             then
                 extractExecutables "$1/$file"
             fi
-        elif [[ -x $1/$file || ($file == *.dylib && ! (-L $1/$file)) ]];
+        elif [[ -x $1/$file || (($file == *.dylib || $file == *.dylib.*) && ! (-L $1/$file)) ]];
         then
             #extract executables from all file directory to one folder
             #to have the ability to merge back, rename the executables with the file path
