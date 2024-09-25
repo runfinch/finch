@@ -3,6 +3,10 @@ name: Build, test and upload .pkg to S3
 # The scheduler runs at 9 am UTC every day.
 on:
   workflow_dispatch:
+    inputs:
+      ref_name:
+        required: true
+        type: string
   workflow_call:
     inputs:
       ref_name:
