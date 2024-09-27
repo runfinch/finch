@@ -82,6 +82,9 @@ Exact installation instructions will vary depending on Linux distribution, but t
       1. `sudo cp ./contrib/packaging/rpm/buildkitd.toml /etc/finch/buildkit/`
    1. Runtime dependencies
       1. `sudo mkdir -p /usr/libexec/finch`
+      1. `sudo mkdir -p /var/lib/finch/buildkit`
+      1. `sudo mkdir -p /var/lib/finch/nerdctl`
+      1. `sudo mkdir -p /var/lib/finch/soci`
       1. `ln -sf /usr/local/bin/nerdctl /usr/libexec/finch/nerdctl`
       1. `ln -sf /usr/local/bin/buildctl /usr/libexec/finch/buildctl`
       1. `ln -sf /usr/local/bin/finch-daemon /usr/libexec/finch/finch-daemon`
