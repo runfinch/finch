@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://github.com/runfinch/finch/compare/v1.3.0...v1.3.1) (2024-09-27)
+
+
+### Build System or External Dependencies
+
+* trigger new release-please build ([6ef2e6b](https://github.com/runfinch/finch/commit/6ef2e6b157bc6226a878196c0b5dd692dcca4ce3))
+* trigger new release-please PR ([#1114](https://github.com/runfinch/finch/issues/1114)) ([6ef2e6b](https://github.com/runfinch/finch/commit/6ef2e6b157bc6226a878196c0b5dd692dcca4ce3))
+
 ## [1.3.0](https://github.com/runfinch/finch/compare/v1.2.3...v1.3.0) (2024-09-24)
 
 
