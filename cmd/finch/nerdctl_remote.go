@@ -8,6 +8,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"maps"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -25,11 +26,6 @@ import (
 
 const nerdctlCmdName = "nerdctl"
 
-type (
-	argHandler     func(systemDeps NerdctlCommandSystemDeps, args []string, index int) error
-	commandHandler func(systemDeps NerdctlCommandSystemDeps, args []string) error
-)
-
 func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	err := nc.assertVMIsRunning(nc.ncc, nc.logger)
 	if err != nil {
@@ -37,33 +33,54 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	}
 	var (
 		nerdctlArgs, envs, fileEnvs, cmdArgs, runArgs []string
-		skip, hasCmdHander, hasArgHandler, lastOpt    bool
+		skip, hasCmdHandler, hasArgHandler, lastOpt   bool
 		cmdHandler                                    commandHandler
 		aMap                                          map[string]argHandler
 		firstOptPos                                   int
 	)
 
-	alias, hasAlias := aliasMap[cmdName]
+	// accumulate distributed map entities
+	aggAliasMap := make(map[string]string)
+	maps.Copy(aggAliasMap, aliasMap)
+	maps.Copy(aggAliasMap, osAliasMap)
+
+	aggCmdHandlerMap := make(map[string]commandHandler)
+	maps.Copy(aggCmdHandlerMap, commandHandlerMap)
+	maps.Copy(aggCmdHandlerMap, osCommandHandlerMap)
+
+	aggArgHandlerMap := make(map[string]map[string]argHandler)
+	for k := range argHandlerMap {
+		aggArgHandlerMap[k] = make(map[string]argHandler)
+		maps.Copy(aggArgHandlerMap[k], argHandlerMap[k])
+	}
+	for k := range osArgHandlerMap {
+		if _, ok := aggArgHandlerMap[k]; !ok {
+			aggArgHandlerMap[k] = make(map[string]argHandler)
+		}
+		maps.Copy(aggArgHandlerMap[k], osArgHandlerMap[k])
+	}
+
+	alias, hasAlias := aggAliasMap[cmdName]
 	if hasAlias {
 		cmdName = alias
-		cmdHandler, hasCmdHander = commandHandlerMap[alias]
-		aMap, hasArgHandler = argHandlerMap[alias]
+		cmdHandler, hasCmdHandler = aggCmdHandlerMap[alias]
+		aMap, hasArgHandler = aggArgHandlerMap[alias]
 	} else {
 		// Check if the command has a handler
-		cmdHandler, hasCmdHander = commandHandlerMap[cmdName]
-		aMap, hasArgHandler = argHandlerMap[cmdName]
+		cmdHandler, hasCmdHandler = aggCmdHandlerMap[cmdName]
+		aMap, hasArgHandler = aggArgHandlerMap[cmdName]
 
-		if !hasCmdHander && !hasArgHandler && len(args) > 0 {
+		if !hasCmdHandler && !hasArgHandler && len(args) > 0 {
 			// for commands like image build, container run
 			key := fmt.Sprintf("%s %s", cmdName, args[0])
-			cmdHandler, hasCmdHander = commandHandlerMap[key]
-			aMap, hasArgHandler = argHandlerMap[key]
+			cmdHandler, hasCmdHandler = aggCmdHandlerMap[key]
+			aMap, hasArgHandler = aggArgHandlerMap[key]
 		}
 	}
 
 	// First check if the command has command handler
-	if hasCmdHander {
-		err := cmdHandler(nc.systemDeps, args)
+	if hasCmdHandler {
+		err := cmdHandler(nc.systemDeps, nc.fc, &cmdName, &args)
 		if err != nil {
 			return err
 		}
@@ -89,13 +106,13 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		shortFlagArgSet := cmdFlagSetMap[cmdName]["shortArgFlags"]
 
 		for i, arg := range args {
-			// Check if command requires arg handling
+			// Check if individual argument (and possibly following value) requires manipulation-in-place handling
 			if hasArgHandler {
 				// Check if argument for the command needs handling, sometimes it can be --file=<filename>
 				b, _, _ := strings.Cut(arg, "=")
 				h, ok := aMap[b]
 				if ok {
-					err = h(nc.systemDeps, args, i)
+					err = h(nc.systemDeps, nc.fc, args, i)
 					if err != nil {
 						return err
 					}
@@ -103,6 +120,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 					arg = args[i]
 				}
 			}
+
 			// parsing arguments from the command line
 			// may pre-fetch and consume the next argument;
 			// the loop variable will skip any pre-consumed args
@@ -116,7 +134,6 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				cmdArgs = append(cmdArgs, arg)
 				continue
 			}
-
 			switch {
 			case arg == "--debug":
 				nc.logger.SetLevel(flog.Debug)
@@ -157,17 +174,26 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 					envs = append(envs, addEnv)
 				}
 			case shortFlagBoolSet.Has(arg) || longFlagBoolSet.Has(arg):
-				// exact match to a short flag: -?
+				// exact match to a short no argument flag: -?
 				// or exact match to: --<long_flag>
 				nerdctlArgs = append(nerdctlArgs, arg)
+			case longFlagBoolSet.Has(strings.Split(arg, "=")[0]):
+				// begins with --<long_flag>
+				//    e.g. --sig-proxy=false
+				nerdctlArgs = append(nerdctlArgs, arg)
 			case shortFlagBoolSet.Has(arg[:2]):
-				// begins with a defined short flag, but is adjacent to one or more short flags: -????
+				// or begins with a defined short no argument flag, but is adjacent to something
+				//   -????   one or more short bool flags; no following values
+				//   -????="<value>" one or more short bool flags ending with a short arg flag equated to value
+				//   -????"<value>" one or more short bool flags ending with a short arg flag concatenated to value
 				addArg := nc.handleMultipleShortFlags(shortFlagBoolSet, shortFlagArgSet, args, i)
 				nerdctlArgs = append(nerdctlArgs, addArg)
 			case shortFlagArgSet.Has(arg) || shortFlagArgSet.Has(arg[:2]):
-				// exact match to: -h,-m,-u,-w,-p,-l,-v
-				// or begins with: -h,-m,-u,-w,-p,-l,-v
-				//     concatenated short flags and values: -p"8080:8080"
+				// exact match to a short arg flag: -?
+				//     next arg must be the <value>
+				// or begins with a short arg flag:
+				//     short arg flag concatenated to value: -?"<value>"
+				//     short arg flag equated to value: -?="<value>" or -?=<value>
 				shouldSkip, addKey, addVal := nc.handleFlagArg(arg, args[i+1])
 				skip = shouldSkip
 				if addKey != "" {
@@ -175,7 +201,11 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 					nerdctlArgs = append(nerdctlArgs, addVal)
 				}
 			case strings.HasPrefix(arg, "--"):
-				// --<long_flag>="<value>", --<long_flag> "<value>"
+				// exact match to a long arg flag: -<long_flag>
+				//     next arg must be the <value>
+				// or begins with a long arg flag:
+				//     long arg flag concatenated to value: --<long_flag>"<value>"
+				//     long arg flag equated to value: --<long_flag>="<value>" or --<long_flag>=<value>
 				shouldSkip, addKey, addVal := nc.handleFlagArg(arg, args[i+1])
 				skip = shouldSkip
 				if addKey != "" {
@@ -227,13 +257,13 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	default:
 
 		for i, arg := range args {
-			// Check if command requires arg handling
+			// Check if individual argument (and possibly following value) requires manipulation-in-place handling
 			if hasArgHandler {
 				// Check if argument for the command needs handling, sometimes it can be --file=<filename>
 				b, _, _ := strings.Cut(arg, "=")
 				h, ok := aMap[b]
 				if ok {
-					err = h(nc.systemDeps, args, i)
+					err = h(nc.systemDeps, nc.fc, args, i)
 					if err != nil {
 						return err
 					}
@@ -284,7 +314,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		if slices.Contains(args, "run") {
 			ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
 		}
-	case "build", "pull", "push", "run":
+	case "build", "pull", "push", "container run":
 		ensureRemoteCredentials(nc.fc, nc.ecc, &additionalEnv, nc.logger)
 	}
 
