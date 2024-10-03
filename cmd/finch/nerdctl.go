@@ -246,7 +246,7 @@ var cmdFlagSetMap = map[string]map[string]sets.Set[string]{
 
 // converts "docker build --load" flag to "nerdctl build --output=type=docker".
 func handleDockerBuildLoad(_ NerdctlCommandSystemDeps, fc *config.Finch, nerdctlCmdArgs []string, index int) error {
-	if fc.DockerCompat {
+	if fc != nil && fc.DockerCompat {
 		nerdctlCmdArgs[index] = "--output=type=docker"
 	}
 
@@ -277,7 +277,7 @@ func handleBuildx(_ NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string,
 }
 
 func handleDockerCompatInspect(_ NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string) error {
-	if !fc.DockerCompat {
+	if fc == nil || !fc.DockerCompat {
 		return nil
 	}
 
