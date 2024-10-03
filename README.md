@@ -68,30 +68,7 @@ To get started with Finch on Linux, the prerequisites are:
 
 * Linux system capable of running containerd 1.7.x (generally, this means at least Linux kernel 4.x)
 
-Currently, Finch installers are packaged and distributed on Amazon Linux. If you are not using Amazon Linux, you can download the binary from the GitHub releases page and install/configure the dependencies, following the convention in the [finch.spec file](./contrib/packaging/rpm/finch.spec).
-
-Exact installation instructions will vary depending on Linux distribution, but the overall summary is as follows:
-1. Download the Finch Linux binary archive corresponding to your system's architecture from the Releases tab, and extract it using a command like `tar Cxzvvf /usr/local ./bin`
-1. Download the Finch Daemon Linux binary archive corresponding to your system's architecture from [their Releases tab](https://github.com/runfinch/finch-daemon/releases), and extract it using a command like `tar Cxzvvf /usr/local/bin <archive_name> ./finch-daemon`
-1. Download the latest nerdctl-full archive release corresponding to your system's architecture [from their Releases tab](https://github.com/containerd/nerdctl/releases), and extract it using a command like `tar Cxzvvf /usr/local <archive_name>`
-1. Setup filesystem:
-   1. Config:
-      1. `sudo mkdir -p /etc/finch/nerdctl`
-      1. `sudo cp ./contrib/packaging/rpm/nerdctl.toml /etc/finch/nerdctl/`
-      1. `sudo mkdir -p /etc/finch/buildkit`
-      1. `sudo cp ./contrib/packaging/rpm/buildkitd.toml /etc/finch/buildkit/`
-   1. Runtime dependencies
-      1. `sudo mkdir -p /usr/libexec/finch`
-      1. `sudo mkdir -p /var/lib/finch/buildkit`
-      1. `sudo mkdir -p /var/lib/finch/nerdctl`
-      1. `sudo mkdir -p /var/lib/finch/soci`
-      1. `ln -sf /usr/local/bin/nerdctl /usr/libexec/finch/nerdctl`
-      1. `ln -sf /usr/local/bin/buildctl /usr/libexec/finch/buildctl`
-      1. `ln -sf /usr/local/bin/finch-daemon /usr/libexec/finch/finch-daemon`
-1. Run system services using a service manager, like systemd, or directly. Example systemd service files can be found in the following locations:
-   1. [containerd](https://github.com/containerd/containerd/blob/main/containerd.service)
-   1. [buildkit](./contrib/packaging/rpm/finch-buildkit.service)
-   1. [finch-daemon](https://github.com/runfinch/finch-daemon/blob/main/finch.service)
+Currently, Finch installers are packaged and distributed on Amazon Linux. If you are not using Amazon Linux, you can download the binary from the GitHub releases page and install/configure the dependencies, following the convention in the [finch.spec file](./contrib/packaging/rpm/finch.spec). Detailed instructions are available on [runfinch.com](https://runfinch.com/docs/managing-finch/linux/installation/#generic).
 
 ### Running containers and building images
 

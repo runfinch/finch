@@ -164,7 +164,6 @@ sudo yum install golang zlib-static containerd nerdctl cni-plugins iptables
 1. `zlib-static`: used to build soci, as part of the included [finch.spec file in ./contrib/packaging/rpm](./contrib/packaging/rpm/finch.spec)
 1. `containerd`, `nerdctl`, `cni-plugins`, `iptables`: runtime dependencies
 
-
 ##### Generic
 
 1. Install go [following instructions here](https://go.dev/doc/install)
@@ -206,9 +205,11 @@ Then run `make` to build the binary. The binary in `_output` can be directly use
 ```
 
 #### macOS/Windows
+
 You can run `make install` to make finch binary globally accessible.
 
 #### Amazon Linux
+
 You can run `./contrib/packaging/rpm/build.sh --local` to install Finch globally.
 
 NOTE: If your build environment experiences issues with downloading dependencies from the Go proxy servers, then you may want to set the environment variable `export GOPROXY=direct`
