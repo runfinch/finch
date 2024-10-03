@@ -16,7 +16,6 @@ import (
 )
 
 func (nc *nerdctlCommand) run(cmdName string, args []string) error {
-
 	var (
 		hasCmdHandler, hasArgHandler bool
 		cmdHandler                   commandHandler
@@ -70,14 +69,12 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		}
 	}
 
-	//  TODO: Extra manipulation if overwriting cmdName with alias
-	//splitName := strings.Split(cmdName, " ")
-	//cmdArgs := append([]string{splitName[0]}, splitName[1:]...)
-	//cmdArgs = append(cmdArgs, args...)
+	// Extra manipulation for cases that overwrite cmdName with alias
+	splitName := strings.Split(cmdName, " ")
+	cmdArgs := append([]string{splitName[0]}, splitName[1:]...)
+	cmdArgs = append(cmdArgs, args...)
 
-	cmdArgs := append([]string{cmdName}, args...)
-
-	if nc.shouldReplaceForHelp(cmdName, args) {
+	if nc.shouldReplaceForHelp(splitName[0], args) {
 		return nc.ncc.RunWithReplacingStdout(
 			[]command.Replacement{{Source: "nerdctl", Target: "finch"}},
 			cmdArgs...,
@@ -92,3 +89,17 @@ var osAliasMap = map[string]string{}
 var osArgHandlerMap = map[string]map[string]argHandler{}
 
 var osCommandHandlerMap = map[string]commandHandler{}
+
+func mapToString(m map[string]string) string {
+	var parts []string
+	for k, v := range m {
+		part := fmt.Sprintf("%s=%s", k, v)
+		parts = append(parts, part)
+	}
+	return strings.Join(parts, ",")
+}
+
+func handleBindMountPath(_ NerdctlCommandSystemDeps, _ map[string]string) error {
+	// Do nothing by default
+	return nil
+}

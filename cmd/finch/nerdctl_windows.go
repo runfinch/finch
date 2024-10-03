@@ -49,7 +49,6 @@ var osArgHandlerMap = map[string]map[string]argHandler{
 		"--cidfile":    handleFilePath,
 		"-v":           handleVolume,
 		"--volume":     handleVolume,
-		"--mount":      handleBindMounts,
 	},
 	"compose": {
 		"--file": handleFilePath,
@@ -166,83 +165,6 @@ func handleVolume(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlC
 	} else {
 		nerdctlCmdArgs[index+1] = fmt.Sprintf("%s:%s%s", wslHostPath, containerPath, readWrite)
 	}
-	return nil
-}
-
-// translates source path of the bind mount to wslpath for --mount option.
-//
-//	and removes the consistency key-value entity from --mount
-func handleBindMounts(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlCmdArgs []string, index int) error {
-	prefix := nerdctlCmdArgs[index]
-	var (
-		v      string
-		found  bool
-		before string
-	)
-	if strings.Contains(nerdctlCmdArgs[index], "=") {
-		before, v, found = strings.Cut(prefix, "=")
-	} else {
-		if (index + 1) < len(nerdctlCmdArgs) {
-			v = nerdctlCmdArgs[index+1]
-		} else {
-			return fmt.Errorf("invalid positional parameter for %s", prefix)
-		}
-	}
-
-	// e.g. --mount type=bind,source="$(pwd)"/target,target=/app,readonly
-	// e.g. --mount type=bind,source=/Users/stchew/projs/arbtest_devcontainers_extensions,
-	//                     target=/workspaces/arbtest_devcontainers_extensions,consistency=cached
-	// https://docs.docker.com/storage/bind-mounts/#choose-the--v-or---mount-flag  order does not matter, so convert to a map
-	entries := strings.Split(v, ",")
-	m := make(map[string]string)
-	ro := []string{}
-	for _, e := range entries {
-		parts := strings.Split(e, "=")
-		if len(parts) < 2 {
-			ro = append(ro, parts...)
-		} else {
-			m[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
-		}
-	}
-	// Check if type is bind mount, else return
-	if m["type"] != "bind" {
-		return nil
-	}
-
-	// Remove 'consistency' key-value pair
-	delete(m, "consistency")
-
-	// Handle src/source path
-	var k string
-	path, ok := m["src"]
-	if !ok {
-		path, ok = m["source"]
-		k = "source"
-	} else {
-		k = "src"
-	}
-	// If there is no src or source or not a windows path, do nothing, let nerdctl handle error
-	if !ok || !strings.Contains(path, `\`) {
-		return nil
-	}
-	wslPath, err := convertToWSLPath(systemDeps, path)
-	if err != nil {
-		return err
-	}
-	m[k] = wslPath
-
-	// Convert to string representation
-	s := mapToString(m)
-	// append read-only key if present
-	if len(ro) > 0 {
-		s = s + "," + strings.Join(ro, ",")
-	}
-	if found {
-		nerdctlCmdArgs[index] = fmt.Sprintf("%s=%s", before, s)
-	} else {
-		nerdctlCmdArgs[index+1] = s
-	}
-
 	return nil
 }
 
@@ -383,6 +305,29 @@ func imageBuildHandler(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, _ *
 			return err
 		}
 	}
+	return nil
+}
+
+func handleBindMountPath(systemDeps NerdctlCommandSystemDeps, m map[string]string) error {
+	// Handle src/source path
+	var k string
+	path, ok := m["src"]
+	if !ok {
+		path, ok = m["source"]
+		k = "source"
+	} else {
+		k = "src"
+	}
+	// If there is no src or source or not a windows path, do nothing, let nerdctl handle error
+	if !ok || !strings.Contains(path, `\`) {
+		return nil
+	}
+	wslPath, err := convertToWSLPath(systemDeps, path)
+	if err != nil {
+		return err
+	}
+
+	m[k] = wslPath
 	return nil
 }
 

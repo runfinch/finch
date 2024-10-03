@@ -218,6 +218,9 @@ var argHandlerMap = map[string]map[string]argHandler{
 	"image build": {
 		"--load": handleDockerBuildLoad,
 	},
+	"container run": {
+		"--mount": handleBindMounts,
+	},
 }
 
 var cmdFlagSetMap = map[string]map[string]sets.Set[string]{
@@ -335,6 +338,70 @@ func handleDockerCompatInspect(_ NerdctlCommandSystemDeps, fc *config.Finch, cmd
 		*args = append([]string{modeDockerCompat}, savedArgs...)
 	default:
 		return fmt.Errorf("unsupported inspect type: %s", inspectType)
+	}
+
+	return nil
+}
+
+// handles the argument & value of --mount option
+//
+//	invokes OS specific path handler for source path of the bind mount
+//	and removes the consistency key-value entity from value
+func handleBindMounts(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlCmdArgs []string, index int) error {
+	prefix := nerdctlCmdArgs[index]
+	var (
+		v      string
+		found  bool
+		before string
+	)
+	if strings.Contains(nerdctlCmdArgs[index], "=") {
+		before, v, found = strings.Cut(prefix, "=")
+	} else {
+		if (index + 1) < len(nerdctlCmdArgs) {
+			v = nerdctlCmdArgs[index+1]
+		} else {
+			return fmt.Errorf("invalid positional parameter for %s", prefix)
+		}
+	}
+
+	// eg --mount type=bind,source="$(pwd)"/target,target=/app,readonly
+	// eg --mount type=bind, source=${pwd}/source_dir, target=<path>/target_dir, consistency=cached
+	// https://docs.docker.com/storage/bind-mounts/#choose-the--v-or---mount-flag  order does not matter, so convert to a map
+	entries := strings.Split(v, ",")
+	m := make(map[string]string)
+	ro := []string{}
+	for _, e := range entries {
+		parts := strings.Split(e, "=")
+		if len(parts) < 2 {
+			ro = append(ro, parts...)
+		} else {
+			m[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
+		}
+	}
+	// Check if type is bind mount, else return
+	if m["type"] != "bind" {
+		return nil
+	}
+
+	// Remove 'consistency' key-value pair, if present
+	delete(m, "consistency")
+
+	// Invoke the OS specific path handler
+	err := handleBindMountPath(systemDeps, m)
+	if err != nil {
+		return err
+	}
+
+	// Convert to string representation
+	s := mapToString(m)
+	// append read-only key if present
+	if len(ro) > 0 {
+		s = s + "," + strings.Join(ro, ",")
+	}
+	if found {
+		nerdctlCmdArgs[index] = fmt.Sprintf("%s=%s", before, s)
+	} else {
+		nerdctlCmdArgs[index+1] = s
 	}
 
 	return nil

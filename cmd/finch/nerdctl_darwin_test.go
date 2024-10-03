@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -1208,6 +1209,36 @@ func TestNerdctlCommand_run(t *testing.T) {
 				c.EXPECT().Run()
 			},
 		},
+		{
+			name:    "bindmount with src and consistency",
+			cmdName: "run",
+			fc:      &config.Finch{},
+			args:    []string{"--mount", "type=bind,src=./src,consistency=cached", "alpine:latest"},
+			wantErr: nil,
+			mockSvc: func(
+				_ *testing.T,
+				lcc *mocks.NerdctlCmdCreator,
+				_ *mocks.CommandCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				_ afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
+				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
+					"--mount", ContainsMultipleStrs([]string{"bind", "type", "!consistency"}), "alpine:latest").Return(c)
+				c.EXPECT().Run()
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -1663,4 +1694,59 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
 		})
 	}
+}
+
+type ContainsSubstring struct {
+	substr string
+}
+
+func (m *ContainsSubstring) Matches(x interface{}) bool {
+	s, ok := x.(string)
+	if !ok {
+		return false
+	}
+	return strings.Contains(s, m.substr)
+}
+
+func (m *ContainsSubstring) String() string {
+	return fmt.Sprintf("contains substring %q", m.substr)
+}
+
+func ContainsStr(substr string) gomock.Matcher {
+	return &ContainsSubstring{substr: substr}
+}
+
+type ContainsMultipleSubstrings struct {
+	substrs []string
+}
+
+func (m *ContainsMultipleSubstrings) Matches(x interface{}) bool {
+	s, ok := x.(string)
+	if !ok {
+		return false
+	}
+	// Check if each substrings is present in the input string
+	//   except strings that start with "!"
+	passTest := true
+	for _, substr := range m.substrs {
+		if substr[0] == '!' {
+			if strings.Contains(s, substr[1:]) {
+				passTest = false
+			}
+			continue
+		}
+
+		if !strings.Contains(s, substr) {
+			passTest = false
+		}
+	}
+	return passTest
+}
+
+func (m *ContainsMultipleSubstrings) String() string {
+	return fmt.Sprintf("contains substrings %q", m.substrs)
+}
+
+func ContainsMultipleStrs(substrs []string) gomock.Matcher {
+	return &ContainsMultipleSubstrings{substrs: substrs}
 }
