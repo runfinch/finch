@@ -31,6 +31,7 @@ import (
 const (
 	bundlePrefix     = "finch-support"
 	platformFileName = "platform.yaml"
+	versionFileName  = "version-output.txt"
 	logPrefix        = "logs"
 	configPrefix     = "configs"
 	additionalPrefix = "misc"
@@ -48,14 +49,22 @@ type BundleBuilder interface {
 	GenerateSupportBundle([]string, []string) (string, error)
 }
 
+// SystemDeps provides methods to get system dependencies.
+//
+//go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_support.go -package=mocks -mock_names SystemDeps=SupportSystemDeps . SystemDeps
+type SystemDeps interface {
+	system.ExecutableFinder
+}
+
 type bundleBuilder struct {
-	logger flog.Logger
-	fs     afero.Fs
-	config BundleConfig
-	finch  fpath.Finch
-	ecc    command.Creator
-	ncc    command.NerdctlCmdCreator
-	lima   wrapper.LimaWrapper
+	logger     flog.Logger
+	fs         afero.Fs
+	config     BundleConfig
+	finch      fpath.Finch
+	ecc        command.Creator
+	ncc        command.NerdctlCmdCreator
+	lima       wrapper.LimaWrapper
+	systemDeps SystemDeps
 }
 
 // NewBundleBuilder produces a new BundleBuilder.
@@ -67,15 +76,17 @@ func NewBundleBuilder(
 	ecc command.Creator,
 	ncc command.NerdctlCmdCreator,
 	lima wrapper.LimaWrapper,
+	systemDeps SystemDeps,
 ) BundleBuilder {
 	return &bundleBuilder{
-		logger: logger,
-		fs:     fs,
-		config: config,
-		finch:  finch,
-		ecc:    ecc,
-		ncc:    ncc,
-		lima:   lima,
+		logger:     logger,
+		fs:         fs,
+		config:     config,
+		finch:      finch,
+		ecc:        ecc,
+		ncc:        ncc,
+		lima:       lima,
+		systemDeps: systemDeps,
 	}
 }
 
@@ -104,6 +115,13 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 
 	bb.logger.Debugln("Gathering platform data...")
 	err = writePlatformData(writer, platform, zipPrefix)
+	if err != nil {
+		return "", err
+	}
+
+	bb.logger.Debugln("Collecting finch version output...")
+	version := bb.getFinchVersion()
+	err = writeVersionOutput(writer, version, zipPrefix)
 	if err != nil {
 		return "", err
 	}
@@ -320,6 +338,21 @@ func getFinchVersion() string {
 	return version.Version
 }
 
+func (bb *bundleBuilder) getFinchVersion() string {
+	// get current finch executable
+	executable, err := bb.systemDeps.Executable()
+	if err != nil {
+		return ""
+	}
+	cmd := bb.ecc.Create(executable, "version")
+	out, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+	output := string(out)
+	return output
+}
+
 func writePlatformData(writer *zip.Writer, platform *PlatformData, prefix string) error {
 	platformFile, err := writer.Create(path.Join(prefix, platformFileName))
 	if err != nil {
@@ -370,4 +403,18 @@ func fileShouldBeExcluded(filename string, exclude []string) bool {
 
 func isFileFromVM(filename string) bool {
 	return strings.HasPrefix(filename, "vm:")
+}
+
+func writeVersionOutput(writer *zip.Writer, version, prefix string) error {
+	versionFile, err := writer.Create(path.Join(prefix, versionFileName))
+	if err != nil {
+		return err
+	}
+
+	_, err = versionFile.Write([]byte(version))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
