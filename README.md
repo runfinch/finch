@@ -113,15 +113,17 @@ Finch has a simple and extensible configuration.
 
 A configuration file at `${HOME}/.finch/finch.yaml` will be generated on first run. Currently, this config file has options for system resource limits for the underlying virtual machine. These default limits are generated dynamically based on the resources available on the host system, but can be changed by manually editing the config file.
 
-For a full list of configuration options, check [the struct here](https://github.com/runfinch/finch/blob/main/pkg/config/config.go#L34).
+For a full list of configuration options, check the finch struct for [macOS](pkg/config/config_darwin.go#L32).
 
 An example `finch.yaml` looks like this:
 
 ```yaml
 # cpus: the amount of vCPU to dedicate to the virtual machine. (required)
 cpus: 4
+
 # memory: the amount of memory to dedicate to the virtual machine. (required)
 memory: 4GiB
+
 # snapshotters: the snapshotters a user wants to use (the first snapshotter will be set as the default snapshotter)
 # Supported Snapshotters List:
 # - soci https://github.com/awslabs/soci-snapshotter/tree/main
@@ -132,6 +134,7 @@ memory: 4GiB
 # and remove the snapshotter configuration in the containerd config file found at /etc/containerd/config.toml
 snapshotters: 
     - soci
+
 # creds_helpers: a list of credential helpers that will be installed and configured automatically. 
 # Supported Credential Helpers List: 
 # - ecr-login https://github.com/awslabs/amazon-ecr-credential-helper
@@ -144,12 +147,14 @@ snapshotters:
 # folder entirely. (optional)
 creds_helpers: 
   - ecr-login
+
 # additional_directories: the work directories that are not supported by default. In macOS, only home directory is supported by default. 
 # For example, if you want to mount a directory into a container, and that directory is not under your home directory, 
 # then you'll need to specify this field to add that directory or any ascendant of it as a work directory. (optional)
 additional_directories:
   # the path of each additional directory.
   - path: /Volumes
+
 # vmType: sets which Hypervisor to use to launch the VM. (optional)
 # Only takes effect when a new VM is launched (only on vm init).
 # One of: "qemu", "vz".
@@ -159,6 +164,7 @@ additional_directories:
 # NOTE: prior to version 1.2.0, "qemu" was the default, and it will still be the default for
 # macOS versions that do not support Virtualization.framework (pre-13.0.0).
 vmType: "vz"
+
 # rosetta: sets whether to enable Rosetta as the binfmt_misc handler for x86_64 
 # binaries inside the VM, as an alternative to qemu user mode emulation. (optional)
 # Only takes effect when a new VM is launched (only on vm init).
@@ -169,13 +175,17 @@ vmType: "vz"
 # some performance regressions, as noted in this issue:
 # https://github.com/lima-vm/lima/issues/1269
 rosetta: false
+
+# dockercompat: a configuration parameter to activate finch functionality to accept Docker-like commands and arguments.
+# For running DevContainers on Finch, this functionality will convert Docker-like arguments into compatible nerdctl commands and arguments.
+dockercompat: true
 ```
 
 #### Windows
 
 A configuration file at `$env:LOCALAPPDATA\.finch\finch.yaml` will be generated on first run. Currently, this config file does not have options for system resource [limits due to limitations in WSL](https://github.com/microsoft/WSL/issues/8570).
 
-For a full list of configuration options, check [the struct here](pkg/config/config.go#L30).
+For a full list of configuration options, check the finch struct for [windows](pkg/config/config_windows.go#L18).
 
 An example `finch.yaml` looks like this:
 
@@ -190,6 +200,7 @@ An example `finch.yaml` looks like this:
 # and remove the snapshotter configuration in the containerd config file found at /etc/containerd/config.toml
 snapshotters: 
     - soci
+
 # creds_helpers: a list of credential helpers that will be installed and configured automatically. 
 # Supported Credential Helpers List: 
 # - ecr-login https://github.com/awslabs/amazon-ecr-credential-helper
@@ -205,6 +216,10 @@ creds_helpers:
 
 # sets wsl2 Hypervisor to use to launch the VM. (optional)
 vmType: "wsl2"
+
+# dockercompat: a configuration parameter to activate finch functionality to accept Docker-like commands and arguments.
+# For running DevContainers on Finch, this functionality will convert Docker-like arguments into compatible nerdctl commands and arguments.
+dockercompat: true
 ```
 
 ### FAQ
