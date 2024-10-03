@@ -21,6 +21,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		cmdHandler                   commandHandler
 		aMap                         map[string]argHandler
 		err                          error
+		inspectType                  string
 	)
 
 	// eat the debug arg, and set the log level to avoid nerdctl parsing this flag
@@ -48,7 +49,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	// First check if the command has a command handler
 	if hasCmdHandler {
-		err := cmdHandler(nc.systemDeps, nc.fc, &cmdName, &args)
+		err := cmdHandler(nc.systemDeps, nc.fc, &cmdName, &args, &inspectType)
 		if err != nil {
 			return err
 		}
@@ -81,7 +82,14 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		)
 	}
 
+	if inspectType == "container" && nc.fc.DockerCompat && !slices.Contains(cmdArgs, "--format") {
+		cmdArgs = append(cmdArgs, "--format", "{{json .}}")
+		cmd := nc.ncc.Create(cmdArgs...)
+		return inspectContainerOutputHandler(cmd)
+	}
+
 	return nc.ncc.Create(cmdArgs...).Run()
+
 }
 
 var osAliasMap = map[string]string{}

@@ -244,11 +244,12 @@ download-licenses:
 # - github.com/runfinch/finch is ignored because we don't have to check our own license.
 #   Moreover, if we don't ignore it, the following error will occur:
 #   `module github.com/runfinch/finch has empty version, defaults to HEAD. The license URL may be incorrect. Please verify!`.
+#   `module  github.com/multiformats/go-base36  has a Apache license and MIT license but not written as LICENSE format`
 check-licenses: GOBIN = $(CURDIR)/tools_bin
 check-licenses:
 	go mod download
 	GOBIN=$(GOBIN) go install github.com/google/go-licenses
-	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT --include_tests ./...
+	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --ignore  github.com/multiformats/go-base36 --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT --include_tests ./...
 
 .PHONY: test-unit
 test-unit:

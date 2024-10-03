@@ -262,7 +262,7 @@ func handleSecretOption(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, ne
 }
 
 // cp command handler, takes command arguments and converts hostpath to wsl path in place. It ignores all other arguments.
-func cpHandler(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, _ *string, nerdctlCmdArgs *[]string) error {
+func cpHandler(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, _ *string, nerdctlCmdArgs *[]string, _ *string) error {
 	for i, arg := range *nerdctlCmdArgs {
 		// -L and --follow-symlink don't have to be processed
 		if strings.HasPrefix(arg, "-") || arg == "cp" {
@@ -285,7 +285,7 @@ func cpHandler(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, _ *string, 
 }
 
 // this is the handler for image build command. It translates build context to wsl path.
-func imageBuildHandler(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, _ *string, nerdctlCmdArgs *[]string) error {
+func imageBuildHandler(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, _ *string, nerdctlCmdArgs *[]string, _ *string) error {
 	var err error
 	argLen := len(*nerdctlCmdArgs) - 1
 	// -h/--help don't have buildcontext, just return

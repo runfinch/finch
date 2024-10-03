@@ -45,7 +45,7 @@ type nerdctlCommandCreator struct {
 
 type (
 	argHandler     func(systemDeps NerdctlCommandSystemDeps, fc *config.Finch, args []string, index int) error
-	commandHandler func(systemDeps NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string) error
+	commandHandler func(systemDeps NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string, inspectType *string) error
 )
 
 func newNerdctlCommandCreator(
@@ -256,7 +256,7 @@ func handleDockerBuildLoad(_ NerdctlCommandSystemDeps, fc *config.Finch, nerdctl
 	return nil
 }
 
-func handleBuildx(_ NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string) error {
+func handleBuildx(_ NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string, _ *string) error {
 	if fc == nil || !fc.DockerCompat {
 		return nil
 	}
@@ -279,7 +279,7 @@ func handleBuildx(_ NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string,
 	return nil
 }
 
-func handleDockerCompatInspect(_ NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string) error {
+func handleDockerCompatInspect(_ NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string, inspectType *string) error {
 	if fc == nil || !fc.DockerCompat {
 		return nil
 	}
@@ -289,10 +289,10 @@ func handleDockerCompatInspect(_ NerdctlCommandSystemDeps, fc *config.Finch, cmd
 	}
 
 	modeDockerCompat := `--mode=dockercompat`
-	inspectType := ""
 	sizeArg := ""
 	savedArgs := []string{}
 	skip := false
+	*inspectType = ""
 
 	for idx, arg := range *args {
 		if skip {
@@ -301,13 +301,13 @@ func handleDockerCompatInspect(_ NerdctlCommandSystemDeps, fc *config.Finch, cmd
 		}
 
 		if (arg == "--type") && (idx < len(*args)-1) {
-			inspectType = (*args)[idx+1]
+			*inspectType = (*args)[idx+1]
 			skip = true
 			continue
 		}
 
 		if strings.Contains(arg, "--type") && strings.Contains(arg, "=") {
-			inspectType = strings.Split(arg, "=")[1]
+			*inspectType = strings.Split(arg, "=")[1]
 			continue
 		}
 
@@ -319,7 +319,7 @@ func handleDockerCompatInspect(_ NerdctlCommandSystemDeps, fc *config.Finch, cmd
 		savedArgs = append(savedArgs, arg)
 	}
 
-	switch inspectType {
+	switch *inspectType {
 	case "image":
 		*cmdName = "image inspect"
 		*args = append([]string{modeDockerCompat}, savedArgs...)
@@ -336,8 +336,9 @@ func handleDockerCompatInspect(_ NerdctlCommandSystemDeps, fc *config.Finch, cmd
 	case "":
 		*cmdName = "inspect"
 		*args = append([]string{modeDockerCompat}, savedArgs...)
+		*inspectType = "container"
 	default:
-		return fmt.Errorf("unsupported inspect type: %s", inspectType)
+		return fmt.Errorf("unsupported inspect type: %s", *inspectType)
 	}
 
 	return nil
