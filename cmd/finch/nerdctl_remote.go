@@ -37,6 +37,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		cmdHandler                                    commandHandler
 		aMap                                          map[string]argHandler
 		firstOptPos                                   int
+		inspectType                                   string
 	)
 
 	// accumulate distributed map entities
@@ -80,7 +81,7 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	// First check if the command has command handler
 	if hasCmdHandler {
-		err := cmdHandler(nc.systemDeps, nc.fc, &cmdName, &args)
+		err := cmdHandler(nc.systemDeps, nc.fc, &cmdName, &args, &inspectType)
 		if err != nil {
 			return err
 		}
@@ -331,6 +332,12 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	if nc.shouldReplaceForHelp(cmdName, args) {
 		return nc.ncc.RunWithReplacingStdout([]command.Replacement{{Source: "nerdctl", Target: "finch"}}, runArgs...)
+	}
+
+	if inspectType == "container" && nc.fc.DockerCompat && !slices.Contains(runArgs, "--format") {
+		runArgs = append(runArgs, "--format", "{{json .}}")
+		cmd := nc.ncc.Create(runArgs...)
+		return inspectContainerOutputHandler(cmd)
 	}
 
 	return nc.ncc.Create(runArgs...).Run()

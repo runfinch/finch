@@ -6,6 +6,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -1306,7 +1307,10 @@ func TestNerdctlCommand_run_inspectCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "inspect", "--mode=dockercompat", "da24").Return(c)
+				var stdoutBuf bytes.Buffer
+				c.EXPECT().SetStdout(&stdoutBuf)
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "inspect", "--mode=dockercompat", "da24",
+					"--format", "{{json .}}").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1339,7 +1343,10 @@ func TestNerdctlCommand_run_inspectCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "inspect", "--mode=dockercompat", "44de").Return(c)
+				var stdoutBuf bytes.Buffer
+				c.EXPECT().SetStdout(&stdoutBuf)
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "inspect", "--mode=dockercompat", "44de",
+					"--format", "{{json .}}").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1448,7 +1455,10 @@ func TestNerdctlCommand_run_inspectCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
-				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "inspect", "--mode=dockercompat", "44de").Return(c)
+				var stdoutBuf bytes.Buffer
+				c.EXPECT().SetStdout(&stdoutBuf)
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "inspect", "--mode=dockercompat", "44de",
+					"--format", "{{json .}}").Return(c)
 				c.EXPECT().Run()
 			},
 		},
