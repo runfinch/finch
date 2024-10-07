@@ -30,9 +30,10 @@ func TestSupport_NewBundleBuilder(t *testing.T) {
 	fs := afero.NewMemMapFs()
 	finch := fpath.Finch("mockfinch")
 	lima := mocks.NewMockLimaWrapper(ctrl)
+	systemDeps := mocks.NewSupportSystemDeps(ctrl)
 
 	config := NewBundleConfig(finch, "mockhome")
-	NewBundleBuilder(logger, fs, config, finch, ecc, ncc, lima)
+	NewBundleBuilder(logger, fs, config, finch, ecc, ncc, lima, systemDeps)
 }
 
 func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
@@ -51,6 +52,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			*mocks.NerdctlCmdCreator,
 			*mocks.Command,
 			*mocks.MockLimaWrapper,
+			*mocks.SupportSystemDeps,
 			afero.Fs,
 		)
 		include []string
@@ -67,6 +69,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				systemDeps *mocks.SupportSystemDeps,
 				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
@@ -83,7 +86,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					cmd = nil
 				}
 
-				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
+				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil).AnyTimes()
+
+				logger.EXPECT().Debugln("Collecting finch version output...")
+				systemDeps.EXPECT().Executable().Return("/bin/path", nil)
+				ecc.EXPECT().Create("/bin/path", "version").Return(cmd)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -117,6 +124,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				systemDeps *mocks.SupportSystemDeps,
 				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
@@ -133,7 +141,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					cmd = nil
 				}
 
-				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
+				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil).AnyTimes()
+
+				logger.EXPECT().Debugln("Collecting finch version output...")
+				systemDeps.EXPECT().Executable().Return("/bin/path", nil)
+				ecc.EXPECT().Create("/bin/path", "version").Return(cmd)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -164,6 +176,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				systemDeps *mocks.SupportSystemDeps,
 				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
@@ -180,7 +193,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					cmd = nil
 				}
 
-				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
+				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil).AnyTimes()
+
+				logger.EXPECT().Debugln("Collecting finch version output...")
+				systemDeps.EXPECT().Executable().Return("/bin/path", nil)
+				ecc.EXPECT().Create("/bin/path", "version").Return(cmd)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -210,6 +227,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				systemDeps *mocks.SupportSystemDeps,
 				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
@@ -226,7 +244,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					cmd = nil
 				}
 
-				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
+				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil).AnyTimes()
+
+				logger.EXPECT().Debugln("Collecting finch version output...")
+				systemDeps.EXPECT().Executable().Return("/bin/path", nil)
+				ecc.EXPECT().Create("/bin/path", "version").Return(cmd)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -256,6 +278,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				systemDeps *mocks.SupportSystemDeps,
 				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
@@ -272,7 +295,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					cmd = nil
 				}
 
-				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
+				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil).AnyTimes()
+
+				logger.EXPECT().Debugln("Collecting finch version output...")
+				systemDeps.EXPECT().Executable().Return("/bin/path", nil)
+				ecc.EXPECT().Create("/bin/path", "version").Return(cmd)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -306,6 +333,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				systemDeps *mocks.SupportSystemDeps,
 				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
@@ -322,7 +350,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					cmd = nil
 				}
 
-				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
+				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil).AnyTimes()
+
+				logger.EXPECT().Debugln("Collecting finch version output...")
+				systemDeps.EXPECT().Executable().Return("/bin/path", nil)
+				ecc.EXPECT().Create("/bin/path", "version").Return(cmd)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -375,6 +407,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				_ *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
+				systemDeps *mocks.SupportSystemDeps,
 				_ afero.Fs,
 			) {
 				logger.EXPECT().Debugf("Creating %s...", gomock.Any())
@@ -391,7 +424,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					cmd = nil
 				}
 
-				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil)
+				cmd.EXPECT().Output().Return([]byte("1.2.3\n"), nil).AnyTimes()
+
+				logger.EXPECT().Debugln("Collecting finch version output...")
+				systemDeps.EXPECT().Executable().Return("/bin/path", nil)
+				ecc.EXPECT().Create("/bin/path", "version").Return(cmd)
 
 				config.EXPECT().LogFiles().Return([]string{
 					"log1",
@@ -437,15 +474,17 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lima := mocks.NewMockLimaWrapper(ctrl)
 			cmd := mocks.NewCommand(ctrl)
+			systemDeps := mocks.NewSupportSystemDeps(ctrl)
 
 			builder := &bundleBuilder{
-				logger: logger,
-				fs:     fs,
-				config: config,
-				finch:  finch,
-				ecc:    ecc,
-				ncc:    ncc,
-				lima:   lima,
+				logger:     logger,
+				fs:         fs,
+				config:     config,
+				finch:      finch,
+				ecc:        ecc,
+				ncc:        ncc,
+				lima:       lima,
+				systemDeps: systemDeps,
 			}
 
 			testFiles := []string{
@@ -465,7 +504,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			tc.mockSvc(logger, config, ecc, ncc, cmd, lima, fs)
+			tc.mockSvc(logger, config, ecc, ncc, cmd, lima, systemDeps, fs)
 
 			zipFile, err := builder.GenerateSupportBundle(tc.include, tc.exclude)
 			assert.NoError(t, err)
@@ -590,6 +629,103 @@ func TestSupport_fileShouldBeExcluded(t *testing.T) {
 
 			result := fileShouldBeExcluded(tc.file, tc.exclude)
 			assert.Equal(t, tc.result, result)
+		})
+	}
+}
+
+func TestSupport_writeVersionOutput(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name            string
+		versionOutput   string
+		prefix          string
+		expectedPath    string
+		expectedContent string
+		expectError     bool
+	}{
+		{
+			name:            "Write version output successfully",
+			versionOutput:   "1.2.3",
+			prefix:          "test_prefix",
+			expectedPath:    "test_prefix/version-output.txt",
+			expectedContent: "1.2.3",
+			expectError:     false,
+		},
+		{
+			name:            "Write version output with empty prefix",
+			versionOutput:   "1.2.3",
+			prefix:          "",
+			expectedPath:    "version-output.txt",
+			expectedContent: "1.2.3",
+			expectError:     false,
+		},
+		{
+			name:            "Write empty output",
+			versionOutput:   "",
+			prefix:          "empty_version",
+			expectedPath:    "empty_version/version-output.txt",
+			expectedContent: "",
+			expectError:     false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			fs := afero.NewMemMapFs()
+
+			file, err := fs.Create("testFile")
+			require.NoError(t, err)
+
+			writer := zip.NewWriter(file)
+
+			err = writeVersionOutput(writer, tc.versionOutput, tc.prefix)
+
+			// Check if we expected an error
+			if tc.expectError {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+
+			err = writer.Close()
+			assert.NoError(t, err)
+
+			err = file.Close()
+			assert.NoError(t, err)
+
+			// Open the zip archive for reading
+			readFile, err := fs.Open("testFile")
+			require.NoError(t, err)
+			defer readFile.Close() //nolint:errcheck // closing the file
+
+			fileInfo, err := readFile.Stat()
+			require.NoError(t, err)
+
+			reader, err := zip.NewReader(readFile, fileInfo.Size())
+			require.NoError(t, err)
+
+			// Check if the file exists in the zip
+			var found bool
+			for _, f := range reader.File {
+				if f.Name == tc.expectedPath {
+					found = true
+					rc, err := f.Open()
+					require.NoError(t, err)
+					defer rc.Close() //nolint:errcheck // closing the file
+
+					content, err := io.ReadAll(rc)
+					require.NoError(t, err)
+
+					// Check the file content
+					assert.Equal(t, tc.expectedContent, string(content))
+					break
+				}
+			}
+			assert.True(t, found, "Expected file not found in zip archive")
 		})
 	}
 }

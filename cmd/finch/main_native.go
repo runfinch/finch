@@ -104,6 +104,7 @@ var newApp = func(
 		ecc,
 		ncc,
 		lima,
+		system.NewStdLib(),
 	)
 
 	// append nerdctl commands
