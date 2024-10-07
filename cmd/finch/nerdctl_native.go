@@ -88,6 +88,10 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		return inspectContainerOutputHandler(cmd)
 	}
 
+	if err := handleDockerCompatComposeVersion(cmdName, *nc, cmdArgs); err == nil {
+		return nil
+	}
+
 	return nc.ncc.Create(cmdArgs...).Run()
 
 }

@@ -36,6 +36,20 @@ func (m *NerdctlCommandSystemDeps) EXPECT() *NerdctlCommandSystemDepsMockRecorde
 	return m.recorder
 }
 
+// Env mocks base method.
+func (m *NerdctlCommandSystemDeps) Env(key string) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Env", key)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Env indicates an expected call of Env.
+func (mr *NerdctlCommandSystemDepsMockRecorder) Env(key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Env", reflect.TypeOf((*NerdctlCommandSystemDeps)(nil).Env), key)
+}
+
 // FilePathAbs mocks base method.
 func (m *NerdctlCommandSystemDeps) FilePathAbs(elem string) (string, error) {
 	m.ctrl.T.Helper()

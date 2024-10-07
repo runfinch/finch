@@ -32,6 +32,7 @@ type NerdctlCommandSystemDeps interface {
 	system.FilePathJoiner
 	system.AbsFilePath
 	system.FilePathToSlash
+	system.EnvGetter
 }
 
 type nerdctlCommandCreator struct {
