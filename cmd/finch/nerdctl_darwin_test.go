@@ -186,6 +186,10 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -216,6 +220,10 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -246,6 +254,10 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -282,6 +294,10 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
 				ecc.EXPECT().Create(
@@ -344,6 +360,10 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
 				ecc.EXPECT().Create(
@@ -403,6 +423,10 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
 				ecc.EXPECT().Create(
@@ -458,6 +482,10 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 
 				awsCmd := mocks.NewCommand(ctrl)
 				ecc.EXPECT().Create(
@@ -1522,6 +1550,10 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
+				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -1583,6 +1615,10 @@ func AddEmptyEnvLookUps(ncsd *mocks.NerdctlCommandSystemDeps) {
 	ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("", false)
 	ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
 	ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+	ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
+	ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
+	ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
+	ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 }
 
 type ContainsSubstring struct {

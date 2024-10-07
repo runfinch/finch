@@ -286,7 +286,8 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 
 	passedEnvs := []string{
 		"COSIGN_PASSWORD", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY",
-		"AWS_SESSION_TOKEN", "COMPOSE_FILE",
+		"AWS_SESSION_TOKEN", "COMPOSE_FILE", "SOURCE_DATE_EPOCH",
+		"AWS_ECR_DISABLE_CACHE", "AWS_ECR_CACHE_DIR", "AWS_ECR_IGNORE_CREDS_STORAGE",
 	}
 
 	var passedEnvArgs []string
