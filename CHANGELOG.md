@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.4.0](https://github.com/runfinch/finch/compare/v1.3.1...v1.4.0) (2024-10-08)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.31.0 to 1.32.1 ([#1134](https://github.com/runfinch/finch/issues/1134)) ([a55450f](https://github.com/runfinch/finch/commit/a55450f70c96e79ec695ceb234189735b99be896))
+* **deps:** Bump golang.org/x/tools from 0.25.0 to 0.26.0 ([#1130](https://github.com/runfinch/finch/issues/1130)) ([633c1bf](https://github.com/runfinch/finch/commit/633c1bfbdd8db4434b6822b4481702e30f07deed))
+
+
+### Features
+
+* Add BindMount handler for Linux ([#1119](https://github.com/runfinch/finch/issues/1119)) ([a49df29](https://github.com/runfinch/finch/commit/a49df292d00af9e4b8a247c0b24c0faa5d465515))
+* Add Dockercompat Mode & DevContainer Support ([#1100](https://github.com/runfinch/finch/issues/1100)) ([c004516](https://github.com/runfinch/finch/commit/c004516c48dcbe85cd16b0c4b0060105e5118fa8))
+* add finch version output to support-bundle ([#1124](https://github.com/runfinch/finch/issues/1124)) ([33d519b](https://github.com/runfinch/finch/commit/33d519b824f4df922df654d7ccb6861832eaaa86))
+* Add More PassedEnvs for ECR CredHelper ([#1132](https://github.com/runfinch/finch/issues/1132)) ([0cb6a55](https://github.com/runfinch/finch/commit/0cb6a55c56d0c26f2648806d7983820796c1b04a))
+* allow user configurable docker compose version env variable ([#1133](https://github.com/runfinch/finch/issues/1133)) ([69b066b](https://github.com/runfinch/finch/commit/69b066b2e9b2ffe39c78f21eb809fa74e9728c2e))
+* handle dockercompat inspect for devcontainers ([#1121](https://github.com/runfinch/finch/issues/1121)) ([5ba7305](https://github.com/runfinch/finch/commit/5ba730580300e6b49d37fd6be8ee7d75ac396462))
+* **macOS:** Support host DNS aliases for macos ([#1085](https://github.com/runfinch/finch/issues/1085)) ([6b7f053](https://github.com/runfinch/finch/commit/6b7f05322141d187246c7d2f3925927a69eb4491))
+
+
+### Bug Fixes
+
+* check config file before accessing values ([#1120](https://github.com/runfinch/finch/issues/1120)) ([5a47eec](https://github.com/runfinch/finch/commit/5a47eecdff1371ae0611aadcea251cadf648f856))
+
 ## [1.3.1](https://github.com/runfinch/finch/compare/v1.3.0...v1.3.1) (2024-09-27)
 
 
