@@ -62,6 +62,14 @@ INFO[0000] Initializing and starting Finch virtual machine...
 INFO[0067] Finch virtual machine started successfully
 ```
 
+#### Linux
+
+To get started with Finch on Linux, the prerequisites are:
+
+* Linux system capable of running containerd 1.7.x (generally, this means at least Linux kernel 4.x)
+
+Currently, Finch installers are packaged and distributed on Amazon Linux. If you are not using Amazon Linux, you can download the binary from the GitHub releases page and install/configure the dependencies, following the convention in the [finch.spec file](./contrib/packaging/rpm/finch.spec). Detailed instructions are available on [runfinch.com](https://runfinch.com/docs/managing-finch/linux/installation/#generic).
+
 ### Running containers and building images
 
 You can now run a test container. If you're familiar with container development, you can use the `run` command as you'd expect.
