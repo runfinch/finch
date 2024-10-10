@@ -284,7 +284,7 @@ test-benchmark-vm:
 
 .PHONY: test-benchmark-container
 test-benchmark-container:
-	cd benchmark/container && go test -ldflags $(LDFLAGS) -bench=. -benchmem --installed="$(INSTALLED)"
+	cd benchmark/container && go test -ldflags $(LDFLAGS) -bench=. -benchmem -benchtime=1x -timeout 2h --installed="$(INSTALLED)"
 
 .PHONY: gen-code
 # Since different projects may have different versions of tool binaries,
