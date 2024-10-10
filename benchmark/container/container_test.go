@@ -17,11 +17,36 @@ func BenchmarkContainer(b *testing.B) {
 		b.Fatal(err)
 	}
 
-	b.Run("BenchmarkContainerRun", func(b *testing.B) {
-		suite.BenchmarkContainerRun(b)
+	b.Run("BenchmarkContainerRun-docker", func(b *testing.B) {
+		suite.BenchmarkContainerRun(b, "docker")
 	})
 
-	b.Run("BenchmarkImageBuild", func(b *testing.B) {
-		suite.BenchmarkImageBuild(b)
+	b.Run("BenchmarkContainerRun-finch", func(b *testing.B) {
+		suite.BenchmarkContainerRun(b, "finch")
 	})
+
+	b.Run("BenchmarkContainerPull-docker", func(b *testing.B) {
+		suite.BenchmarkContainerPull(b, "docker")
+	})
+
+	b.Run("BenchmarkContainerPull-finch", func(b *testing.B) {
+		suite.BenchmarkContainerPull(b, "finch")
+	})
+
+	b.Run("BenchmarkImageBuild-docker", func(b *testing.B) {
+		suite.BenchmarkImageBuild(b, "docker")
+	})
+
+	b.Run("BenchmarkImageBuild-finch", func(b *testing.B) {
+		suite.BenchmarkImageBuild(b, "finch")
+	})
+
+	b.Run("BenchmarkImageDelete-docker", func(b *testing.B) {
+		suite.BenchmarkImageDelete(b, "docker")
+	})
+
+	b.Run("BenchmarkImageDelete-finch", func(b *testing.B) {
+		suite.BenchmarkImageDelete(b, "finch")
+	})
+
 }
