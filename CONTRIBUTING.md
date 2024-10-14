@@ -150,6 +150,27 @@ wsl --update
 wsl --install Ubuntu
 ```
 
+#### Linux
+
+Please note that this section does not have exhaustive instructions for every single Linux distribution and package manager, but it does have a "generic" installation method. More distribution specific contributions are welcome.
+
+##### Amazon Linux 2023
+
+```sh
+sudo yum install golang zlib-static containerd nerdctl cni-plugins iptables
+```
+
+1. `golang`: used to build go packages
+1. `zlib-static`: used to build soci, as part of the included [finch.spec file in ./contrib/packaging/rpm](./contrib/packaging/rpm/finch.spec)
+1. `containerd`, `nerdctl`, `cni-plugins`, `iptables`: runtime dependencies
+
+##### Generic
+
+1. Install go [following instructions here](https://go.dev/doc/install)
+1. Install the latest [nerdctl-full bundle from GitHub](https://github.com/containerd/nerdctl/releases)
+1. If building SOCI, [follow the instructions here](https://github.com/awslabs/soci-snapshotter/blob/main/docs/build.md) to setup the dependencies
+1. Create the expected directory structure by inspecting the [finch.spec file](./contrib/packaging/rpm/finch.spec)
+
 ### Build
 
 Clone the repo and make sure to include the submodules by adding `--recurse-submodules`. For example:
@@ -183,7 +204,13 @@ Then run `make` to build the binary. The binary in `_output` can be directly use
 ./_output/bin/finch version
 ```
 
+#### macOS/Windows
+
 You can run `make install` to make finch binary globally accessible.
+
+#### Amazon Linux
+
+You can run `./contrib/packaging/rpm/build.sh --local` to install Finch globally.
 
 NOTE: If your build environment experiences issues with downloading dependencies from the Go proxy servers, then you may want to set the environment variable `export GOPROXY=direct`
 
@@ -197,16 +224,16 @@ To check unit test coverage, run `make coverage` under root finch-cli root direc
 
 ### E2E Testing
 
-Run these steps at the first time of running e2e tests
+To run e2e tests locally, please run `make test-e2e`. Make sure to run the e2e tests or add new e2e tests before pushing changes.
 
-VM instance is not expected to exist before running e2e tests, please make sure to remove it before going into next step:
+#### macOS/Windows
+
+The VM instance is not expected to exist before running e2e tests, please make sure to remove it before going into next step:
 
 ```sh
 ./_output/bin/finch vm stop
 ./_output/bin/finch vm remove
 ```
-
-To run e2e test locally, please run `make test-e2e`. Please make sure to run the e2e tests or add new e2e tests before pushing the changes.
 
 ## Commits
 
