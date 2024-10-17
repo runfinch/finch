@@ -1,0 +1,118 @@
+name: Release Linux
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
+        required: true
+        type: string
+      version:
+        description: "override for version, will be used instead of ref if set, used for testing"
+        required: false
+        type: string
+  schedule:
+    - cron: '0 9 * * *'
+
+env:
+  GO_VERSION: "1.22.7"
+permissions:
+  contents: write
+  deployments: write
+jobs:
+  get-tag-name:
+    name: Get tag name
+    uses: ./.github/workflows/get-version-and-tag-for-ref.yaml
+    with:
+      ref_name: ${{ inputs.ref_name }}
+      version: ${{ inputs.version }}
+  generate-artifacts:
+    needs: get-latest-tag
+    runs-on: ubuntu-latest
+    env:
+      # Set during setup.
+      RELEASE_TAG: ${{ needs.get-latest-tag.outputs.tag }}
+      STATIC_BINARY_NAME: ""
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-tags: true
+      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - name: "Echo RELEASE_TAG ENV"
+        run: echo ${{ env.RELEASE_TAG }}
+      - name: Build
+        run: |
+          RELEASE_VERSION="${{ needs.get-tag-name.outputs.version }}"
+          make download-licenses
+          # static amd64
+          export STATIC_AMD64_BINARY_NAME="finch-${RELEASE_VERSION}-linux-amd64-static.tar.gz"
+          GOARCH=amd64 STATIC=1 make
+          pushd _output/
+          touch "${STATIC_AMD64_BINARY_NAME}"
+          tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_AMD64_BINARY_NAME}" .
+          echo "${STATIC_AMD64_BINARY_NAME}" >> $GITHUB_ENV
+          popd
+          rm -rf ./_output/bin/
+          # static arm64
+          export STATIC_ARM64_BINARY_NAME="finch-${RELEASE_VERSION}-linux-arm64-static.tar.gz"
+          GOARCH=arm64 STATIC=1 make
+          pushd _output/
+          touch "${STATIC_ARM64_BINARY_NAME}"
+          tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_ARM64_BINARY_NAME}" .
+          echo "${STATIC_ARM64_BINARY_NAME}" >> $GITHUB_ENV
+          popd
+          
+          pushd _output/
+          sha256sum "${STATIC_AMD64_BINARY_NAME}" > "${STATIC_AMD64_BINARY_NAME}".sha256sum
+          sha256sum "${STATIC_ARM64_BINARY_NAME}" > "${STATIC_ARM64_BINARY_NAME}".sha256sum
+          popd
+
+          rm -rf ./_output/bin/
+      - name: Verify Release versions
+        run: |
+          mkdir -p ./_output/${{ env.RELEASE_TAG }}/static/amd64
+          tar -xzf ./_output/${{ env.STATIC_AMD64_BINARY_NAME }} -C ./_output/static/amd64
+          STATIC_AMD64_BINARY_VERSION=$(./output/${{ env.RELEASE_TAG }}/static/amd64/finch --version | grep -oP 'v\d+\.\d+\.\d+')
+          export RELEASE_TAG=${{ env.RELEASE_TAG }}
+          if [ "$STATIC_AMD64_BINARY_VERSION" != "$RELEASE_TAG" ]; then
+            echo "Version mismatch"
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artifacts
+          path: release/
+          if-no-files-found: error
+    outputs:
+      static_amd64_binary_name: ${{ env.STATIC_AMD64_BINARY_NAME }}
+      static_arm64_binary_name: ${{ env.STATIC_ARM64_BINARY_NAME }}
+  validate-artifacts:
+    needs: generate-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: artifacts
+          path: release/
+      - run: bash scripts/verify-release-artifacts.sh ${{ needs.generate-artifacts.outputs.release_tag }}
+  upload-artifacts:
+    needs:
+    - generate-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: upload to S3
+        run: |
+          aws s3 cp --no-progress ${{ needs.generate-artifacts.outputs.static_amd64_binary_name }} s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/
+          aws s3 cp --no-progress ${{ needs.generate-artifacts.outputs.static_amd64_binary_name }}.sha256sum s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/
+          aws s3 cp --no-progress ${{ needs.generate-artifacts.outputs.static_arm64_binary_name }} s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/
+          aws s3 cp --no-progress ${{ needs.generate-artifacts.outputs.static_arm64_binary_name }}.sha256sum s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/

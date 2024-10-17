@@ -24,6 +24,13 @@ on:
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
+      - '!.github/workflows/release-automation.yaml'
+      - '!.github/workflows/release-linux.yaml'
+      - '!.github/workflows/upload-build-to-S3.yaml'
+      - '!.github/workflows/build-and-test-msi.yaml'
+      - '!.github/workflows/build-and-test-pkg.yaml'
+      - '!.github/workflows/ci-release.yaml'
+      - '!CHANGELOG.md'
   pull_request:
     branches:
       - main
@@ -39,6 +46,13 @@ on:
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
+      - '!.github/workflows/release-automation.yaml'
+      - '!.github/workflows/release-linux.yaml'
+      - '!.github/workflows/upload-build-to-S3.yaml'
+      - '!.github/workflows/build-and-test-msi.yaml'
+      - '!.github/workflows/build-and-test-pkg.yaml'
+      - '!.github/workflows/ci-release.yaml'
+      - '!CHANGELOG.md'
 
 jobs:
   git-secrets:

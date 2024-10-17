@@ -1,0 +1,55 @@
+name: get tag and version from ref
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
+        required: true
+        type: string
+      version:
+        description: "override for version, will be used instead of ref if set, used for testing"
+        required: false
+        type: string
+    outputs:
+      tag:
+        description: "The first output string"
+        value: ${{ jobs.get-version-and-tag-for-ref.outputs.tag }}
+      version:
+        description: "The second output string"
+        value: ${{ jobs.get-version-and-tag-for-ref.outputs.version }}
+
+jobs:
+  get-version-and-tag-for-ref:
+    name: Get tag name
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.calculate-tag.outputs.tag }}
+      version: ${{ steps.calculate-tag.outputs.version }}
+    steps:
+      - name: Calculate a version and tag for a given ref
+        id: calculate-tag
+        run: |
+          if [ -n "${{ inputs.ref_name }}" ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+
+          version=${tag#v}
+          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version matches format: $version"
+          elif [ -n "${{ inputs.ref_name }}" ]; then
+            version=${{ inputs.version }}
+          else
+            echo "Version $version doesn't match format. Using test version: 0.0.1"
+            version="0.0.1"
+          fi
+          echo "version=$version" >> ${GITHUB_OUTPUT}

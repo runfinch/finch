@@ -5,12 +5,18 @@ on:
   workflow_dispatch:
     inputs:
       ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
         required: true
         type: string
   workflow_call:
     inputs:
       ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
         required: true
+        type: string
+      version:
+        description: "override for version, will be used instead of ref if set, used for testing"
+        required: false
         type: string
   schedule:
     - cron: '0 9 * * *'
@@ -20,19 +26,10 @@ env:
 jobs:
   get-tag-name:
     name: Get tag name
-    runs-on: ubuntu-latest
-    outputs:
-      tag: ${{ steps.check-tag.outputs.tag }}
-    steps:
-      - name: Check tag from workflow input and github ref
-        id: check-tag
-        run: |
-          if [ -n "${{ inputs.ref_name }}" ]; then
-            tag=${{ inputs.ref_name }}
-          else
-            tag=${{ github.ref_name }}
-          fi
-          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+    uses: ./.github/workflows/get-version-and-tag-for-ref.yaml
+    with:
+      ref_name: ${{ inputs.ref_name }}
+      version: ${{ inputs.version }}
 
   macos-aarch64-pkg-build:
     needs: get-tag-name

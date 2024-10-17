@@ -121,10 +121,8 @@ ifeq ($(GOOS),windows)
 finch: finch-windows finch-all
 else ifeq ($(GOOS),darwin)
 finch: finch-macos
-else ifeq ($(NATIVE_BUILD),true)
-finch: finch-native
 else
-finch: finch-all
+finch: finch-linux
 endif
 
 finch-windows:
@@ -137,9 +135,11 @@ finch-macos: finch-unix
 
 finch-unix: finch-all
 
-finch-native: GO_BUILD_TAGS += native
-finch-native: finch-all
+finch-linux: finch-all
 
+ifneq ($(STATIC),)
+finch-all: export CGO_ENABLED=0
+endif
 finch-all:
 	$(GO) build -ldflags $(LDFLAGS) -tags "$(GO_BUILD_TAGS)" -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
 
