@@ -81,10 +81,10 @@ jobs:
         run: |
           mkdir -p ./_output/${{ env.RELEASE_VERSION }}/static/amd64
           tar -xzf ./_output/${{ steps.build.outputs.STATIC_AMD64_BINARY_NAME }} -C ./_output/${{ env.RELEASE_VERSION }}/static/amd64
-          ls ./output/${{ env.RELEASE_VERSION }}/static/
-          ls ./output/${{ env.RELEASE_VERSION }}/static/amd64/
-          ls ./output/${{ env.RELEASE_VERSION }}/static/amd64/bin
-          STATIC_AMD64_BINARY_VERSION=$(./output/${{ env.RELEASE_VERSION }}/static/amd64/bin/finch --version | grep -oP 'v\d+\.\d+\.\d+')
+          ls ./_output/${{ env.RELEASE_VERSION }}/static/
+          ls ./_output/${{ env.RELEASE_VERSION }}/static/amd64/
+          ls ./_output/${{ env.RELEASE_VERSION }}/static/amd64/bin
+          STATIC_AMD64_BINARY_VERSION=$(./_output/${{ env.RELEASE_VERSION }}/static/amd64/bin/finch --version | grep -oP 'v\d+\.\d+\.\d+')
           export RELEASE_VERSION=${{ env.RELEASE_VERSION }}
           if [ "$STATIC_AMD64_BINARY_VERSION" != "$RELEASE_VERSION" ]; then
             echo "Version mismatch"
