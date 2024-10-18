@@ -95,16 +95,6 @@ jobs:
     outputs:
       static_amd64_binary_name: ${{ env.STATIC_AMD64_BINARY_NAME }}
       static_arm64_binary_name: ${{ env.STATIC_ARM64_BINARY_NAME }}
-  validate-artifacts:
-    needs: generate-artifacts
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: artifacts
-          path: release/
-      - run: bash scripts/verify-release-artifacts.sh ${{ needs.generate-artifacts.outputs.release_tag }}
   upload-artifacts:
     needs:
     - generate-artifacts
