@@ -267,4 +267,4 @@ jobs:
       arch: amd64
       output_arch: x86_64
       version: ${{ matrix.version }}
-      tag: ${{ needs.get-intermediate-version.outputs.version }
+      tag: ${{ needs.get-intermediate-version.outputs.version }}
