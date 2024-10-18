@@ -58,7 +58,9 @@ jobs:
           pushd _output/
           touch "${STATIC_AMD64_BINARY_NAME}"
           tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_AMD64_BINARY_NAME}" .
+          echo "${STATIC_AMD64_BINARY_NAME}"
           echo "${STATIC_AMD64_BINARY_NAME}" >> $GITHUB_ENV
+          echo $GITHUB_ENV
           popd
           rm -rf ./_output/bin/
           # static arm64
@@ -67,7 +69,9 @@ jobs:
           pushd _output/
           touch "${STATIC_ARM64_BINARY_NAME}"
           tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_ARM64_BINARY_NAME}" .
+          echo "${STATIC_ARM64_BINARY_NAME}"
           echo "${STATIC_ARM64_BINARY_NAME}" >> $GITHUB_ENV
+          echo $GITHUB_ENV
           popd
           
           pushd _output/
