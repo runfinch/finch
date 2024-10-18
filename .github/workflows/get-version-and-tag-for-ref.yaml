@@ -39,7 +39,7 @@ jobs:
           if [ -n "${{ inputs.ref_name }}" ]; then
             tag=${{ inputs.ref_name }}
           else
-            tag=${{ github.ref_name }}
+            tag=${{ github.ref }}
           fi
           echo "tag=$tag" >> ${GITHUB_OUTPUT}
 
