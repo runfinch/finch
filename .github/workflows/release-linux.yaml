@@ -32,11 +32,11 @@ jobs:
       ref_name: ${{ inputs.ref_name }}
       version: ${{ inputs.version }}
   generate-artifacts:
-    needs: get-latest-tag
+    needs: get-tag-name
     runs-on: ubuntu-latest
     env:
       # Set during setup.
-      RELEASE_TAG: ${{ needs.get-latest-tag.outputs.tag }}
+      RELEASE_TAG: ${{ needs.get-tag-name.outputs.tag }}
       STATIC_BINARY_NAME: ""
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
