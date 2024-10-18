@@ -43,11 +43,10 @@ jobs:
           fi
           echo "tag=$tag" >> ${GITHUB_OUTPUT}
 
-          version=${tag#v}
-          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [ -n "${{ inputs.version }}" ]; then
             echo "Version matches format: $version"
-          elif [ -n "${{ inputs.ref_name }}" ]; then
-            version=${{ inputs.version }}
+          elif [[ "${tag#v}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            version="${tag#v}"
           else
             echo "Version $version doesn't match format. Using test version: 0.0.1"
             version="0.0.1"
