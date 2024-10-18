@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/runfinch/finch/compare/v1.4.0...v1.4.1) (2024-10-18)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.32.1 to 1.32.2 ([#1137](https://github.com/runfinch/finch/issues/1137)) ([6576052](https://github.com/runfinch/finch/commit/6576052713c8b1eefa18e48e71534b0ac50aa901))
+
 ## [1.4.0](https://github.com/runfinch/finch/compare/v1.3.1...v1.4.0) (2024-10-08)
 
 
