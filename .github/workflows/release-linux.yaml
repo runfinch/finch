@@ -24,7 +24,6 @@ env:
   GO_VERSION: "1.22.7"
 permissions:
   contents: write
-  deployments: write
 jobs:
   get-tag-name:
     name: Get tag name
