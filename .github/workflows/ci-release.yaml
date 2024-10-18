@@ -9,6 +9,7 @@ on:
       - '.github/workflows/upload-build-to-S3.yaml'
       - '.github/workflows/build-and-test-msi.yaml'
       - '.github/workflows/build-and-test-pkg.yaml'
+      - '.github/workflows/get-version-and-tag-for-ref.yaml'
       - 'deps/finch-core'
       - 'CHANGELOG.md'
   pull_request:
@@ -20,6 +21,7 @@ on:
       - '.github/workflows/upload-build-to-S3.yaml'
       - '.github/workflows/build-and-test-msi.yaml'
       - '.github/workflows/build-and-test-pkg.yaml'
+      - '.github/workflows/get-version-and-tag-for-ref.yaml'
       - 'deps/finch-core'
       - 'CHANGELOG.md'
   workflow_dispatch:
