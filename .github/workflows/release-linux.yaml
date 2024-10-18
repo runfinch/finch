@@ -49,6 +49,7 @@ jobs:
       - name: "Echo RELEASE_VERSION ENV"
         run: echo ${{ env.RELEASE_VERSION }}
       - name: Build
+        id: build
         run: |
           RELEASE_VERSION="${{ env.RELEASE_VERSION }}"
           make check-licenses download-licenses
@@ -58,9 +59,7 @@ jobs:
           pushd _output/
           touch "${STATIC_AMD64_BINARY_NAME}"
           tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_AMD64_BINARY_NAME}" .
-          echo "${STATIC_AMD64_BINARY_NAME}"
-          echo "${STATIC_AMD64_BINARY_NAME}" >> $GITHUB_ENV
-          echo $GITHUB_ENV
+          echo "STATIC_AMD64_BINARY_NAME=${STATIC_AMD64_BINARY_NAME}" >> ${GITHUB_OUTPUT}
           popd
           rm -rf ./_output/bin/
           # static arm64
@@ -69,9 +68,7 @@ jobs:
           pushd _output/
           touch "${STATIC_ARM64_BINARY_NAME}"
           tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_ARM64_BINARY_NAME}" .
-          echo "${STATIC_ARM64_BINARY_NAME}"
-          echo "${STATIC_ARM64_BINARY_NAME}" >> $GITHUB_ENV
-          echo $GITHUB_ENV
+          echo "STATIC_ARM64_BINARY_NAME=${STATIC_ARM64_BINARY_NAME}" >> ${GITHUB_OUTPUT}
           popd
           
           pushd _output/
@@ -83,7 +80,7 @@ jobs:
       - name: Verify Release versions
         run: |
           mkdir -p ./_output/${{ env.RELEASE_VERSION }}/static/amd64
-          tar -xzf ./_output/${{ env.STATIC_AMD64_BINARY_NAME }} -C ./_output/static/amd64
+          tar -xzf ./_output/${{ steps.build.outputs.STATIC_AMD64_BINARY_NAME }} -C ./_output/static/amd64
           STATIC_AMD64_BINARY_VERSION=$(./output/${{ env.RELEASE_VERSION }}/static/amd64/finch --version | grep -oP 'v\d+\.\d+\.\d+')
           export RELEASE_VERSION=${{ env.RELEASE_VERSION }}
           if [ "$STATIC_AMD64_BINARY_VERSION" != "$RELEASE_VERSION" ]; then
@@ -96,8 +93,8 @@ jobs:
           path: release/
           if-no-files-found: error
     outputs:
-      static_amd64_binary_name: ${{ env.STATIC_AMD64_BINARY_NAME }}
-      static_arm64_binary_name: ${{ env.STATIC_ARM64_BINARY_NAME }}
+      static_amd64_binary_name: ${{ steps.build.outputs.STATIC_AMD64_BINARY_NAME }}
+      static_arm64_binary_name: ${{ steps.build.outputs.STATIC_ARM64_BINARY_NAME }}
   upload-artifacts:
     needs:
     - generate-artifacts
