@@ -51,10 +51,9 @@ jobs:
       - name: Build
         run: |
           RELEASE_VERSION="${{ needs.get-tag-name.outputs.version }}"
-          make download-licenses
           # static amd64
           export STATIC_AMD64_BINARY_NAME="finch-${RELEASE_VERSION}-linux-amd64-static.tar.gz"
-          GOARCH=amd64 STATIC=1 make
+          GOARCH=amd64 STATIC=1 make release
           pushd _output/
           touch "${STATIC_AMD64_BINARY_NAME}"
           tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_AMD64_BINARY_NAME}" .
@@ -63,7 +62,7 @@ jobs:
           rm -rf ./_output/bin/
           # static arm64
           export STATIC_ARM64_BINARY_NAME="finch-${RELEASE_VERSION}-linux-arm64-static.tar.gz"
-          GOARCH=arm64 STATIC=1 make
+          GOARCH=arm64 STATIC=1 make release
           pushd _output/
           touch "${STATIC_ARM64_BINARY_NAME}"
           tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_ARM64_BINARY_NAME}" .
