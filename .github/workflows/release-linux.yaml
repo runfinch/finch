@@ -37,8 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Set during setup.
-      RELEASE_TAG: ${{ needs.get-tag-name.outputs.tag }}
-      STATIC_BINARY_NAME: ""
+      RELEASE_VERSION: ${{ needs.get-tag-name.outputs.version }}
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
@@ -47,11 +46,11 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
-      - name: "Echo RELEASE_TAG ENV"
-        run: echo ${{ env.RELEASE_TAG }}
+      - name: "Echo RELEASE_VERSION ENV"
+        run: echo ${{ env.RELEASE_VERSION }}
       - name: Build
         run: |
-          RELEASE_VERSION="${{ needs.get-tag-name.outputs.version }}"
+          RELEASE_VERSION="${{ env.RELEASE_VERSION }}"
           make check-licenses download-licenses
           # static amd64
           export STATIC_AMD64_BINARY_NAME="finch-${RELEASE_VERSION}-linux-amd64-static.tar.gz"
@@ -79,11 +78,11 @@ jobs:
           rm -rf ./_output/bin/
       - name: Verify Release versions
         run: |
-          mkdir -p ./_output/${{ env.RELEASE_TAG }}/static/amd64
+          mkdir -p ./_output/${{ env.RELEASE_VERSION }}/static/amd64
           tar -xzf ./_output/${{ env.STATIC_AMD64_BINARY_NAME }} -C ./_output/static/amd64
-          STATIC_AMD64_BINARY_VERSION=$(./output/${{ env.RELEASE_TAG }}/static/amd64/finch --version | grep -oP 'v\d+\.\d+\.\d+')
-          export RELEASE_TAG=${{ env.RELEASE_TAG }}
-          if [ "$STATIC_AMD64_BINARY_VERSION" != "$RELEASE_TAG" ]; then
+          STATIC_AMD64_BINARY_VERSION=$(./output/${{ env.RELEASE_VERSION }}/static/amd64/finch --version | grep -oP 'v\d+\.\d+\.\d+')
+          export RELEASE_VERSION=${{ env.RELEASE_VERSION }}
+          if [ "$STATIC_AMD64_BINARY_VERSION" != "$RELEASE_VERSION" ]; then
             echo "Version mismatch"
             exit 1
           fi
