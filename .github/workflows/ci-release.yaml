@@ -250,7 +250,7 @@ jobs:
       arch: arm64
       output_arch: aarch64
       version: ${{ matrix.version }}
-      tag: ${{ needs.get-intermediate-version.outputs.version }
+      tag: ${{ needs.get-intermediate-version.outputs.version }}
 
   macos-x86-64-pkg-test:
     strategy:
