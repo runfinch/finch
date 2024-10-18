@@ -17,7 +17,7 @@ jobs:
             fetch-depth: 0
       - name: 'Get the latest tag'
         id: latest-tag
-        uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
+        uses: "WyriHaximus/github-action-get-previous-tag@04e848
     
   build-and-test-finch-pkg:
     needs: get-latest-tag
@@ -32,7 +32,7 @@ jobs:
       - build-and-test-finch-pkg
     uses: ./.github/workflows/upload-installer-to-release.yaml
     secrets: inherit
-    with:
+    with
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
   
   build-and-test-finch-msi:
