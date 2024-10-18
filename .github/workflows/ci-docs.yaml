@@ -30,6 +30,8 @@ on:
       - '!.github/workflows/build-and-test-msi.yaml'
       - '!.github/workflows/build-and-test-pkg.yaml'
       - '!.github/workflows/ci-release.yaml'
+      - '!.github/workflows/get-version-and-tag-for-ref.yaml'
+      - '!.github/workflows/ci-docs.yaml'
       - '!CHANGELOG.md'
   pull_request:
     branches:
@@ -52,6 +54,8 @@ on:
       - '!.github/workflows/build-and-test-msi.yaml'
       - '!.github/workflows/build-and-test-pkg.yaml'
       - '!.github/workflows/ci-release.yaml'
+      - '!.github/workflows/get-version-and-tag-for-ref.yaml'
+      - '!.github/workflows/ci-docs.yaml'
       - '!CHANGELOG.md'
 
 jobs:
