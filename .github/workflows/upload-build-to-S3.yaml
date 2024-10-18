@@ -35,7 +35,7 @@ jobs:
         shell: zsh {0}
 
       - name: Upload macos aarch64 build
-        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9 # v4.4.1
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         with:
           name: finch.macos-aarch64
           path: finch.*.aarch64.tar.gz
@@ -64,7 +64,7 @@ jobs:
         shell: zsh {0}
 
       - name: Upload macos x86_64 build
-        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9 # v4.4.1
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         with:
           name: finch.macos-x86_64
           path: finch.*.x86_64.tar.gz
