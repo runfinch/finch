@@ -218,56 +218,8 @@ jobs:
 
   macos-aarch64-pkg-build:
     needs: get-intermediate-version
-    uses: ./.github/workflows/build-pkg.yaml
+    uses: ./.github/workflows/build-and-test-pkg.yaml
     secrets: inherit
     with:
-      os: macos
-      arch: arm64
-      output_arch: aarch64
-      version: 14
-      tag: ${{ needs.get-intermediate-version.outputs.version }}
-
-  macos-x86-64-pkg-build:
-    needs: get-intermediate-version
-    uses: ./.github/workflows/build-pkg.yaml
-    secrets: inherit
-    with:
-      os: macos
-      arch: amd64
-      output_arch: x86_64
-      version: 14
-      tag: ${{ needs.get-intermediate-version.outputs.version }}
-
-  macos-aarch64-pkg-test:
-    strategy:
-      fail-fast: false
-      matrix:
-        version: [13, 14]
-    needs:
-      - get-intermediate-version
-      - macos-aarch64-pkg-build
-    uses: ./.github/workflows/test-pkg.yaml
-    secrets: inherit
-    with:
-      os: macos
-      arch: arm64
-      output_arch: aarch64
-      version: ${{ matrix.version }}
-      tag: ${{ needs.get-intermediate-version.outputs.version }}
-
-  macos-x86-64-pkg-test:
-    strategy:
-      fail-fast: false
-      matrix:
-        version: [13, 14]
-    needs:
-      - get-intermediate-version
-      - macos-x86-64-pkg-build
-    uses: ./.github/workflows/test-pkg.yaml
-    secrets: inherit
-    with:
-      os: macos
-      arch: amd64
-      output_arch: x86_64
-      version: ${{ matrix.version }}
-      tag: ${{ needs.get-intermediate-version.outputs.version }}
+      ref_name: ""
+      version: ${{ needs.get-intermediate-version.outputs.version }}
