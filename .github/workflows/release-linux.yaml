@@ -23,6 +23,7 @@ on:
 env:
   GO_VERSION: "1.22.7"
 permissions:
+  id-token: write
   contents: write
 jobs:
   get-tag-name:
