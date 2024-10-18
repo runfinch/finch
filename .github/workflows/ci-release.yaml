@@ -185,17 +185,19 @@ jobs:
           ignore: 'CHANGELOG.md'
 
   get-intermediate-version:
-      name: Create intermediate version
+      name: Get intermediate version
       runs-on: ubuntu-latest
       outputs:
         version: ${{ steps.get-intermediate-version.version }}
       steps:
         - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
-        - name: Creates an intermediate version
+        - name: Gets an intermediate version string
           id: calculate-version
           run: |
             version=$(git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+            echo "${version}"
             version="${version}-no-release"
+            echo "${version}"
             echo "version=$version" >> ${GITHUB_OUTPUT}
 
   release-linux:
