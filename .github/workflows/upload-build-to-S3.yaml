@@ -16,7 +16,7 @@ jobs:
     runs-on: [self-hosted, macos, arm64, 14, release]
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -45,7 +45,7 @@ jobs:
     runs-on: [self-hosted, macos, amd64, 14, release]
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -77,7 +77,7 @@ jobs:
       - macos-x86_64-build
       - macos-aarch64-build
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         with:
           fetch-depth: 0
           persist-credentials: false
