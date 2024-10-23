@@ -45,9 +45,12 @@ jobs:
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
           git clone https://github.com/${GITHUB_REPOSITORY}.git .
-          git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/prh/*"
-          git config --add remote.origin.fetch "+refs/pull/*/merge:refs/remotes/origin/prm/*"
-          git fetch origin
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+            git config --add remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+            git config --add remote.origin.fetch "+refs/tags/*:refs/tags/*"
+            git config --add remote.origin.fetch "+${GITHUB_SHA}:${GITHUB_REF}"
+          fi
+          git fetch --prune origin
           git checkout ${GITHUB_SHA}
       - name: Set output variables
         id: vars
