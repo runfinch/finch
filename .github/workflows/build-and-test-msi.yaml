@@ -80,6 +80,7 @@ jobs:
           role-session-name: windows-msi
           aws-region: ${{ secrets.WINDOWS_REGION }}
       - name: Remove Finch VM
+        timeout-minutes: 2
         run: |
           $ErrorActionPreference = 'Ignore'
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
@@ -145,6 +146,7 @@ jobs:
           aws s3 cp "./msi-builder/build/signed/Finch-$tag.msi" "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$tag.msi" --no-progress
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
+        timeout-minutes: 2
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -198,6 +200,7 @@ jobs:
           role-session-name: msi-test
           aws-region: ${{ secrets.REGION }}
       - name: Remove Finch VM
+        timeout-minutes: 2
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -243,6 +246,7 @@ jobs:
             $env:INSTALLED="true"
             make test-e2e-vm
       - name: Remove Finch VM
+        timeout-minutes: 2
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -278,6 +282,7 @@ jobs:
           }
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
+        timeout-minutes: 2
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
