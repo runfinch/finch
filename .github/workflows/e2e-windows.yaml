@@ -58,6 +58,7 @@ jobs:
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: Remove Finch VM
+        timeout-minutes: 2
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -90,6 +91,7 @@ jobs:
           make ${{ inputs.test-command }}
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
+        timeout-minutes: 2
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
