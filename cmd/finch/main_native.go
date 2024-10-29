@@ -79,6 +79,9 @@ var newApp = func(
 	// TODO: Decide when to forward --debug to the dependencies
 	// (e.g. nerdctl for container commands and limactl for VM commands).
 	rootCmd.PersistentFlags().Bool("debug", false, "running under debug mode")
+	rootCmd.PersistentFlags().String("namespace", "", `containerd namespace, e.g "finch"`)
+	rootCmd.PersistentFlags().String("cgroup-manager", "", `Cgroup manager to use ("cgroupfs"|"systemd")`)
+	rootCmd.PersistentFlags().String("snapshotter", "", "containerd snapshotter")
 	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
 		// running commands under debug mode will print out debug logs
 		debugMode, _ := cmd.Flags().GetBool("debug")
