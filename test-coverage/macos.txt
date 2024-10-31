@@ -1,0 +1,15 @@
+./cmd/finch
+./pkg/command
+./pkg/config
+./pkg/dependency
+./pkg/disk
+./pkg/flog
+./pkg/fmemory
+./pkg/fssh
+./pkg/lima
+./pkg/path
+./pkg/support
+./pkg/system
+./pkg/templates
+./pkg/version
+./pkg/winutil
