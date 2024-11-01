@@ -83,5 +83,5 @@ jobs:
         shell: zsh {0}
       - name: Upload e2e tests reports to s3 bucket
         run: |
-          aws s3 cp ./reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json
-          aws s3 cp ./reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json        
+          aws s3 cp ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json
+          aws s3 cp ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json        

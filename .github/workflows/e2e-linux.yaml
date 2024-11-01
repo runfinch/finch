@@ -100,8 +100,8 @@ jobs:
           INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-vm
       - name: Upload e2e tests reports to s3 bucket
         run: |
-          aws s3 cp ./reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json
-          aws s3 cp ./reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json
+          aws s3 cp ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json
+          aws s3 cp ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json
       - name: Clean up repo AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && always() ) }}
         run: |
