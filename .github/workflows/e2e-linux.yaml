@@ -98,10 +98,26 @@ jobs:
           eval "$(ssh-agent -s)"
           INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-container
           INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-vm
-      - name: Upload e2e tests reports to s3 bucket
+      - name: Check and upload e2e tests reports to s3 bucket
         run: |
-          aws s3 cp ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json
-          aws s3 cp ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json
+          VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+          CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+          
+          if [ -f "$VM_REPORT" ]; then
+            echo "VM report file exists. Uploading to S3..."
+            aws s3 cp "$VM_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+            echo "VM report uploaded successfully."
+          else
+            echo "VM report file does not exist. Skipping upload."
+          fi
+          
+          if [ -f "$CONTAINER_REPORT" ]; then
+            echo "Container report file exists. Uploading to S3..."
+            aws s3 cp "$CONTAINER_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+            echo "Container report uploaded successfully."
+          else
+            echo "Container report file does not exist. Skipping upload."
+          fi
       - name: Clean up repo AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && always() ) }}
         run: |
