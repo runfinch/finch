@@ -90,14 +90,33 @@ jobs:
           sudo systemctl start finch.service
           sudo systemctl start finch-buildkit.service
           sudo systemctl start finch-soci.service
+      - name: Set up REPORT_DIR
+        run: |
+          echo "REPORT_DIR=${{ github.workspace }}/reports" >> $GITHUB_ENV
       - name: Run e2e tests
         run: |
           git status
           git clean -f -d
           # required by one of the tests which uses SSH_AUTH_SOCK
           eval "$(ssh-agent -s)"
-          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-container
-          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-vm
+          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-container REPORT_DIR=${{ env.REPORT_DIR }}
+          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-vm REPORT_DIR=${{ env.REPORT_DIR }}
+      - name: Change ownership of reports
+        run: |
+          if [ ! -d "$REPORT_DIR" ]; then
+            echo "Error: Directory $REPORT_DIR does not exist."
+            exit 1
+          fi
+
+          USER=$(whoami)
+          GROUP=$(id -gn)
+
+          if sudo chown -R "$USER:$GROUP" "$REPORT_DIR"; then
+            echo "Ownership of $REPORT_DIR changed to $USER:$GROUP"
+          else
+            echo "Error: Failed to change ownership of $REPORT_DIR"
+            exit 1
+          fi
       - name: Check and upload e2e tests reports to s3 bucket
         run: |
           VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
