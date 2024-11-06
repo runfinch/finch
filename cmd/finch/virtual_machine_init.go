@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/runfinch/finch/pkg/disk"
 
@@ -114,6 +115,13 @@ func (iva *initVMAction) run() error {
 		_ = iva.diskManager.DetachUserDataDisk()
 		return err
 	}
+
+	if runtime.GOOS == "windows" {
+		iva.logger.Warnln("Finch on Windows uses WSL, which mounts the C Drive in read-write mode by default. " +
+			"To run finch with more restricted access, follow " +
+			"https://runfinch.com/docs/managing-finch/windows/wsl-configuration/")
+	}
+
 	iva.logger.Info("Finch virtual machine started successfully")
 	return nil
 }
