@@ -272,30 +272,11 @@ test-e2e-vm-serial:
 	
 .PHONY: test-e2e-container
 test-e2e-container:
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container \
-	-test.v \
-	-ginkgo.v \
-	-ginkgo.timeout=2h \
-	-ginkgo.output-dir=$(REPORT_DIR) \
-	--installed="$(INSTALLED)"
-
-.PHONY: test-e2e-generate-container-report
-test-e2e-generate-container-report:
-	go test -ldflags $(LDFLAGS) ./e2e/container \
-	-ginkgo.dry-run \
-	-ginkgo.junit-report=$(REPORT_DIR)/junit-container-report.xml \
-	-ginkgo.report-file=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json
-# .PHONY: test-e2e-container
-# test-e2e-container:
-# 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.output-dir=$(REPORT_DIR) --installed="$(INSTALLED)"
-
-# .PHONY: test-e2e-generate-container-report
-# test-e2e-container-generate-reoirt:    
-# 	ginkgo report $(REPORT_DIR) --json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json
+    go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
 test-e2e-vm:
-    go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.output-dir=$(REPORT_DIR) --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+    go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
 .PHONY: test-e2e-generate-vm-report
 test-e2e-vm-generate-reoirt:
