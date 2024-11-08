@@ -57,6 +57,20 @@ jobs:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
+      - name: Echo GitHub context, and os information
+        run: |
+          echo "GitHub Context Information:"
+          echo "github.event_name: ${{ github.event_name }}"
+          echo "github.repository: ${{ github.repository }}"     
+          echo "github.event.pull_request.head.repo.full_name: ${{ github.event.pull_request.head.repo.full_name }}"
+          echo "github.actor: ${{ github.actor }}"
+          echo "startsWith(inputs.os, 'amazon'): ${{ startsWith(inputs.os, 'amazon') }}"
+          echo "inputs.version: ${{ inputs.version}}"    
+          echo "!(startsWith(inputs.os, 'amazon') && inputs.version == '2'): ${{ !(startsWith(inputs.os, 'amazon') && inputs.version == '2') }}"     
+      - name: Verify AWS credentials configuration
+        if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
+        run: |
+          echo "Verifying AWS credentials configuration."            
       - name: Remove Finch VM
         timeout-minutes: 2
         run: |
