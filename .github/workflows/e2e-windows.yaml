@@ -109,21 +109,21 @@ jobs:
           VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
           CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
           
-          if [ -f "$VM_REPORT" ]; then
-            echo "VM report file exists. Uploading to S3..."
-            aws s3 cp "$VM_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
-            echo "VM report uploaded successfully."
-          else
-            echo "VM report file does not exist. Skipping upload."
-          fi
+          if (Test-Path $VM_REPORT) {
+            Write-Host "VM report file exists. Uploading to S3..."
+            aws s3 cp $VM_REPORT "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+            Write-Host "VM report uploaded successfully."
+          } else {
+            Write-Host "VM report file does not exist. Skipping upload."
+          }
           
-          if [ -f "$CONTAINER_REPORT" ]; then
-            echo "Container report file exists. Uploading to S3..."
-            aws s3 cp "$CONTAINER_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
-            echo "Container report uploaded successfully."
-          else
-            echo "Container report file does not exist. Skipping upload."
-          fi           
+          if (Test-Path $CONTAINER_REPORT) {
+            Write-Host "Container report file exists. Uploading to S3..."
+            aws s3 cp $CONTAINER_REPORT "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+            Write-Host "Container report uploaded successfully."
+          } else {
+            Write-Host "Container report file does not exist. Skipping upload."
+          }       
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
         timeout-minutes: 2

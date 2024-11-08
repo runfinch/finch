@@ -78,7 +78,7 @@ jobs:
           echo "left side(guess): steps.vars.outputs.has_creds == true: ${{ steps.vars.outputs.has_creds == true}}"
           echo "left side(guess): steps.vars.outputs.has_creds == 'true': ${{ steps.vars.outputs.has_creds == 'true'}}" 
           echo "right side: !(startsWith(inputs.os, 'amazon') && inputs.version == '2'): ${{ !(startsWith(inputs.os, 'amazon') && inputs.version == '2') }}"     
-          echo "if statement to allow AWS credentials: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}" 
+          echo "if statement to allow AWS credentials: ${{ steps.vars.outputs.has_creds == 'true' && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}" 
       - name: Clean up previous files
         if: always()
         run: |
