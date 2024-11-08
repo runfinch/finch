@@ -60,7 +60,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         # this action requires node20, skip on AL2
-        if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
+        if: ${{ steps.vars.outputs.has_creds == 'true' && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
@@ -79,10 +79,6 @@ jobs:
           echo "left side(guess): steps.vars.outputs.has_creds == 'true': ${{ steps.vars.outputs.has_creds == 'true'}}" 
           echo "right side: !(startsWith(inputs.os, 'amazon') && inputs.version == '2'): ${{ !(startsWith(inputs.os, 'amazon') && inputs.version == '2') }}"     
           echo "if statement to allow AWS credentials: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}" 
-      - name: Verify AWS credentials configuration
-        if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
-        run: |
-          echo "Verifying AWS credentials configuration."  
       - name: Clean up previous files
         if: always()
         run: |

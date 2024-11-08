@@ -71,11 +71,7 @@ jobs:
           echo "left side(guess): steps.vars.outputs.has_creds == true: ${{ steps.vars.outputs.has_creds == true}}"
           echo "left side(guess): steps.vars.outputs.has_creds == 'true': ${{ steps.vars.outputs.has_creds == 'true'}}"           
           echo "!(startsWith(inputs.os, 'amazon') && inputs.version == '2'): ${{ !(startsWith(inputs.os, 'amazon') && inputs.version == '2') }}"  
-          echo "if statement to allow AWS credentials: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}"   
-      - name: Verify AWS credentials configuration
-        if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
-        run: |
-          echo "Verifying AWS credentials configuration."            
+          echo "if statement to allow AWS credentials: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}"             
       - name: Remove Finch VM
         timeout-minutes: 2
         run: |
