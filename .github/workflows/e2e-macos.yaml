@@ -76,6 +76,7 @@ jobs:
           echo "startsWith(inputs.os, 'amazon'): ${{ startsWith(inputs.os, 'amazon') }}"
           echo "inputs.version: ${{ inputs.version}}"    
           echo "!(startsWith(inputs.os, 'amazon') && inputs.version == '2'): ${{ !(startsWith(inputs.os, 'amazon') && inputs.version == '2') }}"     
+          echo "if statement to allow AWS credentials: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}" 
       - name: Verify AWS credentials configuration
         if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
         run: |
