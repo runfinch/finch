@@ -56,22 +56,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
-          aws-region: ${{ secrets.REGION }}
-      - name: Echo GitHub context, and os information
-        run: |
-          echo "GitHub Context Information:"
-          echo "github.event_name: ${{ github.event_name }}"
-          echo "github.repository: ${{ github.repository }}"     
-          echo "github.event.pull_request.head.repo.full_name: ${{ github.event.pull_request.head.repo.full_name }}"
-          echo "github.actor: ${{ github.actor }}"
-          echo "startsWith(inputs.os, 'amazon'): ${{ startsWith(inputs.os, 'amazon') }}"
-          echo "inputs.version: ${{ inputs.version}}"    
-          echo "inputs.version: ${{ inputs.version}}"   
-          echo "left side: steps.vars.outputs.has_creds: ${{ steps.vars.outputs.has_creds }} " 
-          echo "left side(guess): steps.vars.outputs.has_creds == true: ${{ steps.vars.outputs.has_creds == true}}"
-          echo "left side(guess): steps.vars.outputs.has_creds == 'true': ${{ steps.vars.outputs.has_creds == 'true'}}"           
-          echo "!(startsWith(inputs.os, 'amazon') && inputs.version == '2'): ${{ !(startsWith(inputs.os, 'amazon') && inputs.version == '2') }}"  
-          echo "if statement to allow AWS credentials: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}"             
+          aws-region: ${{ secrets.REGION }}          
       - name: Remove Finch VM
         timeout-minutes: 2
         run: |
@@ -105,9 +90,10 @@ jobs:
           git clean -f -d
           make ${{ inputs.test-command }}
       - name: Check and upload e2e tests reports to s3 bucket
+        if: ${{ always() }}
         run: |
-          VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
-          CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+          $VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+          $CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
           
           if (Test-Path $VM_REPORT) {
             Write-Host "VM report file exists. Uploading to S3..."

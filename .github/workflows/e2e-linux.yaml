@@ -65,20 +65,6 @@ jobs:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
-      - name: Echo GitHub context, and os information
-        run: |
-          echo "GitHub Context Information:"
-          echo "github.event_name: ${{ github.event_name }}"
-          echo "github.repository: ${{ github.repository }}"     
-          echo "github.event.pull_request.head.repo.full_name: ${{ github.event.pull_request.head.repo.full_name }}"
-          echo "github.actor: ${{ github.actor }}"
-          echo "startsWith(inputs.os, 'amazon'): ${{ startsWith(inputs.os, 'amazon') }}"
-          echo "inputs.version: ${{ inputs.version}}"   
-          echo "left side: steps.vars.outputs.has_creds: ${{ steps.vars.outputs.has_creds }} " 
-          echo "left side(guess): steps.vars.outputs.has_creds == true: ${{ steps.vars.outputs.has_creds == true}}"
-          echo "left side(guess): steps.vars.outputs.has_creds == 'true': ${{ steps.vars.outputs.has_creds == 'true'}}" 
-          echo "right side: !(startsWith(inputs.os, 'amazon') && inputs.version == '2'): ${{ !(startsWith(inputs.os, 'amazon') && inputs.version == '2') }}"     
-          echo "if statement to allow AWS credentials: ${{ steps.vars.outputs.has_creds == 'true' && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}" 
       - name: Clean up previous files
         if: always()
         run: |
@@ -116,6 +102,7 @@ jobs:
           INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-container
           INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-vm
       - name: Change ownership of reports
+        if: always()
         run: |
           if [ ! -d "$REPORT_DIR" ]; then
             echo "Error: Directory $REPORT_DIR does not exist."
@@ -132,6 +119,7 @@ jobs:
             exit 1
           fi      
       - name: Check and upload e2e tests reports to s3 bucket
+        if: always()
         run: |
           VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
           CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"

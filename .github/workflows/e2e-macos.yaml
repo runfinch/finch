@@ -54,12 +54,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
-          aws-region: ${{ secrets.REGION }}
-      - name: Echo GitHub context, and os information
-        run: |  
-          echo "left side: steps.vars.outputs.has_creds: ${{ steps.vars.outputs.has_creds }} " 
-          echo "guess: steps.vars.outputs.has_creds == true: ${{ steps.vars.outputs.has_creds == true}}"
-          echo "guess: steps.vars.outputs.has_creds == 'true': ${{ steps.vars.outputs.has_creds == 'true'}}"           
+          aws-region: ${{ secrets.REGION }}        
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -87,6 +82,7 @@ jobs:
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
         shell: zsh {0}
       - name: Check and upload e2e tests reports to s3 bucket
+        if: always()
         run: |
           VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
           CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
