@@ -73,8 +73,11 @@ jobs:
           echo "github.event.pull_request.head.repo.full_name: ${{ github.event.pull_request.head.repo.full_name }}"
           echo "github.actor: ${{ github.actor }}"
           echo "startsWith(inputs.os, 'amazon'): ${{ startsWith(inputs.os, 'amazon') }}"
-          echo "inputs.version: ${{ inputs.version}}"    
-          echo "!(startsWith(inputs.os, 'amazon') && inputs.version == '2'): ${{ !(startsWith(inputs.os, 'amazon') && inputs.version == '2') }}"     
+          echo "inputs.version: ${{ inputs.version}}"   
+          echo "left side: steps.vars.outputs.has_creds: ${{ steps.vars.outputs.has_creds }} " 
+          echo "left side(guess): steps.vars.outputs.has_creds == true: ${{ steps.vars.outputs.has_creds == true}}"
+          echo "left side(guess): steps.vars.outputs.has_creds == 'true': ${{ steps.vars.outputs.has_creds == 'true'}}" 
+          echo "right side: !(startsWith(inputs.os, 'amazon') && inputs.version == '2'): ${{ !(startsWith(inputs.os, 'amazon') && inputs.version == '2') }}"     
           echo "if statement to allow AWS credentials: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}" 
       - name: Verify AWS credentials configuration
         if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
