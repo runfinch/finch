@@ -64,6 +64,7 @@ jobs:
           $ErrorActionPreference = 'Ignore'
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
+          sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
           wsl --shutdown
           wsl --unregister lima-finch
           wsl --list --verbose
@@ -97,6 +98,7 @@ jobs:
           $ErrorActionPreference = 'Ignore'
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
+          sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
           wsl --shutdown
           wsl --unregister lima-finch
           wsl --list --verbose
