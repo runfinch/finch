@@ -80,15 +80,16 @@ jobs:
           role-session-name: windows-msi
           aws-region: ${{ secrets.WINDOWS_REGION }}
       - name: Remove Finch VM
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           $ErrorActionPreference = 'Ignore'
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
           wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
+          echo "WSL has been shut down successfully."
+          wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
+          wsl --list --verbose --all
       - name: Clean up previous files
         run: |
           takeown /F C:\actions-runner\_work\finch /R
@@ -147,7 +148,7 @@ jobs:
           aws s3 cp "./msi-builder/build/signed/Finch-$tag.msi" "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$tag.msi" --no-progress
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -155,8 +156,9 @@ jobs:
           wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
           wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
+          echo "WSL has been shut down successfully."
+          wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
+          wsl --list --verbose --all
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
           make clean
           cd deps/finch-core && make clean
@@ -202,7 +204,7 @@ jobs:
           role-session-name: msi-test
           aws-region: ${{ secrets.REGION }}
       - name: Remove Finch VM
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -210,8 +212,9 @@ jobs:
           wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
           wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
+          echo "WSL has been shut down successfully."
+          wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
+          wsl --list --verbose --all
       - name: Clean up previous files
         run: |
           Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
@@ -249,7 +252,7 @@ jobs:
             $env:INSTALLED="true"
             make test-e2e-vm
       - name: Remove Finch VM
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -257,10 +260,11 @@ jobs:
           wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
           wsl --shutdown
+          echo "WSL has been shut down successfully."
           Start-Sleep -s 10
-          wsl --unregister lima-finch
+          wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
-          wsl --list --verbose    
+          wsl --list --verbose --all
       - name: Run container e2e tests
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
@@ -286,7 +290,7 @@ jobs:
           }
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -294,8 +298,9 @@ jobs:
           wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
           wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
+          echo "WSL has been shut down successfully."
+          wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
+          wsl --list --verbose --all
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
           make clean
           cd deps/finch-core && make clean

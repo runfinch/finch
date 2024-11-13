@@ -58,7 +58,7 @@ jobs:
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: Remove Finch VM
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -66,8 +66,8 @@ jobs:
           wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
           wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
+          wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
+          wsl --list --verbose --all
       - name: Clean up previous files
         run: |
           Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
@@ -92,7 +92,7 @@ jobs:
           make ${{ inputs.test-command }}
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
@@ -100,8 +100,8 @@ jobs:
           wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
           wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
+          wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
+          wsl --list --verbose --all
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
           make clean
           cd deps/finch-core && make clean
