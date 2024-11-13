@@ -84,9 +84,9 @@ jobs:
         run: |
           $ErrorActionPreference = 'Ignore'
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
+          wsl --list --verbose
+          wsl --list --verbose | findstr /C:"Running" > nul && wsl --shutdown
           echo "WSL has been shut down successfully."
           wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
           wsl --list --verbose --all
@@ -153,9 +153,9 @@ jobs:
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
+          wsl --list --verbose
+          wsl --list --verbose | findstr /C:"Running" > nul && wsl --shutdown
           echo "WSL has been shut down successfully."
           wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
           wsl --list --verbose --all
@@ -209,9 +209,9 @@ jobs:
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
+          wsl --list --verbose
+          wsl --list --verbose | findstr /C:"Running" > nul && wsl --shutdown
           echo "WSL has been shut down successfully."
           wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
           wsl --list --verbose --all
@@ -257,9 +257,9 @@ jobs:
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
+          wsl --list --verbose
+          wsl --list --verbose | findstr /C:"Running" > nul && wsl --shutdown
           echo "WSL has been shut down successfully."
           Start-Sleep -s 10
           wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
@@ -295,9 +295,9 @@ jobs:
           # We want these cleanup commands to always run, ignore errors so the step completes.
           $ErrorActionPreference = 'Ignore'
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
+          wsl --list --verbose
+          wsl --list --verbose | findstr /C:"Running" > nul && wsl --shutdown
           echo "WSL has been shut down successfully."
           wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
           wsl --list --verbose --all

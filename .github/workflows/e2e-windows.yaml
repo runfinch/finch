@@ -65,7 +65,7 @@ jobs:
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
+          wsl --list --verbose | findstr /C:"Running" > nul && wsl --shutdown
           wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
           wsl --list --verbose --all
       - name: Clean up previous files
@@ -99,7 +99,7 @@ jobs:
           taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
           wsl --list --verbose
           sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
+          wsl --list --verbose | findstr /C:"Running" > nul && wsl --shutdown
           wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
           wsl --list --verbose --all
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
