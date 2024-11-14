@@ -25,6 +25,9 @@ permissions:
   # This is required for actions/checkout
   contents: read
 
+env:
+  GO_VERSION: '1.22.9'
+
 jobs:
   test:
     runs-on:
@@ -48,8 +51,7 @@ jobs:
           submodules: true
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
-          go-version-file: go.mod
-          cache: false
+          go-version: ${{ env.GO_VERSION }}
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
