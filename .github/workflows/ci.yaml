@@ -16,6 +16,7 @@ on:
       - 'deps/**'
       - 'finch.yaml.d/**'
       - 'winres'
+      - 'Makefile*'
       - '!contrib/hello-finch/**'
   pull_request:
     branches:
@@ -31,6 +32,7 @@ on:
       - 'deps/**'
       - 'finch.yaml.d/**'
       - 'winres'
+      - 'Makefile*'
       - '!contrib/hello-finch/**'
   workflow_dispatch:
 permissions:
