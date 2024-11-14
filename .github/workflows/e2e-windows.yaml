@@ -58,16 +58,8 @@ jobs:
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: Remove Finch VM
-        timeout-minutes: 5
-        run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --list --verbose | findstr /C:"Running" > nul && wsl --shutdown
-          wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
-          wsl --list --verbose --all
+        timeout-minutes: 2
+        run: ./scripts/cleanup_wsl.ps1
       - name: Clean up previous files
         run: |
           Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
@@ -92,17 +84,9 @@ jobs:
           make ${{ inputs.test-command }}
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
-        timeout-minutes: 5
+        timeout-minutes: 2
         run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --list --verbose | findstr /C:"Running" > nul && wsl --shutdown
-          wsl --list --quiet | findstr /C:"lima-finch" > nul && wsl --unregister lima-finch
-          wsl --list --verbose --all
-          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          ./scripts/cleanup_wsl.ps1
           make clean
           cd deps/finch-core && make clean
           exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
