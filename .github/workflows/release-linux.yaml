@@ -77,7 +77,7 @@ jobs:
           popd
 
           rm -rf ./_output/bin/
-      - name: Verify Release versions
+      - name: Verify release versions
         run: |
           mkdir -p ./_output/${{ env.RELEASE_VERSION }}/static/amd64
           tar -xzf ./_output/${{ steps.build.outputs.STATIC_AMD64_BINARY_NAME }} -C ./_output/${{ env.RELEASE_VERSION }}/static/amd64
