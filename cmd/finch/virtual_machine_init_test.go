@@ -8,6 +8,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"runtime"
 	"testing"
 
 	"github.com/runfinch/finch/pkg/dependency"
@@ -83,6 +84,11 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 				command.EXPECT().CombinedOutput()
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
+				if runtime.GOOS == "windows" {
+					logger.EXPECT().Warnln("Finch on Windows uses WSL, which mounts the C Drive in read-write mode by default. " +
+						"To run finch with more restricted access, follow " +
+						"https://runfinch.com/docs/managing-finch/windows/wsl-configuration/")
+				}
 				logger.EXPECT().Info("Finch virtual machine started successfully")
 			},
 		},
@@ -151,6 +157,11 @@ func TestInitVMAction_run(t *testing.T) {
 				command.EXPECT().CombinedOutput()
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
+				if runtime.GOOS == "windows" {
+					logger.EXPECT().Warnln("Finch on Windows uses WSL, which mounts the C Drive in read-write mode by default. " +
+						"To run finch with more restricted access, follow " +
+						"https://runfinch.com/docs/managing-finch/windows/wsl-configuration/")
+				}
 				logger.EXPECT().Info("Finch virtual machine started successfully")
 			},
 		},
@@ -276,6 +287,11 @@ func TestInitVMAction_run(t *testing.T) {
 				command.EXPECT().CombinedOutput()
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
+				if runtime.GOOS == "windows" {
+					logger.EXPECT().Warnln("Finch on Windows uses WSL, which mounts the C Drive in read-write mode by default. " +
+						"To run finch with more restricted access, follow " +
+						"https://runfinch.com/docs/managing-finch/windows/wsl-configuration/")
+				}
 				logger.EXPECT().Info("Finch virtual machine started successfully")
 			},
 		},

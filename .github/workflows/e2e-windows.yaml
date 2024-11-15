@@ -38,7 +38,7 @@ jobs:
         run: |
           takeown /F C:\actions-runner\_work\finch /R
           Remove-Item C:\actions-runner\_work\finch\finch -Recurse -Force -ErrorAction Ignore
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0
@@ -58,14 +58,8 @@ jobs:
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: Remove Finch VM
-        run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
+        timeout-minutes: 2
+        run: ./scripts/cleanup_wsl.ps1
       - name: Clean up previous files
         run: |
           Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
@@ -90,15 +84,9 @@ jobs:
           make ${{ inputs.test-command }}
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
+        timeout-minutes: 2
         run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
-          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          ./scripts/cleanup_wsl.ps1
           make clean
           cd deps/finch-core && make clean
           exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
