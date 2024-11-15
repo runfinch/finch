@@ -39,6 +39,7 @@ permissions:
 
 env:
   DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
+  GO_VERSION: '1.22.8'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -73,7 +74,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
-          go-version-file: go.mod
+          go-version: ${{ env.GO_VERSION }}
           cache: false
       - run: make gen-code
       - run: git diff --exit-code
@@ -91,9 +92,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
-          # Since this repository is not meant to be used as a library,
-          # we don't need to test the latest 2 major releases like Go does: https://go.dev/doc/devel/release#policy.
-          go-version-file: go.mod
+          go-version: ${{ env.GO_VERSION }}
           cache: false
       - run: make test-unit
   # It's recommended to run golangci-lint in a job separate from other jobs (go test, etc) because different jobs run in parallel.
@@ -104,7 +103,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
-          go-version-file: go.mod
+          go-version: ${{ env.GO_VERSION }}
           cache: false
       - name: set GOOS env to windows
         run: |
@@ -144,7 +143,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
-          go-version-file: go.mod
+          go-version: ${{ env.GO_VERSION }}
           cache: false
       # TODO: Use `go mod tidy --check` after https://github.com/golang/go/issues/27005 is fixed.
       - run: go mod tidy
@@ -155,7 +154,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
-          go-version-file: go.mod
+          go-version: ${{ env.GO_VERSION }}
           cache: false
       - run: make check-licenses
   macos-e2e-tests:
