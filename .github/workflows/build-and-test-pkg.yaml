@@ -40,7 +40,7 @@ jobs:
       arch: arm64
       output_arch: aarch64
       version: 14
-      tag: ${{ needs.get-tag-name.outputs.tag }}
+      finch_version: ${{ needs.get-tag-name.outputs.version }}
 
   macos-x86-64-pkg-build:
     needs: get-tag-name
@@ -51,7 +51,7 @@ jobs:
       arch: amd64
       output_arch: x86_64
       version: 14
-      tag: ${{ needs.get-tag-name.outputs.tag }}
+      finch_version: ${{ needs.get-tag-name.outputs.version }}
 
   macos-aarch64-pkg-test:
     strategy:
@@ -68,7 +68,7 @@ jobs:
       arch: arm64
       output_arch: aarch64
       version: ${{ matrix.version }}
-      tag: ${{ needs.get-tag-name.outputs.tag }}
+      finch_version: ${{ needs.get-tag-name.outputs.version }}
 
   macos-x86-64-pkg-test:
     strategy:
@@ -85,4 +85,4 @@ jobs:
       arch: amd64
       output_arch: x86_64
       version: ${{ matrix.version }}
-      tag: ${{ needs.get-tag-name.outputs.tag }}
+      finch_version: ${{ needs.get-tag-name.outputs.version }}
