@@ -3,7 +3,7 @@ module github.com/runfinch/finch
 go 1.22.0
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.32.3
+	github.com/aws/aws-sdk-go-v2 v1.32.5
 	github.com/containerd/cgroups v1.1.0
 	github.com/containerd/nerdctl/v2 v2.0.0-rc.3
 	github.com/docker/cli v27.3.1+incompatible
@@ -37,7 +37,7 @@ require (
 	github.com/AdamKorcz/go-118-fuzz-build v0.0.0-20231105174938-2b5cbb29f3e2 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/Microsoft/hcsshim v0.12.8 // indirect
-	github.com/aws/smithy-go v1.22.0 // indirect
+	github.com/aws/smithy-go v1.22.1 // indirect
 	github.com/containerd/cgroups/v3 v3.0.3 // indirect
 	github.com/containerd/console v1.0.4 // indirect
 	github.com/containerd/containerd v1.7.23 // indirect
