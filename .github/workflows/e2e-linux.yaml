@@ -59,8 +59,8 @@ jobs:
           echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        # this action requires node20, skip on AL2
-        if: ${{ steps.vars.outputs.has_creds == 'true' && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
+        # this action requires node20, skip on AL2, delete skip condition since have node20 on AL2
+        if: ${{ steps.vars.outputs.has_creds == 'true'}}
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
