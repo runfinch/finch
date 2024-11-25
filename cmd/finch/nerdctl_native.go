@@ -93,7 +93,6 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	}
 
 	return nc.ncc.Create(cmdArgs...).Run()
-
 }
 
 var osAliasMap = map[string]string{}
