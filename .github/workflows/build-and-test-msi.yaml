@@ -153,7 +153,7 @@ jobs:
           make clean
           cd deps/finch-core && make clean
           exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
-  
+
   msi-e2e-tests:
     needs:
       - get-tag-name
@@ -232,11 +232,11 @@ jobs:
             # set path to use newer ssh version
             $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
             $env:Path = $newPath
-            
+
             git status
             git clean -f -d
             $env:INSTALLED="true"
-            make test-e2e-vm
+            make test-e2e-vm-with-report
       - name: Remove Finch VM
         timeout-minutes: 2
         shell: pwsh
@@ -250,11 +250,11 @@ jobs:
             # set path to use newer ssh version
             $newPath = (";C:\Program Files\Git\bin\;" + "C:\Program Files\Git\usr\bin\;" + "$env:Path")
             $env:Path = $newPath
-            
+
             git status
             git clean -f -d
             $env:INSTALLED="true"
-            make test-e2e-container
+            make test-e2e-container-with-report
       - name: Uninstall Finch silently
         if: ${{ always() }}
         run: |
