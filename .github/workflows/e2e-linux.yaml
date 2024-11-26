@@ -60,7 +60,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         # this action requires node20, skip on AL2
-        if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
+        if: ${{ steps.vars.outputs.has_creds == 'true' && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
@@ -119,7 +119,7 @@ jobs:
             exit 1
           fi      
       - name: Check and upload e2e tests reports to s3 bucket
-        if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
+        if: ${{ steps.vars.outputs.has_creds == 'true' && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
         run: |
           VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
           CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
