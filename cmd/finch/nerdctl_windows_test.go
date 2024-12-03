@@ -123,7 +123,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				c := mocks.NewCommand(ctrl)
 				// alias substitution, build => image build
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "image", "build", "-t", "demo", "/mnt/c/Users").Return(c)
+					"sudo", "-E", nerdctlCmdName, "build", "-t", "demo", "/mnt/c/Users").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -183,14 +183,13 @@ func TestNerdctlCommand_run(t *testing.T) {
 				c := mocks.NewCommand(ctrl)
 				ncsd.EXPECT().LookupEnv("ARG1")
 				ncsd.EXPECT().LookupEnv("ARG2")
-				ncsd.EXPECT().LookupEnv("ARG3")
 				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
 				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
-					"-it", "--rm", "-e", "ARG0=val0", "alpine:latest", "env").Return(c)
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
+					"-it", "-e", "ARG0=val0", "-e", "ARG1", "--env=ARG2", "-eARG3", "--rm", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -217,14 +216,13 @@ func TestNerdctlCommand_run(t *testing.T) {
 				AddEmptyEnvLookUps(ncsd)
 				c := mocks.NewCommand(ctrl)
 				ncsd.EXPECT().LookupEnv("ARG2")
-				ncsd.EXPECT().LookupEnv("ARG3").Return("val3", true)
 				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
 				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				// alias substitution run=>container run
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
-					"--rm", "-e", "ARG3=val3", "alpine:latest", "env").Return(c)
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
+					"--rm", "--env=ARG2", "-eARG3", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -252,14 +250,13 @@ func TestNerdctlCommand_run(t *testing.T) {
 				AddEmptyEnvLookUps(ncsd)
 				c := mocks.NewCommand(ctrl)
 				ncsd.EXPECT().LookupEnv("ARG2")
-				ncsd.EXPECT().LookupEnv("ARG3").Return("val3", true)
 				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
 				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				// alias substitution run=>container run
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
-					"--rm", "-e", "ARG3=val3", "alpine:latest", "env").Return(c)
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
+					"--rm", "--env=ARG2", "-eARG3", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -295,7 +292,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "--rm", "-e", "ARG1=val1", "alpine:latest", "env").Return(c)
+					"sudo", "-E", nerdctlCmdName, "run", "--rm", "--env-file="+envFilePath, "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -332,7 +329,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "--rm", "-e", "ARG1=val1", "alpine:latest", "env").Return(c)
+					"sudo", "-E", nerdctlCmdName, "run", "--rm", "--env-file="+envFilePath, "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -368,7 +365,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "--rm", "-e", "ARG2=val2", "alpine:latest", "env").Return(c)
+					"sudo", "-E", "ARG2=val2", nerdctlCmdName, "run", "--rm", "--env-file", envFilePath, "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -424,7 +421,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 
 				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "--add-host", "name:192.168.5.2", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -455,7 +452,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "--add-host", "name:0.0.0.0", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -486,7 +483,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "--add-host", "alpine:latest").Return(c)
 				c.EXPECT().Run().Return(errors.New("run cmd error"))
 			},
@@ -520,7 +517,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "--add-host=name:192.168.5.2", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -551,7 +548,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
 					"--rm", "--add-host=name:0.0.0.0", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -581,12 +578,12 @@ func TestNerdctlCommand_run(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				AddEmptyEnvLookUps(ncsd)
 				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil).Times(1)
-				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil).Times(5)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil).Times(3)
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath).Times(3)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath).Times(3)
 				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
-					"--rm", "-v", "/mnt/c/workdir:/tmp1/tmp2:rro", "-v", "/mnt/c/workdir:/tmp1/tmp2/tmp3/tmp4:rro",
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
+					"--rm", "-v", "/mnt/c/workdir:/tmp1/tmp2:rro", "-v=/mnt/c/workdir:/tmp1/tmp2/tmp3/tmp4:rro",
 					"-v", "volume", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
@@ -800,11 +797,12 @@ func TestNerdctlCommand_run(t *testing.T) {
 				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
 				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
 				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
-					"-p", "8080:8080", "--name", "myContainer", "--interactive=true", "--detach", "--rm=true",
-					"--init=false", "--tty=true", "--debug-full", "false", "--sig-proxy=0",
-					"--experimental", "false", "--oom-kill-disable=false", "--read-only=false",
-					"--privileged=false", "-e", "ARG1=val1", "alpine:latest", "env").Return(c)
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
+					"--env", "ARG1=val1", "-p", "8080:8080",
+					"--name", "myContainer", "--interactive=true", "--detach", "--rm=true", "--init=false",
+					"--tty=true", "--debug-full=false", "--sig-proxy=0",
+					"--experimental=false", "--oom-kill-disable=false", "--read-only=false",
+					"--privileged=false", "alpine:latest", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -884,8 +882,8 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 				c := mocks.NewCommand(ctrl)
 				// alias substitution, run => container run
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "--mount",
-					ContainsStr("src=/mnt/c/workdir"), "alpine:latest").Return(c)
+					"sudo", "-E", nerdctlCmdName, "run", "--mount", "type=bind,src=/mnt/c/workdir,target=/app",
+					"alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -916,8 +914,8 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 				c := mocks.NewCommand(ctrl)
 				// alias substitution, run => container run
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "--mount",
-					ContainsStr("source=/mnt/c/workdir"), "alpine:latest").Return(c)
+					"sudo", "-E", nerdctlCmdName, "run", "--mount", "type=bind,source=/mnt/c/workdir,target=/app",
+					"alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -948,8 +946,8 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 				c := mocks.NewCommand(ctrl)
 				// alias substitution, run => container run
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "--mount",
-					ContainsStr("source=/mnt/c/workdir"), "alpine:latest").Return(c)
+					"sudo", "-E", nerdctlCmdName, "run", "--mount=type=bind,source=/mnt/c/workdir,target=/app",
+					"alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -980,8 +978,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 				c := mocks.NewCommand(ctrl)
 				// alias substitution, run => container run
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "--mount",
-					ContainsStr("source=something"), "alpine:latest").Return(c)
+					"sudo", "-E", nerdctlCmdName, "run", "--mount", "type=bind,source=something,target=/app", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1005,15 +1002,13 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
 				AddEmptyEnvLookUps(ncsd)
 				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
-				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil).Times(1)
-				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath).Times(1)
-				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath).Times(1)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil).Times(2)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath).Times(2)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath).Times(2)
 
 				c := mocks.NewCommand(ctrl)
-				// alias substitution, run => container run
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "run", "--mount",
-					ContainsStr("type=notbind"), "alpine:latest").Return(c)
+					"sudo", "-E", nerdctlCmdName, "run", "--mount", "type=notbind,source=/mnt/c/workdir,target=/app", "alpine:latest").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1068,7 +1063,7 @@ func TestNerdctlCommand_run_CpCommand(t *testing.T) {
 				ncsd.EXPECT().FilePathToSlash(hostcopyPath).Return(wslcopyPath)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "cp", wslcopyPath, "somecontainer:/tmp").Return(c)
+					"sudo", "-E", nerdctlCmdName, "cp", wslcopyPath, "somecontainer:/tmp").Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1094,7 +1089,7 @@ func TestNerdctlCommand_run_CpCommand(t *testing.T) {
 				ncsd.EXPECT().FilePathToSlash(hostcopyPath).Return(wslcopyPath)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "cp", "somecontainer:/tmp/test", wslcopyPath).Return(c)
+					"sudo", "-E", nerdctlCmdName, "cp", "somecontainer:/tmp/test", wslcopyPath).Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1120,7 +1115,7 @@ func TestNerdctlCommand_run_CpCommand(t *testing.T) {
 				ncsd.EXPECT().FilePathToSlash(hostcopyPath).Return(wslcopyPath)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "container", "cp", "-L", "somecontainer:/tmp/test", wslcopyPath).Return(c)
+					"sudo", "-E", nerdctlCmdName, "cp", "-L", "somecontainer:/tmp/test", wslcopyPath).Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1179,7 +1174,7 @@ func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
 				ncsd.EXPECT().FilePathToSlash(buildContext).Return(wslBuildContextPath)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "image", "build", wslBuildContextPath).Return(c)
+					"sudo", "-E", nerdctlCmdName, "build", wslBuildContextPath).Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1205,7 +1200,7 @@ func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
 				ncsd.EXPECT().FilePathToSlash(buildContext).Return(wslBuildContextPath).Times(2)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "image", "build", "-f", ContainsStr(wslBuildContextPath), wslBuildContextPath).Return(c)
+					"sudo", "-E", nerdctlCmdName, "build", "-f", ContainsStr(wslBuildContextPath), wslBuildContextPath).Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1235,7 +1230,7 @@ func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
 				ncsd.EXPECT().FilePathToSlash(secretPath).Return(wslSecretPath)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
-					"sudo", "-E", nerdctlCmdName, "image", "build", "--secret",
+					"sudo", "-E", nerdctlCmdName, "build", "--secret",
 					ContainsStr(wslSecretPath), ContainsStr(wslBuildContextPath)).Return(c)
 				c.EXPECT().Run()
 			},
