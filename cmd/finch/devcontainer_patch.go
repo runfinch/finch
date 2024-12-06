@@ -15,7 +15,6 @@ import (
 	"github.com/containerd/nerdctl/v2/pkg/inspecttypes/dockercompat"
 	"github.com/docker/go-connections/nat"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/exp/slices"
 
 	"github.com/runfinch/finch/pkg/command"
 )
@@ -111,15 +110,12 @@ func inspectContainerOutputHandler(cmd command.Command) error {
 	return err
 }
 
-func handleDockerCompatComposeVersion(cmdName string, nc nerdctlCommand, runArgs []string) error {
-	if cmdName == "compose" && nc.fc.DockerCompat && slices.Contains(runArgs, "version") {
-		ver := nc.systemDeps.Env("DOCKER_COMPOSE_VERSION")
-		if ver != "" {
-			logrus.Warn("Displaying docker compose version set as environment variable DOCKER_COMPOSE_VERSION...")
-			fmt.Println(ver)
-			return nil
-		}
-		return errors.New("DOCKER_COMPOSE_VERSION environment variable is not set")
+func handleDockerCompatComposeVersion(nc nerdctlCommand) error {
+	ver := nc.systemDeps.Env("DOCKER_COMPOSE_VERSION")
+	if ver != "" {
+		logrus.Warn("Displaying docker compose version set as environment variable DOCKER_COMPOSE_VERSION...")
+		fmt.Println(ver)
+		return nil
 	}
-	return errors.New("")
+	return errors.New("DOCKER_COMPOSE_VERSION environment variable is not set")
 }
