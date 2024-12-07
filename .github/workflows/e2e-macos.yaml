@@ -53,11 +53,11 @@ jobs:
           echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        if: ${{ steps.vars.outputs.has_creds == true }}
+        if: ${{ steps.vars.outputs.has_creds == 'true' }}
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
-          aws-region: ${{ secrets.REGION }}
+          aws-region: ${{ secrets.REGION }}        
       - name: Clean up previous files
         run: |
           sudo rm -rf /opt/finch
@@ -68,7 +68,7 @@ jobs:
           fi
           if pgrep '^socket_vmnet'; then
             sudo pkill '^socket_vmnet'
-          fi
+          fi        
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true
       - run: brew install lz4 automake autoconf libtool yq
@@ -84,3 +84,33 @@ jobs:
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
         shell: zsh {0}
+      - name: Check and upload e2e tests reports to s3 bucket
+        if: always()
+        run: |
+          VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+          CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+          VM_SERIAL_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
+          
+          if [ -f "$VM_REPORT" ]; then
+            echo "VM report file exists. Uploading to S3..."
+            aws s3 cp "$VM_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+            echo "VM report uploaded successfully."
+          else
+            echo "VM report file does not exist. Skipping upload."
+          fi
+          
+          if [ -f "$CONTAINER_REPORT" ]; then
+            echo "Container report file exists. Uploading to S3..."
+            aws s3 cp "$CONTAINER_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+            echo "Container report uploaded successfully."
+          else
+            echo "Container report file does not exist. Skipping upload."
+          fi
+
+          if [ -f "$VM_SERIAL_REPORT" ]; then
+            echo "VM serial report file exists. Uploading to S3..."
+            aws s3 cp "$VM_SERIAL_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
+            echo "VM serial report uploaded successfully."
+          else
+            echo "VM serial report file does not exist. Skipping upload."
+          fi          
