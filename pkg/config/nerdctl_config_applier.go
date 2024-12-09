@@ -76,6 +76,9 @@ func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd st
 // The [GNU docs for Bash] explain how these files work together in more details.
 // The default location of DOCKER_CONFIG is ~/.docker/config.json. This config change sets the location to
 // ~/.finch/config.json, but from the perspective of macOS (/Users/<user>/.finch/config.json).
+// This config change also symlinks ~/.finch in the macOS/Windows perspective (e.g. /User/<user>/.finch) to
+// ~/.finch in the vm's perspective (/home/<user>/.finch) so that it can be found in a well known location
+// that doesn't require loading the user's bash rc.
 // The reason that we don't set environment variables inside /root/.bashrc is that the vars inside it are
 // not able to be picked up even if we specify `sudo -E`. We have to switch to root user in order to access them, while
 // normally we would access the VM as the regular user.
@@ -106,6 +109,13 @@ func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir 
 			fmt.Sprintf(`AWS_DIR=%s`, awsDir),
 		}, cmdArr...)
 	}
+
+	// Ensure we don't end up with a double '/'
+	// Normally, we would use filepath.Join to do this, but
+	// we don't want to follow host filepath semantics. This
+	// is a linux path inside the VM.
+	limaVMFinchDir := strings.TrimRight(limaVMHomeDir, "/") + "/.finch"
+	cmdArr = append(cmdArr, fmt.Sprintf(`[ -L %s ] || ln -s $FINCH_DIR %s`, limaVMFinchDir, limaVMFinchDir))
 
 	profileFilePath := fmt.Sprintf("%s/.bashrc", limaVMHomeDir)
 	profBuf, err := afero.ReadFile(fs, profileFilePath)
