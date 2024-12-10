@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1733478941555,
+  "lastUpdate": 1733842967783,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -55852,6 +55852,222 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
             "value": 1079,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ddcec1c4b8692749e705f15220eec98b564a5921",
+          "message": "build(deps): Bump submodules and dependencies (#1211)\n\n[create-pull-request] automated change\r\n\r\nSigned-off-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>\r\nCo-authored-by: Shubhranshu153 <47723536+Shubhranshu153@users.noreply.github.com>",
+          "timestamp": "2024-12-10T20:27:53+05:30",
+          "tree_id": "112ef4c6e8562b5c45e1e396232315ddc489c92b",
+          "url": "https://github.com/runfinch/finch/commit/ddcec1c4b8692749e705f15220eec98b564a5921"
+        },
+        "date": 1733842966869,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 68151307708,
+            "unit": "ns/op\t         0.7451 %cpu_avg/op\t        62.50 %cpu_peak/op\t        68.15 cpu_seconds/op\t3593256960 disk_bytes/op\t 3340552 B/op\t   64281 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 68151307708,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.7451,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 62.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 68.15,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 3593256960,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3340552,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 64281,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 17769345375,
+            "unit": "ns/op\t         0.7198 %cpu_avg/op\t        42.86 %cpu_peak/op\t        17.77 cpu_seconds/op\t  39747584 disk_bytes/op\t  869584 B/op\t   16826 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 17769345375,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.7198,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 42.86,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 17.77,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 39747584,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 869584,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 16826,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 246527908,
+            "unit": "ns/op\t         2.189 %cpu_avg/op\t        15.27 %cpu_peak/op\t         0.2465 cpu_seconds/op\t         0 disk_bytes/op\t   22376 B/op\t     277 allocs/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 246527908,
+            "unit": "ns/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 2.189,
+            "unit": "%cpu_avg/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 15.27,
+            "unit": "%cpu_peak/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.2465,
+            "unit": "cpu_seconds/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 0,
+            "unit": "disk_bytes/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 22376,
+            "unit": "B/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 277,
+            "unit": "allocs/op",
+            "extra": "5 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1104989125,
+            "unit": "ns/op\t         0.9023 %cpu_avg/op\t        25.00 %cpu_peak/op\t         1.105 cpu_seconds/op\t   2314240 disk_bytes/op\t   63992 B/op\t    1091 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - ns/op",
+            "value": 1104989125,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_avg/op",
+            "value": 0.9023,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_peak/op",
+            "value": 25,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - cpu_seconds/op",
+            "value": 1.105,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - disk_bytes/op",
+            "value": 2314240,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - B/op",
+            "value": 63992,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
+            "value": 1091,
             "unit": "allocs/op",
             "extra": "1 times\n8 procs"
           }
