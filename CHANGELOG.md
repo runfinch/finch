@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.3](https://github.com/runfinch/finch/compare/v1.4.2...v1.4.3) (2024-12-10)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump golang.org/x/sys from 0.27.0 to 0.28.0 ([#1206](https://github.com/runfinch/finch/issues/1206)) ([d573949](https://github.com/runfinch/finch/commit/d573949d384a170a1091dd92d8579bb055cd12e3))
+* **deps:** Bump submodules and dependencies ([#1211](https://github.com/runfinch/finch/issues/1211)) ([ddcec1c](https://github.com/runfinch/finch/commit/ddcec1c4b8692749e705f15220eec98b564a5921))
+
 ## [1.4.2](https://github.com/runfinch/finch/compare/v1.4.1...v1.4.2) (2024-12-03)
 
 
