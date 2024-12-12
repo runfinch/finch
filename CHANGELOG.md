@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.4](https://github.com/runfinch/finch/compare/v1.4.3...v1.4.4) (2024-12-12)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump golang.org/x/crypto from 0.29.0 to 0.31.0 ([#1215](https://github.com/runfinch/finch/issues/1215)) ([7df9beb](https://github.com/runfinch/finch/commit/7df9beb93c8c29d2832d7c72626f57a0929f4f74))
+
 ## [1.4.3](https://github.com/runfinch/finch/compare/v1.4.2...v1.4.3) (2024-12-10)
 
 
