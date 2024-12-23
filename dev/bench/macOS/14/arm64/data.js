@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1734623025578,
+  "lastUpdate": 1734984697328,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -56716,6 +56716,78 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
             "value": 1127,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kern.walster@gmail.com",
+            "name": "Kern Walster",
+            "username": "Kern--"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a2fd94c4040f9da8da834e41b557b99c7ec85123",
+          "message": "feat: make finch config available in VM at $HOME/.finch (#1180)\n\nNerdctlConfigApplier updates the user's bash rc in the\r\nVM to point DOCKER_CONFIG to the mounted .finch dir from\r\nthe host OS. This works when the bash rc is loaded, but\r\ndoesn't work for, e.g., systemd user services.\r\n\r\nThis change makes the finch config available available at\r\n$HOME/.finch in the VM so there is a clear place to load\r\nconfig via systemd user services without relying on any\r\nbash rcs.\r\n\r\nSigned-off-by: Kern Walster <walster@amazon.com>",
+          "timestamp": "2024-12-23T11:59:53-08:00",
+          "tree_id": "f4ed9420c9cca3fa0f6c6611b6828e7f239b675f",
+          "url": "https://github.com/runfinch/finch/commit/a2fd94c4040f9da8da834e41b557b99c7ec85123"
+        },
+        "date": 1734984696402,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 75500197958,
+            "unit": "ns/op\t         0.3150 %cpu_avg/op\t        37.50 %cpu_peak/op\t        75.50 cpu_seconds/op\t3526189056 disk_bytes/op\t 3689272 B/op\t   71299 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 75500197958,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.315,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 75.5,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 3526189056,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 3689272,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 71299,
             "unit": "allocs/op",
             "extra": "1 times\n8 procs"
           }
