@@ -51,7 +51,7 @@ jobs:
         run: |
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-version-tag.outputs.tag }}.msi Finch-${{ needs.get-version-tag.outputs.tag }}.msi
       - name: Upload installers and dependency source code to release
-        uses: softprops/action-gh-release@01570a1f39cb168c169c802c3bceb9e93fb10974 # v0.1.15
+        uses: softprops/action-gh-release@7b4da11513bf3f43f9999e90eabced41ab8bb048 # v0.1.15
         with:
           tag_name: ${{ needs.get-version-tag.outputs.tag }}
           files: |
