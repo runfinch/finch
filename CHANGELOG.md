@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.5.0](https://github.com/runfinch/finch/compare/v1.4.3...v1.5.0) (2024-12-25)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.32.5 to 1.32.7 ([#1224](https://github.com/runfinch/finch/issues/1224)) ([6be5aa7](https://github.com/runfinch/finch/commit/6be5aa7bb2b16db279b0e4cceaf2c0dad327a239))
+* **deps:** Bump github.com/docker/docker from 27.3.1+incompatible to 27.4.1+incompatible ([#1220](https://github.com/runfinch/finch/issues/1220)) ([8a72057](https://github.com/runfinch/finch/commit/8a720570eac12f147e0d87ff43790c518e6b2e37))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.22.0 to 2.22.1 ([#1225](https://github.com/runfinch/finch/issues/1225)) ([18accb8](https://github.com/runfinch/finch/commit/18accb89ad30e12a8f911f0a561239325fb6a7db))
+* **deps:** Bump golang.org/x/crypto from 0.29.0 to 0.31.0 ([#1215](https://github.com/runfinch/finch/issues/1215)) ([7df9beb](https://github.com/runfinch/finch/commit/7df9beb93c8c29d2832d7c72626f57a0929f4f74))
+* **deps:** Bump submodules and dependencies ([#1219](https://github.com/runfinch/finch/issues/1219)) ([25117e5](https://github.com/runfinch/finch/commit/25117e50e2a79f1751ded2089a1fdec5298f8cf9))
+* **deps:** Bump submodules and dependencies ([#1226](https://github.com/runfinch/finch/issues/1226)) ([71e0620](https://github.com/runfinch/finch/commit/71e06208355ed1c571163d8618ecaa41f871d598))
+
+
+### Features
+
+* make finch config available in VM at $HOME/.finch ([#1180](https://github.com/runfinch/finch/issues/1180)) ([a2fd94c](https://github.com/runfinch/finch/commit/a2fd94c4040f9da8da834e41b557b99c7ec85123))
+
+
+### Bug Fixes
+
+* Update go mod to fix CVE-2024-45338 ([#1222](https://github.com/runfinch/finch/issues/1222)) ([c0e8050](https://github.com/runfinch/finch/commit/c0e805085334bcaddc70497946ce60864697c03c))
+
 ## [1.4.3](https://github.com/runfinch/finch/compare/v1.4.2...v1.4.3) (2024-12-10)
 
 
