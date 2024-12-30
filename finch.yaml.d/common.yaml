@@ -9,12 +9,12 @@ containerd:
   # Override containerd archive
   # 🟢 Builtin default: hard-coded URL with hard-coded digest (see the output of `limactl info | jq .defaultTemplate.containerd.archives`)
   archives:
-  - location: "https://deps.runfinch.com/x86-64/nerdctl-full-1.7.7-linux-amd64.tar.gz"
-    arch: "x86_64"
-    digest: "sha256:a731eac93e8e9dda1a0d76dc1606438deb0668ea7d6bd5c5af436353ed9f65c5"
-  - location: "https://deps.runfinch.com/aarch64/nerdctl-full-1.7.7-linux-arm64.tar.gz"
+  - location: <container_runtime_archive_aarch64_location>
     arch: "aarch64"
-    digest: "sha256:b161a20c0e41f9ad999e8411e23c58ece4b3e584ae90b4252b76a39eee4a0c31"
+    digest: <container_runtime_archive_aarch64_digest>
+  - location: <container_runtime_archive_x86_64_location>
+    arch: "x86_64"
+    digest: <container_runtime_archive_x86_64_digest>
 
 provision:
   - mode: system

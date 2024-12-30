@@ -5,21 +5,18 @@
 # based on the values set in deps/finch-core/deps/full-os.conf
 -include $(FINCH_CORE_DIR)/deps/full-os.conf
 ifeq ($(ARCH),x86_64)
-FINCH_OS_BASENAME=$(X86_64_ARTIFACT)
-FINCH_OS_DIGEST=$(X86_64_512_DIGEST)
+FINCH_OS_BASENAME := $(X86_64_ARTIFACT)
+FINCH_OS_DIGEST := $(X86_64_512_DIGEST)
 else
-FINCH_OS_BASENAME=$(AARCH64_ARTIFACT)
-FINCH_OS_DIGEST=$(AARCH64_512_DIGEST)
+FINCH_OS_BASENAME := $(AARCH64_ARTIFACT)
+FINCH_OS_DIGEST := $(AARCH64_512_DIGEST)
 endif
 
 # This variable is used to generate release builds, where the OS image path should be overwritten
 # to /Applications/Finch/...
 FINCH_OS_IMAGE_LOCATION_ROOT ?= $(DEST)
-FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_OS_BASENAME)
-FINCH_IMAGE_DIGEST := "sha512:$(FINCH_OS_DIGEST)"
-
-.PHONY: finch.yaml
-finch.yaml: $(OS_OUTDIR)/finch.yaml
+FINCH_IMAGE_LOCATION ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_OS_BASENAME)
+FINCH_IMAGE_DIGEST ?= "sha512:$(FINCH_OS_DIGEST)"
 
 $(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/mac.yaml
 	# merge the appropriate YAMLs into a temporary finch.yaml file on the current working directory
@@ -30,6 +27,10 @@ $(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/mac.
 	sed -i.bak -e "s|<finch_image_location>|$(FINCH_IMAGE_LOCATION)|g" finch.yaml.temp
 	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" finch.yaml.temp
 	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" finch.yaml.temp
+	sed -i.bak -e "s|<container_runtime_archive_aarch64_location>|$(CONTAINER_RUNTIME_ARCHIVE_AARCH64_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<container_runtime_archive_aarch64_digest>/$(CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST)/g" finch.yaml.temp
+	sed -i.bak -e "s|<container_runtime_archive_x86_64_location>|$(CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<container_runtime_archive_x86_64_digest>/$(CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST)/g" finch.yaml.temp
 
 	# Replacement was successful, so cleanup .bak
 	@rm finch.yaml.temp.bak
