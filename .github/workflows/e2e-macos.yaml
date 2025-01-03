@@ -88,33 +88,78 @@ jobs:
               REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
           fi
         shell: zsh {0}
-      - name: Check and upload e2e tests reports to s3 bucket
-        if: always()
+      - name: Save artifacts name
+        if: always() && (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')
         run: |
-          VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
-          CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
-          VM_SERIAL_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
+          echo "VM_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json" >> $GITHUB_ENV
+          echo "CONTAINER_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json" >> $GITHUB_ENV
+          echo "VM_SERIAL_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json" >> $GITHUB_ENV
+          echo "RUNNER_OS=${{ inputs.os }}" >> $GITHUB_ENV
+          echo "RUNNER_ARCH=${{ inputs.arch }}" >> $GITHUB_ENV
+      - name: Upload reports artifact
+        if: always() && (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-reports
+          path: ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-*.json
+  upload:
+    needs: test
+    if: always() && ((github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main'))
+    runs-on:
+      [
+        "self-hosted",
+        "macos",
+        "${{ inputs.arch }}",
+        "${{ inputs.version }}",
+        "${{ inputs.runner-type }}",
+      ]
+    steps:
+      - name: Set output variables
+        id: vars
+        run: |
+          has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
+          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        if: ${{ steps.vars.outputs.has_creds == 'true' }}
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: credhelper-test
+          aws-region: ${{ secrets.REGION }}
+      - name: download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-reports
+          path: downloaded-reports
+      - name: Display structure of downloaded files
+        run: ls -R downloaded-reports
+      # - name: Check and upload e2e tests reports to s3 bucket
+      #   if: always()
+      #   run: |
+      #     VM_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+      #     CONTAINER_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+      #     VM_SERIAL_REPORT="${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
 
-          if [ -f "$VM_REPORT" ]; then
-            echo "VM report file exists. Uploading to S3..."
-            aws s3 cp "$VM_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
-            echo "VM report uploaded successfully."
-          else
-            echo "VM report file does not exist. Skipping upload."
-          fi
+      #     if [ -f "$VM_REPORT" ]; then
+      #       echo "VM report file exists. Uploading to S3..."
+      #       aws s3 cp "$VM_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+      #       echo "VM report uploaded successfully."
+      #     else
+      #       echo "VM report file does not exist. Skipping upload."
+      #     fi
 
-          if [ -f "$CONTAINER_REPORT" ]; then
-            echo "Container report file exists. Uploading to S3..."
-            aws s3 cp "$CONTAINER_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
-            echo "Container report uploaded successfully."
-          else
-            echo "Container report file does not exist. Skipping upload."
-          fi
+      #     if [ -f "$CONTAINER_REPORT" ]; then
+      #       echo "Container report file exists. Uploading to S3..."
+      #       aws s3 cp "$CONTAINER_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+      #       echo "Container report uploaded successfully."
+      #     else
+      #       echo "Container report file does not exist. Skipping upload."
+      #     fi
 
-          if [ -f "$VM_SERIAL_REPORT" ]; then
-            echo "VM serial report file exists. Uploading to S3..."
-            aws s3 cp "$VM_SERIAL_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
-            echo "VM serial report uploaded successfully."
-          else
-            echo "VM serial report file does not exist. Skipping upload."
-          fi
+      #     if [ -f "$VM_SERIAL_REPORT" ]; then
+      #       echo "VM serial report file exists. Uploading to S3..."
+      #       aws s3 cp "$VM_SERIAL_REPORT" "s3://finch-e2e-test-log-reports/${{ inputs.os }}-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
+      #       echo "VM serial report uploaded successfully."
+      #     else
+      #       echo "VM serial report file does not exist. Skipping upload."
+      #     fi
