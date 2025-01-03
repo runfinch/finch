@@ -88,14 +88,15 @@ jobs:
               REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
           fi
         shell: zsh {0}
-      - name: Save artifacts name
+      - name: Set artifacts name outputs
         if: always() && (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')
+        id: set-multiple-vars
         run: |
-          echo "VM_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json" >> $GITHUB_ENV
-          echo "CONTAINER_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json" >> $GITHUB_ENV
-          echo "VM_SERIAL_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json" >> $GITHUB_ENV
-          echo "RUNNER_OS=${{ inputs.os }}" >> $GITHUB_ENV
-          echo "RUNNER_ARCH=${{ inputs.arch }}" >> $GITHUB_ENV
+          echo "VM_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json" >> $GITHUB_OUTPUT
+          echo "CONTAINER_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json" >> $GITHUB_OUTPUT
+          echo "VM_SERIAL_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json" >> $GITHUB_OUTPUT
+          echo "RUNNER_OS=${{ inputs.os }}" >> $GITHUB_OUTPUT
+          echo "RUNNER_ARCH=${{ inputs.arch }}" >> $GITHUB_OUTPUT
       - name: Upload reports artifact
         if: always() && (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')
         uses: actions/upload-artifact@v4
@@ -114,11 +115,6 @@ jobs:
         "${{ inputs.runner-type }}",
       ]
     steps:
-      - name: Set output variables
-        id: vars
-        run: |
-          has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
-          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         if: ${{ steps.vars.outputs.has_creds == 'true' }}
@@ -129,20 +125,20 @@ jobs:
       - name: download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.RUNNER_OS }}-${{ env.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
+          name: ${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
           path: downloaded-reports
       - name: Display structure of downloaded files
         run: ls -R downloaded-reports
       - name: Check and upload e2e tests reports to s3 bucket
         if: always()
         run: |
-          VM_REPORT="${{ github.workspace }}/downloaded-reports/${{ env.RUNNER_OS }}-${{ env.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
-          CONTAINER_REPORT="${{ github.workspace }}/downloaded-reports/${{ env.RUNNER_OS }}-${{ env.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
-          VM_SERIAL_REPORT="${{ github.workspace }}/downloaded-reports/${{ env.RUNNER_OS }}-${{ env.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
+          VM_REPORT="${{ github.workspace }}/downloaded-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+          CONTAINER_REPORT="${{ github.workspace }}/downloaded-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+          VM_SERIAL_REPORT="${{ github.workspace }}/downloaded-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
 
           if [ -f "$VM_REPORT" ]; then
             echo "VM report file exists. Uploading to S3..."
-            aws s3 cp "$VM_REPORT" "s3://finch-e2e-test-log-reports/${{ env.RUNNER_OS }}-${{ env.RUNNER_ARCH }}/${{ env.VM_REPORT }}"
+            aws s3 cp "$VM_REPORT" "s3://finch-e2e-test-log-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}/${{ steps.set-multiple-vars.outputs.VM_REPORT }}"
             echo "VM report uploaded successfully."
           else
             echo "VM report file does not exist. Skipping upload."
@@ -150,7 +146,7 @@ jobs:
 
           if [ -f "$CONTAINER_REPORT" ]; then
             echo "Container report file exists. Uploading to S3..."
-            aws s3 cp "$CONTAINER_REPORT" "s3://finch-e2e-test-log-reports/${{ env.RUNNER_OS }}-${{ env.RUNNER_ARCH }}/${{ env.CONTAINER_REPORT }}"
+            aws s3 cp "$CONTAINER_REPORT" "s3://finch-e2e-test-log-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}/${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}"
             echo "Container report uploaded successfully."
           else
             echo "Container report file does not exist. Skipping upload."
@@ -158,7 +154,7 @@ jobs:
 
           if [ -f "$VM_SERIAL_REPORT" ]; then
             echo "VM serial report file exists. Uploading to S3..."
-            aws s3 cp "$VM_SERIAL_REPORT" "s3://finch-e2e-test-log-reports/${{ env.RUNNER_OS }}-${{ env.RUNNER_ARCH }}/${{ env.VM_SERIAL_REPORT }}"
+            aws s3 cp "$VM_SERIAL_REPORT" "s3://finch-e2e-test-log-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}/${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}"
             echo "VM serial report uploaded successfully."
           else
             echo "VM serial report file does not exist. Skipping upload."
