@@ -35,6 +35,13 @@ jobs:
         "${{ inputs.version }}",
         "${{ inputs.runner-type }}",
       ]
+    outputs:
+      vars: ${{ steps.vars.outputs.has_creds}}
+      vm_report: ${{ steps.set-multiple-vars.outputs.VM_REPORT }}
+      container_report: ${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}
+      vm_serial_report: ${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}
+      os: ${{ steps.set-multiple-vars.outputs.RUNNER_OS }}
+      arch: ${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -117,7 +124,7 @@ jobs:
     steps:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        if: ${{ steps.vars.outputs.has_creds == 'true' }}
+        if: ${{ needs.test.outputs.vars == 'true' }}
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
@@ -125,20 +132,20 @@ jobs:
       - name: download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
+          name: ${{needs.test.outputs.os }}-${{ needs.test.outputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
           path: downloaded-reports
       - name: Display structure of downloaded files
         run: ls -R downloaded-reports
       - name: Check and upload e2e tests reports to s3 bucket
         if: always()
         run: |
-          VM_REPORT="${{ github.workspace }}/downloaded-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
-          CONTAINER_REPORT="${{ github.workspace }}/downloaded-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
-          VM_SERIAL_REPORT="${{ github.workspace }}/downloaded-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
+          VM_REPORT="${{ github.workspace }}/downloaded-reports/${{ needs.test.outputs.os }}-${{ needs.test.outputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+          CONTAINER_REPORT="${{ github.workspace }}/downloaded-reports/${{ needs.test.outputs.os }}-${{ needs.test.outputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+          VM_SERIAL_REPORT="${{ github.workspace }}/downloaded-reports/${{ needs.test.outputs.os }}-${{ needs.test.outputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
 
           if [ -f "$VM_REPORT" ]; then
             echo "VM report file exists. Uploading to S3..."
-            aws s3 cp "$VM_REPORT" "s3://finch-e2e-test-log-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}/${{ steps.set-multiple-vars.outputs.VM_REPORT }}"
+            aws s3 cp "$VM_REPORT" "s3://finch-e2e-test-log-reports/${{ needs.test.outputs.os }}-${{ needs.test.outputs.arch }}/${{ needs.test.outputs.vm_report }}"
             echo "VM report uploaded successfully."
           else
             echo "VM report file does not exist. Skipping upload."
@@ -146,7 +153,7 @@ jobs:
 
           if [ -f "$CONTAINER_REPORT" ]; then
             echo "Container report file exists. Uploading to S3..."
-            aws s3 cp "$CONTAINER_REPORT" "s3://finch-e2e-test-log-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}/${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}"
+            aws s3 cp "$CONTAINER_REPORT" "s3://finch-e2e-test-log-reports/${{ needs.test.outputs.os }}-${{ needs.test.outputs.arch }}/${{ needs.test.outputs.container_report }}"
             echo "Container report uploaded successfully."
           else
             echo "Container report file does not exist. Skipping upload."
@@ -154,7 +161,7 @@ jobs:
 
           if [ -f "$VM_SERIAL_REPORT" ]; then
             echo "VM serial report file exists. Uploading to S3..."
-            aws s3 cp "$VM_SERIAL_REPORT" "s3://finch-e2e-test-log-reports/${{ steps.set-multiple-vars.outputs.RUNNER_OS }}-${{ steps.set-multiple-vars.outputs.RUNNER_ARCH }}/${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}"
+            aws s3 cp "$VM_SERIAL_REPORT" "s3://finch-e2e-test-log-reports/${{ needs.test.outputs.os }}-${{ needs.test.outputs.arch }}/${{ needs.test.outputs.vm_serial_report }}"
             echo "VM serial report uploaded successfully."
           else
             echo "VM serial report file does not exist. Skipping upload."
