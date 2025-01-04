@@ -81,8 +81,14 @@ install.finch-core-dependencies:
 # For Finch on macOS and Windows, the container runtime archive locations and digests are set
 # based on the values set in deps/finch-core/deps/container-runtime-full-archive.conf
 -include $(FINCH_CORE_DIR)/deps/container-runtime-full-archive.conf
+ifneq ($(AARCH64_ARTIFACT_PATHING),)
+	AARCH64_ARTIFACT := "$(AARCH64_ARTIFACT_PATHING)/$(AARCH64_ARTIFACT)"
+endif
 CONTAINER_RUNTIME_ARCHIVE_AARCH64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(AARCH64_ARTIFACT)"
 CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST ?= "sha256:$(AARCH64_256_DIGEST)"
+ifneq ($(X86_64_ARTIFACT_PATHING),)
+	X86_64_ARTIFACT := "$(X86_64_ARTIFACT_PATHING)/$(X86_64_ARTIFACT)"
+endif
 CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(X86_64_ARTIFACT)"
 CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST ?= "sha256:$(X86_64_256_DIGEST)"
 
