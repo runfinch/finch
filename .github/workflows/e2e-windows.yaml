@@ -151,9 +151,9 @@ jobs:
       - name: Check and upload e2e tests reports to s3 bucket
         if: ${{ always() }}
         run: |
-          VM_REPORT="${{ github.workspace }}/downloaded-reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
-          CONTAINER_REPORT="${{ github.workspace }}/downloaded-reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
-          VM_SERIAL_REPORT="${{ github.workspace }}/downloaded-reports/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
+          VM_REPORT="${{ github.workspace }}\downloaded-reports\${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+          CONTAINER_REPORT="${{ github.workspace }}\downloaded-reports\${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+          VM_SERIAL_REPORT="${{ github.workspace }}\downloaded-reports\${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
 
           if (Test-Path $VM_REPORT) {
             Write-Host "VM report file exists. Uploading to S3..."
