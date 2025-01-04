@@ -126,6 +126,7 @@ jobs:
           cd deps/finch-core && make clean
           exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
   upload:
+    needs: test
     timeout-minutes: 180
     runs-on:
       [
@@ -148,6 +149,11 @@ jobs:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
+      - name: download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-${{ needs.test.outputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
+          path: downloaded-reports
       - name: Check and upload e2e tests reports to s3 bucket
         if: ${{ always() }}
         run: |
