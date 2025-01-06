@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.0](https://github.com/runfinch/finch/compare/v1.5.0...v1.6.0) (2025-01-06)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/onsi/gomega from 1.36.1 to 1.36.2 ([#1227](https://github.com/runfinch/finch/issues/1227)) ([0c0fbef](https://github.com/runfinch/finch/commit/0c0fbef0328fcbe6fdec2ebbb74213c3258b6b9f))
+
+
+### Features
+
+* integrate nerdctl v2.0.2 ([b644b3e](https://github.com/runfinch/finch/commit/b644b3ea1e8f8367de69a935f52026daa09a2baa))
+* integrate nerdctl v2.0.2 container runtime archive ([#1237](https://github.com/runfinch/finch/issues/1237)) ([b644b3e](https://github.com/runfinch/finch/commit/b644b3ea1e8f8367de69a935f52026daa09a2baa))
+* use finch-core container runtime archive ([#1232](https://github.com/runfinch/finch/issues/1232)) ([0fde2a9](https://github.com/runfinch/finch/commit/0fde2a919383b53aaf4ef1c1b0eed9d2acf60346))
+
 ## [1.5.0](https://github.com/runfinch/finch/compare/v1.4.3...v1.5.0) (2024-12-25)
 
 
