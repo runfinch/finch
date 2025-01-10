@@ -10,7 +10,7 @@ on:
         required: true
       output_arch:
         type: string
-        required: true  
+        required: true
       version:
         type: string
         required: true
@@ -133,7 +133,7 @@ jobs:
           sudo rm -rf ./_output
           echo 'y' | sudo bash /Applications/Finch/uninstall.sh
           # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
-          # that caused the VM initialization failure in the e2e test. 
+          # that caused the VM initialization failure in the e2e test.
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
           sudo installer -pkg Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg -target /
       - name: Run VM e2e tests
@@ -144,7 +144,7 @@ jobs:
           command: |
             git status
             git clean -f -d
-            INSTALLED=true make test-e2e-vm
+            INSTALLED=true make test-e2e-vm-with-report
       - name: Run container e2e tests
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
@@ -153,7 +153,7 @@ jobs:
           command: |
             git status
             git clean -f -d
-            INSTALLED=true make test-e2e-container
+            INSTALLED=true make test-e2e-container-with-report
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
