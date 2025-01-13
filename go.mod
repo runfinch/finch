@@ -1,6 +1,7 @@
 module github.com/runfinch/finch
 
-go 1.22.0
+go 1.22.7
+
 toolchain go1.22.10
 
 require (
