@@ -8,6 +8,12 @@ DEST := $(shell echo "$(DESTDIR)/$(PREFIX)" | sed 's:///*:/:g; s://*$$::')
 BINDIR ?= /usr/local/bin
 OUTDIR ?= $(CURDIR)/_output
 OS_OUTDIR ?= $(OUTDIR)/os
+REPORT_DIR ?= $(CURDIR)/reports
+RUN_ID ?= $(GITHUB_RUN_ID)
+RUN_ATTEMPT ?= $(GITHUB_RUN_ATTEMPT)
+REPORT_DIR ?= $(CURDIR)/reports
+RUN_ID ?= $(GITHUB_RUN_ID)
+RUN_ATTEMPT ?= $(GITHUB_RUN_ATTEMPT)
 
 OUTPUT_DIRECTORIES := $(OUTDIR) $(OS_OUTDIR)
 $(OUTPUT_DIRECTORIES):
@@ -77,6 +83,20 @@ endif
 .PHONY: install.finch-core-dependencies
 install.finch-core-dependencies:
 	OUTDIR=$(OUTDIR) ARCH=$(ARCH) "$(MAKE)" -C $(FINCH_CORE_DIR) install.dependencies
+
+# For Finch on macOS and Windows, the container runtime archive locations and digests are set
+# based on the values set in deps/finch-core/deps/container-runtime-full-archive.conf
+-include $(FINCH_CORE_DIR)/deps/container-runtime-full-archive.conf
+ifneq ($(AARCH64_ARTIFACT_PATHING),)
+	AARCH64_ARTIFACT := "$(AARCH64_ARTIFACT_PATHING)/$(AARCH64_ARTIFACT)"
+endif
+CONTAINER_RUNTIME_ARCHIVE_AARCH64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(AARCH64_ARTIFACT)"
+CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST ?= "sha256:$(AARCH64_256_DIGEST)"
+ifneq ($(X86_64_ARTIFACT_PATHING),)
+	X86_64_ARTIFACT := "$(X86_64_ARTIFACT_PATHING)/$(X86_64_ARTIFACT)"
+endif
+CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(X86_64_ARTIFACT)"
+CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST ?= "sha256:$(X86_64_256_DIGEST)"
 
 .PHONY: finch.yaml
 finch.yaml: $(OS_OUTDIR)/finch.yaml
@@ -261,20 +281,39 @@ test-unit:
 #
 # Container tests and VM tests can be run in any order, but they must be run sequentially.
 # For more details, see the package-level comment of the e2e package.
+# define e2e test command
+COMMON_TEST_CMD_PREFIX := go test -ldflags $(LDFLAGS) -timeout 2h
+COMMON_TEST_CMD_SUFFIX := -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3
+
 .PHONY: test-e2e
 test-e2e: test-e2e-vm-serial test-e2e-container
 
+.PHONY: test-e2e-with-report
+test-e2e-with-report: test-e2e-vm-serial-with-report test-e2e-container-with-report test-e2e-vm-with-report
+
 .PHONY: test-e2e-vm-serial
-test-e2e-vm-serial: 
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 --installed="$(INSTALLED)"
+test-e2e-vm-serial:
+	$(COMMON_TEST_CMD_PREFIX) ./e2e/vm $(COMMON_TEST_CMD_SUFFIX) --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
 test-e2e-container:
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 --installed="$(INSTALLED)"
+	$(COMMON_TEST_CMD_PREFIX) ./e2e/container $(COMMON_TEST_CMD_SUFFIX) --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
 test-e2e-vm:
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+	$(COMMON_TEST_CMD_PREFIX) ./e2e/vm $(COMMON_TEST_CMD_SUFFIX) --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+
+.PHONY: test-e2e-vm-serial-with-report
+test-e2e-vm-serial-with-report:
+	$(COMMON_TEST_CMD_PREFIX) ./e2e/vm $(COMMON_TEST_CMD_SUFFIX) -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
+
+.PHONY: test-e2e-container-with-report
+test-e2e-container-with-report:
+	$(COMMON_TEST_CMD_PREFIX) ./e2e/container $(COMMON_TEST_CMD_SUFFIX) -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
+
+.PHONY: test-e2e-vm-with-report
+test-e2e-vm-with-report:
+	$(COMMON_TEST_CMD_PREFIX) ./e2e/vm $(COMMON_TEST_CMD_SUFFIX) -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
 .PHONY: test-benchmark
 test-benchmark:
