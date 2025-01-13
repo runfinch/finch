@@ -88,7 +88,21 @@ jobs:
 
           git status
           git clean -f -d
+
           make ${{ inputs.test-command }}
+      - name: Set artifacts name outputs
+        if: always()
+        id: set-multiple-vars
+        run: |
+          "VM_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json" >> $env:GITHUB_OUTPUT
+          "CONTAINER_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json" >> $env:GITHUB_OUTPUT
+          "VM_SERIAL_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json" >> $env:GITHUB_OUTPUT
+      - name: Upload reports artifact
+        if: always()
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
+          path: ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-*.json
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
         timeout-minutes: 2
@@ -97,3 +111,74 @@ jobs:
           make clean
           cd deps/finch-core && make clean
           exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
+  upload-windows-e2e-test-report:
+    needs: test
+    if: always()
+    timeout-minutes: 180
+    runs-on:
+      [
+        "self-hosted",
+        "windows",
+        "${{ inputs.arch }}",
+        "${{ inputs.runner-type }}",
+      ]
+    steps:
+      - name: Set output variables
+        id: vars
+        run: |
+          $has_creds="${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]'}}"
+          echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        if: |
+          env.has_creds == 'true' &&
+          github.event_name == 'pull_request' &&
+          github.event.action == 'closed' &&
+          github.event.pull_request.merged == true
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: credhelper-test
+          aws-region: ${{ secrets.REGION }}
+      - name: download artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.08
+        if: |
+          github.event_name == 'pull_request' &&
+          github.event.action == 'closed' &&
+          github.event.pull_request.merged == true
+        with:
+          name: windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
+          path: windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
+      - name: Check and upload e2e tests reports to s3 bucket
+        if: |
+          github.event_name == 'pull_request' &&
+          github.event.action == 'closed' &&
+          github.event.pull_request.merged == true
+        run: |
+          $env:VM_REPORT = "${{ github.workspace }}\windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports\${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+          $env:CONTAINER_REPORT = "${{ github.workspace }}\windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports\${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+          $env:VM_SERIAL_REPORT = "${{ github.workspace }}\windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports\${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
+
+          if (Test-Path $env:VM_REPORT) {
+            Write-Host "VM report file exists. Uploading to S3..."
+            aws s3 cp $env:VM_REPORT "s3://finch-e2e-test-log-reports/windows-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
+            Write-Host "VM report uploaded successfully."
+          } else {
+            Write-Host "VM report file does not exist. Skipping upload."
+          }
+
+          if (Test-Path $env:CONTAINER_REPORT) {
+            Write-Host "Container report file exists. Uploading to S3..."
+            aws s3 cp $env:CONTAINER_REPORT "s3://finch-e2e-test-log-reports/windows-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
+            Write-Host "Container report uploaded successfully."
+          } else {
+            Write-Host "Container report file does not exist. Skipping upload."
+          }
+
+          if (Test-Path $env:VM_SERIAL_REPORT) {
+            Write-Host "VM serial report file exists. Uploading to S3..."
+            aws s3 cp $env:VM_SERIAL_REPORT "s3://finch-e2e-test-log-reports/windows-${{ inputs.arch }}/${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json"
+            Write-Host "VM serial report uploaded successfully."
+          } else {
+            Write-Host "VM serial report file does not exist. Skipping upload."
+          }
