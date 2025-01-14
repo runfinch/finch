@@ -57,6 +57,59 @@ func GetSubject() (string, error) {
 	return subject, nil
 }
 
+// GetDocker gets the path of docker installation
+func GetDocker() (string, error) {
+	subject := filepath.Join("/usr/bin/", "docker")
+	return subject, nil
+}
+
+// func CleanUpFunc() error {
+// cmd0 := exec.Command("sudo", "systemctl", "stop", "docker")
+// if err := cmd0.Run(); err != nil {
+// 	return fmt.Errorf("docker stop failed: %v", err)
+// }
+// cmd1 := exec.Command("sudo", "rm", "-rf", "/var/lib/docker")
+// if err := cmd1.Run(); err != nil {
+// 	return fmt.Errorf("docker cleanup failed: %v", err)
+// }
+// cmd2 := exec.Command("sudo", "rm", "-rf", "/var/run/docker.pid")
+// if err := cmd2.Run(); err != nil {
+// 	return fmt.Errorf("failed to stop docker process: %v", err)
+// }
+// cmd3 := exec.Command("sudo", "systemctl", "restart", "docker")
+// if err := cmd3.Run(); err != nil {
+// 	return fmt.Errorf("docker failed to restart: %v", err)
+// }
+
+// cmd4 := exec.Command("sudo", "rm", "-rf", "/var/lib/finch/buildkit/cache.db")
+// if err := cmd4.Run(); err != nil {
+// 	return fmt.Errorf("finch buildkit cleanup failed: %v", err)
+// }
+
+// cmd5 := exec.Command("sudo", "docker", "builder", "prune", "-a", "-f")
+// if err := cmd5.Run(); err != nil {
+// 	return fmt.Errorf("docker builder prune failed: %v", err)
+// }
+
+// cmd6 := exec.Command("sudo", "docker", "image", "prune", "-a", "-f")
+// if err := cmd6.Run(); err != nil {
+// 	return fmt.Errorf("docker image prune failed: %v", err)
+// }
+
+// cmd7 := exec.Command("sudo", "rm", "-rf", "/var/lib/containerd")
+// if err := cmd7.Run(); err != nil {
+// 	return fmt.Errorf("containerd cleanup failed: %v", err)
+// }
+
+// cmd8 := exec.Command("sudo", "systemctl", "restart", "containerd")
+// if err := cmd8.Run(); err != nil {
+// 	return fmt.Errorf("docker failed to restart: %v", err)
+// }
+
+// return nil
+
+// }
+
 // Wrapper reports the benchmarking metrics of targetFunc to testing.B.
 func Wrapper(b *testing.B, targetFunc func(), cleanupFunc func()) {
 	metricsSum := Metrics{}
