@@ -198,3 +198,4 @@ jobs:
           else
             echo "VM serial report file does not exist. Skipping upload."
           fi
+          

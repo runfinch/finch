@@ -88,7 +88,6 @@ jobs:
           git status
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
-          REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
         shell: zsh {0}
       - name: Set artifacts name outputs
         if: always()
@@ -161,3 +160,4 @@ jobs:
           else
             echo "VM serial report file does not exist. Skipping upload."
           fi
+          

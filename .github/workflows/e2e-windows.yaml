@@ -182,3 +182,4 @@ jobs:
           } else {
             Write-Host "VM serial report file does not exist. Skipping upload."
           }
+          
