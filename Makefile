@@ -279,6 +279,10 @@ test-unit:
 # Container tests and VM tests can be run in any order, but they must be run sequentially.
 # For more details, see the package-level comment of the e2e package.
 
+.PHONY: create_report_dir
+create_report_dir:
+	mkdir -p $(REPORT_DIR)
+
 .PHONY: test-e2e
 test-e2e: test-e2e-vm-serial test-e2e-container
 
