@@ -279,23 +279,23 @@ test-unit:
 # Container tests and VM tests can be run in any order, but they must be run sequentially.
 # For more details, see the package-level comment of the e2e package.
 
-.PHONY: create_report_dir
-create_report_dir:
+.PHONY: create-report-dir
+create-report-dir:
 	mkdir -p $(REPORT_DIR)
 
 .PHONY: test-e2e
 test-e2e: test-e2e-vm-serial test-e2e-container
 
 .PHONY: test-e2e-vm-serial
-test-e2e-vm-serial: create_report_dir
+test-e2e-vm-serial: create-report-dir
 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
-test-e2e-container: create_report_dir
+test-e2e-container: create-report-dir
 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
-test-e2e-vm: create_report_dir
+test-e2e-vm: create-report-dir
 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
 .PHONY: test-benchmark
