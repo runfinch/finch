@@ -22,6 +22,9 @@ type VMStatus int64
 // https://github.com/lima-vm/lima/blob/f0282b2dfc4b6795295fceb2c86acd1312cef436/pkg/limayaml/limayaml.go#L53-L54.
 type VMType string
 
+// LimaVersion is injected at build time to be used in the call to osutil.LimaUser.
+var LimaVersion string
+
 // Finch CLI assumes there are only 4 VM status below. Adding more statuses will need to make changes in the caller side.
 const (
 	Running VMStatus = iota

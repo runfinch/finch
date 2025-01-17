@@ -8,13 +8,15 @@ import (
 	"os/user"
 
 	"github.com/lima-vm/lima/pkg/osutil"
+
+	"github.com/runfinch/finch/pkg/lima"
 )
 
 // LimaWrapper provides Lima utils in an interface to facilitate mocking
 //
 //go:generate mockgen --destination=../../mocks/lima_wrapper.go -package=mocks github.com/runfinch/finch/pkg/lima/wrapper LimaWrapper
 type LimaWrapper interface {
-	LimaUser(warn bool) (*user.User, error)
+	LimaUser(warn bool) *user.User
 }
 
 type limaWrapper struct{}
@@ -25,6 +27,6 @@ func NewLimaWrapper() LimaWrapper {
 }
 
 // LimaUser returns the user that will be used inside the Lima VM.
-func (*limaWrapper) LimaUser(warn bool) (*user.User, error) {
-	return osutil.LimaUser(warn)
+func (*limaWrapper) LimaUser(warn bool) *user.User {
+	return osutil.LimaUser(lima.LimaVersion, warn)
 }

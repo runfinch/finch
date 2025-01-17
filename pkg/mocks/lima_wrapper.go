@@ -35,12 +35,11 @@ func (m *MockLimaWrapper) EXPECT() *MockLimaWrapperMockRecorder {
 }
 
 // LimaUser mocks base method.
-func (m *MockLimaWrapper) LimaUser(arg0 bool) (*user.User, error) {
+func (m *MockLimaWrapper) LimaUser(arg0 bool) *user.User {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LimaUser", arg0)
 	ret0, _ := ret[0].(*user.User)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // LimaUser indicates an expected call of LimaUser.

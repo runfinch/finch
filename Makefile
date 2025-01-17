@@ -27,7 +27,10 @@ SUPPORTED_ARCH = false
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
 GITCOMMIT ?= $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
-LDFLAGS = "-w -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
+VERSION_INJECTION := -X $(PACKAGE)/pkg/version.Version=$(VERSION)
+VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
+VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
+LDFLAGS = "-w $(VERSION_INJECTION)"
 MIN_MACOS_VERSION ?= 11.0
 
 GOOS ?= $(shell $(GO) env GOOS)
@@ -46,6 +49,14 @@ else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
 endif
+
+# This variable is used to inject the version of Lima (via ldflags) to be used with Lima's
+# osutil.LimaUser function.
+LIMA_TAG=$(shell cd deps/finch-core/src/lima && git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+LIMA_VERSION := $(patsubst v%,%,$(LIMA_TAG))
+# This value isn't used on Linux, but the symbol is currently defined on all platforms, so
+# it doesn't hurt to always inject it right now.
+VERSION_INJECTION += -X $(PACKAGE)/pkg/lima.LimaVersion=$(LIMA_VERSION)
 
 .PHONY: arch-test
 arch-test:

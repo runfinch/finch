@@ -199,10 +199,7 @@ func (bb *bundleBuilder) copyAndRedactFile(writer io.Writer, reader bufReader) e
 			return err
 		}
 
-		user, err := bb.lima.LimaUser(false)
-		if err != nil {
-			return err
-		}
+		user := bb.lima.LimaUser(false)
 		line, err = redactUsername(line, user.Username)
 		if err != nil {
 			return err
