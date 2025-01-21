@@ -2,8 +2,6 @@ module github.com/runfinch/finch
 
 go 1.22.7
 
-toolchain go1.22.10
-
 require (
 	github.com/aws/aws-sdk-go-v2 v1.32.7
 	github.com/containerd/cgroups v1.1.0
