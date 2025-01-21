@@ -30,48 +30,76 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name    string
-		cmdName string
-		args    []string
-		mockSvc func(*mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller)
+		name     string
+		cmdName  string
+		args     []string
+		expected bool
+		mockSvc  func(*mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller)
 	}{
 		{
-			name:    "with --help flag",
-			cmdName: "pull",
-			args:    []string{"test:tag", "--help"},
+			name:     "with --help flag",
+			cmdName:  "pull",
+			args:     []string{"test:tag", "--help"},
+			expected: true,
 		},
 		{
-			name:    "with -h",
-			cmdName: "pull",
-			args:    []string{"test:tag", "-h"},
+			name:     "with -h",
+			cmdName:  "pull",
+			args:     []string{"test:tag", "-h"},
+			expected: true,
 		},
 		{
-			name:    "system returns help",
-			cmdName: "system",
+			name:     "system returns help",
+			cmdName:  "system",
+			expected: true,
 		},
 		{
-			name:    "builder returns help",
-			cmdName: "builder",
+			name:     "builder returns help",
+			cmdName:  "builder",
+			expected: true,
 		},
 		{
-			name:    "container returns help",
-			cmdName: "container",
+			name:     "container returns help",
+			cmdName:  "container",
+			expected: true,
 		},
 		{
-			name:    "image returns help",
-			cmdName: "image",
+			name:     "image returns help",
+			cmdName:  "image",
+			expected: true,
 		},
 		{
-			name:    "network returns help",
-			cmdName: "network",
+			name:     "network returns help",
+			cmdName:  "network",
+			expected: true,
 		},
 		{
-			name:    "volume returns help",
-			cmdName: "volume",
+			name:     "volume returns help",
+			cmdName:  "volume",
+			expected: true,
 		},
 		{
-			name:    "compose returns help",
-			cmdName: "compose",
+			name:     "compose returns help",
+			cmdName:  "compose",
+			expected: true,
+		},
+		{
+			name:     "-h argument for hostname-related command",
+			cmdName:  "run",
+			args:     []string{"-h"},
+			expected: false,
+		},
+		{
+			name:     "-h argument for hostname-related command",
+			cmdName:  "container run",
+			args:     []string{"-h"},
+			expected: false,
+		},
+		{
+			name:     "-h argument for hostname-related command",
+			cmdName:  "create",
+			args:     []string{"-h"},
+			expected: false,
 		},
 	}
 
@@ -85,7 +113,8 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 			ecc := mocks.NewCommandCreator(ctrl)
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
-			assert.True(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}).shouldReplaceForHelp(tc.cmdName, tc.args))
+			assert.True(t, (newNerdctlCommand(ncc, ecc, ncsd, logger,
+				nil, &config.Finch{}).shouldReplaceForHelp(tc.cmdName, tc.args) == tc.expected))
 		})
 	}
 }
