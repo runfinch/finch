@@ -8,12 +8,6 @@ DEST := $(shell echo "$(DESTDIR)/$(PREFIX)" | sed 's:///*:/:g; s://*$$::')
 BINDIR ?= /usr/local/bin
 OUTDIR ?= $(CURDIR)/_output
 OS_OUTDIR ?= $(OUTDIR)/os
-REPORT_DIR ?= $(CURDIR)/reports
-RUN_ID ?= $(GITHUB_RUN_ID)
-RUN_ATTEMPT ?= $(GITHUB_RUN_ATTEMPT)
-REPORT_DIR ?= $(CURDIR)/reports
-RUN_ID ?= $(GITHUB_RUN_ID)
-RUN_ATTEMPT ?= $(GITHUB_RUN_ATTEMPT)
 
 OUTPUT_DIRECTORIES := $(OUTDIR) $(OS_OUTDIR)
 $(OUTPUT_DIRECTORIES):
@@ -292,39 +286,20 @@ test-unit:
 #
 # Container tests and VM tests can be run in any order, but they must be run sequentially.
 # For more details, see the package-level comment of the e2e package.
-# define e2e test command
-COMMON_TEST_CMD_PREFIX := go test -ldflags $(LDFLAGS) -timeout 2h
-COMMON_TEST_CMD_SUFFIX := -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3
-
 .PHONY: test-e2e
 test-e2e: test-e2e-vm-serial test-e2e-container
 
-.PHONY: test-e2e-with-report
-test-e2e-with-report: test-e2e-vm-serial-with-report test-e2e-container-with-report test-e2e-vm-with-report
-
 .PHONY: test-e2e-vm-serial
-test-e2e-vm-serial:
-	$(COMMON_TEST_CMD_PREFIX) ./e2e/vm $(COMMON_TEST_CMD_SUFFIX) --installed="$(INSTALLED)"
+test-e2e-vm-serial: 
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
 test-e2e-container:
-	$(COMMON_TEST_CMD_PREFIX) ./e2e/container $(COMMON_TEST_CMD_SUFFIX) --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
 test-e2e-vm:
-	$(COMMON_TEST_CMD_PREFIX) ./e2e/vm $(COMMON_TEST_CMD_SUFFIX) --installed="$(INSTALLED)" --registry="$(REGISTRY)"
-
-.PHONY: test-e2e-vm-serial-with-report
-test-e2e-vm-serial-with-report:
-	$(COMMON_TEST_CMD_PREFIX) ./e2e/vm $(COMMON_TEST_CMD_SUFFIX) -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
-
-.PHONY: test-e2e-container-with-report
-test-e2e-container-with-report:
-	$(COMMON_TEST_CMD_PREFIX) ./e2e/container $(COMMON_TEST_CMD_SUFFIX) -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
-
-.PHONY: test-e2e-vm-with-report
-test-e2e-vm-with-report:
-	$(COMMON_TEST_CMD_PREFIX) ./e2e/vm $(COMMON_TEST_CMD_SUFFIX) -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
 .PHONY: test-benchmark
 test-benchmark:

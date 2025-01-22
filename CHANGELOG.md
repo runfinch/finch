@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.6.1](https://github.com/runfinch/finch/compare/v1.6.0...v1.6.1) (2025-01-17)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/cli from 27.3.1+incompatible to 27.4.1+incompatible ([#1229](https://github.com/runfinch/finch/issues/1229)) ([1c99948](https://github.com/runfinch/finch/commit/1c99948e0eba2f4facb600ccbad1fe81800d13cb))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.22.1 to 2.22.2 ([#1236](https://github.com/runfinch/finch/issues/1236)) ([2151c9f](https://github.com/runfinch/finch/commit/2151c9f50420d7ebbd80469155218c1d655ecaf8))
+* **deps:** Bump golang.org/x/sys from 0.28.0 to 0.29.0 ([#1245](https://github.com/runfinch/finch/issues/1245)) ([0340b25](https://github.com/runfinch/finch/commit/0340b257db89d9f36605220c29ab6e1af22c6e12))
+* **deps:** Bump submodules and dependencies ([#1238](https://github.com/runfinch/finch/issues/1238)) ([4b20a2f](https://github.com/runfinch/finch/commit/4b20a2facfd643f843d226b772df9e15bb1f61a5))
+
+
+### Reverts
+
+* "ci: add generate log files and upload to S3 bucket  ([#1194](https://github.com/runfinch/finch/issues/1194))" ([#1243](https://github.com/runfinch/finch/issues/1243)) ([fba3aa6](https://github.com/runfinch/finch/commit/fba3aa64f0f8ce2037dce53f856b692a1627daca))
+
 ## [1.6.0](https://github.com/runfinch/finch/compare/v1.5.0...v1.6.0) (2025-01-06)
 
 
