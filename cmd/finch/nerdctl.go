@@ -110,8 +110,10 @@ func (nc *nerdctlCommand) shouldReplaceForHelp(cmdName string, args []string) bo
 		}
 	}
 
+	// this needs to handle cases of -h except for `container run`,`run`,`create`. For these options -h represent hostname
+	// TODO: Refactor this function.
 	for _, arg := range args {
-		if arg == "--help" || arg == "-h" {
+		if arg == "--help" || (arg == "-h" && !(cmdName == "container run" || cmdName == "run" || cmdName == "create")) {
 			return true
 		}
 	}

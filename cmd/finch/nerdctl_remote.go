@@ -141,10 +141,12 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 			case arg == "--help":
 				nerdctlArgs = append(nerdctlArgs, arg)
 			case arg == "--add-host":
-				// exact match to --add-host
-				args[i+1], err = resolveIP(args[i+1], nc.logger, nc.ecc)
-				if err != nil {
-					return err
+				// exact match to --add-host. resolve ip if param passed
+				if len(args) > i+1 {
+					args[i+1], err = resolveIP(args[i+1], nc.logger, nc.ecc)
+					if err != nil {
+						return err
+					}
 				}
 				nerdctlArgs = append(nerdctlArgs, arg)
 			case strings.HasPrefix(arg, "--add-host"):
@@ -158,21 +160,33 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 			case strings.HasPrefix(arg, "--env-file"):
 				// exact match to --env-file
 				// or arg begins with --env-file
-				shouldSkip, addEnvs, err := handleEnvFile(nc.fs, nc.systemDeps, arg, args[i+1])
-				if err != nil {
-					return err
+				if len(args) > i+1 {
+					shouldSkip, addEnvs, err := handleEnvFile(nc.fs, nc.systemDeps, arg, args[i+1])
+					if err != nil {
+						return err
+					}
+					skip = shouldSkip
+					fileEnvs = append(fileEnvs, addEnvs...)
+				} else {
+					// if --env-file is at the end of the args, its refers to entrypoint command
+					// which need not be handled
+					nerdctlArgs = append(nerdctlArgs, arg)
 				}
-				skip = shouldSkip
-				fileEnvs = append(fileEnvs, addEnvs...)
 			case argIsEnv(arg):
 				// exact match to either -e or --env
 				// or arg begins with -e or --env
 				//     -e="<value>", -e"<value>"
 				//     --env="<key>=<value>", --env"<key>=<value>"
-				shouldSkip, addEnv := handleEnv(nc.systemDeps, arg, args[i+1])
-				skip = shouldSkip
-				if addEnv != "" {
-					envs = append(envs, addEnv)
+				if len(args) > i+1 {
+					shouldSkip, addEnv := handleEnv(nc.systemDeps, arg, args[i+1])
+					skip = shouldSkip
+					if addEnv != "" {
+						envs = append(envs, addEnv)
+					}
+				} else {
+					// if -e or --env is at the end of the args, its refers to entrypoint command
+					// which need not be handled
+					nerdctlArgs = append(nerdctlArgs, arg)
 				}
 			case shortFlagBoolSet.Has(arg) || longFlagBoolSet.Has(arg):
 				// exact match to a short no argument flag: -?
@@ -195,11 +209,17 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				// or begins with a short arg flag:
 				//     short arg flag concatenated to value: -?"<value>"
 				//     short arg flag equated to value: -?="<value>" or -?=<value>
-				shouldSkip, addKey, addVal := nc.handleFlagArg(arg, args[i+1])
-				skip = shouldSkip
-				if addKey != "" {
-					nerdctlArgs = append(nerdctlArgs, addKey)
-					nerdctlArgs = append(nerdctlArgs, addVal)
+				if len(args) > i+1 {
+					shouldSkip, addKey, addVal := nc.handleFlagArg(arg, args[i+1])
+					skip = shouldSkip
+					if addKey != "" {
+						nerdctlArgs = append(nerdctlArgs, addKey)
+						nerdctlArgs = append(nerdctlArgs, addVal)
+					}
+				} else {
+					// no value found for short arg flag
+					// pass the arg as a nerdctl command argument
+					nerdctlArgs = append(nerdctlArgs, arg)
 				}
 			case strings.HasPrefix(arg, "--"):
 				// exact match to a long arg flag: -<long_flag>
@@ -207,11 +227,17 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				// or begins with a long arg flag:
 				//     long arg flag concatenated to value: --<long_flag>"<value>"
 				//     long arg flag equated to value: --<long_flag>="<value>" or --<long_flag>=<value>
-				shouldSkip, addKey, addVal := nc.handleFlagArg(arg, args[i+1])
-				skip = shouldSkip
-				if addKey != "" {
-					nerdctlArgs = append(nerdctlArgs, addKey)
-					nerdctlArgs = append(nerdctlArgs, addVal)
+				if len(args) > i+1 {
+					shouldSkip, addKey, addVal := nc.handleFlagArg(arg, args[i+1])
+					skip = shouldSkip
+					if addKey != "" {
+						nerdctlArgs = append(nerdctlArgs, addKey)
+						nerdctlArgs = append(nerdctlArgs, addVal)
+					}
+				} else {
+					// if --<long flag> is at the end of the args, its refers to entrypoint command
+					// which need not be handled
+					nerdctlArgs = append(nerdctlArgs, arg)
 				}
 			default:
 				// arg other than a flag ("-?","--<long_flag>") or a skipped <flag_value>
