@@ -36,7 +36,9 @@ var testDaemon = func(_ *option.Option, installed bool) {
 				client.WithVersion("v1.43"),
 			)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			defer apiClient.Close()
+			defer func() {
+				gomega.Expect(apiClient.Close()).ShouldNot(gomega.HaveOccurred())
+			}()
 
 			_, err = apiClient.ImagePull(testCtx, imageRef, image.PullOptions{})
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
