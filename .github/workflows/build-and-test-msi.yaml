@@ -16,6 +16,7 @@ on:
     - cron: '0 9 * * *'
 env:
   GO111MODULE: on
+  GO_VERSION: '1.22.9'
 
 permissions:
   # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
@@ -67,6 +68,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install awscli
+      - uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a # v5.2.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
@@ -81,14 +86,8 @@ jobs:
           aws-region: ${{ secrets.WINDOWS_REGION }}
       - name: Remove Finch VM
         timeout-minutes: 2
-        run: |
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
+        shell: pwsh
+        run: ./scripts/cleanup_wsl.ps1
       - name: Clean up previous files
         run: |
           takeown /F C:\actions-runner\_work\finch /R
@@ -148,16 +147,9 @@ jobs:
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
         timeout-minutes: 2
+        shell: pwsh
         run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
-          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          ./scripts/cleanup_wsl.ps1
           make clean
           cd deps/finch-core && make clean
           exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore
@@ -183,6 +175,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install awscli
+      - uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a # v5.2.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ needs.get-tag-name.outputs.tag }}
@@ -203,15 +199,8 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Remove Finch VM
         timeout-minutes: 2
-        run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
+        shell: pwsh
+        run: ./scripts/cleanup_wsl.ps1
       - name: Clean up previous files
         run: |
           Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
@@ -250,17 +239,8 @@ jobs:
             make test-e2e-vm
       - name: Remove Finch VM
         timeout-minutes: 2
-        run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
-          Start-Sleep -s 10
-          wsl --unregister lima-finch
-          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
-          wsl --list --verbose    
+        shell: pwsh
+        run: ./scripts/cleanup_wsl.ps1
       - name: Run container e2e tests
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
@@ -287,16 +267,9 @@ jobs:
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
         timeout-minutes: 2
+        shell: pwsh
         run: |
-          # We want these cleanup commands to always run, ignore errors so the step completes.
-          $ErrorActionPreference = 'Ignore'
-          taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
-          wsl --list --verbose
-          sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
-          wsl --shutdown
-          wsl --unregister lima-finch
-          wsl --list --verbose
-          Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+          ./scripts/cleanup_wsl.ps1
           make clean
           cd deps/finch-core && make clean
           exit 0 # Cleanup may set the exit code e.g. if a file doesn't exist; just ignore

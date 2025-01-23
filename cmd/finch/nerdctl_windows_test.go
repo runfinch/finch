@@ -769,6 +769,46 @@ func TestNerdctlCommand_run(t *testing.T) {
 				c.EXPECT().Run()
 			},
 		},
+		{
+			name:    "with long-form boolean flags",
+			cmdName: "run",
+			fc:      &config.Finch{},
+			args: []string{
+				"--env", "ARG1=val1", "-p", "8080:8080",
+				"--name", "myContainer", "--interactive=true", "--detach", "--rm=true", "--init=false",
+				"--tty=true", "--debug-full=false", "--sig-proxy=0",
+				"--experimental=false", "--oom-kill-disable=false", "--read-only=false",
+				"--privileged=false", "alpine:latest", "env",
+			},
+			wantErr: nil,
+			mockSvc: func(
+				_ *testing.T,
+				_ *mocks.CommandCreator,
+				ncc *mocks.NerdctlCmdCreator,
+				_ *mocks.Command,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				_ afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				AddEmptyEnvLookUps(ncsd)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+				c := mocks.NewCommand(ctrl)
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
+					"-p", "8080:8080", "--name", "myContainer", "--interactive=true", "--detach", "--rm=true",
+					"--init=false", "--tty=true", "--debug-full", "false", "--sig-proxy=0",
+					"--experimental", "false", "--oom-kill-disable=false", "--read-only=false",
+					"--privileged=false", "-e", "ARG1=val1", "alpine:latest", "env").Return(c)
+				c.EXPECT().Run()
+			},
+		},
 	}
 
 	for _, tc := range testCases {

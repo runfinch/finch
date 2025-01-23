@@ -159,8 +159,10 @@ creds_helpers:
 # additional_directories: the work directories that are not supported by default. In macOS, only home directory is supported by default. 
 # For example, if you want to mount a directory into a container, and that directory is not under your home directory, 
 # then you'll need to specify this field to add that directory or any ascendant of it as a work directory. (optional)
+# Note: If your username doesn't match your home directory name, you may need to add '/Users/<username>' here to avoid permission issues.
 additional_directories:
   # the path of each additional directory.
+  # - path: /Users/<username>  # Uncomment and replace <username> if needed
   - path: /Volumes
 
 # vmType: sets which Hypervisor to use to launch the VM. (optional)

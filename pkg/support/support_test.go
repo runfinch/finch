@@ -110,7 +110,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Copying %s...", "config2")
 				logger.EXPECT().Debugln("Copying in additional files...")
 
-				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+				lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
 			},
 			include: []string{},
 			exclude: []string{},
@@ -162,7 +162,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugln("Copying in additional files...")
 				logger.EXPECT().Debugf("Copying %s...", "extra1")
 
-				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+				lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
 			},
 			include: []string{"extra1"},
 			exclude: []string{},
@@ -213,7 +213,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
 
-				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+				lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
 			},
 			include: []string{},
 			exclude: []string{"log1"},
@@ -264,7 +264,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Infof("Excluding %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
 
-				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+				lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
 			},
 			include: []string{},
 			exclude: []string{"config1"},
@@ -316,7 +316,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugln("Copying in additional files...")
 				logger.EXPECT().Infof("Excluding %s...", "extra1")
 
-				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+				lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
 			},
 			include: []string{"extra1"},
 			exclude: []string{"extra1"},
@@ -391,7 +391,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					return nil
 				})
 
-				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+				lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
 			},
 			include: []string{"vm:extra1"},
 		},
@@ -448,7 +448,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				// hard to write a matcher for the second argument
 				logger.EXPECT().Warnf("Could not add additional file %s. Error: %s", "vm:extra1", gomock.Any())
 
-				lima.EXPECT().LimaUser(false).Return(mockUser, nil).AnyTimes()
+				lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
 			},
 			include: []string{"vm:extra1"},
 		},

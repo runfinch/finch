@@ -5,8 +5,8 @@
 # based on the values in deps/finch-core/deps/rootfs.conf
 -include $(FINCH_CORE_DIR)/deps/rootfs.conf
 ifeq ($(ARCH),x86_64)
-FINCH_ROOTFS_BASENAME ?= $(X86_64_ARTIFACT)
-FINCH_ROOTFS_DIGEST ?= $(X86_64_512_DIGEST)
+FINCH_ROOTFS_BASENAME := $(X86_64_ARTIFACT)
+FINCH_ROOTFS_DIGEST := $(X86_64_512_DIGEST)
 else
 $(error Finch on Windows ARM not supported)
 endif
@@ -14,8 +14,8 @@ endif
 # This variable is used to generate release builds, where the OS rootfs path should be overwritten
 # to C:/Program Files/Finch/...
 FINCH_OS_IMAGE_LOCATION_ROOT ?= $(OUTDIR)
-FINCH_IMAGE_LOCATION := $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_ROOTFS_BASENAME)
-FINCH_IMAGE_DIGEST := "sha512:$(FINCH_ROOTFS_DIGEST)"
+FINCH_IMAGE_LOCATION ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_ROOTFS_BASENAME)
+FINCH_IMAGE_DIGEST ?= "sha512:$(FINCH_ROOTFS_DIGEST)"
 
 $(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/windows.yaml
 	# merge the appropriate YAMLs into a temporary finch.yaml file on the current working directory
@@ -28,6 +28,10 @@ $(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/wind
 	sed -i.bak -e "s|<finch_image_location>|file://$(FINCH_IMAGE_LOCATION)|g" finch.yaml.temp
 	sed -i.bak -e "s/<finch_image_arch>/$(LIMA_ARCH)/g" finch.yaml.temp
 	sed -i.bak -e "s/<finch_image_digest>/$(FINCH_IMAGE_DIGEST)/g" finch.yaml.temp
+	sed -i.bak -e "s|<container_runtime_archive_aarch64_location>|$(CONTAINER_RUNTIME_ARCHIVE_AARCH64_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<container_runtime_archive_aarch64_digest>/$(CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST)/g" finch.yaml.temp
+	sed -i.bak -e "s|<container_runtime_archive_x86_64_location>|$(CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<container_runtime_archive_x86_64_digest>/$(CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST)/g" finch.yaml.temp
 
 	# Replacement was successful, so cleanup .bak
 	@rm finch.yaml.temp.bak

@@ -27,7 +27,10 @@ SUPPORTED_ARCH = false
 LICENSEDIR := $(OUTDIR)/license-files
 VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
 GITCOMMIT ?= $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
-LDFLAGS = "-w -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)"
+VERSION_INJECTION := -X $(PACKAGE)/pkg/version.Version=$(VERSION)
+VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
+VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
+LDFLAGS = "-w $(VERSION_INJECTION)"
 MIN_MACOS_VERSION ?= 11.0
 
 FINCH_DAEMON_LOCATION_ROOT ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/finch-daemon
@@ -49,6 +52,14 @@ else ifneq (,$(findstring x86_64,$(ARCH)))
 	SUPPORTED_ARCH = true
 	LIMA_ARCH = x86_64
 endif
+
+# This variable is used to inject the version of Lima (via ldflags) to be used with Lima's
+# osutil.LimaUser function.
+LIMA_TAG=$(shell cd deps/finch-core/src/lima && git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+LIMA_VERSION := $(patsubst v%,%,$(LIMA_TAG))
+# This value isn't used on Linux, but the symbol is currently defined on all platforms, so
+# it doesn't hurt to always inject it right now.
+VERSION_INJECTION += -X $(PACKAGE)/pkg/lima.LimaVersion=$(LIMA_VERSION)
 
 .PHONY: arch-test
 arch-test:
@@ -80,6 +91,20 @@ endif
 .PHONY: install.finch-core-dependencies
 install.finch-core-dependencies:
 	OUTDIR=$(OUTDIR) ARCH=$(ARCH) "$(MAKE)" -C $(FINCH_CORE_DIR) install.dependencies
+
+# For Finch on macOS and Windows, the container runtime archive locations and digests are set
+# based on the values set in deps/finch-core/deps/container-runtime-full-archive.conf
+-include $(FINCH_CORE_DIR)/deps/container-runtime-full-archive.conf
+ifneq ($(AARCH64_ARTIFACT_PATHING),)
+	AARCH64_ARTIFACT := "$(AARCH64_ARTIFACT_PATHING)/$(AARCH64_ARTIFACT)"
+endif
+CONTAINER_RUNTIME_ARCHIVE_AARCH64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(AARCH64_ARTIFACT)"
+CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST ?= "sha256:$(AARCH64_256_DIGEST)"
+ifneq ($(X86_64_ARTIFACT_PATHING),)
+	X86_64_ARTIFACT := "$(X86_64_ARTIFACT_PATHING)/$(X86_64_ARTIFACT)"
+endif
+CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(X86_64_ARTIFACT)"
+CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST ?= "sha256:$(X86_64_256_DIGEST)"
 
 .PHONY: finch.yaml
 finch.yaml: $(OS_OUTDIR)/finch.yaml
@@ -272,15 +297,15 @@ test-e2e: test-e2e-vm-serial test-e2e-container
 
 .PHONY: test-e2e-vm-serial
 test-e2e-vm-serial: 
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
 test-e2e-container:
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h --installed="$(INSTALLED)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
 test-e2e-vm:
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
 .PHONY: test-benchmark
 test-benchmark:

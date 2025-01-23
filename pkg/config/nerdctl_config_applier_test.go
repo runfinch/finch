@@ -68,7 +68,8 @@ FINCH_DIR=/finch/dir
 AWS_DIR=/home/dir/.aws
 export DOCKER_CONFIG="$FINCH_DIR"
 [ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-ecr-login /usr/local/bin/
-[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws`), string(fileBytes))
+[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws
+[ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`), string(fileBytes))
 			},
 			want: nil,
 		},
@@ -95,7 +96,8 @@ FINCH_DIR=/finch/dir
 AWS_DIR=/home/dir/.aws
 export DOCKER_CONFIG="$FINCH_DIR"
 [ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-ecr-login /usr/local/bin/
-[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws)`,
+[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws)
+[ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`,
 						),
 						0o644,
 					),
@@ -109,7 +111,8 @@ FINCH_DIR=/finch/dir
 AWS_DIR=/home/dir/.aws
 export DOCKER_CONFIG="$FINCH_DIR"
 [ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-ecr-login /usr/local/bin/
-[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws)`), string(fileBytes))
+[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws)
+[ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`), string(fileBytes))
 			},
 			want: nil,
 		},

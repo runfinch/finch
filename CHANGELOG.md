@@ -1,5 +1,92 @@
 # Changelog
 
+## [1.6.1](https://github.com/runfinch/finch/compare/v1.6.0...v1.6.1) (2025-01-17)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/cli from 27.3.1+incompatible to 27.4.1+incompatible ([#1229](https://github.com/runfinch/finch/issues/1229)) ([1c99948](https://github.com/runfinch/finch/commit/1c99948e0eba2f4facb600ccbad1fe81800d13cb))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.22.1 to 2.22.2 ([#1236](https://github.com/runfinch/finch/issues/1236)) ([2151c9f](https://github.com/runfinch/finch/commit/2151c9f50420d7ebbd80469155218c1d655ecaf8))
+* **deps:** Bump golang.org/x/sys from 0.28.0 to 0.29.0 ([#1245](https://github.com/runfinch/finch/issues/1245)) ([0340b25](https://github.com/runfinch/finch/commit/0340b257db89d9f36605220c29ab6e1af22c6e12))
+* **deps:** Bump submodules and dependencies ([#1238](https://github.com/runfinch/finch/issues/1238)) ([4b20a2f](https://github.com/runfinch/finch/commit/4b20a2facfd643f843d226b772df9e15bb1f61a5))
+
+
+### Reverts
+
+* "ci: add generate log files and upload to S3 bucket  ([#1194](https://github.com/runfinch/finch/issues/1194))" ([#1243](https://github.com/runfinch/finch/issues/1243)) ([fba3aa6](https://github.com/runfinch/finch/commit/fba3aa64f0f8ce2037dce53f856b692a1627daca))
+
+## [1.6.0](https://github.com/runfinch/finch/compare/v1.5.0...v1.6.0) (2025-01-06)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/onsi/gomega from 1.36.1 to 1.36.2 ([#1227](https://github.com/runfinch/finch/issues/1227)) ([0c0fbef](https://github.com/runfinch/finch/commit/0c0fbef0328fcbe6fdec2ebbb74213c3258b6b9f))
+
+
+### Features
+
+* integrate nerdctl v2.0.2 ([b644b3e](https://github.com/runfinch/finch/commit/b644b3ea1e8f8367de69a935f52026daa09a2baa))
+* integrate nerdctl v2.0.2 container runtime archive ([#1237](https://github.com/runfinch/finch/issues/1237)) ([b644b3e](https://github.com/runfinch/finch/commit/b644b3ea1e8f8367de69a935f52026daa09a2baa))
+* use finch-core container runtime archive ([#1232](https://github.com/runfinch/finch/issues/1232)) ([0fde2a9](https://github.com/runfinch/finch/commit/0fde2a919383b53aaf4ef1c1b0eed9d2acf60346))
+
+## [1.5.0](https://github.com/runfinch/finch/compare/v1.4.3...v1.5.0) (2024-12-25)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.32.5 to 1.32.7 ([#1224](https://github.com/runfinch/finch/issues/1224)) ([6be5aa7](https://github.com/runfinch/finch/commit/6be5aa7bb2b16db279b0e4cceaf2c0dad327a239))
+* **deps:** Bump github.com/docker/docker from 27.3.1+incompatible to 27.4.1+incompatible ([#1220](https://github.com/runfinch/finch/issues/1220)) ([8a72057](https://github.com/runfinch/finch/commit/8a720570eac12f147e0d87ff43790c518e6b2e37))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.22.0 to 2.22.1 ([#1225](https://github.com/runfinch/finch/issues/1225)) ([18accb8](https://github.com/runfinch/finch/commit/18accb89ad30e12a8f911f0a561239325fb6a7db))
+* **deps:** Bump golang.org/x/crypto from 0.29.0 to 0.31.0 ([#1215](https://github.com/runfinch/finch/issues/1215)) ([7df9beb](https://github.com/runfinch/finch/commit/7df9beb93c8c29d2832d7c72626f57a0929f4f74))
+* **deps:** Bump submodules and dependencies ([#1219](https://github.com/runfinch/finch/issues/1219)) ([25117e5](https://github.com/runfinch/finch/commit/25117e50e2a79f1751ded2089a1fdec5298f8cf9))
+* **deps:** Bump submodules and dependencies ([#1226](https://github.com/runfinch/finch/issues/1226)) ([71e0620](https://github.com/runfinch/finch/commit/71e06208355ed1c571163d8618ecaa41f871d598))
+
+
+### Features
+
+* make finch config available in VM at $HOME/.finch ([#1180](https://github.com/runfinch/finch/issues/1180)) ([a2fd94c](https://github.com/runfinch/finch/commit/a2fd94c4040f9da8da834e41b557b99c7ec85123))
+
+
+### Bug Fixes
+
+* Update go mod to fix CVE-2024-45338 ([#1222](https://github.com/runfinch/finch/issues/1222)) ([c0e8050](https://github.com/runfinch/finch/commit/c0e805085334bcaddc70497946ce60864697c03c))
+
+## [1.4.3](https://github.com/runfinch/finch/compare/v1.4.2...v1.4.3) (2024-12-10)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump golang.org/x/sys from 0.27.0 to 0.28.0 ([#1206](https://github.com/runfinch/finch/issues/1206)) ([d573949](https://github.com/runfinch/finch/commit/d573949d384a170a1091dd92d8579bb055cd12e3))
+* **deps:** Bump submodules and dependencies ([#1211](https://github.com/runfinch/finch/issues/1211)) ([ddcec1c](https://github.com/runfinch/finch/commit/ddcec1c4b8692749e705f15220eec98b564a5921))
+
+## [1.4.2](https://github.com/runfinch/finch/compare/v1.4.1...v1.4.2) (2024-12-03)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.32.2 to 1.32.3 ([#1159](https://github.com/runfinch/finch/issues/1159)) ([6ef662f](https://github.com/runfinch/finch/commit/6ef662f9f6d177118512f8fbb15f351e5c421c89))
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.32.3 to 1.32.5 ([#1189](https://github.com/runfinch/finch/issues/1189)) ([a54ffe6](https://github.com/runfinch/finch/commit/a54ffe68cc5627b0b370c87418340e62d30fe277))
+* **deps:** Bump github.com/containerd/nerdctl/v2 from 2.0.0-rc.2 to 2.0.0-rc.3 ([#1151](https://github.com/runfinch/finch/issues/1151)) ([7f3a579](https://github.com/runfinch/finch/commit/7f3a579df88a3615db60c2beb829214ed2d1ccce))
+* **deps:** Bump github.com/containerd/nerdctl/v2 from 2.0.0-rc.3 to 2.0.0 ([#1172](https://github.com/runfinch/finch/issues/1172)) ([ec5b8ee](https://github.com/runfinch/finch/commit/ec5b8eedeed0923fa932c6e79ef1a296931df2fc))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.20.2 to 2.21.0 ([#1162](https://github.com/runfinch/finch/issues/1162)) ([e066388](https://github.com/runfinch/finch/commit/e0663886e1300870134b2d47a0628745a7286071))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.21.0 to 2.22.0 ([#1196](https://github.com/runfinch/finch/issues/1196)) ([6e9bae8](https://github.com/runfinch/finch/commit/6e9bae8292b5a97ee862fb37a3afba276ff944bf))
+* **deps:** Bump github.com/onsi/gomega from 1.34.2 to 1.35.1 ([#1164](https://github.com/runfinch/finch/issues/1164)) ([6540a4f](https://github.com/runfinch/finch/commit/6540a4f8c371a4a283fd575f0722ed65879d41ea))
+* **deps:** Bump github.com/onsi/gomega from 1.35.1 to 1.36.0 ([#1199](https://github.com/runfinch/finch/issues/1199)) ([0c143a9](https://github.com/runfinch/finch/commit/0c143a97f93e029548f375a32483840dd1c7e801))
+* **deps:** Bump github.com/pkg/sftp from 1.13.6 to 1.13.7 ([#1150](https://github.com/runfinch/finch/issues/1150)) ([3747442](https://github.com/runfinch/finch/commit/3747442536da484a12003ea99a37a8d6977f2689))
+* **deps:** Bump github.com/stretchr/testify from 1.9.0 to 1.10.0 ([#1198](https://github.com/runfinch/finch/issues/1198)) ([712b6a4](https://github.com/runfinch/finch/commit/712b6a4efa4df4b0ab9211d3d33e2c9c922d9e38))
+* **deps:** Bump golang.org/x/crypto from 0.28.0 to 0.29.0 ([#1192](https://github.com/runfinch/finch/issues/1192)) ([4938dfb](https://github.com/runfinch/finch/commit/4938dfb7a52b32accbaa23faa641048dacfc2f41))
+* **deps:** Bump golang.org/x/tools from 0.26.0 to 0.27.0 ([#1191](https://github.com/runfinch/finch/issues/1191)) ([e6ba6e8](https://github.com/runfinch/finch/commit/e6ba6e8d7338a57464126a8cb648136b4c7b6853))
+* **deps:** Bump k8s.io/apimachinery from 0.31.1 to 0.31.2 ([#1147](https://github.com/runfinch/finch/issues/1147)) ([c7c5d81](https://github.com/runfinch/finch/commit/c7c5d812fced643576bfff0fca2411382ed44666))
+* **deps:** Bump k8s.io/apimachinery from 0.31.2 to 0.31.3 ([#1195](https://github.com/runfinch/finch/issues/1195)) ([540fae7](https://github.com/runfinch/finch/commit/540fae7a485320a1a7dd061257e2804495bff86f))
+* **deps:** Bump submodules and dependencies ([#1160](https://github.com/runfinch/finch/issues/1160)) ([c6bf4e8](https://github.com/runfinch/finch/commit/c6bf4e8a04a3f99f6cd189d17b6e43fdf606077d))
+
+
+### Bug Fixes
+
+* Add retries and fix vm init ([#1184](https://github.com/runfinch/finch/issues/1184)) ([7649623](https://github.com/runfinch/finch/commit/76496234282afd52dc4345ee27de70ef98b7b035))
+* add unit test coverage ([#1166](https://github.com/runfinch/finch/issues/1166)) ([507d636](https://github.com/runfinch/finch/commit/507d636d19b5cfd5332db67e1799be992eb8c398))
+* Refactor VM lifecycle test for flakiness ([#1187](https://github.com/runfinch/finch/issues/1187)) ([2978275](https://github.com/runfinch/finch/commit/29782756594b1c6045be6f773265110a792454d9))
+
 ## [1.4.1](https://github.com/runfinch/finch/compare/v1.4.0...v1.4.1) (2024-10-24)
 
 
