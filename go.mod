@@ -173,3 +173,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 )
+
+replace go.openconcensus.io => go.opentelemetry.io/otel/bridge/opencensus v0.24.0
