@@ -123,7 +123,7 @@ mv "finch-%{latest_branch}" "%{finch_src}"
 
 # build finch
 pushd "%{finch_src}"
-GOINSECURE=go.opencensus.io VERSION=%{finch_release} GITCOMMIT=%{finch_commit} make finch
+VERSION=%{finch_release} GITCOMMIT=%{finch_commit} make finch
 popd
 
 # build buildkit
@@ -139,7 +139,7 @@ popd
 
 # build cosign
 pushd "%{cosign_src}"
-GOINSECURE=go.opencensus.io GIT_VERSION="%{cosign_release}" GIT_HASH="%{cosign_commit}" make cosign
+GIT_VERSION="%{cosign_release}" GIT_HASH="%{cosign_commit}" make cosign
 popd
 
 %check
