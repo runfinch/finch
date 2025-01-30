@@ -85,10 +85,6 @@ provision:
       printf '[Unit]\nDescription=Delete hanging data on boot\nDefaultDependencies=no\nBefore=basic.target\n\n[Service]\nType=oneshot\nExecStart=/bin/bash -c "sudo rm -rf /var/lib/cni/networks/bridge/**; sudo rm -rf /var/lib/cni/results/bridge-finch-*"\n\n[Install]\nWantedBy=basic.target\n' | sudo tee /usr/local/lib/systemd/system/finch-cleanup-on-boot.service
       sudo systemctl enable --now finch-cleanup-on-boot.service
 
-      # Set a default ulimit for number of files in containerd
-      sudo mkdir -p /usr/local/lib/systemd/system/containerd.service.d/
-      printf '[Service]\nLimitNOFILE=1048576\n' | sudo tee /usr/local/lib/systemd/system/containerd.service.d/finch.conf
-
       sudo systemctl daemon-reload
 
       sudo systemctl restart containerd.service
