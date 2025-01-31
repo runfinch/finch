@@ -87,7 +87,7 @@ func getNerdctlVersion(subject string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to run version command: %w", err)
 	}
-	re := regexp.MustCompile(`nerdctl:\n\s*Version:\s*v(.*)$`)
+	re := regexp.MustCompile(`(?m)nerdctl:\n\s*Version:\s*v(.*)$`)
 	matches := re.FindStringSubmatch(string(output))
 
 	if matches == nil || len(matches) != 2 {
