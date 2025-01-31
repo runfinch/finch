@@ -35,7 +35,6 @@ import (
 	"regexp"
 	"runtime"
 
-	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/option"
 )
 
@@ -69,7 +68,11 @@ func CreateOption() (*option.Option, error) {
 
 	mods := []option.Modifier{}
 	if runtime.GOOS == "linux" {
-		mods = append(mods, option.WithNerdctlVersion(getNerdctlVersion(subject)))
+		nerdctlVersion, err := getNerdctlVersion(subject)
+		if err != nil {
+			return nil, err
+		}
+		mods = append(mods, option.WithNerdctlVersion(nerdctlVersion))
 	}
 
 	o, err := option.New(args, mods...)
@@ -79,13 +82,17 @@ func CreateOption() (*option.Option, error) {
 	return o, nil
 }
 
-func getNerdctlVersion(subject string) string {
+func getNerdctlVersion(subject string) (string, error) {
 	output, err := exec.Command(subject, "version").CombinedOutput()
-	gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+	if err != nil {
+		return "", fmt.Errorf("failed to run version command: %w", err)
+	}
 	re := regexp.MustCompile(`nerdctl:\n\s*Version:\s*v(.*)$`)
 	matches := re.FindStringSubmatch(string(output))
 
-	gomega.Expect(matches).ShouldNot(gomega.BeNil())
-	gomega.Expect(matches).Should(gomega.HaveLen(2))
-	return matches[1]
+	if matches == nil || len(matches) != 2 {
+		return "", fmt.Errorf("regexp did not match properly, output: %s", output)
+	}
+
+	return matches[1], nil
 }
