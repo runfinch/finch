@@ -31,7 +31,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/runfinch/common-tests/option"
 )
@@ -64,12 +63,7 @@ func CreateOption() (*option.Option, error) {
 		args = append(args, "--debug")
 	}
 
-	mods := []option.Modifier{}
-	if runtime.GOOS == "linux" {
-		mods = append(mods, option.WithNerdctlVersion("1.7.7"))
-	}
-
-	o, err := option.New(args, mods...)
+	o, err := option.New(args, []option.Modifier{}...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize a testing option: %w", err)
 	}
