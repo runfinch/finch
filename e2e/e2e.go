@@ -30,8 +30,12 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"regexp"
+	"runtime"
 
+	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/option"
 )
 
@@ -63,9 +67,25 @@ func CreateOption() (*option.Option, error) {
 		args = append(args, "--debug")
 	}
 
-	o, err := option.New(args, []option.Modifier{}...)
+	mods := []option.Modifier{}
+	if runtime.GOOS == "linux" {
+		mods = append(mods, option.WithNerdctlVersion(getNerdctlVersion(subject)))
+	}
+
+	o, err := option.New(args, mods...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize a testing option: %w", err)
 	}
 	return o, nil
+}
+
+func getNerdctlVersion(subject string) string {
+	output, err := exec.Command(subject, "version").CombinedOutput()
+	gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+	re := regexp.MustCompile(`nerdctl:\n\s*Version:\s*v(.*)$`)
+	matches := re.FindStringSubmatch(string(output))
+
+	gomega.Expect(matches).ShouldNot(gomega.BeNil())
+	gomega.Expect(matches).Should(gomega.HaveLen(2))
+	return matches[1]
 }
