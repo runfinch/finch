@@ -126,27 +126,24 @@ jobs:
       - name: Set output variables
         id: vars
         run: |
-          $has_creds="${{ github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' &&
-            github.event_name == 'pull_request' &&
-            github.event.action == 'closed' &&
-            github.event.pull_request.merged == true}}"
+          $has_creds="${{ github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}"
           echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        if: ${{ env.has_creds == 'true' }}
+        if: env.has_creds == 'true'
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: download artifacts
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.08
-        if: ${{ env.has_creds == 'true' }}
+        if: env.has_creds == 'true'
         with:
           name: windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
           path: windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
       - name: Check and upload e2e tests reports to s3 bucket
-        if: ${{ env.has_creds == 'true' }}
+        if: env.has_creds == 'true'
         run: |
           $env:VM_REPORT = "${{ github.workspace }}\windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports\${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json"
           $env:CONTAINER_REPORT = "${{ github.workspace }}\windows-${{ inputs.test-command }}-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports\${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json"
