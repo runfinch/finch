@@ -57,7 +57,7 @@ jobs:
           has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
           echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
         if: ${{ steps.vars.outputs.has_creds == 'true' }}
         with:
           role-to-assume: ${{ secrets.ROLE }}
@@ -115,7 +115,7 @@ jobs:
       ]
     steps:
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
         if: |
           needs.test.outputs.has_creds == 'true'
           && github.event_name == 'pull_request'
