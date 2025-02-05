@@ -7,6 +7,7 @@ jobs:
   get-latest-tag:
     name: Get the latest release tag
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     outputs:
       tag: ${{ steps.latest-tag.outputs.tag }}
     steps:

@@ -32,6 +32,7 @@ jobs:
         "${{ inputs.version }}",
         "${{ inputs.runner-type }}",
       ]
+    timeout-minutes: 60
     outputs:
       has_creds: ${{ steps.vars.outputs.has_creds}}
       vm_report: ${{ steps.set-multiple-vars.outputs.VM_REPORT }}
@@ -151,6 +152,7 @@ jobs:
         "${{ inputs.version }}",
         "${{ inputs.runner-type }}",
       ]
+    timeout-minutes: 5
     steps:
       - name: Set output variables to check AL2
         id: linux2
