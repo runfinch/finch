@@ -36,6 +36,9 @@ VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
 LDFLAGS = "-w $(VERSION_INJECTION)"
 MIN_MACOS_VERSION ?= 11.0
 
+FINCH_DAEMON_LOCATION_ROOT ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/finch-daemon
+FINCH_DAEMON_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/finch-daemon
+
 GOOS ?= $(shell $(GO) env GOOS)
 ifeq ($(GOOS),windows)
 BINARYNAME := $(addsuffix .exe, $(BINARYNAME))
@@ -75,7 +78,7 @@ endif
 
 FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
 
-remote-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml
+remote-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml $(OUTDIR)/finch-daemon/finch@.service
 
 ifeq ($(BUILD_OS), Windows_NT)
 include Makefile.windows
@@ -173,6 +176,9 @@ finch-all:
 
 .PHONY: release
 release: check-licenses all download-licenses
+
+$(OUTDIR)/finch-daemon/finch@.service:
+	cp finch@.service $(OUTDIR)/finch-daemon/finch@.service
 
 .PHONY: coverage
 coverage:
