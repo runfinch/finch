@@ -114,7 +114,7 @@ jobs:
   upload-windows-e2e-test-report:
     needs: test
     if: always()
-    timeout-minutes: 180
+    timeout-minutes: 5
     runs-on:
       [
         "self-hosted",

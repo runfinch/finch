@@ -35,6 +35,7 @@ jobs:
         "${{ inputs.version }}",
         "${{ inputs.runner-type }}",
       ]
+    timeout-minutes: 60
     outputs:
       has_creds: ${{ steps.vars.outputs.has_creds}}
       vm_report: ${{ steps.set-multiple-vars.outputs.VM_REPORT }}
@@ -113,6 +114,7 @@ jobs:
         "${{ inputs.version }}",
         "${{ inputs.runner-type }}",
       ]
+    timeout-minutes: 5
     steps:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
