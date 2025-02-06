@@ -37,6 +37,7 @@ permissions:
 jobs:
  upload-e2e-test-report:
     if: always()
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
       - name: Set output variables to check AL2

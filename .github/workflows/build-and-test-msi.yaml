@@ -28,6 +28,7 @@ jobs:
   get-tag-name:
     name: Get tag name
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     outputs:
       tag: ${{ steps.check-tag.outputs.tag }}
       version: ${{ steps.check-tag.outputs.version }}
