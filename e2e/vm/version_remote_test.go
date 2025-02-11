@@ -19,10 +19,10 @@ import (
 )
 
 const (
-	nerdctlVersion    = "v2.0.2.m"
-	buildKitVersion   = "v0.18.1"
-	containerdVersion = "v2.0.0"
-	runcVersion       = "1.2.2"
+	nerdctlVersion    = "v2.0.3"
+	buildKitVersion   = "v0.19.0"
+	containerdVersion = "v2.0.2"
+	runcVersion       = "1.2.4"
 )
 
 type Versions struct {
@@ -53,7 +53,7 @@ var testVersion = func(o *option.Option) {
  OS\/Arch:	[A-Za-z0-9]+\/[A-Za-z0-9]+
  nerdctl:
   Version:	{{ .NerdctlVersion }}
-  GitCommit:	[a-z0-9]{40}.m
+  GitCommit:	[a-z0-9]{40}
  buildctl:
   Version:	{{ .BuildKitVersion }}
   GitCommit:	[a-z0-9]{40}
