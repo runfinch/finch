@@ -53,7 +53,7 @@ var testVersion = func(o *option.Option) {
  OS\/Arch:	[A-Za-z0-9]+\/[A-Za-z0-9]+
  nerdctl:
   Version:	{{ .NerdctlVersion }}
-  GitCommit:	[a-z0-9]{40}.m
+  GitCommit:	[a-z0-9]{40}
  buildctl:
   Version:	{{ .BuildKitVersion }}
   GitCommit:	[a-z0-9]{40}
