@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.7.0](https://github.com/runfinch/finch/compare/v1.6.1...v1.7.0) (2025-02-11)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.32.7 to 1.36.0 ([#1266](https://github.com/runfinch/finch/issues/1266)) ([4498d21](https://github.com/runfinch/finch/commit/4498d214b9bedcfefcc54e176386822dc5158b5a))
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.36.0 to 1.36.1 ([#1274](https://github.com/runfinch/finch/issues/1274)) ([1aa6c97](https://github.com/runfinch/finch/commit/1aa6c9786af8ca2e03189bf4ad3217ba978c0be1))
+* **deps:** Bump github.com/containerd/nerdctl/v2 from 2.0.0 to 2.0.3 ([#1212](https://github.com/runfinch/finch/issues/1212)) ([3a207c1](https://github.com/runfinch/finch/commit/3a207c171135d96d08083d189f12f5014151e7aa))
+* **deps:** Bump github.com/docker/cli from 27.5.0+incompatible to 27.5.1+incompatible ([#1275](https://github.com/runfinch/finch/issues/1275)) ([5c52f7d](https://github.com/runfinch/finch/commit/5c52f7d632227d4cbf4ed8e7eb553d6e5b18ad36))
+* **deps:** Bump github.com/docker/docker from 27.4.1+incompatible to 27.5.1+incompatible ([#1253](https://github.com/runfinch/finch/issues/1253)) ([ab34181](https://github.com/runfinch/finch/commit/ab34181a43632d86bc1aecc050b10bd39533d8fa))
+* **deps:** Bump github.com/lima-vm/lima from 0.23.2 to 1.0.4 ([#1230](https://github.com/runfinch/finch/issues/1230)) ([67ab6f8](https://github.com/runfinch/finch/commit/67ab6f8532da8d70100338f4546a76ed4ea43cad))
+* **deps:** Bump github.com/lima-vm/lima from 1.0.4 to 1.0.5 ([#1279](https://github.com/runfinch/finch/issues/1279)) ([8a377dc](https://github.com/runfinch/finch/commit/8a377dc4d756d8dd885d6294cc74d705f45e29b0))
+* **deps:** Bump github.com/spf13/afero from 1.11.0 to 1.12.0 ([#1271](https://github.com/runfinch/finch/issues/1271)) ([10db65d](https://github.com/runfinch/finch/commit/10db65d260eefbc39641e69e05c812879e31abcd))
+* **deps:** Bump golang.org/x/crypto from 0.32.0 to 0.33.0 ([#1280](https://github.com/runfinch/finch/issues/1280)) ([88ae5ed](https://github.com/runfinch/finch/commit/88ae5edf1e9375d02cd77f21d9af4bb0bc0dbf80))
+* **deps:** Bump golang.org/x/sys from 0.29.0 to 0.30.0 ([#1277](https://github.com/runfinch/finch/issues/1277)) ([6b0328a](https://github.com/runfinch/finch/commit/6b0328a5db7f56472b7ac21a936f20eeacee15fa))
+* **deps:** Bump golang.org/x/text from 0.21.0 to 0.22.0 ([#1270](https://github.com/runfinch/finch/issues/1270)) ([77ed636](https://github.com/runfinch/finch/commit/77ed63680888f32336b6c5cc05bd82ed4c03ca07))
+* **deps:** Bump golang.org/x/tools from 0.28.0 to 0.29.0 ([#1256](https://github.com/runfinch/finch/issues/1256)) ([87a9827](https://github.com/runfinch/finch/commit/87a982753d86025777b7ec1c5a64cf60df5e52cb))
+* **deps:** Bump golang.org/x/tools from 0.29.0 to 0.30.0 ([#1284](https://github.com/runfinch/finch/issues/1284)) ([e521a09](https://github.com/runfinch/finch/commit/e521a09c9c2c7640f345f3a9f204164ac44d5cd1))
+* **deps:** Bump submodules and dependencies ([#1249](https://github.com/runfinch/finch/issues/1249)) ([b015c66](https://github.com/runfinch/finch/commit/b015c6684f820c55ded83924d0861ff22f22f31b))
+
+
+### Features
+
+* allow other credential helpers in Finch VM ([#1265](https://github.com/runfinch/finch/issues/1265)) ([515a693](https://github.com/runfinch/finch/commit/515a6931f9a7ae861b383e0d8ae5113bb01c1081))
+
+
+### Bug Fixes
+
+* conflict in parsing of -h flag for help and hostname in container run ([8b8df27](https://github.com/runfinch/finch/commit/8b8df27d697d749746c84d913660419284aff9b6))
+* conflict in parsing of -h flag for help and hostname in container run  ([#1251](https://github.com/runfinch/finch/issues/1251)) ([8b8df27](https://github.com/runfinch/finch/commit/8b8df27d697d749746c84d913660419284aff9b6))
+* formatting for byo credential helper bashrc ([#1278](https://github.com/runfinch/finch/issues/1278)) ([b1c7d6e](https://github.com/runfinch/finch/commit/b1c7d6ee715965c6bc0897bea0f7e0559ad7dd07))
+
 ## [1.6.1](https://github.com/runfinch/finch/compare/v1.6.0...v1.6.1) (2025-01-17)
 
 
