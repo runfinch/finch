@@ -137,7 +137,7 @@ jobs:
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
           sudo installer -pkg Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg -target /
       - name: Run VM e2e tests
-        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        uses: nick-fields/retry@c97818ca39074beaea45180dba704f92496a0082 # v3.0.1
         with:
           timeout_minutes: 180
           max_attempts: 3
@@ -146,7 +146,7 @@ jobs:
             git clean -f -d
             INSTALLED=true make test-e2e-vm
       - name: Run container e2e tests
-        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        uses: nick-fields/retry@c97818ca39074beaea45180dba704f92496a0082 # v3.0.1
         with:
           timeout_minutes: 180
           max_attempts: 3
