@@ -13,6 +13,8 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@d1a8f221d7723166f48a584aebba00ef3f6febec # v4.1.4
         id: release
+        with:
+          target-branch: ${{ github.head_ref || github.ref_name }}
   trigger-release-automation:
     name: Trigger release-automation.yaml if PR is merged
     needs: [release-please]
