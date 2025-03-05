@@ -1,6 +1,7 @@
 module github.com/runfinch/finch
 
 go 1.22.7
+toolchain go1.23.7
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.36.3
@@ -26,7 +27,7 @@ require (
 	github.com/xorcare/pointer v1.2.2
 	golang.org/x/crypto v0.33.0
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
-	golang.org/x/sync v0.11.0
+	golang.org/x/sync v0.12.0
 	golang.org/x/tools v0.30.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.31.4
