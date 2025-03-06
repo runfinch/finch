@@ -16,7 +16,7 @@ on:
     - cron: '0 9 * * *'
 env:
   GO111MODULE: on
-  GO_VERSION: '1.22.9'
+  GO_VERSION: '1.23.0'
 
 permissions:
   # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
