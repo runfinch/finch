@@ -11,7 +11,7 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
     steps:
-      - uses: googleapis/release-please-action@d1a8f221d7723166f48a584aebba00ef3f6febec # v4.1.4
+      - uses: googleapis/release-please-action@5792afc6b46e9bb55deda9eda973a18c226bc3fc # v4.1.5
         id: release
   trigger-release-automation:
     name: Trigger release-automation.yaml if PR is merged
