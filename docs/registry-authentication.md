@@ -28,10 +28,10 @@ This helper automatically handles the retrieval and renewal of ECR credentials f
 
 ###### Installation and Setup
 
-1. Add `ecr-login` to `creds-helpers` in `finch.yaml`.
+1. Add `ecr-login` to `creds_helpers` in `finch.yaml`.
 
     ```yaml
-    creds-helpers:
+    creds_helpers:
       - ecr-login
     ```
 
@@ -57,10 +57,10 @@ Bring-Your-Own credential helpers enables users to plug-and-play their own custo
 
 ##### Installation and Setup
 
-1. Add credential helper to `creds-helpers` in `finch.yaml`.
+1. Add credential helper to `creds_helpers` in `finch.yaml`.
 
     ```yaml
-    creds-helpers:
+    creds_helpers:
       - secretservice
     ```
 
