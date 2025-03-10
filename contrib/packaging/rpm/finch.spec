@@ -91,7 +91,7 @@ Provides: bundled(buildkitd) = %{buildkit_rpm_version}
 Provides: bundled(cosign) = %{cosign_rpm_version}
 
 # Compilation requirements
-BuildRequires: golang >= 1.22.3, git, make
+BuildRequires: golang >= 1.23.0, git, make
 %if 0%{?amzn} > 2
 # this macro package doesn't exist on AL2
 BuildRequires: systemd-rpm-macros
