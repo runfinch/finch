@@ -11,6 +11,7 @@ jobs:
     outputs:
       arch: ${{ steps.output-arch.arch }}
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - name: 'get output arch'
         id: output-arch

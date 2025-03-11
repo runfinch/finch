@@ -91,9 +91,16 @@ func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd st
 func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir string) error {
 	cmdArr := []string{
 		`export DOCKER_CONFIG="$FINCH_DIR"`,
-		"[ -L /usr/local/bin/docker-credential-ecr-login ] " +
-			`|| sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-ecr-login /usr/local/bin/`,
 		`[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws`,
+	}
+
+	//nolint:gosec // G101: Potential hardcoded credentials false positive
+	const configureCredHelperTemplate = `([ -e "$FINCH_DIR"/cred-helpers/docker-credential-%s ] || \
+  (echo "error: docker-credential-%s not found in $FINCH_DIR/cred-helpers directory.")) && \
+  ([ -L /usr/local/bin/docker-credential-%s ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-%s /usr/local/bin)`
+
+	for _, credHelper := range fc.CredsHelpers {
+		cmdArr = append(cmdArr, fmt.Sprintf(configureCredHelperTemplate, credHelper, credHelper, credHelper, credHelper))
 	}
 
 	awsDir := fmt.Sprintf("%s/.aws", homeDir)
