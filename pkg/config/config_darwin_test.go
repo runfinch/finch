@@ -26,6 +26,17 @@ func makeConfig(vmType limayaml.VMType, memory string, cpus int, rosetta bool) *
 	return &fc
 }
 
+func makeExperimentalConfig(vmType limayaml.VMType, memory string, cpus int, rosetta bool, experimentalSettings SharedExperimentalSettings) *Finch {
+	fc := Finch{}
+	fc.VMType = pointer.String(vmType)
+	fc.Memory = pointer.String(memory)
+	fc.CPUs = pointer.Int(cpus)
+	fc.Rosetta = pointer.Bool(rosetta)
+	fc.ExperimentalFeatures = experimentalSettings
+	return &fc
+}
+
+
 func platformLoadTests(t *testing.T) []loadTestCase {
 	return []loadTestCase{
 		{
@@ -117,6 +128,28 @@ cpus: 8
 			want:    makeConfig("vz", "3GiB", 2, false),
 			wantErr: nil,
 		},
+ 		{
+ 			name: "config file exists, but contains experimental features",
+ 			path: "/config.yaml",
+ 			mockSvc: func(
+ 				fs afero.Fs,
+ 				_ *mocks.Logger,
+ 				deps *mocks.LoadSystemDeps,
+ 				mem *mocks.Memory,
+ 				ecc *mocks.CommandCreator,
+ 				ctrl *gomock.Controller,
+ 			) {
+ 					require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("experimental_features:\n  mountInotify: true"), 0o600))
+ 				deps.EXPECT().NumCPU().Return(4).Times(2)
+ 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(2)
+ 				c := mocks.NewCommand(ctrl)
+ 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
+ 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
+ 			},
+ 			want:    makeExperimentalConfig("vz", "3GiB", 2, false, SharedExperimentalSettings{MountInotify: true}),
+ 			wantErr: nil,
+ 		},
+ 	}
 		{
 			name: "config file does not exist",
 			path: "/config.yaml",
