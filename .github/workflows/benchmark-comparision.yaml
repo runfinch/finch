@@ -1,0 +1,68 @@
+# - When a third-party action is added (i.e., `uses`), please also add it to `download-licenses` in Makefile.
+# - When a job is added/removed/renamed, please make corresponding changes in ci-docs.yaml.
+name: Comparison Benchmark
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'contrib/**'
+
+permissions:
+  # deployments permission to deploy GitHub pages website
+  deployments: write
+  # contents permission to update benchmark contents in gh-pages branch
+  contents: write
+
+jobs:
+  benchmark:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          submodules: true
+      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Clean up previous files
+        run: |
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          sudo rm -rf ./_output
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+      - name: Install Dependencies
+        run: | 
+          sudo apt-get install -y lz4 automake autoconf libtool
+          sudo snap install yq
+      - name: Build project
+        run: |
+          make
+      - name: Run benchmark
+        run: make test-benchmark-container | tee benchmark-container.txt
+      - name: Set OS info as env variable
+        run: |
+          echo "OS_VERSION=$(lsb_release -sr)" >> $GITHUB_ENV
+          echo "ARCH=$(uname -m)" >> $GITHUB_ENV
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@4de1bed97a47495fc4c5404952da0499e31f5c29 # v1.20.3
+        with:
+          name: Finch Benchmark
+          tool: 'go'
+          benchmark-data-dir-path: "dev/bench/comparison/${{ env.OS_VERSION }}/${{ env.ARCH }}"
+          output-file-path: benchmark-container.txt
+      - name: Push benchmark result
+        run: git push 'https://github.com/coderbirju/finch.git' gh-pages:gh-pages
