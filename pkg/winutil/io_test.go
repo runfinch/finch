@@ -49,7 +49,6 @@ func TestFromUTF16le(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			tc.postRunCheck(t, FromUTF16le(tc.r))
@@ -98,7 +97,6 @@ func TestFromUTF16leToString(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 

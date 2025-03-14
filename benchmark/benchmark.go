@@ -7,6 +7,7 @@ package benchmark
 import (
 	"flag"
 	"fmt"
+	"math/big"
 	"os"
 	"path/filepath"
 	"sync"
@@ -149,12 +150,12 @@ func measureMetrics(targetFunc func()) (Metrics, error) { //nolint:unparam // ma
 	avgCPU := sumCPU / float64(len(cpuUsage))
 	totalCPUTime := time.Since(startTime)
 
-	diskUsageDelta := int64(diskUsageBefore - diskUsageAfter)
+	diskUsageDelta := new(big.Int).SetUint64(diskUsageBefore - diskUsageAfter)
 
 	return Metrics{
 		PeakCPUUsage:    peakCPU,
 		AverageCPUUsage: avgCPU,
 		TotalCPUTime:    totalCPUTime,
-		DiskUsageDelta:  diskUsageDelta,
+		DiskUsageDelta:  diskUsageDelta.Int64(),
 	}, nil
 }
