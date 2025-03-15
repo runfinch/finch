@@ -5,6 +5,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"text/template"
@@ -120,7 +121,10 @@ func (va *versionAction) runAdapter(cmd *cobra.Command, _ []string) error {
 
 func (va *versionAction) run(format string) error {
 	if err := va.printVersion(format); err != nil {
-		fmt.Fprintf(va.stdOut, "Finch version:\t%s\n", version.Version)
+		_, inErr := fmt.Fprintf(va.stdOut, "Finch version:\t%s\n", version.Version)
+		if inErr != nil {
+			return errors.Join(err, inErr)
+		}
 		return err
 	}
 	return nil

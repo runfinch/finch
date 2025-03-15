@@ -163,7 +163,6 @@ func TestGenDocsAction_runAdapter(t *testing.T) {
 
 	//nolint:paralleltest // This function manipulates stdout
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			logger := mocks.NewLogger(ctrl)

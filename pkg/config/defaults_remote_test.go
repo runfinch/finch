@@ -33,7 +33,6 @@ func Test_applyDefaults(t *testing.T) {
 	testCases = append(testCases, applyDefaultPlatformSpecificTestCases()...)
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 

@@ -34,7 +34,11 @@ type Level int
 
 //go:generate stringer -type=Level
 const (
+	// Debug is the lowest log level. It should be used for debugging purposes.
 	Debug Level = iota
+
+	// Panic is the highest log level. It should be used for panic situations.
+	// It will cause the program to panic and exit.
 	Panic
 )
 
@@ -43,7 +47,13 @@ type Formatter int
 
 //go:generate stringer -type=Formatter
 const (
+	// Text is the default log formatter. It formats logs into text.
 	Text Formatter = iota
+
+	// TextWithoutTruncation is text log formatting with truncation of level text disabled.
 	TextWithoutTruncation
+
+	// JSON is the JSON log formatter.
+	// It will also add a timestamp to the log message.
 	JSON
 )

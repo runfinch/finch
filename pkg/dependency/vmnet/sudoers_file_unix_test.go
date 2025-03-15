@@ -14,7 +14,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"runtime"
 	"testing"
 
 	"github.com/runfinch/finch/pkg/mocks"
@@ -26,9 +25,6 @@ import (
 )
 
 func TestSudoers_path(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip()
-	}
 	t.Parallel()
 
 	got := newSudoersFile(nil, nil, nil, nil).path()
@@ -36,9 +32,6 @@ func TestSudoers_path(t *testing.T) {
 }
 
 func TestSudoers_Installed(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip()
-	}
 	t.Parallel()
 
 	testCases := []struct {
@@ -103,7 +96,6 @@ func TestSudoers_Installed(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -121,9 +113,6 @@ func TestSudoers_Installed(t *testing.T) {
 }
 
 func TestSudoers_Install(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip()
-	}
 	t.Parallel()
 
 	testCases := []struct {
@@ -202,7 +191,6 @@ func TestSudoers_Install(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -220,9 +208,6 @@ func TestSudoers_Install(t *testing.T) {
 }
 
 func TestSudoers_RequiresRoot(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip()
-	}
 	t.Parallel()
 
 	got := newSudoersFile(nil, nil, nil, nil).RequiresRoot()
