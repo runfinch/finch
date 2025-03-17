@@ -24,9 +24,9 @@ linters-settings:
     checks: ["all", "-ST1003"]
 linters:
   enable:
+    - copyloopvar
     - errname
     - errorlint
-    - exportloopref
     - forcetypeassert
     - gocritic
     - godot

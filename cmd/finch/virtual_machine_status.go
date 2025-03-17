@@ -47,14 +47,14 @@ func (sva *statusVMAction) run() error {
 	}
 	switch status {
 	case lima.Running:
-		fmt.Fprintln(sva.stdout, "Running")
-		return nil
+		_, err = fmt.Fprintln(sva.stdout, "Running")
+		return err
 	case lima.Nonexistent:
-		fmt.Fprintln(sva.stdout, "Nonexistent")
-		return nil
+		_, err = fmt.Fprintln(sva.stdout, "Nonexistent")
+		return err
 	case lima.Stopped:
-		fmt.Fprintln(sva.stdout, "Stopped")
-		return nil
+		_, err = fmt.Fprintln(sva.stdout, "Stopped")
+		return err
 	default:
 		return fmt.Errorf("instance state of %q is unknown", limaInstanceName)
 	}
