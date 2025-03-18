@@ -36,7 +36,7 @@ func makeExperimentalConfig(vmType limayaml.VMType, memory string, cpus int, ros
 	fc.Memory = pointer.String(memory)
 	fc.CPUs = pointer.Int(cpus)
 	fc.Rosetta = pointer.Bool(rosetta)
-	fc.ExperimentalFeatures = experimentalSettings
+	fc.Experimental = experimentalSettings
 	return &fc
 }
 
@@ -202,7 +202,7 @@ cpus: 8
 			wantErr: nil,
 		},
 		{
-			name: "config file exists, but contains experimental features",
+			name: "config file exists, but contains experimental flags",
 			path: "/config.yaml",
 			mockSvc: func(
 				fs afero.Fs,
@@ -212,7 +212,7 @@ cpus: 8
 				ecc *mocks.CommandCreator,
 				ctrl *gomock.Controller,
 			) {
-					require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("experimental_features:\n  mountInotify: true"), 0o600))
+					require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte("experimental:\n  mountInotify: true"), 0o600))
 				deps.EXPECT().NumCPU().Return(4).Times(2)
 				mem.EXPECT().TotalMemory().Return(uint64(12_884_901_888)).Times(2)
 				c := mocks.NewCommand(ctrl)
