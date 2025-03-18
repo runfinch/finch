@@ -115,7 +115,7 @@ jobs:
         run: |
           echo "GOOS=windows" >> $GITHUB_ENV
       - name: golangci-lint - windows
-        uses: golangci/golangci-lint-action@4696ba8babb6127d732c3c6dde519db15edab9ea # v6.5.1
+        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
         with:
           # Pin the version in case all the builds start to fail at the same time.
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
@@ -126,7 +126,7 @@ jobs:
         run: |
           echo "GOOS=darwin" >> $GITHUB_ENV
       - name: golangci-lint - darwin
-        uses: golangci/golangci-lint-action@4696ba8babb6127d732c3c6dde519db15edab9ea # v6.5.1
+        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
         with:
           # Pin the version in case all the builds start to fail at the same time.
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
