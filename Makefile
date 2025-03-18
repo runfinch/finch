@@ -309,6 +309,27 @@ test-e2e-container: create-report-dir
 test-e2e-vm: create-report-dir
 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
+GINKGO = go run github.com/onsi/ginkgo/v2/ginkgo
+# Common ginkgo options: -v for verbose mode, --focus="test name" for running single tests
+GFLAGS ?= --race --randomize-all --randomize-suites
+
+ifeq ($(INSTALLED),true)
+DAEMON_DOCKER_HOST := "unix:///Applications/Finch/lima/data/finch/sock/finch.sock"
+else
+DAEMON_DOCKER_HOST := "unix://$(OUTDIR)/lima/data/finch/sock/finch.sock"
+endif
+
+.PHONY: test-e2e-daemon
+test-e2e-daemon: create-report-dir
+	cd $(FINCH_CORE_DIR)/src/finch-daemon && \
+	STATIC=1 GOOS=linux GOARCH=$(GOARCH) make && \
+	DOCKER_HOST=$(DAEMON_DOCKER_HOST) \
+	DOCKER_API_VERSION="v1.41" \
+	TEST_E2E=1 \
+	go test ./e2e/... -test.v -ginkgo.v -ginkgo.randomize-all -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json --subject="$(OUTDIR)/bin/$(BINARYNAME)"
+#$(GINKGO) $(GFLAGS) ./e2e/... --subject="$(OUTDIR)/bin/$(BINARYNAME)"
+
+
 .PHONY: test-benchmark
 test-benchmark:
 	cd benchmark/all && go test -ldflags $(LDFLAGS) -bench=. -benchmem --installed="$(INSTALLED)"
