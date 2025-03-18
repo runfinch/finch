@@ -66,7 +66,7 @@ jobs:
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: Remove Finch VM
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: ./scripts/cleanup_wsl.ps1
       - name: Clean up previous files
         run: |
@@ -110,7 +110,7 @@ jobs:
           path: ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-*.json
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           ./scripts/cleanup_wsl.ps1
           make clean
