@@ -208,11 +208,11 @@ rosetta: false
 # For running DevContainers on Finch, this functionality will convert Docker-like arguments into compatible nerdctl commands and arguments.
 dockercompat: true
 
-# experimental_features: enable experimental features (optional)
+# experimental: enable experimental features (optional)
 #
 # Supported features:
 # - mountInotify https://lima-vm.io/docs/config/mount/#mount-inotify
-experimental_features:
+experimental:
     mountInotify: true
 ```
 
@@ -256,11 +256,11 @@ vmType: "wsl2"
 # For running DevContainers on Finch, this functionality will convert Docker-like arguments into compatible nerdctl commands and arguments.
 dockercompat: true
 
-# experimental_features: experimental features to enable (optional)
+# experimental: experimental features to enable (optional)
 #
 # Supported features:
 # - mountInotify https://lima-vm.io/docs/config/mount/#mount-inotify
-experimental_features:
+experimental:
     mountInotify: true
 ```
 
