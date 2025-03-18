@@ -49,7 +49,7 @@ jobs:
         run: |
           echo "ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true" >> $GITHUB_ENV
           echo "ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION=node16" >> $GITHUB_ENV
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         # Later checkout versiosn use node which doesn't run on AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         with:
