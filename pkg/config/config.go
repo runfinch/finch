@@ -36,10 +36,10 @@ type SharedSystemSettings struct {
 
 // SharedSettings represents settings shared by all Finch configurations.
 type SharedSettings struct {
-	Snapshotters         []string                   `yaml:"snapshotters,omitempty"`
-	CredsHelpers         []string                   `yaml:"creds_helpers,omitempty"`
-	ExperimentalFeatures SharedExperimentalSettings `yaml:"experimental_features,omitempty"`
-	DockerCompat         bool                       `yaml:"dockercompat,omitempty"`
+	Snapshotters []string                   `yaml:"snapshotters,omitempty"`
+	CredsHelpers []string                   `yaml:"creds_helpers,omitempty"`
+	Experimental SharedExperimentalSettings `yaml:"experimental,omitempty"`
+	DockerCompat bool                       `yaml:"dockercompat,omitempty"`
 }
 
 // SharedExperimentalSettings represents available experimental settings shared
