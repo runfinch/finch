@@ -143,16 +143,34 @@ memory: 4GiB
 snapshotters: 
     - soci
 
-# creds_helpers: a list of credential helpers that will be installed and configured automatically. 
-# Supported Credential Helpers List: 
+# creds_helpers: a list of credential helpers which can be used by Finch's container runtime stack. (optional)
+#
+# Finch currently supports Linux based credential helpers through its guest machine for macOS and Windows or natively
+# for Linux. All credential helpers are expected to have `docker-credential-*` naming convention.
+# Finch provides two modes of operation for credential helpers: managed and bring-your-own.
+#
+# Managed credential helpers:
+# Managed credential helpers are installed and configured by Finch. This means the credential helper binary will be downloaded
+# to the host machine and a config.json will be created and configured inside the $HOME/.finch directory if it does not already exist.
+# Finch will ensure the credential helper binary is made available to its container runtime stack with no additional action required by
+# the user.
+#
+# Supported list of managed credential helpers: 
 # - ecr-login https://github.com/awslabs/amazon-ecr-credential-helper
-# Once the option has been set the credential helper will be installed on either finch vm init or finch vm start. 
-# The binary will be downloaded on the host machine and a config.json will be created and populated inside the ~/.finch/ folder 
-# if it doesn't already exist. If it already exists, the value of credsStore will be overwritten. 
-# To opt out of using the credential helper, remove the value from the credsStore parameter of config.json 
-# and remove the creds_helper value from finch.yaml. 
-# To completely remove the credential helper, either remove the binary from ~/.finch/creds-helpers or remove the creds-helpers
-# folder entirely. (optional)
+#
+# Bring-your-own credential helpers:
+# Finch does offer support for users to bring their own credential helpers. In this use-case, users will still configure
+# the credential helper in finch.yaml similar to a managed credential helper; however, unlike managed credential helpers
+# users will also need to provide the credential helper binary through $HOME/.finch/cred-helpers. Finch will ensure
+# this binary is available to the container runtime stack in the guest machine. Note: Finch currently only supports
+# guest credential helper integration, therefore users will need to provide Linux credential helper binaries. Host
+# credential helper support is not yet available.
+#
+# For both managed and bring-your-own credential helpers, once configured in finch.yaml the user will need to run
+# finch vm init or finch vm start for the configuration to take affect. To remove credential helper integration, users
+# should remove the credential helper's configuration in $HOME/.finch/config.json and the creds_helpers configuration
+# from finch.yaml. To completely remove the credential helper, either remove the binary from $HOME/.finch/creds-helpers or
+# remove the directory entirely.
 creds_helpers: 
   - ecr-login
 

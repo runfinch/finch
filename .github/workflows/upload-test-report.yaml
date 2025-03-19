@@ -46,7 +46,7 @@ jobs:
           is_al2=${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
           echo "is_al2=$is_al2" >> $GITHUB_OUTPUT
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
         if: |
             steps.linux2.outputs.is_al2 == 'false'
             && inputs.has-creds == 'true'
@@ -58,7 +58,7 @@ jobs:
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: download artifacts
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.08
+        uses: actions/download-artifact@b14cf4c92620c250e1c074ab0a5800e37df86765 # v4.1.08
         if: |
             steps.linux2.outputs.is_al2 == 'false'
             && inputs.has-creds == 'true'

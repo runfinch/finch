@@ -41,7 +41,7 @@ permissions:
 
 env:
   DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
-  GO_VERSION: '1.22.8'
+  GO_VERSION: '1.23.7'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -115,23 +115,23 @@ jobs:
         run: |
           echo "GOOS=windows" >> $GITHUB_ENV
       - name: golangci-lint - windows
-        uses: golangci/golangci-lint-action@e60da84bfae8c7920a47be973d75e15710aa8bd7 # v6.3.0
+        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
         with:
           # Pin the version in case all the builds start to fail at the same time.
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
-          version: v1.56.1
+          version: v1.64.7
           args: --fix=false --timeout=5m
       - name: set GOOS env to darwin
         run: |
           echo "GOOS=darwin" >> $GITHUB_ENV
       - name: golangci-lint - darwin
-        uses: golangci/golangci-lint-action@e60da84bfae8c7920a47be973d75e15710aa8bd7 # v6.3.0
+        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
         with:
           # Pin the version in case all the builds start to fail at the same time.
           # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
-          version: v1.56.1
+          version: v1.64.7
           args: --fix=false --timeout=5m --skip-dirs="(^|/)deps($|/)"
   shellcheck:
     name: ShellCheck

@@ -26,7 +26,7 @@ permissions:
   contents: read
 
 env:
-  GO_VERSION: '1.22.9'
+  GO_VERSION: '1.23.7'
 
 jobs:
   test:
@@ -65,7 +65,7 @@ jobs:
             sudo pkill '^socket_vmnet'
           fi
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: download-installer-session
@@ -137,7 +137,7 @@ jobs:
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
           sudo installer -pkg Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg -target /
       - name: Run VM e2e tests
-        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        uses: nick-fields/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v3.0.2
         with:
           timeout_minutes: 180
           max_attempts: 3
@@ -146,7 +146,7 @@ jobs:
             git clean -f -d
             INSTALLED=true make test-e2e-vm
       - name: Run container e2e tests
-        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
+        uses: nick-fields/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v3.0.2
         with:
           timeout_minutes: 180
           max_attempts: 3

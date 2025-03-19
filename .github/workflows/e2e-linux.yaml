@@ -22,6 +22,9 @@ permissions:
   # This is required for actions/checkout
   contents: read
 
+env:
+  GO_VERSION: '1.23.7'
+
 jobs:
   test:
     runs-on:
@@ -33,12 +36,27 @@ jobs:
         "${{ inputs.runner-type }}",
       ]
     timeout-minutes: 60
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: 'true'
     outputs:
       has_creds: ${{ steps.vars.outputs.has_creds}}
       vm_report: ${{ steps.set-multiple-vars.outputs.VM_REPORT }}
       container_report: ${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}
       vm_serial_report: ${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}
     steps:
+      - name: Allow Node16 on AL2
+        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
+        run: |
+          echo "ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true" >> $GITHUB_ENV
+          echo "ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION=node16" >> $GITHUB_ENV
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        # Later checkout versiosn use node which doesn't run on AL2
+        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         # checkout uses node version 20, which doesn't run on AL2
         if: ${{ ! (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
@@ -47,24 +65,24 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: recursive
-      - name: Check repo out manually
+      - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
+        # Later setup-go versions use node which doesn't run on AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
-        run: |
-          git clone https://github.com/${GITHUB_REPOSITORY}.git .
-          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
-            git config --add remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
-            git config --add remote.origin.fetch "+refs/tags/*:refs/tags/*"
-            git config --add remote.origin.fetch "+${GITHUB_SHA}:${GITHUB_REF}"
-          fi
-          git fetch --prune origin
-          git checkout ${GITHUB_SHA}
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+        if: ${{ ! (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
       - name: Set output variables
         id: vars
         run: |
           has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
           echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
         # this action requires node20, skip on AL2
         if: ${{ steps.vars.outputs.has_creds == 'true' && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
         with:
@@ -103,10 +121,13 @@ jobs:
         run: |
           git status
           git clean -f -d
+
           # required by one of the tests which uses SSH_AUTH_SOCK
           eval "$(ssh-agent -s)"
-          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-container
-          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make test-e2e-vm
+
+          # Preserve path so Go from actions/setup-go is used; not the system installed golang.
+          sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-container
+          sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-vm
       - name: Change ownership of reports
         if: always()
         run: |
@@ -133,14 +154,11 @@ jobs:
           echo "VM_SERIAL_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json" >> $GITHUB_OUTPUT
       - name: Upload reports artifact
         if: ${{ steps.vars.outputs.has_creds == 'true' && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
         with:
           name: linux-${{ inputs.version }}-test-e2e-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
           path: ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-*.json
-      - name: Clean up repo AL2
-        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && always() ) }}
-        run: |
-          rm -rf "${GITHUB_WORKSPACE}"
+
   upload-e2e-test-reports:
     needs: test
     if: always()
