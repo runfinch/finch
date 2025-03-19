@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.7.1](https://github.com/runfinch/finch/compare/v1.7.0...v1.7.1) (2025-03-19)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.36.1 to 1.36.2 ([#1296](https://github.com/runfinch/finch/issues/1296)) ([0ab4f6c](https://github.com/runfinch/finch/commit/0ab4f6cc22d9a7b062ab26ae1587ef94aa5ff3f7))
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.36.2 to 1.36.3 ([#1307](https://github.com/runfinch/finch/issues/1307)) ([2f91a52](https://github.com/runfinch/finch/commit/2f91a52920b069d896ee339be22413f7116ff9c0))
+* **deps:** Bump github.com/containerd/containerd from 1.7.25 to 1.7.27 ([#1328](https://github.com/runfinch/finch/issues/1328)) ([33f0368](https://github.com/runfinch/finch/commit/33f0368d8bf7b0ce9bff6dec36494780932d790a))
+* **deps:** Bump github.com/containerd/containerd/v2 ([eb5e7ad](https://github.com/runfinch/finch/commit/eb5e7ad52e4bfee1f82605afce82bcf12db0952a))
+* **deps:** Bump github.com/containerd/containerd/v2 from 2.0.2 to 2.0.4 ([#1327](https://github.com/runfinch/finch/issues/1327)) ([eb5e7ad](https://github.com/runfinch/finch/commit/eb5e7ad52e4bfee1f82605afce82bcf12db0952a))
+* **deps:** Bump github.com/docker/cli ([f29502a](https://github.com/runfinch/finch/commit/f29502a2eb8f96709f16ee94d062a12b7289276d))
+* **deps:** Bump github.com/docker/cli from 27.5.1+incompatible to 28.0.1+incompatible ([#1303](https://github.com/runfinch/finch/issues/1303)) ([f29502a](https://github.com/runfinch/finch/commit/f29502a2eb8f96709f16ee94d062a12b7289276d))
+* **deps:** Bump github.com/docker/docker ([653eb2f](https://github.com/runfinch/finch/commit/653eb2fe586e2ad91c00a7f34ad668ab743e6a2f))
+* **deps:** Bump github.com/docker/docker from 27.5.1+incompatible to 28.0.1+incompatible ([#1305](https://github.com/runfinch/finch/issues/1305)) ([653eb2f](https://github.com/runfinch/finch/commit/653eb2fe586e2ad91c00a7f34ad668ab743e6a2f))
+* **deps:** Bump github.com/go-jose/go-jose/v4 from 4.0.4 to 4.0.5 ([#1298](https://github.com/runfinch/finch/issues/1298)) ([7b5938f](https://github.com/runfinch/finch/commit/7b5938f01831459a4483e151d70eb9a68dd011e8))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.22.2 to 2.23.0 ([#1332](https://github.com/runfinch/finch/issues/1332)) ([6b4011f](https://github.com/runfinch/finch/commit/6b4011f62573a5388e1d44882a42eed272a26eaa))
+* **deps:** Bump github.com/spf13/cobra from 1.8.1 to 1.9.1 ([#1293](https://github.com/runfinch/finch/issues/1293)) ([7314a96](https://github.com/runfinch/finch/commit/7314a964a61b008e559b28be8c56ce8930db6d1d))
+* **deps:** Bump golang.org/x/sync from 0.11.0 to 0.12.0 ([#1312](https://github.com/runfinch/finch/issues/1312)) ([b77aa58](https://github.com/runfinch/finch/commit/b77aa581218509bde422074dfaf80abdcff6afd4))
+* **deps:** Bump submodules and dependencies ([#1287](https://github.com/runfinch/finch/issues/1287)) ([2bc1795](https://github.com/runfinch/finch/commit/2bc179505382aa137d6acbbe126473795df83916))
+* **deps:** Bump the golang-x group with 3 updates ([#1326](https://github.com/runfinch/finch/issues/1326)) ([dd66983](https://github.com/runfinch/finch/commit/dd66983728d35958ed3a50fc78c347850ccee63f))
+
 ## [1.7.0](https://github.com/runfinch/finch/compare/v1.6.1...v1.7.0) (2025-02-11)
 
 
