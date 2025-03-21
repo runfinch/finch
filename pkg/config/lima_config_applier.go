@@ -139,6 +139,10 @@ func (lca *limaConfigApplier) ConfigureDefaultLimaYaml() error {
 		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
 	}
 
+	if lca.cfg.Experimental.MountInotify {
+		limaCfg.MountInotify = pointer.Bool(lca.cfg.Experimental.MountInotify)
+	}
+
 	cfgAfterInit, err := lca.configureVirtualizationFramework(&limaCfg)
 	if err != nil {
 		return fmt.Errorf("failed to apply init-only config values: %w", err)
