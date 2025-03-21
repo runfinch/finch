@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.7.2](https://github.com/runfinch/finch/compare/v1.7.1...v1.7.2) (2025-03-21)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/cli ([76d4082](https://github.com/runfinch/finch/commit/76d40829eedc8d0b97f5c4265d1122b23c853c20))
+* **deps:** Bump github.com/docker/cli from 28.0.1+incompatible to 28.0.2+incompatible ([#1337](https://github.com/runfinch/finch/issues/1337)) ([76d4082](https://github.com/runfinch/finch/commit/76d40829eedc8d0b97f5c4265d1122b23c853c20))
+* **deps:** Bump github.com/lima-vm/lima from 1.0.5 to 1.0.6 ([#1289](https://github.com/runfinch/finch/issues/1289)) ([a576086](https://github.com/runfinch/finch/commit/a576086956095a3f458e0bcb82adb4fc01a8c447))
+* **deps:** Bump github.com/runfinch/common-tests from 0.9.1 to 0.9.2 ([#1345](https://github.com/runfinch/finch/issues/1345)) ([ec5949a](https://github.com/runfinch/finch/commit/ec5949abdb8dbf5fe649cf4c3bec757ec0242f5b))
+* **deps:** Bump k8s.io/apimachinery from 0.31.4 to 0.32.3 ([#1319](https://github.com/runfinch/finch/issues/1319)) ([9280536](https://github.com/runfinch/finch/commit/92805361a582eb64ea029c0ed694b574e7e53ced))
+
 ## [1.7.1](https://github.com/runfinch/finch/compare/v1.7.0...v1.7.1) (2025-03-19)
 
 
