@@ -15,11 +15,12 @@ require (
 	github.com/onsi/ginkgo/v2 v2.23.2
 	github.com/onsi/gomega v1.36.2
 	github.com/pelletier/go-toml v1.9.5
-	github.com/pkg/sftp v1.13.7
+	github.com/pkg/sftp v1.13.8
 	github.com/runfinch/common-tests v0.9.2
 	github.com/shirou/gopsutil/v3 v3.24.5
 	github.com/sirupsen/logrus v1.9.4-0.20230606125235-dd1b4c2e81af
-	github.com/spf13/afero v1.12.0
+	github.com/spf13/afero v1.14.0
+	github.com/spf13/afero/sftpfs v1.14.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/tc-hib/go-winres v0.3.3
