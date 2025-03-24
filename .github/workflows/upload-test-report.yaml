@@ -58,7 +58,7 @@ jobs:
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: download artifacts
-        uses: actions/download-artifact@b14cf4c92620c250e1c074ab0a5800e37df86765 # v4.1.08
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.1.08
         if: |
             steps.linux2.outputs.is_al2 == 'false'
             && inputs.has-creds == 'true'
