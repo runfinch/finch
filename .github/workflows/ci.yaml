@@ -17,6 +17,7 @@ on:
       - 'finch.yaml.d/**'
       - 'winres'
       - 'Makefile*'
+      - '.golangci.yaml'
       - '!contrib/hello-finch/**'
   pull_request:
     branches:
@@ -33,6 +34,7 @@ on:
       - 'finch.yaml.d/**'
       - 'winres'
       - 'Makefile*'
+      - '.golangci.yaml'
       - '!contrib/hello-finch/**'
   workflow_dispatch:
 permissions:
