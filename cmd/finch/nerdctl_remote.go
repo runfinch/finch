@@ -299,10 +299,10 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				}
 			}
 
-			switch {
-			case arg == "--debug":
+			switch arg {
+			case "--debug":
 				nc.logger.SetLevel(flog.Debug)
-			case arg == "--help":
+			case "--help":
 				nerdctlArgs = append(nerdctlArgs, arg)
 			default:
 				nerdctlArgs = append(nerdctlArgs, arg)
