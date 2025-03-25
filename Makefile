@@ -321,8 +321,8 @@ endif
 
 .PHONY: test-e2e-daemon
 test-e2e-daemon: create-report-dir
-	$(OUTDIR)/bin/$(BINARYNAME) vm stop && \
-	$(OUTDIR)/bin/$(BINARYNAME) vm remove && \
+	$(OUTDIR)/bin/$(BINARYNAME) vm stop -f && \
+	$(OUTDIR)/bin/$(BINARYNAME) vm remove -f && \
 	$(OUTDIR)/bin/$(BINARYNAME) vm init && \
 	cd $(FINCH_CORE_DIR)/src/finch-daemon && \
 	STATIC=1 GOOS=linux GOARCH=$(GOARCH) make && \
