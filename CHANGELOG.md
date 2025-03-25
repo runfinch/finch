@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.7.2](https://github.com/runfinch/finch/compare/v1.7.1...v1.7.2) (2025-03-25)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/containerd/nerdctl/v2 from 2.0.3 to 2.0.4 ([#1342](https://github.com/runfinch/finch/issues/1342)) ([5c34d28](https://github.com/runfinch/finch/commit/5c34d28fb09b8673d3faaddd81bf2b3858e438b8))
+* **deps:** Bump github.com/docker/cli ([76d4082](https://github.com/runfinch/finch/commit/76d40829eedc8d0b97f5c4265d1122b23c853c20))
+* **deps:** Bump github.com/docker/cli from 28.0.1+incompatible to 28.0.2+incompatible ([#1337](https://github.com/runfinch/finch/issues/1337)) ([76d4082](https://github.com/runfinch/finch/commit/76d40829eedc8d0b97f5c4265d1122b23c853c20))
+* **deps:** Bump github.com/lima-vm/lima from 1.0.5 to 1.0.6 ([#1289](https://github.com/runfinch/finch/issues/1289)) ([a576086](https://github.com/runfinch/finch/commit/a576086956095a3f458e0bcb82adb4fc01a8c447))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.23.2 to 2.23.3 ([#1348](https://github.com/runfinch/finch/issues/1348)) ([dae86f9](https://github.com/runfinch/finch/commit/dae86f9cc632c42ab3be7ba058184b7c4d5183b3))
+* **deps:** Bump github.com/runfinch/common-tests from 0.9.1 to 0.9.2 ([#1345](https://github.com/runfinch/finch/issues/1345)) ([ec5949a](https://github.com/runfinch/finch/commit/ec5949abdb8dbf5fe649cf4c3bec757ec0242f5b))
+* **deps:** Bump github.com/spf13/afero from 1.12.0 to 1.14.0 ([#1343](https://github.com/runfinch/finch/issues/1343)) ([a365fc2](https://github.com/runfinch/finch/commit/a365fc2b8d1b189eeed0928abd4e467b19b16a46))
+* **deps:** Bump golang.org/x/tools from 0.30.0 to 0.31.0 ([#1338](https://github.com/runfinch/finch/issues/1338)) ([78a89ad](https://github.com/runfinch/finch/commit/78a89ad91a2b9f4181a6b6f13d5d8973598a4986))
+* **deps:** Bump k8s.io/apimachinery from 0.31.4 to 0.32.3 ([#1319](https://github.com/runfinch/finch/issues/1319)) ([9280536](https://github.com/runfinch/finch/commit/92805361a582eb64ea029c0ed694b574e7e53ced))
+
 ## [1.7.1](https://github.com/runfinch/finch/compare/v1.7.0...v1.7.1) (2025-03-19)
 
 
