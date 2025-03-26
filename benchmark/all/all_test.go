@@ -31,11 +31,11 @@ func BenchmarkAll(b *testing.B) {
 	}
 
 	b.Run("BenchmarkContainerRun", func(b *testing.B) {
-		suite.BenchmarkContainerRun(b)
+		suite.BenchmarkContainerRun(b, "finch")
 	})
 
 	b.Run("BenchmarkImageBuild", func(b *testing.B) {
-		suite.BenchmarkImageBuild(b)
+		suite.BenchmarkImageBuild(b, "finch")
 	})
 
 	err = suite.StopVM()
