@@ -1,0 +1,16 @@
+[Unit]
+Description=Finch daemon %I
+Documentation=https://runfinch.com https://github.com/runfinch/finch-daemon
+After=network.target local-fs.target containerd.service buildkit.service
+
+[Service]
+ExecStart=/usr/local/bin/finch-daemon --socket-owner %i
+ExecStartPost=-rm -rf /var/run/docker.sock
+ExecStartPost=ln -s /run/finch.sock /var/run/docker.sock
+Type=notify
+Delegate=yes
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
