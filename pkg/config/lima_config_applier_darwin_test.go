@@ -666,7 +666,7 @@ mountType: "reverse-sshfs"`), 0o600)
 			overridePath: "/override.yaml",
 			isInit:       true,
 			mockSvc: func(
-				fs afero.Fs,
+				_ afero.Fs,
 				_ *mocks.Logger,
 				cmd *mocks.Command,
 				creator *mocks.CommandCreator,
