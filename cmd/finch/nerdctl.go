@@ -4,13 +4,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	"golang.org/x/exp/slices"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -119,44 +117,6 @@ func (nc *nerdctlCommand) shouldReplaceForHelp(cmdName string, args []string) bo
 	}
 
 	return false
-}
-
-// ensureRemoteCredentials is called before any actions that may require remote resources, in order
-// to ensure that fresh credentials are available inside the VM.
-// For more details on how `aws configure export-credentials` works, checks the docs.
-//
-// [the docs]: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/configure/export-credentials.html
-func ensureRemoteCredentials(
-	fc *config.Finch,
-	ecc command.Creator,
-	outEnv *[]string,
-	logger flog.Logger,
-) {
-	if slices.Contains(fc.CredsHelpers, "ecr-login") {
-		out, err := ecc.Create(
-			"aws",
-			"configure",
-			"export-credentials",
-			"--format",
-			"process",
-		).CombinedOutput()
-		if err != nil {
-			logger.Debugln("failed to run `aws configure` command")
-			return
-		}
-
-		var exportCredsOut aws.Credentials
-		err = json.Unmarshal(out, &exportCredsOut)
-		if err != nil {
-			logger.Debugln("`aws configure export-credentials` output is unexpected, is command available? " +
-				"This may result in a broken ecr-credential helper experience.")
-			return
-		}
-
-		*outEnv = append(*outEnv, fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", exportCredsOut.AccessKeyID))
-		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", exportCredsOut.SecretAccessKey))
-		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SESSION_TOKEN=%s", exportCredsOut.SessionToken))
-	}
 }
 
 var nerdctlCmds = map[string]string{
