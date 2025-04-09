@@ -55,7 +55,7 @@ func TestLoad(t *testing.T) {
 		},
 	}
 
-	testCases = append(testCases, loadPlatformTests(t)...)
+	testCases = append(testCases, platformLoadTests(t)...)
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {

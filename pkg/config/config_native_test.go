@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func loadPlatformTests(t *testing.T) []loadTestCase {
+func platformLoadTests(t *testing.T) []loadTestCase {
 	return []loadTestCase{
 		{
 			name: "happy path",

@@ -15,7 +15,7 @@ import (
 	"github.com/xorcare/pointer"
 )
 
-func loadPlatformTests(t *testing.T) []loadTestCase {
+func platformLoadTests(t *testing.T) []loadTestCase {
 	return []loadTestCase{
 		{
 			name: "happy path",
@@ -137,7 +137,7 @@ func loadPlatformTests(t *testing.T) []loadTestCase {
 	}
 }
 
-func loadModifyFinchConfigTests(t *testing.T) []modifyFinchConfigTestCase {
+func platformModifyFinchConfigTests(t *testing.T) []modifyFinchConfigTestCase {
 	return []modifyFinchConfigTestCase{
 		{
 			name:    "should return an error if the configuration file does not exist",
@@ -151,7 +151,7 @@ func loadModifyFinchConfigTests(t *testing.T) []modifyFinchConfigTestCase {
 	}
 }
 
-func loadloadFinchConfigTestCase(t *testing.T) []loadFinchConfigTestCase {
+func platformFinchConfigTests(t *testing.T) []loadFinchConfigTestCase {
 	return []loadFinchConfigTestCase{
 		{
 			name: "successfully loads config.yaml",

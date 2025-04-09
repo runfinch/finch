@@ -25,7 +25,7 @@ func makeConfig(vmType limayaml.VMType, memory string, cpus int, rosetta bool) *
 	return &fc
 }
 
-func loadPlatformTests(t *testing.T) []loadTestCase {
+func platformLoadTests(t *testing.T) []loadTestCase {
 	return []loadTestCase{
 		{
 			name: "happy path",
