@@ -43,7 +43,7 @@ permissions:
 
 env:
   DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
-  GO_VERSION: '1.23.7'
+  GO_VERSION: '1.23.8'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
