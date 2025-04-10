@@ -11,11 +11,11 @@ require (
 	github.com/docker/go-connections v0.5.0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
-	github.com/lima-vm/lima v1.0.6
+	github.com/lima-vm/lima v1.0.7
 	github.com/onsi/ginkgo/v2 v2.23.3
-	github.com/onsi/gomega v1.36.2
+	github.com/onsi/gomega v1.37.0
 	github.com/pelletier/go-toml v1.9.5
-	github.com/pkg/sftp v1.13.8
+	github.com/pkg/sftp v1.13.9
 	github.com/runfinch/common-tests v0.9.2
 	github.com/shirou/gopsutil/v3 v3.24.5
 	github.com/sirupsen/logrus v1.9.4-0.20230606125235-dd1b4c2e81af
@@ -148,9 +148,9 @@ require (
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
-	github.com/goccy/go-yaml v1.15.22 // indirect
+	github.com/goccy/go-yaml v1.15.23 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect

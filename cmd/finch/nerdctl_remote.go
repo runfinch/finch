@@ -7,12 +7,14 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"maps"
 	"path/filepath"
 	"runtime"
 	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	orderedmap "github.com/wk8/go-ordered-map"
 	"golang.org/x/exp/slices"
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -20,6 +22,7 @@ import (
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
 )
@@ -299,10 +302,10 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				}
 			}
 
-			switch {
-			case arg == "--debug":
+			switch arg {
+			case "--debug":
 				nc.logger.SetLevel(flog.Debug)
-			case arg == "--help":
+			case "--help":
 				nerdctlArgs = append(nerdctlArgs, arg)
 			default:
 				nerdctlArgs = append(nerdctlArgs, arg)
@@ -398,6 +401,44 @@ func (nc *nerdctlCommand) assertVMIsRunning(creator command.NerdctlCmdCreator, l
 
 func argIsEnv(arg string) bool {
 	return strings.HasPrefix(arg, "-e") || (strings.HasPrefix(arg, "--env") && !strings.HasPrefix(arg, "--env-file"))
+}
+
+// ensureRemoteCredentials is called before any actions that may require remote resources, in order
+// to ensure that fresh credentials are available inside the VM.
+// For more details on how `aws configure export-credentials` works, checks the docs.
+//
+// [the docs]: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/configure/export-credentials.html
+func ensureRemoteCredentials(
+	fc *config.Finch,
+	ecc command.Creator,
+	outEnv *[]string,
+	logger flog.Logger,
+) {
+	if slices.Contains(fc.CredsHelpers, "ecr-login") {
+		out, err := ecc.Create(
+			"aws",
+			"configure",
+			"export-credentials",
+			"--format",
+			"process",
+		).CombinedOutput()
+		if err != nil {
+			logger.Debugln("failed to run `aws configure` command")
+			return
+		}
+
+		var exportCredsOut aws.Credentials
+		err = json.Unmarshal(out, &exportCredsOut)
+		if err != nil {
+			logger.Debugln("`aws configure export-credentials` output is unexpected, is command available? " +
+				"This may result in a broken ecr-credential helper experience.")
+			return
+		}
+
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", exportCredsOut.AccessKeyID))
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", exportCredsOut.SecretAccessKey))
+		*outEnv = append(*outEnv, fmt.Sprintf("AWS_SESSION_TOKEN=%s", exportCredsOut.SessionToken))
+	}
 }
 
 func (nc *nerdctlCommand) handleMultipleShortFlags(

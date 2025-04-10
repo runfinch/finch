@@ -17,6 +17,7 @@ on:
       - 'finch.yaml.d/**'
       - 'winres'
       - 'Makefile*'
+      - '.golangci.yaml'
       - '!contrib/hello-finch/**'
   pull_request:
     branches:
@@ -33,6 +34,7 @@ on:
       - 'finch.yaml.d/**'
       - 'winres'
       - 'Makefile*'
+      - '.golangci.yaml'
       - '!contrib/hello-finch/**'
   workflow_dispatch:
 permissions:
@@ -67,7 +69,7 @@ jobs:
   #       run: |
   #         git secrets --register-aws
   #         git secrets --scan-history
-
+  #
   # gen-code-no-diff:
   #   strategy:
   #     matrix:
@@ -76,7 +78,7 @@ jobs:
   #   timeout-minutes: 5
   #   steps:
   #     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-  #     - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+  #     - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
   #       with:
   #         go-version: ${{ env.GO_VERSION }}
   #         cache: false
@@ -95,7 +97,7 @@ jobs:
   #         git config --global core.autocrlf false
   #         git config --global core.eol lf
   #     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-  #     - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+  #     - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
   #       with:
   #         go-version: ${{ env.GO_VERSION }}
   #         cache: false
@@ -107,7 +109,7 @@ jobs:
   #   timeout-minutes: 5
   #   steps:
   #     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-  #     - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+  #     - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
   #       with:
   #         go-version: ${{ env.GO_VERSION }}
   #         cache: false
@@ -115,23 +117,23 @@ jobs:
   #       run: |
   #         echo "GOOS=windows" >> $GITHUB_ENV
   #     - name: golangci-lint - windows
-  #       uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
+  #       uses: golangci/golangci-lint-action@1481404843c368bc19ca9406f87d6e0fc97bdcfd # v7.0.0
   #       with:
   #         # Pin the version in case all the builds start to fail at the same time.
   #         # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
   #         # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
-  #         version: v1.64.7
+  #         version: v2.0.1
   #         args: --fix=false --timeout=5m
   #     - name: set GOOS env to darwin
   #       run: |
   #         echo "GOOS=darwin" >> $GITHUB_ENV
   #     - name: golangci-lint - darwin
-  #       uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
+  #       uses: golangci/golangci-lint-action@1481404843c368bc19ca9406f87d6e0fc97bdcfd # v7.0.0
   #       with:
   #         # Pin the version in case all the builds start to fail at the same time.
   #         # There may not be an automatic way (e.g., dependabot) to update a specific parameter of a GitHub Action,
   #         # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
-  #         version: v1.64.7
+  #         version: v2.0.1
   #         args: --fix=false --timeout=5m --skip-dirs="(^|/)deps($|/)"
   # shellcheck:
   #   name: ShellCheck
@@ -149,7 +151,7 @@ jobs:
   #   timeout-minutes: 1
   #   steps:
   #     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-  #     - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+  #     - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
   #       with:
   #         go-version: ${{ env.GO_VERSION }}
   #         cache: false
@@ -161,7 +163,7 @@ jobs:
   #   timeout-minutes: 1
   #   steps:
   #     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-  #     - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+  #     - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
   #       with:
   #         go-version: ${{ env.GO_VERSION }}
   #         cache: false

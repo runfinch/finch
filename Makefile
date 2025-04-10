@@ -282,7 +282,7 @@ check-licenses:
 COVERAGE_THRESH = 60
 .PHONY: test-unit
 test-unit:
-	go test -cover -coverprofile=coverage.out $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks | grep -v version | grep -v flog | grep -v system | grep -v fmemory | grep -v coverage |grep -v devcontainer_patch) -shuffle on
+	go test -coverprofile=coverage.out $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks | grep -v version | grep -v flog | grep -v system | grep -v fmemory | grep -v coverage | grep -v devcontainer_patch) -shuffle on
 	go run coverage/coverage.go $(COVERAGE_THRESH)
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
