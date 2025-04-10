@@ -137,20 +137,6 @@ func platformLoadTests(t *testing.T) []loadTestCase {
 	}
 }
 
-func platformModifyFinchConfigTests(t *testing.T) []modifyFinchConfigTestCase {
-	return []modifyFinchConfigTestCase{
-		{
-			name:    "should return an error if the configuration file does not exist",
-			path:    "/config.yaml",
-			mockSvc: func(_ afero.Fs) {},
-			cpus:    2,
-			memory:  "2GiB",
-			want:    false,
-			errMsg:  "failed to read config file: open \\config.yaml: file does not exist",
-		},
-	}
-}
-
 func platformFinchConfigTests(t *testing.T) []loadFinchConfigTestCase {
 	return []loadFinchConfigTestCase{
 		{

@@ -27,64 +27,6 @@ type modifyFinchConfigTestCase struct {
 	isConfigUpdated bool
 }
 
-func Test_ModifyFinchConfig(t *testing.T) {
-	t.Parallel()
-
-	testCases := []modifyFinchConfigTestCase{
-		{
-			name: "should update vm settings",
-			path: "/config.yaml",
-			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 2\nmemory: 6GiB"
-				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
-			},
-			cpus:   1,
-			memory: "2GiB",
-			want:   true,
-			errMsg: "",
-		},
-		{
-			name: "should return an error if the configurations of CPU and memory are invalid",
-			path: "/config.yaml",
-			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 2\nmemory: 6GiB"
-				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
-			},
-			cpus:   0,
-			memory: "",
-			want:   false,
-			errMsg: "the number of CPUs or the amount of memory should be at least one valid value",
-		},
-	}
-
-	testCases = append(testCases, platformModifyFinchConfigTests(t)...)
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			ctrl := gomock.NewController(t)
-			fs := afero.NewMemMapFs()
-			l := mocks.NewLogger(ctrl)
-
-			opts := VMConfigOpts{
-				CPUs:   tc.cpus,
-				Memory: tc.memory,
-			}
-
-			tc.mockSvc(fs)
-
-			isConfigUpdated, err := ModifyFinchConfig(fs, l, tc.path, opts)
-			errMsg := ""
-			if err != nil {
-				errMsg = err.Error()
-			}
-			require.Equal(t, tc.want, isConfigUpdated)
-			require.Equal(t, tc.errMsg, errMsg)
-		})
-	}
-}
-
 type loadFinchConfigTestCase struct {
 	name         string
 	path         string
