@@ -30,9 +30,9 @@ func platformLoadTests(t *testing.T) []loadTestCase {
 				_ *gomock.Controller,
 			) {
 				data := `
-	memory: 4GiB
-	cpus: 8
-	`
+: 4GiB
+cpus: 8
+`
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			want: &Finch{
