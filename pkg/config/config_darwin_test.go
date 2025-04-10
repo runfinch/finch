@@ -10,10 +10,11 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/lima-vm/lima/pkg/limayaml"
-	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 	"github.com/xorcare/pointer"
+
+	"github.com/runfinch/finch/pkg/mocks"
 )
 
 func makeConfig(vmType limayaml.VMType, memory string, cpus int, rosetta bool) *Finch {
@@ -141,16 +142,13 @@ cpus: 8
 }
 
 type modifyFinchConfigTestCase struct {
-	name            string
-	path            string
-	mockSvc         func(fs afero.Fs)
-	postRunCheck    func(t *testing.T, fs afero.Fs)
-	want            bool
-	errMsg          string
-	opts            VMConfigOpts
-	cpus            int
-	memory          string
-	isConfigUpdated bool
+	name    string
+	path    string
+	mockSvc func(fs afero.Fs)
+	want    bool
+	errMsg  string
+	cpus    int
+	memory  string
 }
 
 func Test_ModifyFinchConfig(t *testing.T) {
@@ -243,12 +241,11 @@ func Test_ModifyFinchConfig(t *testing.T) {
 }
 
 type loadFinchConfigTestCase struct {
-	name         string
-	path         string
-	mockSvc      func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory)
-	postRunCheck func(t *testing.T, fs afero.Fs)
-	want         *Finch
-	errMsg       string
+	name    string
+	path    string
+	mockSvc func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory)
+	want    *Finch
+	errMsg  string
 }
 
 func Test_loadFinchConfig(t *testing.T) {
