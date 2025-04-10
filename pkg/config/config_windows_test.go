@@ -9,10 +9,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 	"github.com/xorcare/pointer"
+
+	"github.com/runfinch/finch/pkg/mocks"
 )
 
 func platformLoadTests(t *testing.T) []loadTestCase {
@@ -133,33 +134,6 @@ func platformLoadTests(t *testing.T) []loadTestCase {
 				},
 			},
 			wantErr: nil,
-		},
-	}
-}
-
-func platformFinchConfigTests(t *testing.T) []loadFinchConfigTestCase {
-	return []loadFinchConfigTestCase{
-		{
-			name: "successfully loads config.yaml",
-			path: "/config.yaml",
-			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
-				data := "cpus: 2\nmemory: 6GiB"
-				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
-			},
-			want: &Finch{
-				SystemSettings: SystemSettings{
-					CPUs:   pointer.Int(2),
-					Memory: pointer.String("6GiB"),
-				},
-			},
-			errMsg: "",
-		},
-		{
-			name:    "config file does not exist",
-			path:    "/config.yaml",
-			mockSvc: func(_ afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {},
-			want:    nil,
-			errMsg:  "failed to read config file: open \\config.yaml: file does not exist",
 		},
 	}
 }
