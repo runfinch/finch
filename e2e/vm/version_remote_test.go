@@ -19,10 +19,10 @@ import (
 )
 
 const (
-	nerdctlVersion    = "v2.0.3"
-	buildKitVersion   = "v0.19.0"
-	containerdVersion = "v2.0.2"
-	runcVersion       = "1.2.4"
+	nerdctlVersion    = "v2.0.4"
+	buildKitVersion   = "v0.20.1"
+	containerdVersion = "v2.0.4"
+	runcVersion       = "1.2.6"
 )
 
 type Versions struct {
