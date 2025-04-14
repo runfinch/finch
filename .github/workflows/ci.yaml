@@ -69,7 +69,7 @@ jobs:
         run: |
           git secrets --register-aws
           git secrets --scan-history
-  
+
   gen-code-no-diff:
     strategy:
       matrix:
