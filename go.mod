@@ -6,13 +6,13 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.36.3
 	github.com/containerd/cgroups v1.1.0
 	github.com/containerd/nerdctl/v2 v2.0.4
-	github.com/docker/cli v28.0.2+incompatible
-	github.com/docker/docker v28.0.2+incompatible
+	github.com/docker/cli v28.0.4+incompatible
+	github.com/docker/docker v28.0.4+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
 	github.com/lima-vm/lima v1.0.7
-	github.com/onsi/ginkgo/v2 v2.23.3
+	github.com/onsi/ginkgo/v2 v2.23.4
 	github.com/onsi/gomega v1.37.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.9
@@ -25,10 +25,10 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/tc-hib/go-winres v0.3.3
 	github.com/xorcare/pointer v1.2.2
-	golang.org/x/crypto v0.36.0
+	golang.org/x/crypto v0.37.0
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
-	golang.org/x/sync v0.12.0
-	golang.org/x/tools v0.31.0
+	golang.org/x/sync v0.13.0
+	golang.org/x/tools v0.32.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.32.3
 )
@@ -80,7 +80,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/licenseclassifier/v2 v2.0.0 // indirect
-	github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad // indirect
+	github.com/google/pprof v0.0.0-20250403155104-27863c87afa6 // indirect
 	github.com/google/yamlfmt v0.16.0 // indirect
 	github.com/ipfs/go-cid v0.5.0 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
@@ -134,8 +134,9 @@ require (
 	go.opentelemetry.io/otel v1.32.0 // indirect
 	go.opentelemetry.io/otel/metric v1.32.0 // indirect
 	go.opentelemetry.io/otel/trace v1.32.0 // indirect
+	go.uber.org/automaxprocs v1.6.0 // indirect
 	golang.org/x/image v0.18.0 // indirect
-	golang.org/x/term v0.30.0 // indirect
+	golang.org/x/term v0.31.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250106144421-5f5ef82da422 // indirect
 	google.golang.org/grpc v1.70.0 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
@@ -164,9 +165,9 @@ require (
 	github.com/wk8/go-ordered-map v1.0.0
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/net v0.37.0 // indirect
-	golang.org/x/sys v0.31.0
-	golang.org/x/text v0.23.0
+	golang.org/x/net v0.39.0 // indirect
+	golang.org/x/sys v0.32.0
+	golang.org/x/text v0.24.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 )
