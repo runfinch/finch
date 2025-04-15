@@ -19,14 +19,14 @@ FINCH_IMAGE_LOCATION ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_OS_BASENAME)
 FINCH_IMAGE_DIGEST ?= "sha512:$(FINCH_OS_DIGEST)"
 
 # check if finch-daemon socket is in a default path
-SHOULD_ADD_DAEMON_MOUNT = $(shell if [[ $(FINCH_DAEMON_LOCATION_ROOT) = ^\/Users\/.* ]]; then echo "0"; else echo "1"; fi)
+SHOULD_ADD_DAEMON_MOUNT = $(shell if echo "$(FINCH_DAEMON_LOCATION_ROOT)" | grep -q \/Users\/ ; then echo "0"; else echo "1"; fi)
 
 .PHONY: finch.yaml
 finch.yaml: $(OS_OUTDIR)/finch.yaml
 
 # only add the finch-daemon mount when its not in a default path
 # this scenario is common in dev, where the typical path is /Users/...
-ifeq ($(SHOULD_ADD_DAEMON_MOUNT),0)
+ifeq ($(SHOULD_ADD_DAEMON_MOUNT),1)
 finch.yaml: add-daemon-mount
 endif
 
