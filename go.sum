@@ -282,8 +282,8 @@ github.com/prometheus/procfs v0.15.1 h1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0leargg
 github.com/prometheus/procfs v0.15.1/go.mod h1:fB45yRUv8NstnjriLhBQLuOUt+WW4BsoGhij/e3PBqk=
 github.com/rootless-containers/rootlesskit/v2 v2.3.4 h1:EHiqqiq+ntTfdnQtIgDR3etiuqKkRCPr1qpoizJxW/E=
 github.com/rootless-containers/rootlesskit/v2 v2.3.4/go.mod h1:AJNM4jS0jFIF8GvBfnm4I0498zosnHGCIMRhUoEUmFg=
-github.com/runfinch/common-tests v0.9.2 h1:1ZKNiKFT60Q985NkeDl7TNLBqCvASd28gz5RUNuuR3Q=
-github.com/runfinch/common-tests v0.9.2/go.mod h1:KHm47Oz2QzInnjGiN8jadvBgtszjLoUkklSnw2L6ev0=
+github.com/runfinch/common-tests v0.9.3 h1:7I7IS0HatdaUZDvhmXM4J53SpYQo4mDzm5x9hPPVfZI=
+github.com/runfinch/common-tests v0.9.3/go.mod h1:KHm47Oz2QzInnjGiN8jadvBgtszjLoUkklSnw2L6ev0=
 github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf35Ld67mk=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 h1:OkMGxebDjyw0ULyrTYWeN0UNCCkmCWfjPnIA2W6oviI=
