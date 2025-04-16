@@ -18,8 +18,7 @@ import (
 
 const (
 	// diskName must always be consistent with the value set for AdditionalDisks in lima_config_applier.go.
-	diskName    = "finch"
-	diskSizeStr = "50GB"
+	diskName = "finch"
 )
 
 type qemuDiskInfo struct {
@@ -35,11 +34,22 @@ func (m *userDataDiskManager) EnsureUserDataDisk() error {
 	if m.limaDiskExists() {
 		diskPath := m.finch.UserDataDiskPath(m.rootDir)
 
-		if *m.config.VMType == "vz" {
-			info, err := m.getDiskInfo(diskPath)
-			if err != nil {
-				return err
+		// Get current disk info for size comparison
+		info, err := m.getDiskInfo(diskPath)
+		if err != nil {
+			return err
+		}
+
+		// Check if resize is needed
+		configuredSize, _ := units.FromHumanSize(*m.config.DiskSize)
+		if configuredSize > int64(info.VirtualSize) {
+			// Implement disk resize logic here if needed
+			if err := m.resizeDisk(*m.config.DiskSize); err != nil {
+				return fmt.Errorf("failed to resize disk: %w", err)
 			}
+		}
+
+		if *m.config.VMType == "vz" {
 
 			// Convert the persistent disk file to RAW before Lima starts.
 			// Lima also does this, but since Finch uses a symlink to this file, lima won't create the new RAW file
@@ -131,6 +141,14 @@ func (m *userDataDiskManager) getDiskInfo(diskPath string) (*qemuDiskInfo, error
 	return &diskInfoJSON, nil
 }
 
+func (m *userDataDiskManager) resizeDisk(newSize string) error {
+	cmd := m.ncc.CreateWithoutStdio("disk", "resize", diskName, "--size", newSize)
+	if logs, err := cmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("failed to resize disk, debug logs:\n%s", logs)
+	}
+	return nil
+}
+
 func (m *userDataDiskManager) convertToRaw(diskPath string) error {
 	qcowPath := fmt.Sprintf("%s.qcow2", diskPath)
 	if err := m.fs.Rename(diskPath, qcowPath); err != nil {
@@ -153,7 +171,8 @@ func (m *userDataDiskManager) convertToRaw(diskPath string) error {
 }
 
 func (m *userDataDiskManager) createLimaDisk() error {
-	size, err := sizeString()
+	// Use configured size from config
+	size, err := sizeString(*m.config.DiskSize)
 	if err != nil {
 		return fmt.Errorf("failed to get disk size: %w", err)
 	}
@@ -214,7 +233,7 @@ func (m *userDataDiskManager) unlockLimaDisk() error {
 	return nil
 }
 
-func sizeString() (string, error) {
+func sizeString(diskSizeStr string) (string, error) {
 	sizeB, err := units.RAMInBytes(diskSizeStr)
 	if err != nil {
 		return "", err

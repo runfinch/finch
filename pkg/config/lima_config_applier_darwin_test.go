@@ -44,7 +44,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 	}{
 		{
 			name:         "happy path",
-			config:       makeConfig("qemu", "2GiB", 4, false),
+			config:       makeConfig("qemu", "2GiB", 4, "50GiB", false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,
@@ -394,7 +394,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 		},
 		{
 			name:         "updates vmType and removes cross-arch provisioning script and network config",
-			config:       makeConfig("vz", "2GiB", 4, true),
+			config:       makeConfig("vz", "2GiB", 4, "50GiB", true),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,
@@ -455,7 +455,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 		},
 		{
 			name:         "updates vmType from vz to qemu and adds cross-arch provisioning script",
-			config:       makeConfig("qemu", "2GiB", 4, false),
+			config:       makeConfig("qemu", "2GiB", 4, "50GiB", false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,
@@ -501,7 +501,7 @@ rosetta:
 		},
 		{
 			name:         "does not update lima config because isInit == false",
-			config:       makeConfig("vz", "2GiB", 4, false),
+			config:       makeConfig("vz", "2GiB", 4, "50GiB", false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       false,
@@ -530,7 +530,7 @@ mountType: "reverse-sshfs"`), 0o600)
 		},
 		{
 			name:         "lima config file does not exist",
-			config:       makeConfig("qemu", "2GiB", 4, false),
+			config:       makeConfig("qemu", "2GiB", 4, "50GiB", false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,
@@ -568,7 +568,7 @@ mountType: "reverse-sshfs"`), 0o600)
 		},
 		{
 			name:         "lima config file does not contain valid YAML",
-			config:       makeConfig("qemu", "2GiB", 4, false),
+			config:       makeConfig("qemu", "2GiB", 4, "50GiB", false),
 			defaultPath:  "/default.yaml",
 			overridePath: "/override.yaml",
 			isInit:       true,

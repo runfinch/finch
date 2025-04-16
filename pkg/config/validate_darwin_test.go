@@ -29,8 +29,9 @@ func TestValidate(t *testing.T) {
 			name: "happy path",
 			cfg: &Finch{
 				SystemSettings: SystemSettings{
-					CPUs:   pointer.Int(4),
-					Memory: pointer.String("4GiB"),
+					CPUs:     pointer.Int(4),
+					Memory:   pointer.String("4GiB"),
+					DiskSize: pointer.String("50GiB"),
 				},
 			},
 			mockSvc: func(_ *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
@@ -44,8 +45,9 @@ func TestValidate(t *testing.T) {
 			name: "config specifies less CPUs than required",
 			cfg: &Finch{
 				SystemSettings: SystemSettings{
-					CPUs:   pointer.Int(0),
-					Memory: pointer.String("0GiB"),
+					CPUs:     pointer.Int(0),
+					Memory:   pointer.String("0GiB"),
+					DiskSize: pointer.String("50GiB"),
 				},
 			},
 			mockSvc: func(_ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {},
@@ -55,8 +57,9 @@ func TestValidate(t *testing.T) {
 			name: "config specifies less memory than required",
 			cfg: &Finch{
 				SystemSettings: SystemSettings{
-					CPUs:   pointer.Int(1),
-					Memory: pointer.String("0GiB"),
+					CPUs:     pointer.Int(1),
+					Memory:   pointer.String("0GiB"),
+					DiskSize: pointer.String("50GiB"),
 				},
 			},
 			mockSvc: func(_ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {},
@@ -66,8 +69,9 @@ func TestValidate(t *testing.T) {
 			name: "config specifies more CPUs than available",
 			cfg: &Finch{
 				SystemSettings: SystemSettings{
-					CPUs:   pointer.Int(4),
-					Memory: pointer.String("4GiB"),
+					CPUs:     pointer.Int(4),
+					Memory:   pointer.String("4GiB"),
+					DiskSize: pointer.String("50GiB"),
 				},
 			},
 			mockSvc: func(l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
@@ -86,8 +90,9 @@ func TestValidate(t *testing.T) {
 			name: "config specifies more memory than available",
 			cfg: &Finch{
 				SystemSettings: SystemSettings{
-					CPUs:   pointer.Int(4),
-					Memory: pointer.String("4GiB"),
+					CPUs:     pointer.Int(4),
+					Memory:   pointer.String("4GiB"),
+					DiskSize: pointer.String("50GiB"),
 				},
 			},
 			mockSvc: func(l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
@@ -99,6 +104,25 @@ func TestValidate(t *testing.T) {
 						"which may lead to severe performance degradation",
 					"4GiB",
 					"1GiB",
+				)
+			},
+			err: nil,
+		},
+		{
+			name: "disk size above recommended maximum",
+			cfg: &Finch{
+				SystemSettings: SystemSettings{
+					CPUs:     pointer.Int(4),
+					Memory:   pointer.String("4GiB"),
+					DiskSize: pointer.String("250GiB"),
+				},
+			},
+			mockSvc: func(l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+				deps.EXPECT().NumCPU().Return(8)
+				mem.EXPECT().TotalMemory().Return(uint64(12_880_000_000))
+				l.EXPECT().Warnf(
+					"Large disk size requested (%s). This may impact system performance",
+					"250GiB",
 				)
 			},
 			err: nil,

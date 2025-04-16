@@ -17,11 +17,12 @@ import (
 	"github.com/runfinch/finch/pkg/mocks"
 )
 
-func makeConfig(vmType limayaml.VMType, memory string, cpus int, rosetta bool) *Finch {
+func makeConfig(vmType limayaml.VMType, memory string, cpus int, diskSize string, rosetta bool) *Finch {
 	fc := Finch{}
 	fc.VMType = pointer.String(vmType)
 	fc.Memory = pointer.String(memory)
 	fc.CPUs = pointer.Int(cpus)
+	fc.DiskSize = pointer.String(diskSize)
 	fc.Rosetta = pointer.Bool(rosetta)
 	return &fc
 }
@@ -42,6 +43,7 @@ func platformLoadTests(t *testing.T) []loadTestCase {
 				data := `
 memory: 4GiB
 cpus: 8
+disk_size: 50GiB
 `
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 				deps.EXPECT().NumCPU().Return(8)
@@ -51,7 +53,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want:    makeConfig("vz", "4GiB", 8, false),
+			want:    makeConfig("vz", "4GiB", 8, "50GiB", false),
 			wantErr: nil,
 		},
 		{
@@ -72,7 +74,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want:    makeConfig("vz", "3GiB", 2, false),
+			want:    makeConfig("vz", "3GiB", 2, "50GiB", false),
 			wantErr: nil,
 		},
 		{
@@ -93,7 +95,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want:    makeConfig("vz", "2GiB", 2, true),
+			want:    makeConfig("vz", "2GiB", 2, "50GiB", true),
 			wantErr: nil,
 		},
 		{
@@ -114,7 +116,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want:    makeConfig("vz", "3GiB", 2, false),
+			want:    makeConfig("vz", "3GiB", 2, "50GiB", false),
 			wantErr: nil,
 		},
 		{
@@ -135,20 +137,21 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want:    makeConfig("vz", "3GiB", 2, false),
+			want:    makeConfig("vz", "3GiB", 2, "50GiB", false),
 			wantErr: nil,
 		},
 	}
 }
 
 type modifyFinchConfigTestCase struct {
-	name    string
-	path    string
-	mockSvc func(fs afero.Fs)
-	want    bool
-	errMsg  string
-	cpus    int
-	memory  string
+	name     string
+	path     string
+	mockSvc  func(fs afero.Fs)
+	want     bool
+	errMsg   string
+	cpus     int
+	memory   string
+	diskSize string
 }
 
 func Test_ModifyFinchConfig(t *testing.T) {
@@ -159,58 +162,76 @@ func Test_ModifyFinchConfig(t *testing.T) {
 			name: "should update vm settings",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   1,
-			memory: "2GiB",
-			want:   true,
-			errMsg: "",
+			cpus:     1,
+			memory:   "2GiB",
+			diskSize: "60GiB",
+			want:     true,
+			errMsg:   "",
 		},
 		{
-			name: "should return an error if the configurations of CPU and memory are invalid",
+			name: "should return an error if the configurations of CPU, memory and disk size are invalid",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   0,
-			memory: "",
-			want:   false,
-			errMsg: "the number of CPUs or the amount of memory should be at least one valid value",
+			cpus:     0,
+			memory:   "",
+			diskSize: "",
+			want:     false,
+			errMsg:   "the number of CPUs, amount of memory, or disk size should be at least one valid value",
 		},
 		{
-			name:    "should return an error if the configuration file does not exist",
-			path:    "/config.yaml",
-			mockSvc: func(_ afero.Fs) {},
-			cpus:    2,
-			memory:  "2GiB",
-			want:    false,
-			errMsg:  "failed to read config file: open /config.yaml: file does not exist",
+			name:     "should return an error if the configuration file does not exist",
+			path:     "/config.yaml",
+			mockSvc:  func(_ afero.Fs) {},
+			cpus:     2,
+			memory:   "2GiB",
+			diskSize: "60GiB",
+			want:     false,
+			errMsg:   "failed to read config file: open /config.yaml: file does not exist",
 		},
 		{
 			name: "should return an error if the configuration of CPU is invalid",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   -1,
-			memory: "2GiB",
-			want:   false,
-			errMsg: "failed to validate config file: specified number of CPUs (-1) must be greater than 0",
+			cpus:     -1,
+			memory:   "2GiB",
+			diskSize: "60GiB",
+			want:     false,
+			errMsg:   "failed to validate config file: specified number of CPUs (-1) must be greater than 0",
 		},
 		{
 			name: "should return an error if the configuration of memory is invalid",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs) {
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   2,
-			memory: "2Gi",
-			want:   false,
-			errMsg: "failed to validate config file: failed to parse memory to uint: invalid suffix: 'gi'",
+			cpus:     2,
+			memory:   "2Gi",
+			diskSize: "60GiB",
+			want:     false,
+			errMsg:   "failed to validate config file: failed to parse memory to uint: invalid suffix: 'gi'",
+		},
+		{
+			name: "should return an error if the configuration of disk size is invalid",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs) {
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			cpus:     2,
+			memory:   "2GiB",
+			diskSize: "60Gi",
+			want:     false,
+			errMsg:   "invalid requested disk size format: invalid suffix: 'gi'",
 		},
 	}
 
@@ -223,8 +244,9 @@ func Test_ModifyFinchConfig(t *testing.T) {
 			l := mocks.NewLogger(ctrl)
 
 			opts := VMConfigOpts{
-				CPUs:   tc.cpus,
-				Memory: tc.memory,
+				CPUs:     tc.cpus,
+				Memory:   tc.memory,
+				DiskSize: tc.diskSize,
 			}
 
 			tc.mockSvc(fs)
@@ -266,7 +288,7 @@ func Test_loadFinchConfig(t *testing.T) {
 			name: "successfully loads config.yaml",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, _ *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 
 				deps.EXPECT().NumCPU().Return(4)
@@ -274,8 +296,9 @@ func Test_loadFinchConfig(t *testing.T) {
 			},
 			want: &Finch{
 				SystemSettings: SystemSettings{
-					CPUs:   pointer.Int(2),
-					Memory: pointer.String("6GiB"),
+					CPUs:     pointer.Int(2),
+					Memory:   pointer.String("6GiB"),
+					DiskSize: pointer.String("50GiB"),
 				},
 			},
 			errMsg: "",
@@ -291,7 +314,7 @@ func Test_loadFinchConfig(t *testing.T) {
 			name: "should return an error if the configuration of CPU is invalid",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
-				data := "cpus: 0\nmemory: 6GiB"
+				data := "cpus: 0\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			want:   nil,
@@ -301,11 +324,24 @@ func Test_loadFinchConfig(t *testing.T) {
 			name: "should return an error if the configuration of memory is invalid",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs, _ *mocks.Logger, _ *mocks.LoadSystemDeps, _ *mocks.Memory) {
-				data := "cpus: 2\nmemory: 6Gi"
+				data := "cpus: 2\nmemory: 6Gi\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
 			want:   nil,
 			errMsg: "failed to validate config file: failed to parse memory to uint: invalid suffix: 'gi'",
+		},
+		{
+			name: "should return an error if the configuration of disk size is invalid",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs, _ *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory) {
+				deps.EXPECT().NumCPU().Return(2)
+				mem.EXPECT().TotalMemory().Return(uint64(6 * 1024 * 1024 * 1024))
+
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50Gi"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			want:   nil,
+			errMsg: "failed to validate config file: invalid requested disk size format: invalid suffix: 'gi'",
 		},
 	}
 

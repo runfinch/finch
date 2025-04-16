@@ -41,7 +41,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 		)
 	}{
 		{
-			name:    "should configure the instance for valid CPU and memory values",
+			name:    "should configure the instance for valid CPU, memory and disk-size values",
 			wantErr: nil,
 			command: &cobra.Command{
 				Use: "settings",
@@ -49,13 +49,14 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 			args: []string{
 				"--cpus=1",
 				"--memory=2GiB",
+				"--disk-size=60GiB",
 			},
 			mockSvc: func(
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
@@ -75,7 +76,7 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
@@ -95,7 +96,27 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+		},
+		{
+			name:    "should configure the instance for valid disk-size value",
+			wantErr: nil,
+			command: &cobra.Command{
+				Use: "settings",
+			},
+			args: []string{
+				"--disk-size=70GiB",
+			},
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
@@ -134,8 +155,9 @@ func TestSettingsVMAction_run(t *testing.T) {
 			*mocks.LimaConfigApplier,
 			afero.Fs,
 		)
-		cpus   int
-		memory string
+		cpus     int
+		memory   string
+		diskSize string
 	}{
 		{
 			name:             "should update vm settings",
@@ -146,24 +168,25 @@ func TestSettingsVMAction_run(t *testing.T) {
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
-			cpus:   1,
-			memory: "2GiB",
+			cpus:     1,
+			memory:   "2GiB",
+			diskSize: "60GiB",
 		},
 		{
 			name:             "should return an error if the configuration of CPU or memory is invalid",
-			wantErr:          errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
+			wantErr:          errors.New("the number of CPUs, amount of memory, or disk size should be at least one valid value"),
 			wantStatusOutput: "",
 			mockSvc: func(
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
@@ -173,20 +196,74 @@ func TestSettingsVMAction_run(t *testing.T) {
 		},
 		{
 			name:             "should return an error if the configuration of CPU or memory is invalid",
-			wantErr:          errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
+			wantErr:          errors.New("the number of CPUs, amount of memory, or disk size should be at least one valid value"),
 			wantStatusOutput: "",
 			mockSvc: func(
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
 			cpus:   2,
 			memory: "6GiB",
+		},
+		{
+			name:             "should return an error if the configuration of disk-size invalid",
+			wantErr:          errors.New("the number of CPUs, amount of memory, or disk size should be at least one valid value"),
+			wantStatusOutput: "",
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+			cpus:     2,
+			memory:   "6GiB",
+			diskSize: "50GiB",
+		},
+		{
+			name:             "should return an error if disk-size is being shrinked",
+			wantErr:          errors.New("disk size cannot be shrinked after VM creation. Current size: 50GiB, requested size: 20GiB"),
+			wantStatusOutput: "",
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+			cpus:     0,
+			memory:   "",
+			diskSize: "20GiB",
+		},
+		{
+			name:             "should return an error if disk-size is in invalid format",
+			wantErr:          errors.New("invalid requested disk size format: invalid suffix: 'kibs'"),
+			wantStatusOutput: "",
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\ndisk_size: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+			cpus:     0,
+			memory:   "",
+			diskSize: "20kibs",
 		},
 	}
 
@@ -200,14 +277,20 @@ func TestSettingsVMAction_run(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			stdout := bytes.Buffer{}
 			opts := config.VMConfigOpts{
-				CPUs:   tc.cpus,
-				Memory: tc.memory,
+				CPUs:     tc.cpus,
+				Memory:   tc.memory,
+				DiskSize: tc.diskSize,
 			}
 
 			tc.mockSvc(lca, fs)
 
 			err := newSettingsVMAction(logger, lca, fs, &stdout).run(opts)
-			assert.Equal(t, err, tc.wantErr)
+			if tc.wantErr != nil {
+				require.Error(t, err)
+				require.EqualError(t, err, tc.wantErr.Error())
+			} else {
+				require.NoError(t, err)
+			}
 			assert.Equal(t, tc.wantStatusOutput, stdout.String())
 		})
 	}

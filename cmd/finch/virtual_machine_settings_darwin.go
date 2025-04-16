@@ -38,6 +38,11 @@ func newSettingsVMCommand(
 		config.DefaultMemory,
 		"the amount of memory to dedicate to the virtual machine (restart the vm when applying this change.)",
 	)
+	settingsVMCommand.Flags().String(
+		"disk-size",
+		config.DefaultDiskSize,
+		"the size of the virtual machine disk (restart the vm when applying this change.)",
+	)
 
 	return settingsVMCommand
 }
@@ -74,9 +79,15 @@ func (sva *settingsVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
+	diskSize, err := cmd.Flags().GetString("disk-size")
+	if err != nil {
+		return err
+	}
+
 	opts := config.VMConfigOpts{
-		CPUs:   cpus,
-		Memory: memory,
+		CPUs:     cpus,
+		Memory:   memory,
+		DiskSize: diskSize,
 	}
 
 	return sva.run(opts)

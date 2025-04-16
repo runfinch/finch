@@ -7,9 +7,7 @@ package config
 
 import (
 	"fmt"
-
 	"github.com/docker/go-units"
-
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
 )
@@ -51,6 +49,20 @@ func validate(cfg *Finch, log flog.Logger, systemDeps LoadSystemDeps, mem fmemor
 				"which may lead to severe performance degradation",
 			*cfg.Memory,
 			units.BytesSize(float64(totalMem)),
+		)
+	}
+
+	// Todo confirm if we need more validations
+	diskSize, err := units.FromHumanSize(*cfg.DiskSize)
+	if err != nil {
+		return fmt.Errorf("invalid requested disk size format: %w", err)
+	}
+
+	const maxRecommendedSize = 200 * units.GB
+	if diskSize > maxRecommendedSize {
+		log.Warnf(
+			"Large disk size requested (%s). This may impact system performance",
+			*cfg.DiskSize,
 		)
 	}
 
