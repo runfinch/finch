@@ -18,9 +18,21 @@ FINCH_OS_IMAGE_LOCATION_ROOT ?= $(DEST)
 FINCH_IMAGE_LOCATION ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/os/$(FINCH_OS_BASENAME)
 FINCH_IMAGE_DIGEST ?= "sha512:$(FINCH_OS_DIGEST)"
 
+# check if finch-daemon socket is in a default path
+SHOULD_ADD_DAEMON_MOUNT = $(shell if echo "$(FINCH_DAEMON_LOCATION_ROOT)" | grep -q \/Users\/ ; then echo "0"; else echo "1"; fi)
+
+.PHONY: finch.yaml
+finch.yaml: $(OS_OUTDIR)/finch.yaml
+
+# only add the finch-daemon mount when its not in a default path
+# this scenario is common in dev, where the typical path is /Users/...
+ifeq ($(SHOULD_ADD_DAEMON_MOUNT),1)
+finch.yaml: add-daemon-mount
+endif
+
 $(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/mac.yaml
 	# merge the appropriate YAMLs into a temporary finch.yaml file on the current working directory
-	cd finch.yaml.d && yq eval-all '. as $$item ireduce ({}; . *+ $$item)' mac.yaml common.yaml > ../finch.yaml.temp
+	cd finch.yaml.d && yq eval-all '. as $$item ireduce ({}; . *+ $$item)' common.yaml mac.yaml > ./../finch.yaml.temp
 
 	# using -i.bak is very intentional, it allows the following commands to succeed for both GNU / BSD sed
 	# this sed command uses the alternative separator of "|" because the image location uses "/"
@@ -31,8 +43,19 @@ $(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/mac.
 	sed -i.bak -e "s/<container_runtime_archive_aarch64_digest>/$(CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST)/g" finch.yaml.temp
 	sed -i.bak -e "s|<container_runtime_archive_x86_64_location>|$(CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION)|g" finch.yaml.temp
 	sed -i.bak -e "s/<container_runtime_archive_x86_64_digest>/$(CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST)/g" finch.yaml.temp
+	sed -i.bak -e "s|<finch_daemon_root>|$(FINCH_DAEMON_LOCATION_ROOT)|g" finch.yaml.temp
+	sed -i.bak -e "s|<finch_daemon_location>|$(FINCH_DAEMON_LOCATION)|g" finch.yaml.temp
 
 	# Replacement was successful, so cleanup .bak
 	@rm finch.yaml.temp.bak
 
 	mv finch.yaml.temp $@
+
+.PHONY: add-daemon-mount
+add-daemon-mount:
+	cd finch.yaml.d && yq eval-all '. as $$item ireduce ({}; . *+ $$item)' $(OS_OUTDIR)/finch.yaml finch-daemon-mount.yaml > ./../finch.yaml.temp
+	sed -i.bak -e "s|<finch_daemon_root>|$(FINCH_DAEMON_LOCATION_ROOT)|g" finch.yaml.temp
+	# Replacement was successful, so cleanup .bak
+	@rm finch.yaml.temp.bak
+
+	mv finch.yaml.temp $(OS_OUTDIR)/finch.yaml

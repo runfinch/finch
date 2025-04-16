@@ -173,7 +173,7 @@ jobs:
       fail-fast: false
       matrix:
         version: ['13', '14']
-        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container', 'test-e2e-daemon']
         arch: ['X64', 'arm64']
         runner-type: ['test']
     uses: ./.github/workflows/e2e-macos.yaml
