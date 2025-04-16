@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/docker/go-units"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
@@ -23,6 +24,7 @@ import (
 type SystemSettings struct {
 	CPUs                  *int                  `yaml:"cpus,omitempty"`
 	Memory                *string               `yaml:"memory,omitempty"`
+	DiskSize              *string               `yaml:"disk_size,omitempty"`
 	AdditionalDirectories []AdditionalDirectory `yaml:"additional_directories,omitempty"`
 	Rosetta               *bool                 `yaml:"rosetta,omitempty"`
 	SharedSystemSettings  `yaml:",inline"`
@@ -81,8 +83,30 @@ func ModifyFinchConfig(fs afero.Fs, logger flog.Logger, finchConfigPath string, 
 		isConfigUpdated = true
 	}
 
+	if opts.DiskSize != DefaultDiskSize && opts.DiskSize != *finchCfg.DiskSize {
+		currentDiskSize := *finchCfg.DiskSize
+
+		currentSize, _ := units.FromHumanSize(currentDiskSize)
+		requestedSize, err := units.FromHumanSize(opts.DiskSize)
+		if err != nil {
+			return false, fmt.Errorf("invalid requested disk size format: %w", err)
+		}
+
+		// Throw error if attempting to shrink disk size
+		if requestedSize <= currentSize {
+			return false, fmt.Errorf(
+				"disk size cannot be shrinked after VM creation. Current size: %s, requested size: %s",
+				currentDiskSize,
+				opts.DiskSize,
+			)
+		}
+
+		*finchCfg.DiskSize = opts.DiskSize
+		isConfigUpdated = true
+	}
+
 	if !isConfigUpdated {
-		return isConfigUpdated, fmt.Errorf("the number of CPUs or the amount of memory should be at least one valid value")
+		return isConfigUpdated, fmt.Errorf("the number of CPUs, amount of memory, or disk size should be at least one valid value")
 	}
 
 	if err := validate(finchCfg, logger, systemDeps, mem); err != nil {

@@ -38,8 +38,9 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 
 	finch := fpath.Finch("mock_finch")
 	homeDir := "mock_home"
+	mockDiskSizeStr := "50GiB"
 
-	size, err := sizeString()
+	size, err := sizeString(mockDiskSizeStr)
 	assert.NoError(t, err)
 
 	limaPath := path.Join(finch.LimaHomePath(), "_disks", diskName, "datadisk")
@@ -87,6 +88,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			name: "create and save disk",
 			cfg: &config.Finch{
 				SystemSettings: config.SystemSettings{
+					DiskSize: pointer.String(mockDiskSizeStr),
 					SharedSystemSettings: config.SharedSystemSettings{
 						VMType: pointer.String("qemu"),
 					},
@@ -114,18 +116,20 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			name: "disk already exists",
 			cfg: &config.Finch{
 				SystemSettings: config.SystemSettings{
+					DiskSize: pointer.String(mockDiskSizeStr),
 					SharedSystemSettings: config.SharedSystemSettings{
 						VMType: pointer.String("qemu"),
 					},
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
+				ecc.EXPECT().Create(mockQemuImgExePath, mockDiskInfoArgs).Return(cmd)
+				cmd.EXPECT().CombinedOutput().Return(diskInfoQCOW2SuccessOutput, nil)
 
 				dfs.EXPECT().ReadlinkIfPossible(limaPath).Return(finch.UserDataDiskPath(homeDir), nil)
-
 				dfs.EXPECT().Stat(lockPath).Return(nil, fs.ErrNotExist)
 			},
 		},
@@ -133,16 +137,18 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			name: "disk exists but has not been saved",
 			cfg: &config.Finch{
 				SystemSettings: config.SystemSettings{
+					DiskSize: pointer.String(mockDiskSizeStr),
 					SharedSystemSettings: config.SharedSystemSettings{
 						VMType: pointer.String("qemu"),
 					},
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
-
+				ecc.EXPECT().Create(mockQemuImgExePath, mockDiskInfoArgs).Return(cmd)
+				cmd.EXPECT().CombinedOutput().Return(diskInfoQCOW2SuccessOutput, nil)
 				// not a link
 				dfs.EXPECT().ReadlinkIfPossible(limaPath).Return("", nil)
 
@@ -160,6 +166,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			name: "disk does not exist but a persistent disk does",
 			cfg: &config.Finch{
 				SystemSettings: config.SystemSettings{
+					DiskSize: pointer.String(mockDiskSizeStr),
 					SharedSystemSettings: config.SharedSystemSettings{
 						VMType: pointer.String("qemu"),
 					},
@@ -187,15 +194,18 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			name: "disk already exists but is locked",
 			cfg: &config.Finch{
 				SystemSettings: config.SystemSettings{
+					DiskSize: pointer.String(mockDiskSizeStr),
 					SharedSystemSettings: config.SharedSystemSettings{
 						VMType: pointer.String("qemu"),
 					},
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
+				ecc.EXPECT().Create(mockQemuImgExePath, mockDiskInfoArgs).Return(cmd)
+				cmd.EXPECT().CombinedOutput().Return(diskInfoQCOW2SuccessOutput, nil)
 
 				dfs.EXPECT().ReadlinkIfPossible(limaPath).Return(finch.UserDataDiskPath(homeDir), nil)
 
@@ -205,9 +215,36 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 			},
 		},
 		{
+			name: "disk exists but needs resize",
+			cfg: &config.Finch{
+				SystemSettings: config.SystemSettings{
+					DiskSize: pointer.String("70GiB"),
+					SharedSystemSettings: config.SharedSystemSettings{
+						VMType: pointer.String("qemu"),
+					},
+				},
+			},
+			wantErr: nil,
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
+				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
+				cmd.EXPECT().Output().Return(listSuccessOutput, nil)
+				ecc.EXPECT().Create(mockQemuImgExePath, mockDiskInfoArgs).Return(cmd)
+				cmd.EXPECT().CombinedOutput().Return(diskInfoQCOW2SuccessOutput, nil)
+
+				// Perform resize
+				resizeArgs := []string{"disk", "resize", diskName, "--size", "70GiB"}
+				ncc.EXPECT().CreateWithoutStdio(resizeArgs).Return(cmd)
+				cmd.EXPECT().CombinedOutput().Return(nil, nil)
+
+				dfs.EXPECT().ReadlinkIfPossible(limaPath).Return(finch.UserDataDiskPath(homeDir), nil)
+				dfs.EXPECT().Stat(lockPath).Return(nil, fs.ErrNotExist)
+			},
+		},
+		{
 			name: "disk exists and using vz mode, but disk is the wrong format",
 			cfg: &config.Finch{
 				SystemSettings: config.SystemSettings{
+					DiskSize: pointer.String(mockDiskSizeStr),
 					SharedSystemSettings: config.SharedSystemSettings{
 						VMType: pointer.String("vz"),
 					},
@@ -231,7 +268,6 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				dfs.EXPECT().Rename(limaPath, finch.UserDataDiskPath(homeDir)).Return(nil)
 
 				dfs.EXPECT().ReadlinkIfPossible(limaPath).Return(finch.UserDataDiskPath(homeDir), nil)
-
 				dfs.EXPECT().Stat(limaPath).Return(nil, fs.ErrNotExist)
 				dfs.EXPECT().SymlinkIfPossible(finch.UserDataDiskPath(homeDir), limaPath).Return(nil)
 

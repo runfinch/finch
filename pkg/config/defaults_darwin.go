@@ -17,8 +17,9 @@ import (
 
 const (
 	// 2,147,483,648 => 2GiB.
-	fallbackMemory float64 = 2_147_483_648
-	fallbackCPUs   int     = 2
+	fallbackMemory   float64 = 2_147_483_648
+	fallbackCPUs     int     = 2
+	fallbackDiskSize float64 = 53_687_091_200 // 50GiB
 )
 
 func vmDefault(cfg *Finch, supportsVz bool) {
@@ -59,6 +60,12 @@ func cpuDefault(cfg *Finch, deps LoadSystemDeps) {
 	}
 }
 
+func diskSizeDefault(cfg *Finch) {
+	if cfg.DiskSize == nil {
+		cfg.DiskSize = pointer.String(units.BytesSize(fallbackDiskSize))
+	}
+}
+
 // applyDefaults sets default configuration options if they are not already set.
 func applyDefaults(
 	cfg *Finch,
@@ -68,6 +75,7 @@ func applyDefaults(
 ) *Finch {
 	cpuDefault(cfg, deps)
 	memoryDefault(cfg, mem)
+	diskSizeDefault(cfg)
 	supportsVz := false
 	vz, err := SupportsVirtualizationFramework(ecc)
 	if err == nil && vz {
