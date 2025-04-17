@@ -52,6 +52,7 @@ func newVirtualMachineCommand(
 		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs,
 			fp.LimaSSHPrivateKeyPath(), diskManager),
 		newSettingsVMCommand(logger, lca, fs, os.Stdout),
+		newDiskResizeVMCommand(limaCmdCreator, logger),
 	)
 
 	return virtualMachineCommand
