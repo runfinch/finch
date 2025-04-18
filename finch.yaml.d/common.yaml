@@ -71,6 +71,10 @@ provision:
       sudo mkdir -p /mnt/lima-finch/soci-snapshotter-grpc/snapshotter/snapshots /var/lib/soci-snapshotter-grpc
       sudo mount --bind /mnt/lima-finch/soci-snapshotter-grpc /var/lib/soci-snapshotter-grpc
 
+      # Mounting buildkit dir to make the metadata persistent
+      sudo mkdir -p /mnt/lima-finch/buildkit /var/lib/buildkit
+      sudo mount --bind /mnt/lima-finch/buildkit /var/lib/buildkit
+
       # Make sure stargz and buildkit are restarted with containerd
       sudo mkdir -p /usr/local/lib/systemd/system/buildkit.service.d/
       printf '[Unit]\nPartOf=containerd.service\n' | sudo tee /usr/local/lib/systemd/system/buildkit.service.d/finch.conf
