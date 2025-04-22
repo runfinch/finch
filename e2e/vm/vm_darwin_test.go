@@ -61,6 +61,7 @@ func TestVM(t *testing.T) {
 	})
 
 	ginkgo.Describe("", func() {
+		testVMPrune(o, *e2e.Installed)
 		testVMLifecycle(o)
 		testAdditionalDisk(o, *e2e.Installed)
 		testConfig(o, *e2e.Installed)
