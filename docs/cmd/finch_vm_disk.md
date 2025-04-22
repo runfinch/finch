@@ -15,6 +15,7 @@ finch vm disk info [flags]
 ```
 
 ### Options
+
 ```text
 -h, --help   help for disk info
 ```
@@ -28,6 +29,7 @@ finch vm disk resize --size <size> [flags]
 ```
 
 ### Options
+
 ```text
 -h, --help       help for disk resize
 --size string    New size for the disk (e.g., 60GiB) (required)
