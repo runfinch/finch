@@ -1,0 +1,50 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//go:build darwin
+
+package vm
+
+import (
+	"github.com/onsi/ginkgo/v2"
+	"github.com/runfinch/common-tests/command"
+	"github.com/runfinch/common-tests/option"
+)
+
+func testVMDisk(o *option.Option) {
+	ginkgo.Describe("vm disk commands", ginkgo.Serial, func() {
+		ginkgo.AfterEach(func() {
+			restoreVM(o)
+		})
+
+		ginkgo.Context("when VM is running", func() {
+			ginkgo.BeforeEach(func() {
+				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(160).Run()
+			})
+
+			ginkgo.It("should fail to resize disk", func() {
+				command.New(o, virtualMachineRootCmd, "disk-resize", "--size", "60GiB").WithoutSuccessfulExit().Run()
+			})
+
+			ginkgo.It("should display disk info", func() {
+				command.New(o, virtualMachineRootCmd, "disk-info").Run()
+			})
+		})
+
+		ginkgo.Context("when VM is stopped", func() {
+			ginkgo.BeforeEach(func() {
+				command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(160).Run()
+				command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
+			})
+
+			ginkgo.It("should successfully resize disk", func() {
+				command.New(o, virtualMachineRootCmd, "disk-resize", "--size", "60GiB").Run()
+				command.New(o, virtualMachineRootCmd, "disk-info").Run()
+			})
+
+			ginkgo.It("should fail with invalid size format", func() {
+				command.New(o, virtualMachineRootCmd, "disk-resize", "--size", "60").WithoutSuccessfulExit().Run()
+			})
+		})
+	})
+}

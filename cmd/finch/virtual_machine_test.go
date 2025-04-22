@@ -7,6 +7,7 @@ package main
 
 import (
 	"errors"
+	"runtime"
 	"testing"
 
 	"github.com/runfinch/finch/pkg/mocks"
@@ -23,7 +24,11 @@ func TestVirtualMachineCommand(t *testing.T) {
 	assert.Equal(t, cmd.Use, virtualMachineRootCmd)
 
 	// check the number of subcommand for vm
-	assert.Equal(t, len(cmd.Commands()), 6)
+	expectedCmds := 6
+	if runtime.GOOS == "darwin" {
+		expectedCmds = 7 // Darwin includes disk commands
+	}
+	assert.Equal(t, len(cmd.Commands()), expectedCmds)
 }
 
 func TestPostVMStartInitAction_runAdapter(t *testing.T) {
