@@ -7,6 +7,7 @@ package vm
 
 import (
 	"github.com/onsi/ginkgo/v2"
+	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
 )
@@ -23,11 +24,12 @@ func testVMDisk(o *option.Option) {
 			})
 
 			ginkgo.It("should fail to resize disk", func() {
-				command.New(o, virtualMachineRootCmd, "disk-resize", "--size", "60GiB").WithoutSuccessfulExit().Run()
+				command.New(o, virtualMachineRootCmd, "disk", "resize", "--size", "60GiB").WithoutSuccessfulExit().Run()
 			})
 
 			ginkgo.It("should display disk info", func() {
-				command.New(o, virtualMachineRootCmd, "disk-info").Run()
+				result := command.New(o, virtualMachineRootCmd, "disk", "info").Run()
+				gomega.Expect(result.Out.Contents()).To(gomega.ContainSubstring("finch"))
 			})
 		})
 
@@ -38,12 +40,14 @@ func testVMDisk(o *option.Option) {
 			})
 
 			ginkgo.It("should successfully resize disk", func() {
-				command.New(o, virtualMachineRootCmd, "disk-resize", "--size", "60GiB").Run()
-				command.New(o, virtualMachineRootCmd, "disk-info").Run()
+				command.New(o, virtualMachineRootCmd, "disk", "resize", "--size", "60GiB").Run()
+				result := command.New(o, virtualMachineRootCmd, "disk", "info").Run()
+				gomega.Expect(result.Out.Contents()).To(gomega.ContainSubstring("finch"))
+				gomega.Expect(result.Out.Contents()).To(gomega.ContainSubstring("60GiB"))
 			})
 
 			ginkgo.It("should fail with invalid size format", func() {
-				command.New(o, virtualMachineRootCmd, "disk-resize", "--size", "60").WithoutSuccessfulExit().Run()
+				command.New(o, virtualMachineRootCmd, "disk", "resize", "--size", "60").WithoutSuccessfulExit().Run()
 			})
 		})
 	})

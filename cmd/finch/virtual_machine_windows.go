@@ -8,14 +8,15 @@ package main
 import (
 	"os"
 
+	"github.com/spf13/afero"
+	"github.com/spf13/cobra"
+
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
 	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/path"
-	"github.com/spf13/afero"
-	"github.com/spf13/cobra"
 )
 
 func newVirtualMachineCommand(
