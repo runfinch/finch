@@ -2,6 +2,8 @@
 
 Manage virtual machine disk operations.
 
+> **Note:** These commands are currently supported on macOS only. Not available on Windows.
+
 ---
 
 ## Commands
