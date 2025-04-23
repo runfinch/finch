@@ -7,7 +7,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/runfinch/finch/pkg/disk"
@@ -16,7 +15,6 @@ import (
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
-	"github.com/runfinch/finch/pkg/dependency"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/path"
 
@@ -28,34 +26,6 @@ const (
 	limaInstanceName      = "finch"
 	virtualMachineRootCmd = "vm"
 )
-
-func newVirtualMachineCommand(
-	limaCmdCreator command.NerdctlCmdCreator,
-	logger flog.Logger,
-	optionalDepGroups []*dependency.Group,
-	lca config.LimaConfigApplier,
-	nca config.NerdctlConfigApplier,
-	fp path.Finch,
-	fs afero.Fs,
-	diskManager disk.UserDataDiskManager,
-) *cobra.Command {
-	virtualMachineCommand := &cobra.Command{
-		Use:   virtualMachineRootCmd,
-		Short: "Manage the virtual machine lifecycle",
-	}
-
-	virtualMachineCommand.AddCommand(
-		newStartVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fs, fp.LimaSSHPrivateKeyPath(), diskManager),
-		newStopVMCommand(limaCmdCreator, diskManager, logger),
-		newRemoveVMCommand(limaCmdCreator, diskManager, logger),
-		newStatusVMCommand(limaCmdCreator, logger, os.Stdout),
-		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs,
-			fp.LimaSSHPrivateKeyPath(), diskManager),
-		newSettingsVMCommand(logger, lca, fs, os.Stdout),
-	)
-
-	return virtualMachineCommand
-}
 
 // Used by the actions that call VM start to ensure that the in-VM config file options are applied after boot.
 type postVMStartInitAction struct {
