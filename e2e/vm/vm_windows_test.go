@@ -46,6 +46,12 @@ func TestVM(t *testing.T) {
 	}, func() {})
 
 	ginkgo.Describe("", func() {
+		/*
+			TODO: Fix issue with prune in windows. Error:
+			failed marshalling json out of network configuration file \"/etc/cni/net.d/nerdctl-bridge.conflist\":
+			error parsing configuration list:unexpected end of JSON input\nFor details on the schema"
+		*/
+		// testVMPrune(o, *e2e.Installed)
 		testVMLifecycle(o)
 		testAdditionalDisk(o, *e2e.Installed)
 		testFinchConfigFile(o)

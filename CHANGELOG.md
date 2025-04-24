@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.7.2](https://github.com/runfinch/finch/compare/v1.7.1...v1.7.2) (2025-04-14)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/containerd/nerdctl/v2 from 2.0.3 to 2.0.4 ([#1342](https://github.com/runfinch/finch/issues/1342)) ([5c34d28](https://github.com/runfinch/finch/commit/5c34d28fb09b8673d3faaddd81bf2b3858e438b8))
+* **deps:** Bump github.com/docker/cli ([76d4082](https://github.com/runfinch/finch/commit/76d40829eedc8d0b97f5c4265d1122b23c853c20))
+* **deps:** Bump github.com/docker/cli from 28.0.1+incompatible to 28.0.2+incompatible ([#1337](https://github.com/runfinch/finch/issues/1337)) ([76d4082](https://github.com/runfinch/finch/commit/76d40829eedc8d0b97f5c4265d1122b23c853c20))
+* **deps:** Bump github.com/docker/docker and github.com/docker/cli from 28.0.2 to 28.0.4 ([#1360](https://github.com/runfinch/finch/issues/1360)) ([ab78a0a](https://github.com/runfinch/finch/commit/ab78a0a3223d08dced77da42c6b9b39755ec9e63))
+* **deps:** Bump github.com/lima-vm/lima from 1.0.5 to 1.0.6 ([#1289](https://github.com/runfinch/finch/issues/1289)) ([a576086](https://github.com/runfinch/finch/commit/a576086956095a3f458e0bcb82adb4fc01a8c447))
+* **deps:** Bump github.com/lima-vm/lima from 1.0.6 to 1.0.7 ([#1350](https://github.com/runfinch/finch/issues/1350)) ([106061c](https://github.com/runfinch/finch/commit/106061c024ee0c2f7eaf241f714874f0966bd386))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.23.2 to 2.23.3 ([#1348](https://github.com/runfinch/finch/issues/1348)) ([dae86f9](https://github.com/runfinch/finch/commit/dae86f9cc632c42ab3be7ba058184b7c4d5183b3))
+* **deps:** Bump github.com/onsi/ginkgo/v2 from 2.23.3 to 2.23.4 ([#1363](https://github.com/runfinch/finch/issues/1363)) ([b830ddf](https://github.com/runfinch/finch/commit/b830ddfdb9a79bfa711d70b78b77981103063ff1))
+* **deps:** Bump github.com/onsi/gomega from 1.36.2 to 1.37.0 ([#1358](https://github.com/runfinch/finch/issues/1358)) ([81d8f34](https://github.com/runfinch/finch/commit/81d8f340e030206fa19b3718ce125afd322c34a4))
+* **deps:** Bump github.com/pkg/sftp from 1.13.8 to 1.13.9 ([#1353](https://github.com/runfinch/finch/issues/1353)) ([ce14aa7](https://github.com/runfinch/finch/commit/ce14aa721c01134d13e6dd6581abc6d290009bcf))
+* **deps:** Bump github.com/runfinch/common-tests from 0.9.1 to 0.9.2 ([#1345](https://github.com/runfinch/finch/issues/1345)) ([ec5949a](https://github.com/runfinch/finch/commit/ec5949abdb8dbf5fe649cf4c3bec757ec0242f5b))
+* **deps:** Bump github.com/spf13/afero from 1.12.0 to 1.14.0 ([#1343](https://github.com/runfinch/finch/issues/1343)) ([a365fc2](https://github.com/runfinch/finch/commit/a365fc2b8d1b189eeed0928abd4e467b19b16a46))
+* **deps:** Bump golang.org/x/tools from 0.30.0 to 0.31.0 ([#1338](https://github.com/runfinch/finch/issues/1338)) ([78a89ad](https://github.com/runfinch/finch/commit/78a89ad91a2b9f4181a6b6f13d5d8973598a4986))
+* **deps:** Bump golang.org/x/tools from 0.31.0 to 0.32.0 ([#1362](https://github.com/runfinch/finch/issues/1362)) ([093e632](https://github.com/runfinch/finch/commit/093e632663d879e12407edd16ae06e8bc477820c))
+* **deps:** Bump k8s.io/apimachinery from 0.31.4 to 0.32.3 ([#1319](https://github.com/runfinch/finch/issues/1319)) ([9280536](https://github.com/runfinch/finch/commit/92805361a582eb64ea029c0ed694b574e7e53ced))
+* **deps:** Bump submodules and dependencies ([#1346](https://github.com/runfinch/finch/issues/1346)) ([a112465](https://github.com/runfinch/finch/commit/a112465f334f433a6cf5599ad2bd62adaa33796e))
+
 ## [1.7.1](https://github.com/runfinch/finch/compare/v1.7.0...v1.7.1) (2025-03-19)
 
 
