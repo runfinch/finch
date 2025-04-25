@@ -1,0 +1,3 @@
+mounts:
+  - location: "<finch_daemon_root>"
+    writable: true

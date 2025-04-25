@@ -7,6 +7,14 @@ provision:
   - mode: boot
     script: |
       modprobe virtiofs
+  # port this to common.yaml after windows socket forwarding is added
+  - mode: user
+    script: |
+      sudo cp <finch_daemon_location> /usr/local/bin/finch-daemon
+      sudo cp <finch_daemon_root>/finch@.service /usr/local/lib/systemd/system/finch@.service
+
+      sudo systemctl daemon-reload
+      sudo systemctl enable --now finch@${UID}
 mounts:
   - location: "~"
     mountPoint: null
@@ -22,9 +30,9 @@ mounts:
       cache: "fscache"
   - location: "/tmp/lima"
     writable: true
-  - location: "/var/folders"
+  - location: "/private"
     writable: true
-  - location: "/private/var/folders"
+  - location: "/var/folders"
     writable: true
 
 ssh:
@@ -44,3 +52,7 @@ hostResolver:
   hosts:
     host.finch.internal: host.lima.internal
     host.docker.internal: host.lima.internal
+
+portForwards:
+- guestSocket: "/run/finch.sock"
+  hostSocket: "{{.Dir}}/sock/finch.sock"
