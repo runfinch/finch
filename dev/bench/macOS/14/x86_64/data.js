@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1745610908358,
+  "lastUpdate": 1745864495580,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -78628,6 +78628,78 @@ window.BENCHMARK_DATA = {
           {
             "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
             "value": 1399,
+            "unit": "allocs/op",
+            "extra": "1 times\n12 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "169b84f59da50a95380a1457f888448fbc916f3c",
+          "message": "build(deps): Bump submodules and dependencies (#1383)\n\n* [create-pull-request] automated change\n\nSigned-off-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>\n\n* go mod tidy\n\nSigned-off-by: Justin Alvarez <alvajus@amazon.com>\n\n---------\n\nSigned-off-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>\nSigned-off-by: Justin Alvarez <alvajus@amazon.com>\nCo-authored-by: subashkotha <47501783+subashkotha@users.noreply.github.com>\nCo-authored-by: Justin Alvarez <alvajus@amazon.com>",
+          "timestamp": "2025-04-28T11:10:04-07:00",
+          "tree_id": "ede118de8b6bd265b1288484a82415fd9138dfb5",
+          "url": "https://github.com/runfinch/finch/commit/169b84f59da50a95380a1457f888448fbc916f3c"
+        },
+        "date": 1745864494460,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 94344670885,
+            "unit": "ns/op\t         0.2435 %cpu_avg/op\t        30.77 %cpu_peak/op\t        94.34 cpu_seconds/op\t1849327616 disk_bytes/op\t 4549280 B/op\t   87434 allocs/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 94344670885,
+            "unit": "ns/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.2435,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 30.77,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 94.34,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 1849327616,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 4549280,
+            "unit": "B/op",
+            "extra": "1 times\n12 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 87434,
             "unit": "allocs/op",
             "extra": "1 times\n12 procs"
           }
