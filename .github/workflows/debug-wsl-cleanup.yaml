@@ -1,0 +1,26 @@
+name: Debug WSL Cleanup
+
+on:
+  push:
+    branches:
+      - wsl_cleanup_fix  # Modified branch name
+  workflow_dispatch:  # Added manual trigger option
+
+jobs:
+  debug-cleanup:
+    runs-on: windows-latest  # Very important: must be Windows runner!
+    steps:
+      - name: Debug Message
+        shell: pwsh
+        run: |
+          Write-Host "=== Starting WSL Cleanup Debug Workflow ==="
+          Write-Host "Debug timestamp: $(Get-Date)"
+          Write-Host "================================================"
+
+#      - name: Checkout repo
+#        uses: actions/checkout@v4
+#
+#      run: |
+#          Write-Host "Executing cleanup_wsl.ps1 script..."
+#          ./scripts/cleanup_wsl.ps1
+#          Write-Host "Completed executing cleanup_wsl.ps1 script."

@@ -2,6 +2,9 @@ name: Build, test and upload .msi to S3
 
 # TODO: add scheduler and tests
 on:
+  push:
+    branches-ignore:
+      - wsl_cleanup_fix
   workflow_dispatch:
     inputs:
       ref_name:

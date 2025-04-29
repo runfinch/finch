@@ -2,6 +2,9 @@ name: Build, test and upload .pkg to S3
 
 # The scheduler runs at 9 am UTC every day.
 on:
+  push:
+    branches-ignore:
+      - wsl_cleanup_fix
   workflow_dispatch:
     inputs:
       ref_name:

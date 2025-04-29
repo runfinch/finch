@@ -4,9 +4,17 @@
 # We want these cleanup commands to always run, ignore errors so the step completes.
 $ErrorActionPreference = 'Ignore'
 
+Write-Host "Starting taskkill wslservice.exe..."
 taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
+Write-Host "Completed taskkill wslservice.exe."
+
+Write-Host "Checking LxssManager service state..."
 sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
+Write-Host "Completed LxssManager service check."
+
+Write-Host "Listing WSL distros (before shutdown)..."
 wsl --list --verbose --all
+Write-Host "Completed WSL list (before shutdown)."
 
 # Attempt to shut down WSL if any distribution is running
 if (wsl --list --verbose | findstr /C:"Running" > nul) {
