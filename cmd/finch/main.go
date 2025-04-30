@@ -42,13 +42,26 @@ func initializeNerdctlCommands(
 	nerdctlCommandCreator := newNerdctlCommandCreator(ncc, ecc, system.NewStdLib(), logger, fs, fc)
 	var allNerdctlCommands []*cobra.Command
 	for cmdName, cmdDescription := range nerdctlCmds {
-		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))
-	}
-
-	if fc != nil && fc.DockerCompat {
-		for cmdName, cmdDescription := range dockerCompatCmds {
-			allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))
+		if fc != nil && fc.DockerCompat {
+			switch cmdName {
+			case "build":
+				allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.createDockerCompatBuildCmd())
+				continue
+			case "image":
+				allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.createDockerCompatImageCmd())
+				continue
+			case "inspect":
+				allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.createDockerCompatInspectCmd())
+				continue
+			case "run":
+				allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.createDockerCompatRunCmd())
+				continue
+			case "compose":
+				allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.createDockerCompatComposeCmd())
+				continue
+			}
 		}
+		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))
 	}
 
 	return allNerdctlCommands

@@ -24,6 +24,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/tc-hib/go-winres v0.3.3
+	github.com/wk8/go-ordered-map v1.0.0
 	github.com/xorcare/pointer v1.2.2
 	golang.org/x/crypto v0.37.0
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
@@ -163,7 +164,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
-	github.com/wk8/go-ordered-map v1.0.0
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/mod v0.24.0 // indirect
 	golang.org/x/net v0.39.0 // indirect
