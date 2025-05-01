@@ -199,14 +199,14 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 				// begins with --<long_flag>
 				//    e.g. --sig-proxy=false
 				nerdctlArgs = append(nerdctlArgs, arg)
-			case shortFlagBoolSet.Has(arg[:2]):
+			case len(arg) > 1 && shortFlagBoolSet.Has(arg[:2]):
 				// or begins with a defined short no argument flag, but is adjacent to something
 				//   -????   one or more short bool flags; no following values
 				//   -????="<value>" one or more short bool flags ending with a short arg flag equated to value
 				//   -????"<value>" one or more short bool flags ending with a short arg flag concatenated to value
 				addArg := nc.handleMultipleShortFlags(shortFlagBoolSet, shortFlagArgSet, args, i)
 				nerdctlArgs = append(nerdctlArgs, addArg)
-			case shortFlagArgSet.Has(arg) || shortFlagArgSet.Has(arg[:2]):
+			case shortFlagArgSet.Has(arg) || (len(arg) > 1 && shortFlagArgSet.Has(arg[:2])):
 				// exact match to a short arg flag: -?
 				//     next arg must be the <value>
 				// or begins with a short arg flag:

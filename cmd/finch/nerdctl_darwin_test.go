@@ -1204,6 +1204,33 @@ func TestNerdctlCommand_run(t *testing.T) {
 				c.EXPECT().Run()
 			},
 		},
+		{
+			name:    "with single letter entry in args",
+			cmdName: "run",
+			fc:      &config.Finch{},
+			args:    []string{"-i", "--name", "myContainer", "--rm", "a", "env"},
+			wantErr: nil,
+			mockSvc: func(
+				_ *testing.T,
+				lcc *mocks.NerdctlCmdCreator,
+				_ *mocks.CommandCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				_ afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				AddEmptyEnvLookUps(ncsd)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().
+					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "container", "run",
+						"-i", "--name", "myContainer", "--rm", "a", "env").Return(c)
+				c.EXPECT().Run()
+			},
+		},
 	}
 
 	for _, tc := range testCases {
