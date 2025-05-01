@@ -5,7 +5,7 @@ go 1.23.0
 require (
 	github.com/aws/aws-sdk-go-v2 v1.36.3
 	github.com/containerd/cgroups v1.1.0
-	github.com/containerd/nerdctl/v2 v2.0.4
+	github.com/containerd/nerdctl/v2 v2.0.5
 	github.com/docker/cli v28.1.1+incompatible
 	github.com/docker/docker v28.1.1+incompatible
 	github.com/docker/go-connections v0.5.0
@@ -47,7 +47,7 @@ require (
 	github.com/containerd/console v1.0.4 // indirect
 	github.com/containerd/containerd v1.7.27 // indirect
 	github.com/containerd/containerd/api v1.8.0 // indirect
-	github.com/containerd/containerd/v2 v2.0.4 // indirect
+	github.com/containerd/containerd/v2 v2.0.5 // indirect
 	github.com/containerd/continuity v0.4.5 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
@@ -60,8 +60,8 @@ require (
 	github.com/containerd/stargz-snapshotter v0.16.3 // indirect
 	github.com/containerd/ttrpc v1.2.7 // indirect
 	github.com/containerd/typeurl/v2 v2.2.3 // indirect
-	github.com/containernetworking/cni v1.2.3 // indirect
-	github.com/containernetworking/plugins v1.6.2 // indirect
+	github.com/containernetworking/cni v1.3.0 // indirect
+	github.com/containernetworking/plugins v1.7.1 // indirect
 	github.com/containers/ocicrypt v1.2.1 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
@@ -111,8 +111,8 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/opencontainers/runtime-spec v1.2.1 // indirect
-	github.com/opencontainers/selinux v1.11.1 // indirect
-	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
+	github.com/opencontainers/selinux v1.12.0 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/petermattis/goid v0.0.0-20240813172612-4fcff4a6cae7 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/power-devops/perfstat v0.0.0-20221212215047-62379fc7944b // indirect
