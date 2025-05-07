@@ -28,7 +28,7 @@ VDE_INSTALL ?= /opt/finch
 ARCH ?= $(shell uname -m)
 SUPPORTED_ARCH = false
 LICENSEDIR := $(OUTDIR)/license-files
-VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified'  --abbrev=0 --always --tags)
 GITCOMMIT ?= $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 VERSION_INJECTION := -X $(PACKAGE)/pkg/version.Version=$(VERSION)
 VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
@@ -58,7 +58,7 @@ endif
 
 # This variable is used to inject the version of Lima (via ldflags) to be used with Lima's
 # osutil.LimaUser function.
-LIMA_TAG=$(shell cd deps/finch-core/src/lima && git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+LIMA_TAG=$(shell cd deps/finch-core/src/lima && git describe --match 'v[0-9]*' --dirty='.modified'  --abbrev=0 --always --tags)
 LIMA_VERSION := $(patsubst v%,%,$(LIMA_TAG))
 # This value isn't used on Linux, but the symbol is currently defined on all platforms, so
 # it doesn't hurt to always inject it right now.
