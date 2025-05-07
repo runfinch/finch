@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.8.1](https://github.com/runfinch/finch/compare/v1.8.0...v1.8.1) (2025-05-07)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/containerd/nerdctl/v2 from 2.0.4 to 2.0.5 ([#1387](https://github.com/runfinch/finch/issues/1387)) ([8166b1a](https://github.com/runfinch/finch/commit/8166b1a7bff207e546094f1f0cbcb6af0886ddc8))
+* **deps:** Bump golang.org/x/sys from 0.32.0 to 0.33.0 ([#1390](https://github.com/runfinch/finch/issues/1390)) ([759a616](https://github.com/runfinch/finch/commit/759a616e65f955608f8b4b30f68ff892aa5e8572))
+
+
+### Bug Fixes
+
+* Ensure UTF-8 encoding for finch.yaml on windows ([#1388](https://github.com/runfinch/finch/issues/1388)) ([86ce3b1](https://github.com/runfinch/finch/commit/86ce3b178079a01d0eeb56f45e83c9b4319a602b))
+* version format in finch info ([#1394](https://github.com/runfinch/finch/issues/1394)) ([83be39a](https://github.com/runfinch/finch/commit/83be39a68d104b71a83623aac8ce3319a389515a))
+* version format inf finch info ([83be39a](https://github.com/runfinch/finch/commit/83be39a68d104b71a83623aac8ce3319a389515a))
+
 ## [1.8.0](https://github.com/runfinch/finch/compare/v1.7.2...v1.8.0) (2025-05-01)
 
 
