@@ -19,10 +19,10 @@ import (
 )
 
 const (
-	nerdctlVersion    = "v2.0.4"
-	buildKitVersion   = "v0.20.1"
-	containerdVersion = "v2.0.4"
-	runcVersion       = "1.2.6"
+	nerdctlVersion    = "v2.1.1"
+	buildKitVersion   = "v0.21.1"
+	containerdVersion = "v2.1.0"
+	runcVersion       = "1.3.0"
 )
 
 type Versions struct {
@@ -64,7 +64,7 @@ Server:
   GitCommit:	[a-z0-9]{40}
  runc:
   Version:	{{ .RuncVersion }}
-  GitCommit:	v[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+-g[a-z0-9]{8})?
+  GitCommit:	v[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+-g[a-z0-9]{7,8})?
 `)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			var versionMatcher bytes.Buffer
