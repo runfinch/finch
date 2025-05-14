@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.8.1](https://github.com/runfinch/finch/compare/v1.8.0...v1.8.1) (2025-05-14)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/containerd/nerdctl/v2 from 2.0.4 to 2.0.5 ([#1387](https://github.com/runfinch/finch/issues/1387)) ([8166b1a](https://github.com/runfinch/finch/commit/8166b1a7bff207e546094f1f0cbcb6af0886ddc8))
+* **deps:** Bump github.com/runfinch/common-tests from 0.9.2 to 0.9.4 ([#1400](https://github.com/runfinch/finch/issues/1400)) ([f83f6e2](https://github.com/runfinch/finch/commit/f83f6e2786cfb205ba71172afcd54ae9b4c65bac))
+* **deps:** Bump golang.org/x/crypto from 0.37.0 to 0.38.0 ([#1403](https://github.com/runfinch/finch/issues/1403)) ([7b79ed5](https://github.com/runfinch/finch/commit/7b79ed5b9dc4b08ee1897ff1e29f45491c2f7455))
+* **deps:** Bump golang.org/x/sys from 0.32.0 to 0.33.0 ([#1390](https://github.com/runfinch/finch/issues/1390)) ([759a616](https://github.com/runfinch/finch/commit/759a616e65f955608f8b4b30f68ff892aa5e8572))
+* **deps:** Bump golang.org/x/text from 0.24.0 to 0.25.0 ([#1398](https://github.com/runfinch/finch/issues/1398)) ([c1e2093](https://github.com/runfinch/finch/commit/c1e209373313be9b93336804c31d4777e62765d7))
+* **deps:** Bump submodules and dependencies ([#1393](https://github.com/runfinch/finch/issues/1393)) ([8ff69da](https://github.com/runfinch/finch/commit/8ff69dae29454bda44db2b06d593640f90f8e782))
+
+
+### Bug Fixes
+
+* Ensure UTF-8 encoding for finch.yaml on windows ([#1388](https://github.com/runfinch/finch/issues/1388)) ([86ce3b1](https://github.com/runfinch/finch/commit/86ce3b178079a01d0eeb56f45e83c9b4319a602b))
+* version format in finch info ([#1394](https://github.com/runfinch/finch/issues/1394)) ([83be39a](https://github.com/runfinch/finch/commit/83be39a68d104b71a83623aac8ce3319a389515a))
+* version format inf finch info ([83be39a](https://github.com/runfinch/finch/commit/83be39a68d104b71a83623aac8ce3319a389515a))
+
+
+### Reverts
+
+* ci(deps): Bump golangci/golangci-lint-action from 7.0.0 to 8.0.0 ([#1404](https://github.com/runfinch/finch/issues/1404)) ([a542b0d](https://github.com/runfinch/finch/commit/a542b0dedeb3db1bc6cb6d6086a225008e26de28))
+
 ## [1.8.0](https://github.com/runfinch/finch/compare/v1.7.2...v1.8.0) (2025-05-01)
 
 
