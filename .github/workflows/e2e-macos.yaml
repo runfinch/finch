@@ -42,6 +42,9 @@ jobs:
       container_report: ${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}
       vm_serial_report: ${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}
     steps:
+      - name: Clean macOS runner workspace
+        run: |
+          rm -rf ${{ github.workspace }}/*
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.

@@ -38,6 +38,9 @@ jobs:
       container_report: ${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}
       vm_serial_report: ${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}  
     steps:
+      - name: Clean GitHub runner workspace
+        run: |
+          Remove-Item -Path "${{ github.workspace }}\*" -Recurse -Force -ErrorAction SilentlyContinue
       - name: Configure git CRLF settings
         run: |
           git config --global core.autocrlf false
