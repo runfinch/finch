@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.2](https://github.com/runfinch/finch/compare/v1.8.1...v1.8.2) (2025-05-17)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/containerd/nerdctl/v2 from 2.0.5 to 2.1.1 ([#1402](https://github.com/runfinch/finch/issues/1402)) ([8f0c9b4](https://github.com/runfinch/finch/commit/8f0c9b4a1767a59e0c0205b9dc77a5cf91a90dfd))
+* **deps:** Bump golang.org/x/tools from 0.32.0 to 0.33.0 ([#1399](https://github.com/runfinch/finch/issues/1399)) ([f35db93](https://github.com/runfinch/finch/commit/f35db937da4b4db0b54c92633580b8ff7c7563a4))
+
 ## [1.8.1](https://github.com/runfinch/finch/compare/v1.8.0...v1.8.1) (2025-05-14)
 
 
