@@ -83,7 +83,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@f24d7193d98baebaeacc7e2227925dd47cc267f5 # v4.2.0
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
         with:
           role-to-assume: ${{ secrets.WINDOWS_ROLE }}
           role-session-name: windows-msi
@@ -139,7 +139,7 @@ jobs:
               throw "Failed after $maxRetries attempts."
           }
       - name: configure aws credentials for upload signed MSI to installer bucket
-        uses: aws-actions/configure-aws-credentials@f24d7193d98baebaeacc7e2227925dd47cc267f5 # v4.2.0
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: windows-msi
@@ -199,7 +199,7 @@ jobs:
           echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@f24d7193d98baebaeacc7e2227925dd47cc267f5 # v4.2.0
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: msi-test
