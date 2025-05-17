@@ -57,6 +57,9 @@ jobs:
     runs-on: [self-hosted, windows, amd64, release]
     timeout-minutes: 100
     steps:
+      - name: Clean GitHub runner workspace
+        run: |
+          Remove-Item -Path "${{ github.workspace }}\*" -Recurse -Force -ErrorAction SilentlyContinue
       - name: Configure git CRLF settings
         run: |
           git config --global core.autocrlf false
@@ -164,6 +167,9 @@ jobs:
     runs-on: [self-hosted, windows, amd64, release]
     timeout-minutes: 180
     steps:
+      - name: Clean GitHub runner workspace
+        run: |
+          Remove-Item -Path "${{ github.workspace }}\*" -Recurse -Force -ErrorAction SilentlyContinue
       - name: Configure git CRLF settings
         run: |
           git config --global core.autocrlf false

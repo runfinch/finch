@@ -40,6 +40,10 @@ jobs:
       ]
     timeout-minutes: 60
     steps:
+      - name: Clean macOS runner workspace
+        run: |
+          rm -rf ${{ github.workspace }}/*
+        shell: zsh {0}
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ inputs.tag }}
