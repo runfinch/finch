@@ -1,0 +1,57 @@
+name: Upload deb
+on:
+  pull_request:
+      branches:
+        - main
+  workflow_dispatch: # Trigger this workflow from tag
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: write   # This is required for uploading the release assets
+jobs:
+  get-tag-name:
+    name: Get the tag and validate the format
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ inputs.ref_name }}" ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+
+  upload-deb:
+    needs: get-tag-name
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: download-ubuntu-session
+          aws-region: ${{ secrets.REGION }}
+      - name: Download deb and signature files
+        run: |
+          aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME }}/run-finch_${{ needs.get-tag-name.outputs.tag }})_amd64.deb run-finch_${{ needs.get-tag-name.outputs.tag }}_amd64.deb
+          aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME }}/run-finch_${{ needs.get-tag-name.outputs.tag }})_aarch64.deb run-finch_${{ needs.get-tag-name.outputs.tag }}_aarch.deb
+      - name: Upload deb and signature files to release
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v0.1.15
+        with:
+          tag_name: ${{ needs.get-tag-name.outputs.tag }}
+          files: |
+            run-finch_${{ needs.get-tag-name.outputs.tag }}_amd64.deb
+            run-finch_${{ needs.get-tag-name.outputs.tag }}_aarch64.deb
+      - name: Delete deb and signature files
+        run: rm -rf run-finch_${{ needs.get-tag-name.outputs.tag }}_amd64.deb run-finch_${{ needs.get-tag-name.outputs.tag }}_aarch64.deb

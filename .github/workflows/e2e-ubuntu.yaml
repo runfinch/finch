@@ -1,0 +1,134 @@
+name: e2e-ubuntu
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+        required: true
+      arch:
+        type: string
+        required: true
+      output-arch:
+        type: string
+        required: true
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  # This is required for actions/checkout
+  contents: read
+
+env:
+  GO111MODULE: on
+  GO_VERSION: '1.23.8'
+
+jobs:
+  test:
+    runs-on: codebuild-finch-${{ inputs.arch }}-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    timeout-minutes: 60
+    outputs:
+      has_creds: ${{ steps.vars.outputs.has_creds}}
+      vm_report: ${{ steps.set-multiple-vars.outputs.VM_REPORT }}
+      container_report: ${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}
+      vm_serial_report: ${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}
+    steps:
+      - name: Clean Ubuntu workspace
+        run: |
+          rm -rf ${{ github.workspace }}/*
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - name: Set output variables
+        id: vars
+        run: |
+          has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
+          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        with:
+          role-to-assume: ${{ secrets.DEB_ROLE_TESTING }}
+          role-session-name: ubuntu-deb
+          aws-region: us-west-2
+      - name: Install dependencies
+        run: |
+          sudo apt install build-essential -y
+          sudo apt install libseccomp-dev -y
+          sudo apt install pkg-config -y
+          sudo apt install zlib1g-dev -y
+      - name: Build for Ubuntu ${{ inputs.arch }}
+        run: |
+          make
+      - name: Generate deb
+        run: |
+          ./contrib/packaging/deb/package.sh
+      - name: Install Finch
+        run: |
+          sudo apt install ./_output/deb/$(ls -t ./_output/deb/ | grep 'run-finch_.*${{ inputs.output-arch }}\.deb' | head -1) -y
+          sudo systemctl daemon-reload
+          sudo systemctl start containerd.service
+          sudo systemctl start finch.service || true
+          sudo systemctl start finch-buildkit.service
+          sudo systemctl start finch-soci.service
+      - name: Set up REPORT_DIR
+        run: |
+          echo "REPORT_DIR=${{ github.workspace }}/reports" >> $GITHUB_ENV
+      - name: Run e2e tests
+        run: |
+            git status
+            git clean -f -d
+            # sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-container
+            sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+      - name: Change ownership of reports
+        if: always()
+        run: |
+          if [ ! -d "$REPORT_DIR" ]; then
+            echo "Error: Directory $REPORT_DIR does not exist."
+            exit 1
+          fi
+
+          USER=$(whoami)
+          GROUP=$(id -gn)
+
+          if sudo chown -R "$USER:$GROUP" "$REPORT_DIR"; then
+            echo "Ownership of $REPORT_DIR changed to $USER:$GROUP"
+          else
+            echo "Error: Failed to change ownership of $REPORT_DIR"
+            exit 1
+          fi
+      - name: Set artifacts name outputs
+        if: always()
+        id: set-multiple-vars
+        run: |
+          echo "VM_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json" >> $GITHUB_OUTPUT
+          echo "CONTAINER_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json" >> $GITHUB_OUTPUT
+          echo "VM_SERIAL_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json" >> $GITHUB_OUTPUT
+      - name: Upload reports artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ubuntu-test-e2e-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
+          path: ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-*.json
+      - name: Clean Up Previous Environment
+        if: always()
+        timeout-minutes: 2
+        run: |
+          sudo apt remove run-finch -y
+          sudo apt remove build-essential -y
+          sudo apt remove libseccomp-dev -y
+          sudo apt remove pkg-config -y
+          sudo apt remove zlib1g-dev -y
+          sudo systemctl stop finch.service || true
+          sudo systemctl stop finch-buildkit.service || true
+          sudo systemctl stop finch-soci.service || true
+          sudo systemctl stop containerd.service
+          sudo systemctl daemon-reload
+        
+

@@ -1,0 +1,146 @@
+name: Build, test and upload .deb to S3
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+  schedule:
+    - cron: '0 9 * * *'
+env:
+  GO111MODULE: on
+  GO_VERSION: '1.23.8'
+
+jobs:
+  setup:
+    name: Setup Build Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      runner-labels: ${{ toJSON(matrix.runner-labels) }}
+    strategy:
+      matrix:
+        runner-labels:
+          - self-hosted-x86: codebuild-finch-x86_64-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+            self-hosted-arm64: codebuild-finch-arm64-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: Dump Config
+        run: echo '${{ toJSON(matrix) }}'
+
+  get-tag-name:
+    name: Get tag name
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ inputs.ref_name }}" ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+          
+  ubuntu-deb-build-and-test:
+    needs:
+      - get-tag-name
+      - setup
+    runs-on: ${{ fromJSON(needs.setup.outputs.runner-labels)[matrix.os] }}
+    timeout-minutes: 100
+    strategy:
+      matrix:
+        os: ['self-hosted-x86']
+    steps:
+        - name: Clean ubuntu runner workspace
+          run: |
+            rm -rf ${{ github.workspace }}/*
+        - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+          with:
+            ref: ${{ inputs.tag }}
+            fetch-depth: 0
+            persist-credentials: false
+            submodules: true
+        - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+          with:
+            go-version: ${{ env.GO_VERSION }}
+            cache: false
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+          with:
+            role-to-assume: ${{ secrets.DEB_ROLE_TESTING }}
+            role-session-name: ubuntu-deb
+            aws-region: us-west-2
+        - name: Install dependencies
+          run: |
+            sudo apt install build-essential -y
+            sudo apt install libseccomp-dev -y
+            sudo apt install pkg-config -y
+            sudo apt install zlib1g-dev -y
+        - name: Build for Ubuntu ${{ inputs.output_arch }}
+          run: |
+            make
+        - name: Generate deb
+          run: |
+            ./contrib/packaging/deb/package.sh
+        - name: Install Finch
+          run: |
+            sudo apt install ./_output/deb/$(ls -t ./_output/deb/ | grep 'run-finch_.*amd64\.deb' | head -1) -y
+            sudo systemctl daemon-reload
+            sudo systemctl start containerd.service
+            sudo systemctl start finch.service || true
+            sudo systemctl start finch-buildkit.service
+            sudo systemctl start finch-soci.service
+        - name: Run e2e tests
+          run: |
+              git status
+              git clean -f -d
+              # sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-container
+              sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+        - name: Clean Up Previous Environment
+          if: ${{ always() }}
+          timeout-minutes: 2
+          run: |
+            sudo apt remove run-finch -y
+            sudo apt remove build-essential -y
+            sudo apt remove libseccomp-dev -y
+            sudo apt remove pkg-config -y
+            sudo apt remove zlib1g-dev -y
+            sudo systemctl stop finch.service || true
+            sudo systemctl stop finch-buildkit.service || true
+            sudo systemctl stop finch-soci.service || true
+            sudo systemctl stop containerd.service
+            sudo systemctl daemon-reload
+      
+  upload-to-s3:
+    needs:
+        - get-tag-name
+        - setup
+    # Configure AWS Credentials
+    runs-on: ${{ fromJSON(needs.setup.outputs.runner-labels)[matrix.os] }}
+    timeout-minutes: 100
+    strategy:
+      matrix:
+        os: ['self-hosted-x86', 'self-hosted-arm64']
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        with:
+          role-to-assume: ${{ secrets.DEB_ROLE_TESTING }}
+          role-session-name: ubuntu-build-session
+          aws-region: us-west-2
+
+      - name: Upload deb to S3
+        run: |
+          aws s3 cp --acl public-read ./_output/deb/run-finch_${{ needs.get-tag-name.outputs.tag }}_amd64.deb "s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_TESTING }}/run-finch_${{ inputs.tag }}_amd64.deb"
+          aws s3 cp --acl public-read ./_output/deb/run-finch_${{ needs.get-tag-name.outputs.tag }}_aarch64.deb "s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_TESTING }}/run-finch_${{ inputs.tag }}_aarch64.deb"
