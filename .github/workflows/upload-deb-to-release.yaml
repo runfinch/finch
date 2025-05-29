@@ -1,0 +1,96 @@
+name: Upload deb
+on:
+  workflow_dispatch: # Trigger this workflow from tag
+    inputs:
+      ref_name:
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: write   # This is required for uploading the release assets
+jobs:
+  get-tag-and-version:
+    name: Get tag name
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+      version: ${{ steps.check-tag.outputs.version }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ inputs.ref_name }}" ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+
+          version=${tag#v}
+          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version matches format: $version"
+          else
+            echo "Error: Version $version doesn't match format."
+            exit 1
+          fi
+          echo "version=$version" >> ${GITHUB_OUTPUT}
+  upload-deb:
+    needs: get-tag-and-version
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        with:
+          role-to-assume: ${{ secrets.DEB_ROLE_PROD }}
+          role-session-name: ubuntu-deb
+          aws-region: us-west-2
+      - name: Download deb and signature files
+        run: |
+          MAX_RETRIES=25
+          RETRY_COUNT=0
+          RETRY_SLEEP_SECONDS=15
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            if aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/publickey.pem publickey.pem; then
+              echo "Downloaded deb and signature files successfully."
+              break
+            else
+              RETRY_COUNT=$((RETRY_COUNT+1))
+              echo "Retrying in $RETRY_SLEEP_SECONDS seconds... (Attempt $RETRY_COUNT of $MAX_RETRIES)"
+              sleep $RETRY_SLEEP_SECONDS
+            fi
+          done
+
+          if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+            echo "Max retries reached. Exiting..."
+            exit 1
+          fi
+      - name: Upload deb archives and signatures to release
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v0.1.15
+        with:
+          tag_name: ${{ needs.get-tag-name.outputs.version }}
+          files: |
+            run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb
+            run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig
+            run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb
+            run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig
+            publickey.pem
+      - name: Delete deb and signature files
+        run: |
+          rm -rf run-finch_1.8.2_amd64.deb
+          rm -rf run-finch_1.8.2_amd64.deb.sig
+          rm -rf run-finch_1.8.2_arm64.deb
+          rm -rf run-finch_1.8.2_arm64.deb.sig
+          rm -rf publickey.pem
