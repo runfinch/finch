@@ -6,6 +6,7 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd -- "${CURRENT_DIR}/../../.." && pwd)"
 RPMBUILD_DIR="${CURRENT_DIR}/rpmbuild"
 RPM_DIR="${RPMBUILD_DIR}/RPMS/$(uname -m)"
+CONFIG="${PROJECT_ROOT}/contrib/packaging/config/"
 OUTPUT="${PROJECT_ROOT}/_output/packages/"
 
 usage() {
@@ -97,7 +98,7 @@ if [ ! -z "${BRANCH}" ]; then
 fi
 
 # copy all non "meta" files which will be needed for the build to SOURCES
-find "${CURRENT_DIR}" -maxdepth 1 -type f \
+find "${CONFIG}" -maxdepth 1 -type f \
     \( ! -name '*.spec' \
     -and ! -name 'build.sh' \
     -and ! -name 'README.md' \

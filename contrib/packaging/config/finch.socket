@@ -1,0 +1,20 @@
+[Unit]
+Description=Socket for finch daemon
+
+[Socket]
+ListenStream=/run/finch/finch.sock
+
+[Socket]
+ListenStream-/run/finch.sock
+SocketMode=0660
+SocketUser=root
+SocketGroup=root
+
+[Socket]
+ListenStream=/run/finch.sock
+SocketMode=0660
+SocketUser=root
+SocketGroup=root
+
+[Install]
+WantedBy=sockets.target
