@@ -207,6 +207,13 @@ rosetta: false
 # dockercompat: a configuration parameter to activate finch functionality to accept Docker-like commands and arguments.
 # For running DevContainers on Finch, this functionality will convert Docker-like arguments into compatible nerdctl commands and arguments.
 dockercompat: true
+
+# experimental: enable experimental features (optional)
+#
+# Supported features:
+# - mountInotify https://lima-vm.io/docs/config/mount/#mount-inotify
+experimental:
+    mountInotify: true
 ```
 
 #### Windows
@@ -248,6 +255,13 @@ vmType: "wsl2"
 # dockercompat: a configuration parameter to activate finch functionality to accept Docker-like commands and arguments.
 # For running DevContainers on Finch, this functionality will convert Docker-like arguments into compatible nerdctl commands and arguments.
 dockercompat: true
+
+# experimental: experimental features to enable (optional)
+#
+# Supported features:
+# - mountInotify https://lima-vm.io/docs/config/mount/#mount-inotify
+experimental:
+    mountInotify: true
 ```
 
 ### FAQ
