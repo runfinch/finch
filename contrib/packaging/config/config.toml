@@ -1,0 +1,4 @@
+[proxy_plugin]
+        [proxy_plugins.soci]
+        type="snapshot"
+        address = "/var/lib/finch/soci/soci-snapshotter-grpc.sock"

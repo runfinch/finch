@@ -1,0 +1,5 @@
+Package: run-finch
+Version: 1.8.2
+Architecture: ${ARCH}
+Maintainer: AWS todo@amazon.com
+Description: CLI Container Runtime
