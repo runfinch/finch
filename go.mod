@@ -9,7 +9,6 @@ require (
 	github.com/docker/cli v28.2.2+incompatible
 	github.com/docker/docker v28.2.2+incompatible
 	github.com/docker/go-connections v0.5.0
-	github.com/golang/mock v1.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
 	github.com/lima-vm/lima v1.1.1
 	github.com/onsi/ginkgo/v2 v2.23.4
@@ -25,6 +24,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/tc-hib/go-winres v0.3.3
 	github.com/xorcare/pointer v1.2.2
+	go.uber.org/mock v0.5.2
 	golang.org/x/crypto v0.39.0
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
 	golang.org/x/sync v0.15.0

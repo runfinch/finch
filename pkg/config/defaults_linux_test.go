@@ -8,8 +8,8 @@ package config
 import (
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 
 	"github.com/runfinch/finch/pkg/mocks"
 )
