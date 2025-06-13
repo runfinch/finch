@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/runfinch/finch/compare/v1.8.3...v1.9.0) (2025-06-13)
+
+
+### Features
+
+* migrate from golang gomock to uber gomock ([#1431](https://github.com/runfinch/finch/issues/1431)) ([3d98454](https://github.com/runfinch/finch/commit/3d98454be94cdebdb995d80b0be02fef4df06230))
+
 ## [1.8.3](https://github.com/runfinch/finch/compare/v1.8.2...v1.8.3) (2025-06-10)
 
 
