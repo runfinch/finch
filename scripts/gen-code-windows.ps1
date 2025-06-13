@@ -13,7 +13,7 @@ $GOBIN = Join-Path $PSScriptRoot "../tools_bin"
 $env:GOBIN=$GOBIN 
 
 # Install the required Go tools specifying GOBIN
-go install github.com/golang/mock/mockgen
+go install go.uber.org/mock/mockgen
 go install golang.org/x/tools/cmd/stringer
 
 # Update the PATH environment variable and then run 'go generate'

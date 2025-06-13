@@ -199,9 +199,9 @@ download-licenses:
 
     ### dependencies in tools.go - start ###
 
-    # for github.com/golang/mock/mockgen
-	mkdir -p "$(LICENSEDIR)/github.com/golang/mock"
-	curl https://raw.githubusercontent.com/golang/mock/main/LICENSE --output "$(LICENSEDIR)/github.com/golang/mock/LICENSE"
+    # for go.uber.org/mock/mockgen
+	mkdir -p "$(LICENSEDIR)/go.uber.org/mock"
+	curl https://raw.githubusercontent.com/golang/mock/main/LICENSE --output "$(LICENSEDIR)/go.uber.org/mock/LICENSE"
     # for github.com/google/go-licenses
 	mkdir -p "$(LICENSEDIR)/github.com/google/go-licenses"
 	curl https://raw.githubusercontent.com/google/go-licenses/master/LICENSE --output "$(LICENSEDIR)/github.com/google/go-licenses/LICENSE"
@@ -354,7 +354,7 @@ test-benchmark-container:
 # To add a new tool binary to the recipe below, please also checkout out `pkg/tools.go`.
 gen-code: GOBIN = $(CURDIR)/tools_bin
 gen-code:
-	GOBIN=$(GOBIN) go install github.com/golang/mock/mockgen
+	GOBIN=$(GOBIN) go install go.uber.org/mock/mockgen
 	GOBIN=$(GOBIN) go install golang.org/x/tools/cmd/stringer
 	# Make sure that we are using the tool binaries which are just built to generate code.
 ifeq ($(GOOS),windows)

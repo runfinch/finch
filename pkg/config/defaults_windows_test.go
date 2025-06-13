@@ -6,8 +6,8 @@
 package config
 
 import (
-	"github.com/golang/mock/gomock"
 	"github.com/xorcare/pointer"
+	"go.uber.org/mock/gomock"
 
 	"github.com/runfinch/finch/pkg/mocks"
 )
