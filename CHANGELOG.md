@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.0](https://github.com/runfinch/finch/compare/v1.8.3...v1.9.0) (2025-06-17)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump k8s.io/apimachinery from 0.32.4 to 0.33.1 ([#1410](https://github.com/runfinch/finch/issues/1410)) ([11f8c4d](https://github.com/runfinch/finch/commit/11f8c4d8dbf96ad9f990e3fbd975b6bb2b380722))
+
+
+### Features
+
+* migrate from golang gomock to uber gomock ([#1431](https://github.com/runfinch/finch/issues/1431)) ([3d98454](https://github.com/runfinch/finch/commit/3d98454be94cdebdb995d80b0be02fef4df06230))
+
 ## [1.8.3](https://github.com/runfinch/finch/compare/v1.8.2...v1.8.3) (2025-06-10)
 
 
