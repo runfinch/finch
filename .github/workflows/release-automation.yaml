@@ -49,3 +49,30 @@ jobs:
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+
+  build-and-test-finch-deb:
+    needs: get-latest-tag
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ['x86_64', 'arm64']
+        include:
+          - arch: 'x86_64'
+            output-arch: 'amd64'
+          - arch: 'arm64'
+            output-arch: 'arm64'
+    uses: ./.github/workflows/build-and-test-deb.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+      arch: ${{ matrix.arch }}
+      output-arch: ${{ matrix.output-arch }}
+  
+  upload-deb-to-release:
+    needs:
+      - get-latest-tag
+      - build-and-test-finch-deb
+    uses: ./.github/workflows/upload-deb-to-release.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
