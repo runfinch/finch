@@ -49,3 +49,32 @@ jobs:
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+    
+  update-latest-version-in-s3:
+    needs: 
+      - get-latest-tag
+      - upload-pkg-and-dependency-source-code-to-release
+      - upload-msi-to-release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: update-latest-version-in-s3
+          aws-region: ${{ secrets.REGION }}
+          
+      - name: Update latest version in S3
+        run: |
+          # Create latest-version.json with the latest Finch release version to track updates
+          cat > latest-version.json << EOF
+          {
+            "latest_version": "${{ needs.get-latest-tag.outputs.tag }}"
+          }
+          EOF
+          
+          # Upload to S3
+          aws s3 cp latest-version.json s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/manifest/latest-version.json --content-type "application/json"
