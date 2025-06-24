@@ -1,0 +1,70 @@
+name: Upload Verified Artifacts to S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'deps/finch-core'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  upload-artifacts:
+    name: Upload Artifacts to S3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: recursive
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        with:
+          aws-region: ${{ secrets.REGION }}
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: update-latest-os-artifacts-in-s3
+          
+      - name: Update latest base OS artifact information in S3
+        run: |
+          # Update the latest verified base OS artifact information in S3
+          echo "Uploading the verified base OS artifact information to S3"
+
+          # Extract updated artifact information
+          source deps/finch-core/deps/full-os.conf
+          
+          # Create manifest file to hold artifact information
+          MANIFEST_FILE="latest-os-artifacts.json"
+          echo '{
+            "aarch64": {
+              "filename": "'$AARCH64_ARTIFACT'",
+              "sha512sum": "'$AARCH64_512_DIGEST'"
+            },
+            "x86_64": {
+              "filename": "'$X86_64_ARTIFACT'",
+              "sha512sum": "'$X86_64_512_DIGEST'"
+            }
+          }' > $MANIFEST_FILE
+          
+          # Upload to S3
+          aws s3 cp $MANIFEST_FILE s3://${{ secrets.ARTFACT_BUCKET_NAME }}/manifest/latest-os-artifacts.json --content-type "application/json"
+
+      - name: Update latest rootfs information in S3
+        run: |
+          # Update the latest verified rootfs information in S3
+          echo "Uploading the latest verified rootfs information in S3"
+          # Extract updated artifact information
+          source deps/finch-core/deps/rootfs.conf
+          
+          # Create manifest file to hold artifact information
+          MANIFEST_FILE="latest-rootfs-artifacts.json"
+          echo '{
+            "filename": "'$X86_64_ARTIFACT'",
+            "sha512sum": "'$X86_64_512_DIGEST'"
+          }' > $MANIFEST_FILE
+          
+          # Upload to S3
+          aws s3 cp $MANIFEST_FILE s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/manifest/latest-rootfs-artifacts.json --content-type "application/json"
