@@ -63,7 +63,8 @@ jobs:
               aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig && \
               aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb && \
               aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig && \
-              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/publickey.pem publickey.pem; then
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/publickey.pem publickey.pem && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/RELEASE RELEASE; then
               echo "Downloaded deb and signature files successfully."
               break
             else
@@ -77,16 +78,91 @@ jobs:
             echo "Max retries reached. Exiting..."
             exit 1
           fi
-      - name: Upload deb archives and signatures to release
-        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v0.1.15
-        with:
-          tag_name: ${{ needs.get-tag-name.outputs.version }}
-          files: |
-            run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb
-            run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig
-            run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb
-            run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig
-            publickey.pem
+      - name: Setup APT repository structure
+        run: |
+          mkdir -p pool/main/f/run-finch/
+          mkdir -p dists/noble/main/
+          mkdir dists/noble/main/binary-amd64/
+          mkdir dists/noble/main/binary-arm64/
+
+          mv run-finch_* pool/main/f/run-finch/
+          mv publickey.pem pool/main/f/run-finch/
+          mv RELEASE dists/noble/
+
+          dpkg-scanpackages --arch amd64 pool/main > dists/noble/main/binary-amd64/Packages
+          gzip -k dists/noble/main/binary-amd64/Packages
+
+          dpkg-scanpackages --arch arm64 pool/main > dists/noble/main/binary-arm64/Packages
+          gzip -k dists/noble/main/binary-arm64/Packages
+
+          echo "Date: $(date -Ru)" >> dists/noble/RELEASE
+          {
+          echo "MD5Sum:"
+          for f in dists/noble/main/binary-*/Packages*; do
+            echo " $(md5sum $f | cut -d' ' -f1) $(wc -c < $f) ${f#dists/noble/}"
+          done
+          echo "SHA1:"
+          for f in dists/noble/main/binary-*/Packages*; do
+            echo " $(sha1sum $f | cut -d' ' -f1) $(wc -c < $f) ${f#dists/noble/}"
+          done
+          echo "SHA256:"
+          for f in dists/noble/main/binary-*/Packages*; do
+            echo " $(sha256sum $f | cut -d' ' -f1) $(wc -c < $f) ${f#dists/noble/}"
+          done
+          } >> dists/noble/RELEASE
+
+          aws s3 cp dists/noble/RELEASE s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/RELEASE_${{ needs.get-tag-and-version.outputs.version }}
+          MAX_RETRIES=10
+          RETRY_COUNT=0
+          RETRY_SLEEP_SECONDS=5
+
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            if aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/RELEASE_${{ needs.get-tag-and-version.outputs.version }}.sig RELEASE.gpg && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/RELEASE_${{ needs.get-tag-and-version.outputs.version }} RELEASE; then
+              echo "Downloaded RELEASE and signed RELEASE files successfully."
+              break
+            else
+              RETRY_COUNT=$((RETRY_COUNT+1))
+              echo "Retrying in $RETRY_SLEEP_SECONDS seconds... (Attempt $RETRY_COUNT of $MAX_RETRIES)"
+              sleep $RETRY_SLEEP_SECONDS
+            fi
+          done
+
+          if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+            echo "Max retries reached. Exiting..."
+            exit 1
+          fi
+
+          mv RELEASE.gpg dists/noble/
+          mv RELEASE dists/noble/
+
+          sudo gpg --import pool/main/f/run-finch/publickey.pem && sudo gpg --export --armor EC2A8C75A0F2C15B4B606642EC6C05BFDC5DA32C > GPG_KEY.pub
+      # - name: Upload repository files to repository bucket
+      #   run: |
+      #     aws s3 cp pool/main/f/run-finch/run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb s3://${{ PLACEHOLDER }}/pool/main/f/run-finch/
+      #     aws s3 cp pool/main/f/run-finch/run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig s3://${{ PLACEHOLDER }}/pool/main/f/run-finch/
+      #     aws s3 cp pool/main/f/run-finch/run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb s3://${{ PLACEHOLDER }}/pool/main/f/run-finch/
+      #     aws s3 cp pool/main/f/run-finch/run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig s3://${{ PLACEHOLDER }}/pool/main/f/run-finch/
+      #     aws s3 cp pool/main/f/run-finch/publickey.pem s3://${{ PLACEHOLDER }}/pool/main/f/run-finch/
+
+      #     aws s3 cp dists/noble/RELEASE s3://${{ PLACEHOLDER }}/dists/noble/
+      #     aws s3 cp dists/noble/RELEASE.gpg s3://${{ PLACEHOLDER }}/dists/noble/
+      #     aws s3 cp dists/noble/main/binary-amd64/Packages s3://${{ PLACEHOLDER }}/dists/noble/main/binary-amd64/
+      #     aws s3 cp dists/noble/main/binary-amd64/Packages.gz s3://${{ PLACEHOLDER }}/dists/noble/main/binary-amd64/
+      #     aws s3 cp dists/noble/main/binary-arm64/Packages s3://${{ PLACEHOLDER }}/dists/noble/main/binary-arm64/
+      #     aws s3 cp dists/noble/main/binary-arm64/Packages.gz s3://${{ PLACEHOLDER }}/dists/noble/main/binary-arm64/
+
+      #     aws s3 cp GPG_KEY.pub s3://${{ PLACEHOLDER }}/
+      # - name: Upload deb archives and signatures to release
+      #   uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v0.1.15
+      #   with:
+      #     tag_name: ${{ needs.get-tag-name.outputs.version }}
+      #     files: |
+      #       run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb
+      #       run-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig
+      #       run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb
+      #       run-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig
+      #       publickey.pem
       - name: Delete deb and signature files
         run: |
           rm -rf run-finch_1.8.2_amd64.deb
@@ -94,3 +170,6 @@ jobs:
           rm -rf run-finch_1.8.2_arm64.deb
           rm -rf run-finch_1.8.2_arm64.deb.sig
           rm -rf publickey.pem
+          rm -rf pool/
+          rm -rf dists/
+          rm -rf GPG_KEY.pub

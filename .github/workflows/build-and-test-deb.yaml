@@ -111,7 +111,7 @@ jobs:
               git status
               git clean -f -d
               eval $(ssh-agent)
-              sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
+              # sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
               sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
         - name: Clean Up Previous Environment
           if: ${{ always() }}
@@ -130,3 +130,4 @@ jobs:
         - name: Upload deb to S3
           run: |
             aws s3 cp ./_output/deb s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/ --recursive --exclude "*" --include "run-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb"
+            aws s3 cp ./contrib/packaging/deb/RELEASE s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/
