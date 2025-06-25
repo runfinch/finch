@@ -10,8 +10,8 @@ package pkg
 // For the tutorial to add a new tool, see https://github.com/golang/go/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module.
 // After following the tutorial, update `download-licenses` in Makefile. You'll likely also need to update `gen-code`.
 import (
-	_ "github.com/golang/mock/mockgen"
 	_ "github.com/google/go-licenses"
 	_ "github.com/tc-hib/go-winres"
+	_ "go.uber.org/mock/mockgen"
 	_ "golang.org/x/tools/cmd/stringer"
 )

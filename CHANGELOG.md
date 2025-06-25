@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.8.3](https://github.com/runfinch/finch/compare/v1.8.2...v1.8.3) (2025-06-10)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/docker/cli ([8951770](https://github.com/runfinch/finch/commit/895177039189820e7b00be7c9c18766288d722df))
+* **deps:** Bump github.com/docker/cli from 28.1.1+incompatible to 28.2.2+incompatible ([#1421](https://github.com/runfinch/finch/issues/1421)) ([8951770](https://github.com/runfinch/finch/commit/895177039189820e7b00be7c9c18766288d722df))
+* **deps:** Bump github.com/docker/docker ([bdae3ac](https://github.com/runfinch/finch/commit/bdae3ac692254840399868722f1ee7f8e7285ebc))
+* **deps:** Bump github.com/docker/docker from 28.1.1+incompatible to 28.2.2+incompatible ([#1420](https://github.com/runfinch/finch/issues/1420)) ([bdae3ac](https://github.com/runfinch/finch/commit/bdae3ac692254840399868722f1ee7f8e7285ebc))
+* **deps:** Bump github.com/lima-vm/lima from 1.0.7 to 1.1.1 ([#1415](https://github.com/runfinch/finch/issues/1415)) ([95026a1](https://github.com/runfinch/finch/commit/95026a1243bbbf82cd13cdaa404c0b0e527f3edf))
+* **deps:** Bump golang.org/x/crypto from 0.38.0 to 0.39.0 ([#1427](https://github.com/runfinch/finch/issues/1427)) ([42ac01d](https://github.com/runfinch/finch/commit/42ac01dec2b8def9302f4cd124b873b0335b7497))
+* **deps:** Bump golang.org/x/tools from 0.33.0 to 0.34.0 ([#1426](https://github.com/runfinch/finch/issues/1426)) ([a423697](https://github.com/runfinch/finch/commit/a4236971b60d0ccbce21511ac8cf22dc698c322c))
+* **deps:** Bump submodules and dependencies ([#1419](https://github.com/runfinch/finch/issues/1419)) ([1b88505](https://github.com/runfinch/finch/commit/1b88505dc48f65a689b347d8f5a5aadd42b58ee5))
+
 ## [1.8.2](https://github.com/runfinch/finch/compare/v1.8.1...v1.8.2) (2025-05-21)
 
 
