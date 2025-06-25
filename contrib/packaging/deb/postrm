@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+# Clean up configuration files and data directories if purging
+if [ "$1" = "purge" ]; then
+    # Remove configuration files
+    rm -rf /etc/finch
+
+    # Remove data directories
+    rm -rf /var/lib/finch
+    rm -rf /usr/libexec/finch
+
+    # Remove systemd service files
+    rm -f /etc/systemd/system/finch.service
+    rm -f /etc/systemd/system/finch.socket
+    rm -f /etc/systemd/system/finch-buildkit.service
+    rm -f /etc/systemd/system/finch-buildkit.socket
+    rm -f /etc/systemd/system/finch-soci.service
+    rm -f /etc/systemd/system/finch-soci.socket
+
+    # Reload systemd to recognize the removed services
+    systemctl daemon-reload || true
+fi
+
+exit 0

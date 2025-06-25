@@ -1,5 +1,10 @@
-Package: run-finch
-Version: 1.8.2
+Source: runfinch-finch
+Section: devel
+Priority: optional
+Maintainer: AWS finch-package-maintainers@amazon.com
+Build-Depends: debhelper (>= 13)
+Homepage: https://runfinch.com
+Package: runfinch-finch
 Architecture: ${ARCH}
-Maintainer: AWS todo@amazon.com
-Description: CLI Container Runtime
+Depends: containerd (>= 1.7.24), runc (>=1.1.5)
+Description: https://github.com/runfinch/finch

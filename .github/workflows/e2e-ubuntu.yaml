@@ -11,7 +11,7 @@ on:
 
 env:
   GO111MODULE: on
-  GO_VERSION: '1.23.8'
+  GO_VERSION: '1.24.0'
 
 jobs:
   get-latest-tag:
@@ -98,10 +98,11 @@ jobs:
           ./contrib/packaging/deb/package.sh --${{ inputs.output-arch }} --version ${{ needs.get-tag-and-version.outputs.version }}
       - name: Install Finch
         run: |
-          sudo apt install ./_output/deb/run-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb -y
+          sudo apt install ./_output/deb/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb -y
           sudo systemctl daemon-reload
           sudo systemctl start containerd.service
-          sudo systemctl start finch.service || true
+          sudo systemctl restart finch.socket
+          sudo systemctl start finch.service
           sudo systemctl start finch-buildkit.service
           sudo systemctl start finch-soci.service
       - name: Set up REPORT_DIR
@@ -148,15 +149,8 @@ jobs:
         if: always()
         timeout-minutes: 2
         run: |
-          sudo apt remove run-finch -y
+          sudo apt remove runfinch-finch -y
           sudo apt remove build-essential -y
           sudo apt remove libseccomp-dev -y
           sudo apt remove pkg-config -y
           sudo apt remove zlib1g-dev -y
-          sudo systemctl stop finch.service || true
-          sudo systemctl stop finch-buildkit.service || true
-          sudo systemctl stop finch-soci.service || true
-          sudo systemctl stop containerd.service
-          sudo systemctl daemon-reload
-        
-
