@@ -1,0 +1,7 @@
+Origin: runfinch-finch repository
+Label: runfinch-finch
+Suite: noble
+Codename: noble
+Architectures: amd64 arm64
+Components: main
+Description: https://github.com/runfinch/finch

@@ -1,0 +1,18 @@
+[Unit]
+Description=finch daemon
+Documentation=https://runfinch.com
+After=network.target local-fs.target containerd.service finch.socket
+Wants=network.target containerd.service
+Requires=finch.socket
+
+[Service]
+ExecStart=/usr/libexec/finch/finch-daemon --debug --socket-addr fd://
+Type=notify
+Delegate=yes
+Restart=always
+RestartSec=5
+Environment=PATH=/usr/libexec/finch/:$PATH
+Environment=BUILDKIT_HOST=/var/lib/finch/buildkit/buildkitd.sock
+
+[Install]
+WantedBy=multi-user.target

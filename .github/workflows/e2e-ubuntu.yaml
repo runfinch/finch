@@ -1,0 +1,156 @@
+name: e2e-ubuntu
+on:
+  workflow_call:
+    inputs:
+      arch:
+        type: string
+        required: true
+      output-arch:
+        type: string
+        required: true
+
+env:
+  GO111MODULE: on
+  GO_VERSION: '1.24.0'
+
+jobs:
+  get-latest-tag:
+    name: Get the latest release tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.latest-tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+            fetch-depth: 0
+      - name: 'Get the latest tag'
+        id: latest-tag
+        uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
+  
+  get-tag-and-version:
+    needs: get-latest-tag
+    name: Get tag name
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+      version: ${{ steps.check-tag.outputs.version }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ needs.get-latest-tag.outputs.tag }}" ]; then
+            tag=${{ needs.get-latest-tag.outputs.tag }}
+          else
+            tag=${{ github.tag }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+
+          version=${tag#v}
+          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version matches format: $version"
+          else
+            echo "Error: Version $version doesn't match format."
+            exit 1
+          fi
+          echo "version=$version" >> ${GITHUB_OUTPUT}
+  
+  e2e-test:
+    needs: get-tag-and-version
+    runs-on: codebuild-finch-${{ inputs.arch }}-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    timeout-minutes: 60
+    outputs:
+      has_creds: ${{ steps.vars.outputs.has_creds}}
+      vm_report: ${{ steps.set-multiple-vars.outputs.VM_REPORT }}
+      container_report: ${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}
+      vm_serial_report: ${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}
+    steps:
+      - name: Clean Ubuntu workspace
+        run: |
+          rm -rf ${{ github.workspace }}/*
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - name: Set output variables
+        id: vars
+        run: |
+          has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
+          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
+      - name: Install dependencies
+        run: |
+          sudo apt install build-essential -y
+          sudo apt install libseccomp-dev -y
+          sudo apt install pkg-config -y
+          sudo apt install zlib1g-dev -y
+      - name: Build for Ubuntu ${{ inputs.output-arch }}
+        run: |
+          make
+      - name: Generate deb
+        run: |
+          ./contrib/packaging/deb/package.sh --${{ inputs.output-arch }} --version ${{ needs.get-tag-and-version.outputs.version }}
+      - name: Install Finch
+        run: |
+          sudo apt install ./_output/deb/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb -y
+          sudo systemctl daemon-reload
+          sudo systemctl start containerd.service
+          sudo systemctl restart finch.socket
+          sudo systemctl start finch.service
+          sudo systemctl start finch-buildkit.service
+          sudo systemctl start finch-soci.service
+      - name: Set up REPORT_DIR
+        run: |
+          echo "REPORT_DIR=${{ github.workspace }}/reports" >> $GITHUB_ENV
+      - name: Run e2e tests
+        run: |
+            git status
+            git clean -f -d
+            eval $(ssh-agent)
+            sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
+            sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+      - name: Change ownership of reports
+        if: always()
+        run: |
+          if [ ! -d "$REPORT_DIR" ]; then
+            echo "Error: Directory $REPORT_DIR does not exist."
+            exit 1
+          fi
+
+          USER=$(whoami)
+          GROUP=$(id -gn)
+
+          if sudo chown -R "$USER:$GROUP" "$REPORT_DIR"; then
+            echo "Ownership of $REPORT_DIR changed to $USER:$GROUP"
+          else
+            echo "Error: Failed to change ownership of $REPORT_DIR"
+            exit 1
+          fi
+      - name: Set artifacts name outputs
+        if: always()
+        id: set-multiple-vars
+        run: |
+          echo "VM_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-report.json" >> $GITHUB_OUTPUT
+          echo "CONTAINER_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-container-report.json" >> $GITHUB_OUTPUT
+          echo "VM_SERIAL_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json" >> $GITHUB_OUTPUT
+      - name: Upload reports artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ubuntu-test-e2e-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
+          path: ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-*.json
+      - name: Clean Up Previous Environment
+        if: always()
+        timeout-minutes: 2
+        run: |
+          sudo apt remove runfinch-finch -y
+          sudo apt remove build-essential -y
+          sudo apt remove libseccomp-dev -y
+          sudo apt remove pkg-config -y
+          sudo apt remove zlib1g-dev -y

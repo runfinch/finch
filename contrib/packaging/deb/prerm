@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+# Stop all Finch services before removing the package
+systemctl stop finch.socket || true
+systemctl stop finch.service || true
+systemctl stop finch-buildkit.service || true
+systemctl stop finch-soci.service || true
+
+# Disable services to prevent them from starting on boot
+systemctl disable finch.service || true
+systemctl disable finch-buildkit.service || true
+systemctl disable finch-soci.service || true
+systemctl disable finch.socket || true
+systemctl disable finch-buildkit.socket || true
+systemctl disable finch-soci.socket || true
+
+exit 0
