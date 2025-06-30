@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.9.0](https://github.com/runfinch/finch/compare/v1.8.3...v1.9.0) (2025-06-30)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.36.3 to 1.36.5 ([#1434](https://github.com/runfinch/finch/issues/1434)) ([d6aa084](https://github.com/runfinch/finch/commit/d6aa0840aaa70ce5a9ce4102d092a66c4541689c))
+* **deps:** Bump github.com/docker/cli ([8c1611c](https://github.com/runfinch/finch/commit/8c1611c95efd09f855ef431663de91970a186178))
+* **deps:** Bump github.com/docker/cli from 28.2.2+incompatible to 28.3.0+incompatible ([#1439](https://github.com/runfinch/finch/issues/1439)) ([8c1611c](https://github.com/runfinch/finch/commit/8c1611c95efd09f855ef431663de91970a186178))
+* **deps:** Bump github.com/docker/docker ([ea432b4](https://github.com/runfinch/finch/commit/ea432b4de3678614a6ff24da91107501005a41d5))
+* **deps:** Bump github.com/docker/docker from 28.2.2+incompatible to 28.3.0+incompatible ([#1438](https://github.com/runfinch/finch/issues/1438)) ([ea432b4](https://github.com/runfinch/finch/commit/ea432b4de3678614a6ff24da91107501005a41d5))
+* **deps:** Bump k8s.io/apimachinery from 0.32.4 to 0.33.1 ([#1410](https://github.com/runfinch/finch/issues/1410)) ([11f8c4d](https://github.com/runfinch/finch/commit/11f8c4d8dbf96ad9f990e3fbd975b6bb2b380722))
+
+
+### Features
+
+* migrate from golang gomock to uber gomock ([#1431](https://github.com/runfinch/finch/issues/1431)) ([3d98454](https://github.com/runfinch/finch/commit/3d98454be94cdebdb995d80b0be02fef4df06230))
+* Ubuntu packaging ([#1425](https://github.com/runfinch/finch/issues/1425)) ([3d6590e](https://github.com/runfinch/finch/commit/3d6590e0db193b16f4d0c26faa9c3bdba72e6440))
+
 ## [1.8.3](https://github.com/runfinch/finch/compare/v1.8.2...v1.8.3) (2025-06-10)
 
 
