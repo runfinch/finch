@@ -1,0 +1,129 @@
+name: Build, test and upload .deb to S3
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+      arch:
+        type: string
+        required: true
+      output-arch:
+        type: string
+        required: true
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+      arch:
+        type: string
+        required: true
+      output-arch:
+        type: string
+        required: true
+  schedule:
+    - cron: '0 9 * * *'
+env:
+  GO111MODULE: on
+  GO_VERSION: '1.24.0'
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  get-tag-and-version:
+    name: Get tag name
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+      version: ${{ steps.check-tag.outputs.version }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ inputs.ref_name }}" ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+
+          version=${tag#v}
+          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version matches format: $version"
+          else
+            echo "Error: Version $version doesn't match format."
+            exit 1
+          fi
+          echo "version=$version" >> ${GITHUB_OUTPUT}
+  ubuntu-deb-build-and-test:
+    needs: get-tag-and-version
+    runs-on: codebuild-finch-${{ inputs.arch }}-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    timeout-minutes: 30
+    steps:
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+          with:
+            role-to-assume: ${{ secrets.DEB_ROLE_PROD }}
+            role-session-name: ubuntu-deb
+            aws-region: us-west-2
+        - name: Clean ubuntu runner workspace
+          run: |
+            rm -rf ${{ github.workspace }}/*
+        - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+          with:
+            ref: ${{ inputs.tag }}
+            fetch-depth: 0
+            persist-credentials: false
+            submodules: true
+        - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+          with:
+            go-version: ${{ env.GO_VERSION }}
+            cache: false
+        - name: Install dependencies
+          run: |
+            sudo apt install build-essential -y
+            sudo apt install libseccomp-dev -y
+            sudo apt install pkg-config -y
+            sudo apt install zlib1g-dev -y
+        - name: Build for Ubuntu ${{ inputs.output-arch }}
+          run: |
+            make
+        - name: Generate deb
+          run: |
+            ./contrib/packaging/deb/package.sh --${{ inputs.output-arch }} --version ${{ needs.get-tag-and-version.outputs.version }}
+        - name: Install Finch
+          run: |
+            sudo apt install ./_output/deb/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb -y
+            sudo systemctl daemon-reload
+            sudo systemctl start containerd.service
+            sudo systemctl restart finch.socket
+            sudo systemctl start finch.service
+            sudo systemctl start finch-buildkit.service
+            sudo systemctl start finch-soci.service
+        - name: Run e2e tests
+          run: |
+              git status
+              git clean -f -d
+              eval $(ssh-agent)
+              sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
+              sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+        - name: Clean Up Previous Environment
+          if: ${{ always() }}
+          timeout-minutes: 2
+          run: |
+            sudo apt remove runfinch-finch -y
+            sudo apt remove build-essential -y
+            sudo apt remove libseccomp-dev -y
+            sudo apt remove pkg-config -y
+            sudo apt remove zlib1g-dev -y
+        - name: Upload deb to S3
+          run: |
+            aws s3 cp ./_output/deb s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/ --recursive --exclude "*" --include "runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb"
+            aws s3 cp ./contrib/packaging/deb/Release s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/
