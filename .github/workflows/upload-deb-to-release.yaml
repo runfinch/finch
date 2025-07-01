@@ -197,11 +197,11 @@ jobs:
         with:
           tag_name: ${{ needs.get-tag-name.outputs.version }}
           files: |
-            runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb
-            runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig
-            runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb
-            runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig
-            publickey.pem
+            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb
+            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig
+            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb
+            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig
+            pool/main/f/runfinch-finch/publickey.pem
       - name: Delete deb and signature files
         run: |
           rm -rf runfinch-finch_* publcikey.pem pool/ dists/ GPG_KEY.pub PackagesAMD64 PackagesARM64

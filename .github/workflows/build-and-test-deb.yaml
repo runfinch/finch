@@ -58,10 +58,11 @@ jobs:
           if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Version matches format: $version"
           else
-            echo "Error: Version $version doesn't match format."
-            exit 1
+            echo "Version $version doesn't match format. Using test version: 0.0.1+{commit}"
+            version="0.0.1+${{ github.sha }}""
           fi
           echo "version=$version" >> ${GITHUB_OUTPUT}
+
   ubuntu-deb-build-and-test:
     needs: get-tag-and-version
     runs-on: codebuild-finch-${{ inputs.arch }}-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
