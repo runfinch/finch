@@ -59,7 +59,7 @@ jobs:
             echo "Version matches format: $version"
           else
             echo "Version $version doesn't match format. Using test version: 0.0.1+{commit}"
-            version="0.0.1+${{ github.sha }}""
+            version="0.0.1+${{ github.sha }}"
           fi
           echo "version=$version" >> ${GITHUB_OUTPUT}
 
