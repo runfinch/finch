@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.1](https://github.com/runfinch/finch/compare/v1.9.0...v1.9.1) (2025-07-03)
+
+
+### Bug Fixes
+
+* remove extra quotation in deb workflow ([#1443](https://github.com/runfinch/finch/issues/1443)) ([ff980fa](https://github.com/runfinch/finch/commit/ff980fae18017ed45e35d81e46d344a500923236))
+* ubuntu nightly workflow inputs ([#1447](https://github.com/runfinch/finch/issues/1447)) ([330c198](https://github.com/runfinch/finch/commit/330c19803b642233624d9709fb526afea6059e90))
+* ubuntu workflow fixes ([#1441](https://github.com/runfinch/finch/issues/1441)) ([fc83232](https://github.com/runfinch/finch/commit/fc832328a09486d8ee184589c733f5c5f19e7c22))
+
 ## [1.9.0](https://github.com/runfinch/finch/compare/v1.8.3...v1.9.0) (2025-06-30)
 
 
