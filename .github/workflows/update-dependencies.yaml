@@ -1,0 +1,73 @@
+name: update-dependencies
+
+on:
+  push:
+    branches:
+      - '**'
+  # schedule:
+  #   - cron: '0 9 * * *'  # Run daily at 9 AM UTC
+  # workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run dependency update
+        run: |
+          cd contrib/packaging/deb
+          chmod +x update-dependencies.sh
+          ./update-dependencies.sh
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet contrib/packaging/deb/package.sh; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create or update PR
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          signoff: true
+          commit-message: 'chore: update debian dependencies'
+          title: 'chore: update debian dependencies'
+          body: |
+            This PR updates the following dependencies to their latest versions:
+            
+            - finch-daemon
+            - nerdctl
+            - buildkit
+            - soci-snapshotter
+            - CNI plugins
+            - cosign
+            
+            This is an automated update created by the dependency update workflow.
+          branch: update-dependencies
+          delete-branch: true
+  
+  ubuntu-e2e-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ['x86_64', 'arm64']
+        include:
+          - arch: 'x86_64'
+            output-arch: 'amd64'
+          - arch: 'arm64'
+            output-arch: 'arm64'
+    needs: update-dependencies
+    if: needs.update-dependencies.outputs.changed == 'true'
+    uses: ./.github/workflows/e2e-ubuntu.yaml
+    secrets: inherit
+    with:
+      arch: ${{ matrix.arch }}
+      output-arch: ${{ matrix.output-arch }}
