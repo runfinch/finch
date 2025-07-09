@@ -56,42 +56,42 @@ TEMP_BUILD_DIR="${SCRIPT_DIR}/TMP/build"
 
 # finch daemon
 FINCHD_PACKAGE="github.com/runfinch/finch-daemon"
-FINCHD_RELEASE="0.14.0"
-FINCHD_COMMIT="000e7c2dd8f326cb0e4e16225f82ff8b905de450"
+FINCHD_RELEASE="0.17.2"
+FINCHD_COMMIT="cc74c20b613050faa445b2f0bf14952501bdaae3"
 FINCHD_SRC=finch-daemon-"${FINCHD_COMMIT}"
 
 # nerdctl
 NERDCTL_PACKAGE="github.com/containerd/nerdctl"
 NERDCTL_MODULE="github.com/containerd/nerdctl/v2"
-NERDCTL_RELEASE="2.0.4"
-NERDCTL_COMMIT="39058fbce68e29feecc9cec992ade74b272817d8"
+NERDCTL_RELEASE="2.1.3"
+NERDCTL_COMMIT="ff9323859a8d7892d8d72380a17b99395ef9a516"
 NERDCTL_SRC=nerdctl-"${NERDCTL_COMMIT}"
 NERDCTL_VERSION="v$(echo "$NERDCTL_RELEASE" | sed 's/-.*//')"
 
 # buildkit
 BUILDKIT_PACKAGE="github.com/moby/buildkit"
-BUILDKIT_RELEASE="0.20.2"
-BUILDKIT_COMMIT="97437fdd7e32f29bb80288d800cd4ffcb34e1c15"
+BUILDKIT_RELEASE="0.23.2"
+BUILDKIT_COMMIT="40b2ede0ac0a37030f9959b4a28e9c6c8ea036e7"
 BUILDKIT_SRC=buildkit-"${BUILDKIT_COMMIT}"
 BUILDKIT_VERSION=$(echo "$BUILDKIT_RELEASE" | sed 's/-.*//')
 
 # soci
 SOCI_PACKAGE="github.com/awslabs/soci-snapshotter"
-SOCI_RELEASE="0.9.0"
-SOCI_COMMIT="737f61a3db40c386f997c1f126344158aa3ad43c"
+SOCI_RELEASE="0.11.1"
+SOCI_COMMIT="28781de6731978b2e2f0f43573a345e9fa14dbd1"
 SOCI_SRC=soci-snapshotter-"${SOCI_COMMIT}"
 SOCI_GO_LDFLAGS="-ldflags '-s -w -X ${SOCI_PACKAGE}/version.Version=v${SOCI_RELEASE} -X ${SOCI_PACKAGE}/version.Revision=${SOCI_COMMIT}'"
 
 # cni
 CNI_PACKAGE="github.com/containernetworking/plugins"
-CNI_RELEASE="1.6.2"
-CNI_COMMIT="7f756b411efc3d3730c707e2cc1f2baf1a66e28c"
+CNI_RELEASE="1.7.1"
+CNI_COMMIT="a5d507e2b884d8bd6a001c9e5a9118113ffef444"
 CNI_SRC=plugins-"${CNI_COMMIT}"
 
 # cosign
 COSIGN_PACKAGE="github.com/sigstore/cosign"
-COSIGN_RELEASE="2.5.0"
-COSIGN_COMMIT="38bb98697005cdc5c092f031594c0e45d039f4a0"
+COSIGN_RELEASE="2.5.2"
+COSIGN_COMMIT="af5a988bb15a03919ccaac7a2ddcad7a9d006f38"
 COSIGN_SRC=cosign-"${COSIGN_COMMIT}"
 
 # prep directories
