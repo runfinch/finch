@@ -8,10 +8,11 @@ package config
 import (
 	"testing"
 
-	"github.com/runfinch/finch/pkg/mocks"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
+
+	"github.com/runfinch/finch/pkg/mocks"
 )
 
 func platformLoadTests(t *testing.T) []loadTestCase {
