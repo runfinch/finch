@@ -1,12 +1,12 @@
-name: update-dependencies
+name: update-ubuntu-finch-dependencies
 
 on:
   push:
     branches:
       - '**'
-  # schedule:
-  #   - cron: '0 9 * * *'  # Run daily at 9 AM UTC
-  # workflow_dispatch:  # Allow manual trigger
+  schedule:
+    - cron: '0 9 * * *'  # Run daily at 9 AM UTC
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
   update-dependencies:
