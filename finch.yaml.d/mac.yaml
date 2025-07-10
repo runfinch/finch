@@ -11,6 +11,7 @@ provision:
   - mode: user
     script: |
       sudo cp <finch_daemon_location> /usr/local/bin/finch-daemon
+      sudo cp <finch_daemon_credhelper_location> /usr/bin/docker-credential-finch
       sudo cp <finch_daemon_root>/finch@.service /usr/local/lib/systemd/system/finch@.service
 
       sudo systemctl daemon-reload
