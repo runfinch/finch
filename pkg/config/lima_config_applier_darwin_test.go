@@ -659,6 +659,40 @@ mountType: "reverse-sshfs"`), 0o600)
 			},
 			want: nil,
 		},
+		{
+			name:         "sets mountInotify when experimental feature is enabled",
+			config:       makeExperimentalConfig("qemu", "2GiB", 4, false, SharedExperimentalSettings{MountInotify: true}),
+			defaultPath:  "/default.yaml",
+			overridePath: "/override.yaml",
+			isInit:       true,
+			mockSvc: func(
+				_ afero.Fs,
+				_ *mocks.Logger,
+				cmd *mocks.Command,
+				creator *mocks.CommandCreator,
+				_ *mocks.LimaConfigApplierSystemDeps,
+			) {
+				cmd.EXPECT().Output().Return([]byte("13.0.0"), nil)
+				creator.EXPECT().Create("sw_vers", "-productVersion").Return(cmd)
+			},
+			postRunCheck: func(t *testing.T, fs afero.Fs) {
+				buf, err := afero.ReadFile(fs, "/override.yaml")
+				require.NoError(t, err)
+
+				var limaCfg limayaml.LimaYAML
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, 4, *limaCfg.CPUs)
+				require.Equal(t, "2GiB", *limaCfg.Memory)
+
+				buf, err = afero.ReadFile(fs, "/default.yaml")
+				require.NoError(t, err)
+				err = yaml.Unmarshal(buf, &limaCfg)
+				require.NoError(t, err)
+				require.Equal(t, true, *limaCfg.MountInotify)
+			},
+			want: nil,
+		},
 	}
 
 	for _, tc := range testCases {
