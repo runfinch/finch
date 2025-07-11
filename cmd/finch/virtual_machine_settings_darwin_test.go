@@ -101,6 +101,20 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
 		},
+		{
+			name:    "should show settings --help when no flags are provided",
+			wantErr: nil,
+			command: &cobra.Command{
+				Use: "settings",
+			},
+			args: []string{},
+			mockSvc: func(
+				_ *mocks.LimaConfigApplier,
+				_ afero.Fs,
+			) {
+				// no expectations since help should be shown
+			},
+		},
 	}
 
 	for _, tc := range testCases {
