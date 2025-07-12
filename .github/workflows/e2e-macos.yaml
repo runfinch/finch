@@ -35,7 +35,7 @@ jobs:
         "${{ inputs.version }}",
         "${{ inputs.runner-type }}",
       ]
-    timeout-minutes: 80
+    timeout-minutes: 120
     outputs:
       has_creds: ${{ steps.vars.outputs.has_creds}}
       vm_report: ${{ steps.set-multiple-vars.outputs.VM_REPORT }}

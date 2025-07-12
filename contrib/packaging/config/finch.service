@@ -6,6 +6,8 @@ After=network.target local-fs.target finch-buildkit.service
 [Service]
 ExecStart=/usr/bin/true
 Type=oneshot
+Environment=PATH=/usr/libexec/finch/::/usr/bin:$PATH
+Environment=BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock
 
 [Install]
 WantedBy=multi-user.target
