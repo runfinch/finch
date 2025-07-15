@@ -74,6 +74,11 @@ func (sva *settingsVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
+	// check if any flags were provided by the user
+	if !cmd.Flags().Changed("cpus") && !cmd.Flags().Changed("memory") {
+		return cmd.Help()
+	}
+
 	opts := config.VMConfigOpts{
 		CPUs:   cpus,
 		Memory: memory,
