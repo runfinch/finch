@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.10.0](https://github.com/runfinch/finch/compare/v1.9.0...v1.10.0) (2025-07-15)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump submodules and dependencies ([#1460](https://github.com/runfinch/finch/issues/1460)) ([f7af7c1](https://github.com/runfinch/finch/commit/f7af7c1d15ce4b5879bd70a86879b21b223fd9ec))
+
+
+### Features
+
+* add experimental_features config option ([#1323](https://github.com/runfinch/finch/issues/1323)) ([e55c91d](https://github.com/runfinch/finch/commit/e55c91db9ea3843a3a546943388721c9db4ef4ad))
+
+
+### Bug Fixes
+
+* remove extra quotation in deb workflow ([#1443](https://github.com/runfinch/finch/issues/1443)) ([ff980fa](https://github.com/runfinch/finch/commit/ff980fae18017ed45e35d81e46d344a500923236))
+* ubuntu nightly workflow inputs ([#1447](https://github.com/runfinch/finch/issues/1447)) ([330c198](https://github.com/runfinch/finch/commit/330c19803b642233624d9709fb526afea6059e90))
+* ubuntu workflow fixes ([#1441](https://github.com/runfinch/finch/issues/1441)) ([fc83232](https://github.com/runfinch/finch/commit/fc832328a09486d8ee184589c733f5c5f19e7c22))
+* vm settings w/o flag show settings help ([#1456](https://github.com/runfinch/finch/issues/1456)) ([dc20464](https://github.com/runfinch/finch/commit/dc2046439cd840d925c7dcbcad40dd4c4597585d))
+
 ## [1.9.0](https://github.com/runfinch/finch/compare/v1.8.3...v1.9.0) (2025-06-30)
 
 
