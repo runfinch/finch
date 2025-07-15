@@ -50,7 +50,7 @@ jobs:
           }' > $MANIFEST_FILE
           
           # Upload to S3
-          aws s3 cp $MANIFEST_FILE s3://${{ secrets.ARTFACT_BUCKET_NAME }}/manifest/latest-os-artifacts.json --content-type "application/json"
+          aws s3 cp $MANIFEST_FILE s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/manifest/latest-os-artifacts.json --content-type "application/json"
 
       - name: Update latest rootfs information in S3
         run: |
