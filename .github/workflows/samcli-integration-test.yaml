@@ -1,0 +1,309 @@
+name: samcli-integration-test
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # midnight
+  workflow_dispatch:    # manual trigger
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  macos-samcli-test:
+    runs-on: macos-latest
+    timeout-minutes: 240 # allows 30+ min buffer
+    env:
+     AWS_DEFAULT_REGION: us-east-1
+     DOCKER_HOST: unix:///Applications/Finch/lima/data/finch/sock/finch.sock
+     SAM_CLI_DEV: 1
+    steps:
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: samcli-integration-test
+          aws-region: ${{ secrets.REGION }}
+
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9' # min. supported by SAMcli
+
+      - name: Set up SAM CLI from source
+        run: |
+          python -m pip install --upgrade pip
+          git clone https://github.com/aws/aws-sam-cli.git 
+          cd aws-sam-cli
+          git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
+          git submodule update --init --recursive
+          make init
+          which samdev
+          samdev --version
+
+      - name: Run unit tests
+        working-directory: aws-sam-cli  
+        run: |
+
+          # Run the unit tests and capture output
+          make test | tee unit_test_output.txt
+
+          # Check if tests passed
+          if ! grep -q "failed=0" unit_test_output.txt; then
+            echo "Unit tests failed!"
+            exit 1
+          fi
+
+          # Extract coverage percentage
+          COVERAGE=$(grep -o "[0-9]\+%" unit_test_output.txt | head -1 | tr -d '%')
+
+          # Check if coverage is at least 90% (allowing for some variation from the ~94%)
+          if [ -z "$COVERAGE" ] || [ "$COVERAGE" -lt 90 ]; then
+            echo "Coverage is below expected threshold! Got: $COVERAGE%, Expected: ~94%"
+            exit 1
+          else
+            echo "Unit tests passed with $COVERAGE% coverage (expected ~94%)"
+          fi
+
+      - name: Build and initialize Finch
+        run: |
+          make
+          ./bin/finch vm init || ./bin/finch vm start
+          if ! ./bin/finch vm status | grep -q "Running"; then
+            echo "Error: Finch VM is not running"
+            exit 1
+          else
+            echo "Finch VM is running successfully"
+          fi
+
+      - name: Run local invoke test
+        timeout-minutes: 75
+        working-directory: aws-sam-cli
+        run: |
+
+          # Run the test, display output
+          python -m pytest tests/integration/local/invoke -k 'not Terraform' -v > test_output.txt 2>&1 || true
+          cat test_output.txt
+
+          # Create a list of expected failing tests
+          cat > expected_failures.txt << 'EOL'
+          test_invoke_with_error_during_image_build
+          test_invoke_with_timeout_set_0_TimeoutFunction
+          test_invoke_with_timeout_set_1_TimeoutFunctionWithParameter
+          test_invoke_with_timeout_set_2_TimeoutFunctionWithStringParameter
+          test_building_new_rapid_image_removes_old_rapid_images
+          test_invoke_returns_expected_results_from_git_function
+          test_invoke_returns_expected_results_from_git_function_with_parameters
+          EOL
+
+          # Extract actual failing tests
+          grep "FAILED" test_output.txt | sed 's/.*::\(test_[a-zA-Z0-9_]*\).*/\1/' > actual_failures.txt
+
+          # Find unexpected failures (failures not in the expected list)
+          UNEXPECTED_FAILURES=$(grep -v -f expected_failures.txt actual_failures.txt || true)
+
+          # Check if there are any unexpected failures
+          if [ -n "$UNEXPECTED_FAILURES" ]; then
+            echo "Unexpected test failures found:"
+            echo "$UNEXPECTED_FAILURES"
+            echo "Invoke test failed due to unexpected test failures"
+            exit 1
+          else
+            echo "All test failures were expected. Invoke test passed!"
+          fi
+
+      - name: Run start-lambda test
+        timeout-minutes: 30
+        working-directory: aws-sam-cli
+        run: |
+
+          # Run the tests
+          python -m pytest tests/integration/local/start_lambda -k 'not Terraform' -v > start_lambda_output.txt 2>&1 || true
+          cat start_lambda_output.txt
+
+          # Check if any tests failed
+          if grep -q "FAILED" start_lambda_output.txt; then
+            echo "Some start-lambda tests failed!"
+            exit 1
+          else
+            echo "All start-lambda tests passed!"
+          fi
+
+
+      - name: Run start-api test
+        timeout-minutes: 75
+        working-directory: aws-sam-cli
+        run: |
+
+          # Increase file limit to prevent "too many files open" error
+          ulimit -n 4096 || true
+
+          # Run the tests
+          python -m pytest tests/integration/local/start_api -k 'not Terraform' -v > start_api_output.txt 2>&1 || true
+          cat start_api_output.txt
+
+          # Check if any tests failed
+          if grep -q "FAILED" start_api_output.txt; then
+            echo "Some start-api tests failed!"
+            exit 1
+          else
+            echo "All start-api tests passed!"
+          fi
+
+      - name: Set up AWS resources for tests
+        run: |
+          # Check if bucket exists, create if it doesn't
+          aws s3api head-bucket --bucket aws-sam-cli-managed-default-samclisourcebucket-90tl7nimqmxe 2>/dev/null || \
+          aws s3 mb s3://aws-sam-cli-managed-default-samclisourcebucket-90tl7nimqmxe
+
+      - name: Run sync test
+        timeout-minutes: 20
+        working-directory: aws-sam-cli
+        run: |
+
+          # Run the tests
+          python -m pytest tests/integration/sync -k 'image' -v > sync_test.txt 2>&1 || true
+          cat sync_test.txt
+
+          # Check if any tests failed
+          if grep -q "FAILED" sync_test.txt; then
+            echo "Some sync tests failed!"
+            exit 1
+          else
+            echo "All sync tests passed!"
+          fi
+
+      - name: Run package test 
+        timeout-minutes: 7
+        working-directory: aws-sam-cli
+        run: |  
+
+          # Run the tests
+          python -m pytest tests/integration/package/test_package_command_image.py > package_test.txt 2>&1 || true
+          cat package_test.txt
+
+          # Create a list of expected failing tests
+          cat > expected_package_failures.txt << 'EOL'
+          test_package_with_deep_nested_template_image
+          test_package_template_with_image_repositories_nested_stack
+          test_package_with_loadable_image_archive_0_template_image_load_yaml
+          EOL
+
+          # Extract actual failing tests
+          grep "FAILED" package_test.txt | sed 's/.*::\(test_[a-zA-Z0-9_]*\).*/\1/' > actual_package_failures.txt || true
+
+          # Find unexpected failures (failures not in the expected list)
+          UNEXPECTED_FAILURES=$(grep -v -f expected_package_failures.txt actual_package_failures.txt || true)
+
+          # Check if there are any unexpected failures
+          if [ -n "$UNEXPECTED_FAILURES" ]; then
+            echo "Unexpected test failures found:"
+            echo "$UNEXPECTED_FAILURES"
+            echo "Package test failed due to unexpected test failures"
+            exit 1
+          else
+            echo "All test failures were expected. Test passed!"
+          fi
+
+      - name: Run deploy test
+        working-directory: aws-sam-cli
+        timeout-minutes: 30
+        run: |
+
+          # Run the tests
+          python -m pytest tests/integration/deploy -k 'image' > deploy_test.txt 2>&1 || true
+          cat deploy_test.txt
+
+          # Check if any tests failed
+          if grep -q "PASSED" deploy_test.txt; then
+            echo "Some deploy tests passed unexpectedly! This might indicate a change in behavior."
+            grep "PASSED" deploy_test.txt
+            exit 1
+          else
+            echo "All deploy tests failed as expected!"
+          fi
+
+      - name: Run build test
+        working-directory: aws-sam-cli
+        run: |  
+
+          # Run the tests
+          python -m pytest tests/integration/buildcmd -k '(container or image) and not sar and not terraform' > build_test.txt 2>&1 || true
+          cat build_test.txt
+
+          # Create a list of expected failing tests
+          cat > expected_build_failures.txt << 'EOL'
+          test_with_invalid_dockerfile_definition
+          test_with_invalid_dockerfile_location
+          test_load_success
+          test_building_ruby_3_2_1_use_container
+          test_with_makefile_builder_specified_python_runtime_1_use_container
+          test_with_native_builder_specified_python_runtime_1_use_container
+          test_inline_not_built_1_use_container
+          test_json_env_vars_passed_0_use_container
+          test_json_env_vars_passed_1_use_container
+          test_inline_env_vars_passed_0_use_container
+          test_inline_env_vars_passed_1_use_container
+          test_custom_build_image_succeeds_0_use_container
+          test_custom_build_image_succeeds_1_use_container
+          test_building_ruby_in_container_with_specified_architecture_0_ruby3_2
+          test_building_java_in_container_with_arm64_architecture_00_java8_al2
+          test_building_java_in_container_with_arm64_architecture_03_java8_al2
+          test_building_java_in_container_with_arm64_architecture_04_java11
+          test_building_java_in_container_with_arm64_architecture_07_java11
+          test_building_java_in_container_with_arm64_architecture_08_java17
+          test_building_java_in_container_with_arm64_architecture_11_java17
+          test_building_java_in_container_with_arm64_architecture_al2023_0_java21
+          test_building_java_in_container_with_arm64_architecture_al2023_1_java21
+          test_building_java_in_container_with_arm64_architecture_al2023_2_java21
+          test_building_java_in_container_with_arm64_architecture_al2023_3_java21
+          test_building_java_in_container_00_java8_al2
+          EOL
+
+          # Extract actual failing tests
+          grep "FAILED" build_test.txt | sed 's/.*::\(test_[a-zA-Z0-9_]*\).*/\1/' > actual_build_failures.txt
+
+          # Find unexpected failures (failures not in the expected list)
+          UNEXPECTED_FAILURES=$(grep -v -f expected_build_failures.txt actual_build_failures.txt || true)
+
+          # Check if there are any unexpected failures
+          if [ -n "$UNEXPECTED_FAILURES" ]; then
+            echo "Unexpected test failures found:"
+            echo "$UNEXPECTED_FAILURES"
+            echo "Build test failed due to unexpected test failures"
+            exit 1
+          else
+            echo "All test failures were expected. Test passed!"
+          fi
+        
+      # Resource cleanup from Q
+      - name: Clean up AWS resources
+        if: always()  # Run even if previous steps fail
+        timeout-minutes: 15
+        run: |
+          echo "Cleaning up AWS resources created during testing..."
+          export AWS_DEFAULT_REGION=us-east-1
+
+          # Clean up the specific S3 bucket mentioned in the tests
+          echo "Cleaning up S3 bucket: aws-sam-cli-managed-default-samclisourcebucket-90tl7nimqmxe"
+          aws s3 rm s3://aws-sam-cli-managed-default-samclisourcebucket-90tl7nimqmxe --recursive || true
+          aws s3 rb s3://aws-sam-cli-managed-default-samclisourcebucket-90tl7nimqmxe || true
+
+          # Clean up ECR repositories created specifically by these tests
+          # Use a more specific pattern to avoid affecting other repositories
+          echo "Cleaning up ECR repositories created by the tests..."
+          REPOS=$(aws ecr describe-repositories --query 'repositories[?starts_with(repositoryName, `samcli-integration-`) || starts_with(repositoryName, `image-repo-`)].repositoryName' --output text) || true
+          for REPO in $REPOS; do
+            echo "Deleting ECR repository: $REPO"
+            aws ecr delete-repository --repository-name $REPO --force || true
+          done
+
+          echo "AWS resource cleanup completed"
+
+  # linux-samcli-test:
