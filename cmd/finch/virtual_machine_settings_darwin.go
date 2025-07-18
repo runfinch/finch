@@ -98,7 +98,9 @@ func (sva *settingsVMAction) run(opts config.VMConfigOpts) error {
 		return err
 	}
 
-	if isConfigUpdated {
+	if !isConfigUpdated {
+		_, err = fmt.Fprintln(sva.stdout, "Provided flags match existing settings, no changes made.")
+	} else {
 		_, err = fmt.Fprintln(sva.stdout, "Configurations have been successfully updated.")
 	}
 
