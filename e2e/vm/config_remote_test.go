@@ -139,7 +139,7 @@ var _ = func(o *option.Option) {
 		})
 
 		ginkgo.It("fails to launch when the config file file doesn't specify enough CPUs", func() {
-			startCmdSession := updateAndApplyConfig(o, []byte("cpus: 0"))
+			startCmdSession := updateAndApplyConfig(o, []byte("cpus: -1"))
 			gomega.Expect(startCmdSession).Should(gexec.Exit(1))
 		})
 

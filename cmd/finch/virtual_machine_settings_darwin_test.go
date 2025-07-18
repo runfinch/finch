@@ -186,9 +186,9 @@ func TestSettingsVMAction_run(t *testing.T) {
 			memory: "",
 		},
 		{
-			name:             "should return an error if the configuration of CPU or memory is invalid",
-			wantErr:          errors.New("the number of CPUs or the amount of memory should be at least one valid value"),
-			wantStatusOutput: "",
+			name:             "should not return an error if the configuration of CPU and memory matches existing config",
+			wantErr:          nil,
+			wantStatusOutput: "Provided flags match existing settings, no changes made.\n",
 			mockSvc: func(
 				lca *mocks.LimaConfigApplier,
 				fs afero.Fs,

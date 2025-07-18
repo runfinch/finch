@@ -216,6 +216,18 @@ func Test_ModifyFinchConfig(t *testing.T) {
 			errMsg: "the number of CPUs or the amount of memory should be at least one valid value",
 		},
 		{
+			name: "should not error if the configurations of both CPU and memory match existing config",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs) {
+				data := "cpus: 2\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
+			cpus:   2,
+			memory: "6GiB",
+			want:   false,
+			errMsg: "",
+		},
+		{
 			name:    "should return an error if the configuration file does not exist",
 			path:    "/config.yaml",
 			mockSvc: func(_ afero.Fs) {},
