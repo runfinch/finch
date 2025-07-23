@@ -58,7 +58,7 @@ jobs:
   
   e2e-test:
     needs: get-tag-and-version
-    runs-on: codebuild-finch-${{ inputs.arch }}-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    runs-on: codebuild-finch-${{ inputs.arch }}-1-instance-${{ github.run_id }}-${{ github.run_attempt }}
     timeout-minutes: 60
     outputs:
       has_creds: ${{ steps.vars.outputs.has_creds}}
