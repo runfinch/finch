@@ -74,14 +74,20 @@ func (sva *settingsVMAction) runAdapter(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
+	cpusChanged := cmd.Flags().Changed("cpus")
+	memoryChanged := cmd.Flags().Changed("memory")
+
 	// check if any flags were provided by the user
-	if !cmd.Flags().Changed("cpus") && !cmd.Flags().Changed("memory") {
+	if !cpusChanged && !memoryChanged {
 		return cmd.Help()
 	}
 
-	opts := config.VMConfigOpts{
-		CPUs:   cpus,
-		Memory: memory,
+	opts := config.VMConfigOpts{}
+	if cpusChanged {
+		opts.CPUs = &cpus
+	}
+	if memoryChanged {
+		opts.Memory = &memory
 	}
 
 	return sva.run(opts)
@@ -98,7 +104,9 @@ func (sva *settingsVMAction) run(opts config.VMConfigOpts) error {
 		return err
 	}
 
-	if isConfigUpdated {
+	if !isConfigUpdated {
+		sva.logger.Warnln("Provided flags match existing settings, no changes made.")
+	} else {
 		_, err = fmt.Fprintln(sva.stdout, "Configurations have been successfully updated.")
 	}
 

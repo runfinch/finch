@@ -72,17 +72,21 @@ func ModifyFinchConfig(fs afero.Fs, logger flog.Logger, finchConfigPath string, 
 	}
 
 	cpus, memory := opts.CPUs, opts.Memory
-	if cpus != DefaultCPUs && cpus != *finchCfg.CPUs {
-		*finchCfg.CPUs = cpus
+	// This should never happen when called from the CLI, but good to cover just in case
+	if cpus == nil && memory == nil {
+		return isConfigUpdated, fmt.Errorf("specify at least one flag")
+	}
+	if cpus != nil && *cpus != *finchCfg.CPUs {
+		*finchCfg.CPUs = *cpus
 		isConfigUpdated = true
 	}
-	if memory != DefaultMemory && memory != *finchCfg.Memory {
-		*finchCfg.Memory = memory
+	if memory != nil && *memory != *finchCfg.Memory {
+		*finchCfg.Memory = *memory
 		isConfigUpdated = true
 	}
 
 	if !isConfigUpdated {
-		return isConfigUpdated, fmt.Errorf("the number of CPUs or the amount of memory should be at least one valid value")
+		return isConfigUpdated, nil
 	}
 
 	if err := validate(finchCfg, logger, systemDeps, mem); err != nil {

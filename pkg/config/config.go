@@ -66,8 +66,8 @@ type Nerdctl struct {
 
 // VMConfigOpts represents the Options for finch vm settings command.
 type VMConfigOpts struct {
-	CPUs   int
-	Memory string
+	CPUs   *int
+	Memory *string
 }
 
 // Default values for the command line arguments --cpus and --memory.
