@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.10.1](https://github.com/runfinch/finch/compare/v1.10.0...v1.10.1) (2025-07-25)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump submodules and dependencies ([#1467](https://github.com/runfinch/finch/issues/1467)) ([8be886c](https://github.com/runfinch/finch/commit/8be886c868b203da4b29d200d8338c02a5631c03))
+* **deps:** Bump submodules and dependencies ([#1469](https://github.com/runfinch/finch/issues/1469)) ([bc3590b](https://github.com/runfinch/finch/commit/bc3590bd7c634d7e026d2b199dc82e9e162024c1))
+
+
+### Bug Fixes
+
+* workflow trigger and typo in upload-verified-artifacts-to-s3.yaml ([#1462](https://github.com/runfinch/finch/issues/1462)) ([c48a1ea](https://github.com/runfinch/finch/commit/c48a1ea0b27d921949f154158ae78c7df0d83cbc))
+
 ## [1.10.0](https://github.com/runfinch/finch/compare/v1.9.0...v1.10.0) (2025-07-15)
 
 
