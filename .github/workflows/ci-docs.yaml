@@ -86,14 +86,9 @@ jobs:
     timeout-minutes: 2
     steps:
       - run: echo "Skipping CI for docs & contrib files"
+  # Run the linter in case of workflow-only changes to our testing process
   go-linter:
-    name: lint
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    timeout-minutes: 2
-    steps:
-      - run: echo "Skipping CI for docs & contrib files"
+    uses: ./.github/workflows/go-linter.yaml
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     timeout-minutes: 2

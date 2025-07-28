@@ -1,3 +1,6 @@
-[submodule "finch-core"]
+[submodule "deps/c2d1595e8d6962c72650361f6bcda8c7c97d3cb4"]
+	path = deps/c2d1595e8d6962c72650361f6bcda8c7c97d3cb4
+	url = https://github.com/runfinch/finch-core.git
+[submodule "deps/finch-core"]
 	path = deps/finch-core
 	url = https://github.com/runfinch/finch-core.git
