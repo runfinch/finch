@@ -183,12 +183,19 @@ type modifyFinchConfigTestCase struct {
 	mockSvc func(fs afero.Fs)
 	want    bool
 	errMsg  string
-	cpus    int
-	memory  string
+	cpus    *int
+	memory  *string
 }
 
 func Test_ModifyFinchConfig(t *testing.T) {
 	t.Parallel()
+
+	intPtr := func(i int) *int {
+		return &i
+	}
+	stringPtr := func(str string) *string {
+		return &str
+	}
 
 	testCases := []modifyFinchConfigTestCase{
 		{
@@ -198,31 +205,43 @@ func Test_ModifyFinchConfig(t *testing.T) {
 				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   1,
-			memory: "2GiB",
 			want:   true,
 			errMsg: "",
+			cpus:   intPtr(1),
+			memory: stringPtr("2GiB"),
 		},
 		{
-			name: "should return an error if the configurations of CPU and memory are invalid",
+			name: "should not error if one flag is specified",
 			path: "/config.yaml",
 			mockSvc: func(fs afero.Fs) {
 				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   0,
-			memory: "",
+			want:   true,
+			errMsg: "",
+			cpus:   nil,
+			memory: stringPtr("2GiB"),
+		},
+		{
+			name: "should not error if the configurations of both CPU and memory match existing config",
+			path: "/config.yaml",
+			mockSvc: func(fs afero.Fs) {
+				data := "cpus: 2\nmemory: 6GiB"
+				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
+			},
 			want:   false,
-			errMsg: "the number of CPUs or the amount of memory should be at least one valid value",
+			errMsg: "",
+			cpus:   intPtr(2),
+			memory: stringPtr("6GiB"),
 		},
 		{
 			name:    "should return an error if the configuration file does not exist",
 			path:    "/config.yaml",
 			mockSvc: func(_ afero.Fs) {},
-			cpus:    2,
-			memory:  "2GiB",
 			want:    false,
 			errMsg:  "failed to read config file: open /config.yaml: file does not exist",
+			cpus:    intPtr(2),
+			memory:  stringPtr("6GiB"),
 		},
 		{
 			name: "should return an error if the configuration of CPU is invalid",
@@ -231,10 +250,10 @@ func Test_ModifyFinchConfig(t *testing.T) {
 				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   -1,
-			memory: "2GiB",
 			want:   false,
-			errMsg: "failed to validate config file: specified number of CPUs (-1) must be greater than 0",
+			errMsg: "failed to validate config file: specified number of CPUs (0) must be greater than 0",
+			cpus:   intPtr(0),
+			memory: stringPtr("6GiB"),
 		},
 		{
 			name: "should return an error if the configuration of memory is invalid",
@@ -243,10 +262,10 @@ func Test_ModifyFinchConfig(t *testing.T) {
 				data := "cpus: 2\nmemory: 6GiB"
 				require.NoError(t, afero.WriteFile(fs, "/config.yaml", []byte(data), 0o600))
 			},
-			cpus:   2,
-			memory: "2Gi",
 			want:   false,
 			errMsg: "failed to validate config file: failed to parse memory to uint: invalid suffix: 'gi'",
+			cpus:   intPtr(2),
+			memory: stringPtr("6gi"),
 		},
 	}
 
@@ -258,12 +277,12 @@ func Test_ModifyFinchConfig(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			l := mocks.NewLogger(ctrl)
 
+			tc.mockSvc(fs)
+
 			opts := VMConfigOpts{
 				CPUs:   tc.cpus,
 				Memory: tc.memory,
 			}
-
-			tc.mockSvc(fs)
 
 			isConfigUpdated, err := ModifyFinchConfig(fs, l, tc.path, opts)
 			errMsg := ""
