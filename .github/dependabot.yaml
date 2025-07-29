@@ -12,6 +12,11 @@ updates:
     # Re. how that is achieved, see `changelog-types` in workflows/release-please.yml.
     prefix: "build"
     include: "scope"
+  groups:
+    docker:
+      patterns:
+        - "github.com/docker/docker"
+        - "github.com/docker/cli"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:

@@ -36,9 +36,16 @@ type SharedSystemSettings struct {
 
 // SharedSettings represents settings shared by all Finch configurations.
 type SharedSettings struct {
-	Snapshotters []string `yaml:"snapshotters,omitempty"`
-	CredsHelpers []string `yaml:"creds_helpers,omitempty"`
-	DockerCompat bool     `yaml:"dockercompat,omitempty"`
+	Snapshotters []string                   `yaml:"snapshotters,omitempty"`
+	CredsHelpers []string                   `yaml:"creds_helpers,omitempty"`
+	Experimental SharedExperimentalSettings `yaml:"experimental,omitempty"`
+	DockerCompat bool                       `yaml:"dockercompat,omitempty"`
+}
+
+// SharedExperimentalSettings represents available experimental settings shared
+// by all Finch configurations.
+type SharedExperimentalSettings struct {
+	MountInotify bool `yaml:"mountInotify,omitempty"`
 }
 
 // Nerdctl is a copy from github.com/containerd/nerdctl/cmd/nerdctl/main.go
@@ -59,8 +66,8 @@ type Nerdctl struct {
 
 // VMConfigOpts represents the Options for finch vm settings command.
 type VMConfigOpts struct {
-	CPUs   int
-	Memory string
+	CPUs   *int
+	Memory *string
 }
 
 // Default values for the command line arguments --cpus and --memory.

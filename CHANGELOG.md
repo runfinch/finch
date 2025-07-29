@@ -1,5 +1,56 @@
 # Changelog
 
+## [1.10.1](https://github.com/runfinch/finch/compare/v1.10.0...v1.10.1) (2025-07-25)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump submodules and dependencies ([#1467](https://github.com/runfinch/finch/issues/1467)) ([8be886c](https://github.com/runfinch/finch/commit/8be886c868b203da4b29d200d8338c02a5631c03))
+* **deps:** Bump submodules and dependencies ([#1469](https://github.com/runfinch/finch/issues/1469)) ([bc3590b](https://github.com/runfinch/finch/commit/bc3590bd7c634d7e026d2b199dc82e9e162024c1))
+
+
+### Bug Fixes
+
+* workflow trigger and typo in upload-verified-artifacts-to-s3.yaml ([#1462](https://github.com/runfinch/finch/issues/1462)) ([c48a1ea](https://github.com/runfinch/finch/commit/c48a1ea0b27d921949f154158ae78c7df0d83cbc))
+
+## [1.10.0](https://github.com/runfinch/finch/compare/v1.9.0...v1.10.0) (2025-07-15)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump submodules and dependencies ([#1460](https://github.com/runfinch/finch/issues/1460)) ([f7af7c1](https://github.com/runfinch/finch/commit/f7af7c1d15ce4b5879bd70a86879b21b223fd9ec))
+
+
+### Features
+
+* add experimental_features config option ([#1323](https://github.com/runfinch/finch/issues/1323)) ([e55c91d](https://github.com/runfinch/finch/commit/e55c91db9ea3843a3a546943388721c9db4ef4ad))
+
+
+### Bug Fixes
+
+* remove extra quotation in deb workflow ([#1443](https://github.com/runfinch/finch/issues/1443)) ([ff980fa](https://github.com/runfinch/finch/commit/ff980fae18017ed45e35d81e46d344a500923236))
+* ubuntu nightly workflow inputs ([#1447](https://github.com/runfinch/finch/issues/1447)) ([330c198](https://github.com/runfinch/finch/commit/330c19803b642233624d9709fb526afea6059e90))
+* ubuntu workflow fixes ([#1441](https://github.com/runfinch/finch/issues/1441)) ([fc83232](https://github.com/runfinch/finch/commit/fc832328a09486d8ee184589c733f5c5f19e7c22))
+* vm settings w/o flag show settings help ([#1456](https://github.com/runfinch/finch/issues/1456)) ([dc20464](https://github.com/runfinch/finch/commit/dc2046439cd840d925c7dcbcad40dd4c4597585d))
+
+## [1.9.0](https://github.com/runfinch/finch/compare/v1.8.3...v1.9.0) (2025-06-30)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump github.com/aws/aws-sdk-go-v2 from 1.36.3 to 1.36.5 ([#1434](https://github.com/runfinch/finch/issues/1434)) ([d6aa084](https://github.com/runfinch/finch/commit/d6aa0840aaa70ce5a9ce4102d092a66c4541689c))
+* **deps:** Bump github.com/docker/cli ([8c1611c](https://github.com/runfinch/finch/commit/8c1611c95efd09f855ef431663de91970a186178))
+* **deps:** Bump github.com/docker/cli from 28.2.2+incompatible to 28.3.0+incompatible ([#1439](https://github.com/runfinch/finch/issues/1439)) ([8c1611c](https://github.com/runfinch/finch/commit/8c1611c95efd09f855ef431663de91970a186178))
+* **deps:** Bump github.com/docker/docker ([ea432b4](https://github.com/runfinch/finch/commit/ea432b4de3678614a6ff24da91107501005a41d5))
+* **deps:** Bump github.com/docker/docker from 28.2.2+incompatible to 28.3.0+incompatible ([#1438](https://github.com/runfinch/finch/issues/1438)) ([ea432b4](https://github.com/runfinch/finch/commit/ea432b4de3678614a6ff24da91107501005a41d5))
+* **deps:** Bump k8s.io/apimachinery from 0.32.4 to 0.33.1 ([#1410](https://github.com/runfinch/finch/issues/1410)) ([11f8c4d](https://github.com/runfinch/finch/commit/11f8c4d8dbf96ad9f990e3fbd975b6bb2b380722))
+
+
+### Features
+
+* migrate from golang gomock to uber gomock ([#1431](https://github.com/runfinch/finch/issues/1431)) ([3d98454](https://github.com/runfinch/finch/commit/3d98454be94cdebdb995d80b0be02fef4df06230))
+* Ubuntu packaging ([#1425](https://github.com/runfinch/finch/issues/1425)) ([3d6590e](https://github.com/runfinch/finch/commit/3d6590e0db193b16f4d0c26faa9c3bdba72e6440))
+
 ## [1.8.3](https://github.com/runfinch/finch/compare/v1.8.2...v1.8.3) (2025-06-10)
 
 

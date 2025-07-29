@@ -6,6 +6,7 @@ package lima
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -44,6 +45,10 @@ func GetVMStatus(creator command.NerdctlCmdCreator, logger flog.Logger, instance
 	cmd := creator.CreateWithoutStdio(args...)
 	out, err := cmd.Output()
 	if err != nil {
+		if strings.TrimSpace(string(out)) == "" ||
+			strings.Contains(strings.TrimSpace(string(out)), fmt.Sprintf("No instance matching %s found", instanceName)) {
+			return Nonexistent, nil
+		}
 		return Unknown, err
 	}
 	status := strings.TrimSpace(string(out))

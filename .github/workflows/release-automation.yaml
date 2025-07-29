@@ -49,6 +49,22 @@ jobs:
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+
+  build-and-test-finch-deb:
+    needs: get-latest-tag
+    uses: ./.github/workflows/build-and-test-deb.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+  
+  upload-deb-to-release:
+    needs:
+      - get-latest-tag
+      - build-and-test-finch-deb
+    uses: ./.github/workflows/upload-deb-to-release.yaml
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
     
   update-latest-version-in-s3:
     needs: 

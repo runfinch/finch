@@ -3,11 +3,11 @@ module github.com/runfinch/finch
 go 1.24.0
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.36.3
+	github.com/aws/aws-sdk-go-v2 v1.36.5
 	github.com/containerd/cgroups v1.1.0
 	github.com/containerd/nerdctl/v2 v2.1.2
-	github.com/docker/cli v28.2.2+incompatible
-	github.com/docker/docker v28.2.2+incompatible
+	github.com/docker/cli v28.3.0+incompatible
+	github.com/docker/docker v28.3.3+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
 	github.com/lima-vm/lima v1.1.1
@@ -38,7 +38,7 @@ require (
 	github.com/Microsoft/hcsshim v0.13.0 // indirect
 	github.com/a8m/envsubst v1.4.2 // indirect
 	github.com/alecthomas/participle/v2 v2.1.4 // indirect
-	github.com/aws/smithy-go v1.22.2 // indirect
+	github.com/aws/smithy-go v1.22.4 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.7.1 // indirect
 	github.com/braydonk/yaml v0.9.0 // indirect
 	github.com/containerd/cgroups/v3 v3.0.5 // indirect
