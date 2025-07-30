@@ -89,17 +89,22 @@ jobs:
           sudo rm -rf /var/lib/containerd
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
+          sudo rm -rf /run/containerd || true
       - name: Build project
         run: |
           ./contrib/packaging/rpm/build.sh --local
+      - name: Install Dependencies
+        run: |
+          sudo yum install iptables -y
       - name: Install Finch
         run: |
           sudo rpm -i ./_output/packages/$(ls -t ./_output/packages/ | grep runfinch-finch | head -1)
           sudo systemctl daemon-reload
-          sudo systemctl start containerd.service
-          sudo systemctl start finch.service
-          sudo systemctl start finch-buildkit.service
-          sudo systemctl start finch-soci.service
+          sudo systemctl restart containerd.service
+          sudo systemctl restart finch.socket
+          sudo systemctl restart finch.service
+          sudo systemctl restart finch-buildkit.service
+          sudo systemctl restart finch-soci.service
       - name: Set up REPORT_DIR
         run: |
           echo "REPORT_DIR=${{ github.workspace }}/reports" >> $GITHUB_ENV
@@ -114,6 +119,7 @@ jobs:
           # Preserve path so Go from actions/setup-go is used; not the system installed golang.
           sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-container
           sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-vm
+          sudo -E env "PATH=/usr/libexec/finch:/usr/libexec/finch/cni/bin/:/usr/local/bin:$PATH" NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock  make test-e2e-daemon-linux
       - name: Change ownership of reports
         if: always()
         run: |
