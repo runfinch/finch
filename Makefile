@@ -336,6 +336,11 @@ test-e2e-daemon:
 	  --daemon-context-subject-prefix="$(OUTDIR)/lima/bin/limactl shell finch sudo" \
 	  --daemon-context-subject-env="LIMA_HOME=$(OUTDIR)/lima/data"
 
+.PHONY: test-e2e-daemon-linux
+test-e2e-daemon-linux:
+	cd $(FINCH_CORE_DIR)/src/finch-daemon && \
+    make test-e2e
+
 .PHONY: test-benchmark
 test-benchmark:
 	cd benchmark/all && go test -ldflags $(LDFLAGS) -bench=. -benchmem --installed="$(INSTALLED)"

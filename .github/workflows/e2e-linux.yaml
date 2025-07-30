@@ -114,6 +114,7 @@ jobs:
           # Preserve path so Go from actions/setup-go is used; not the system installed golang.
           sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-container
           sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-vm
+          sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-daemon-linux
       - name: Change ownership of reports
         if: always()
         run: |
