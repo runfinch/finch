@@ -1,4 +1,6 @@
 #!/bin/bash
+set -o errexit
+set -o pipefail
 
 mergeBackSignedExecutables() {
     for file in $(ls -a ./installer-builder/output/executables/signed/Payload/EXECUTABLES_TO_SIGN)

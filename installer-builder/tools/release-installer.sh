@@ -1,4 +1,6 @@
 #!/bin/bash
+set -o errexit
+set -o pipefail
 
 source ./installer-builder/tools/artifact-helper.sh
 
@@ -46,10 +48,7 @@ releaseInstaller() {
     downloadSignedPkg "$ARCH" "$PKG_BUCKET"
 
     echo "[11/12] App Store Notarization"
-    if ! bash ./installer-builder/tools/notarize.sh "$NOTARIZATION_ACCOUNT" "$NOTARIZATION_CREDENTIAL"; then
-        echo "App Store Notarization failed"
-        exit 1
-    fi
+    bash ./installer-builder/tools/notarize.sh "$NOTARIZATION_ACCOUNT" "$NOTARIZATION_CREDENTIAL"
 
     echo "[12/12] Upload installer to S3 buckets"
     uploadNotarizedPkg "$ARCH" "$FINCH_VERSION" "$INSTALLER_PRIVATE_BUCKET_NAME"

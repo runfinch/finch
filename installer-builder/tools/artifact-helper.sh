@@ -1,4 +1,6 @@
 #!/bin/bash
+set -o errexit
+set -o pipefail
 
 #wait signed artifacts available
 MAX_RETRY=60
@@ -35,6 +37,7 @@ downloadSignedExecutables() {
     if [ $attempts -eq $MAX_RETRY ]
     then
         echo "Download failed after $MAX_RETRY attempts."
+        return 1
     fi
 
     tar xzvf "./installer-builder/output/executables/signed/finch-executables-${1//_/-}.zip" -C ./installer-builder/output/executables/signed
@@ -62,6 +65,7 @@ downloadSignedPkg() {
     if [ $attempts -eq $MAX_RETRY ]
     then
         echo "Download failed after $MAX_RETRY attempts."
+        return 1
     fi
 
     tar xzvf "./installer-builder/output/installer/signed/finch-pkg-${1//_/-}.zip" -C ./installer-builder/output/installer/signed
