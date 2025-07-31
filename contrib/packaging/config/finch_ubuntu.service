@@ -11,7 +11,7 @@ Type=notify
 Delegate=yes
 Restart=always
 RestartSec=5
-Environment=PATH=/usr/libexec/finch/:/usr/bin:$PATH
+Environment=PATH=/usr/libexec/finch:/usr/bin:$PATH
 Environment=BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock
 
 [Install]
