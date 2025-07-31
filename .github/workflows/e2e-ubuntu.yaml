@@ -100,11 +100,13 @@ jobs:
         run: |
           sudo apt install ./_output/deb/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb -y
           sudo systemctl daemon-reload
+          sudo cat /etc/systemd/system/finch.service
           sudo systemctl restart containerd.service
           sudo systemctl restart finch.socket
           sudo systemctl restart finch.service
           sudo systemctl restart finch-buildkit.service
           sudo systemctl restart finch-soci.service
+
       - name: Set up REPORT_DIR
         run: |
           echo "REPORT_DIR=${{ github.workspace }}/reports" >> $GITHUB_ENV
