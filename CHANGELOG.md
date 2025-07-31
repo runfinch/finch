@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.3](https://github.com/runfinch/finch/compare/v1.10.2...v1.10.3) (2025-07-31)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump golang.org/x/tools from 0.34.0 to 0.35.0 ([#1485](https://github.com/runfinch/finch/issues/1485)) ([eb6d8e1](https://github.com/runfinch/finch/commit/eb6d8e1c0babde554510f2bc29a69f40586678c6))
+* **deps:** Bump submodules and dependencies ([#1487](https://github.com/runfinch/finch/issues/1487)) ([7d9a6bf](https://github.com/runfinch/finch/commit/7d9a6bfcd4db32fb4bd0cc52036f4ae0bb488099))
+
 ## [1.10.2](https://github.com/runfinch/finch/compare/v1.10.1...v1.10.2) (2025-07-31)
 
 
