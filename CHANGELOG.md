@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.10.2](https://github.com/runfinch/finch/compare/v1.10.1...v1.10.2) (2025-07-31)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/docker/cli ([9239620](https://github.com/runfinch/finch/commit/9239620b4c5eafe59777a2395434c00d23130a54))
+* **deps:** bump github.com/docker/cli from 28.3.0+incompatible to 28.3.3+incompatible ([#1478](https://github.com/runfinch/finch/issues/1478)) ([9239620](https://github.com/runfinch/finch/commit/9239620b4c5eafe59777a2395434c00d23130a54))
+* **deps:** bump github.com/docker/docker ([ff3b4a8](https://github.com/runfinch/finch/commit/ff3b4a88598670754e81719c613c6a46fa6285f3))
+* **deps:** bump github.com/docker/docker from 28.3.0+incompatible to 28.3.3+incompatible ([#1477](https://github.com/runfinch/finch/issues/1477)) ([ff3b4a8](https://github.com/runfinch/finch/commit/ff3b4a88598670754e81719c613c6a46fa6285f3))
+* **deps:** Bump submodules and dependencies ([#1482](https://github.com/runfinch/finch/issues/1482)) ([664e527](https://github.com/runfinch/finch/commit/664e5276401f2f3cd38c8080aee8260e3223cbea))
+
+
+### Bug Fixes
+
+* **ci:** Add error handling for notarization step in release-installer script ([#1476](https://github.com/runfinch/finch/issues/1476)) ([acf9d02](https://github.com/runfinch/finch/commit/acf9d02d3782a7ecb19352687c4a511e05d78965))
+* **ci:** Added error handling for notarization step ([acf9d02](https://github.com/runfinch/finch/commit/acf9d02d3782a7ecb19352687c4a511e05d78965))
+* e2e ubuntu workflow should use non-release fleet ([#1468](https://github.com/runfinch/finch/issues/1468)) ([82b1280](https://github.com/runfinch/finch/commit/82b1280d41344579c1e51c95b0645f4c276a65a5))
+* **vm:** Don't fail if settings match existing one ([#1466](https://github.com/runfinch/finch/issues/1466)) ([3f680c6](https://github.com/runfinch/finch/commit/3f680c684711bd98e3a7fa9d63014e29ed424acd))
+
 ## [1.10.1](https://github.com/runfinch/finch/compare/v1.10.0...v1.10.1) (2025-07-25)
 
 
