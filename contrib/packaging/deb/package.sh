@@ -56,8 +56,8 @@ TEMP_BUILD_DIR="${SCRIPT_DIR}/TMP/build"
 
 # finch daemon
 FINCHD_PACKAGE="github.com/runfinch/finch-daemon"
-FINCHD_RELEASE="0.18.1"
-FINCHD_COMMIT="beee9549dd791ebfe2c79bb9d476b368d027c9e7"
+FINCHD_RELEASE="0.19.1"
+FINCHD_COMMIT="7ee991cb3be01fdb0013649b9e8fc6b5e3c5a35d"
 FINCHD_SRC=finch-daemon-"${FINCHD_COMMIT}"
 
 # nerdctl
