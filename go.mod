@@ -12,7 +12,7 @@ require (
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
 	github.com/lima-vm/lima v1.1.1
 	github.com/onsi/ginkgo/v2 v2.23.4
-	github.com/onsi/gomega v1.37.0
+	github.com/onsi/gomega v1.38.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.9
 	github.com/runfinch/common-tests v0.9.4
