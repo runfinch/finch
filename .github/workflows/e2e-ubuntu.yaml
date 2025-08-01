@@ -100,8 +100,6 @@ jobs:
         run: |
           sudo apt install ./_output/deb/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb -y
           sudo systemctl daemon-reload
-          sudo cat /etc/systemd/system/finch.service
-          sudo cat  /etc/finch/nerdctl/nerdctl.toml
           sudo systemctl restart containerd.service
           sudo systemctl restart finch.socket
           sudo systemctl restart finch.service
