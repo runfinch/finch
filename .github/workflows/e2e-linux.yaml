@@ -114,7 +114,7 @@ jobs:
           # Preserve path so Go from actions/setup-go is used; not the system installed golang.
           # sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-container
           # sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-vm
-          sudo -E env "PATH=/usr/libexec/finch:$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-daemon-linux
+          sudo -E env "PATH=/usr/libexec/finch:$PATH" env "NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml" env "BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-daemon-linux
       - name: Change ownership of reports
         if: always()
         run: |

@@ -114,9 +114,9 @@ jobs:
             git status
             git clean -f -d
             eval $(ssh-agent)
-            # sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
-            # sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
-            sudo -E env "PATH=/usr/libexec/finch:$PATH" env "NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml" INSTALLED=true make test-e2e-daemon-linux
+            sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
+            sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+            sudo -E env "PATH=/usr/libexec/finch:$PATH" env "NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml" env "BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock" INSTALLED=true make test-e2e-daemon-linux
       - name: Change ownership of reports
         if: always()
         run: |
