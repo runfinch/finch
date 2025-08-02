@@ -336,6 +336,16 @@ test-e2e-daemon:
 	  --daemon-context-subject-prefix="$(OUTDIR)/lima/bin/limactl shell finch sudo" \
 	  --daemon-context-subject-env="LIMA_HOME=$(OUTDIR)/lima/data"
 
+.PHONY: test-e2e-daemon-linux
+test-e2e-daemon-linux:
+	cd $(FINCH_CORE_DIR)/src/finch-daemon && \
+	DOCKER_HOST="unix:///run/finch.sock" \
+	DOCKER_API_VERSION="v1.41" \
+	TEST_E2E=1 \
+	go test ./e2e -timeout 1h -test.v -ginkgo.v -ginkgo.randomize-all  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
+    --subject="$(OUTDIR)/bin/$(BINARYNAME)" \
+	--daemon-context-subject-env='PATH=/usr/libexec/finch:$$PATH NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock'
+
 .PHONY: test-benchmark
 test-benchmark:
 	cd benchmark/all && go test -ldflags $(LDFLAGS) -bench=. -benchmem --installed="$(INSTALLED)"
