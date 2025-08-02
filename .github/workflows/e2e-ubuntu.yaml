@@ -96,6 +96,35 @@ jobs:
       - name: Generate deb
         run: |
           ./contrib/packaging/deb/package.sh --${{ inputs.output-arch }} --version ${{ needs.get-tag-and-version.outputs.version }}
+      - name: Clean existing Finch environment
+        run: |
+          # Stop finch services if they exist
+          sudo systemctl stop finch.service || true
+          sudo systemctl stop finch.socket || true
+          sudo systemctl stop finch-buildkit.service || true
+          sudo systemctl stop finch-soci.service || true
+          sudo systemctl stop containerd.service || true
+          
+          # Disable services to prevent auto-start
+          sudo systemctl disable finch.service || true
+          sudo systemctl disable finch.socket || true
+          sudo systemctl disable finch-buildkit.service || true
+          sudo systemctl disable finch-soci.service || true
+          
+          # Remove existing finch packages
+          sudo apt remove --purge runfinch-finch -y || true
+          sudo apt autoremove -y || true
+          sudo apt autoclean || true
+          
+          # Clean up any leftover finch directories and files
+          sudo rm -rf /opt/finch || true
+          sudo rm -rf /usr/local/bin/finch || true
+          sudo rm -rf /etc/systemd/system/finch* || true
+          sudo rm -rf /var/lib/finch || true
+          sudo rm -rf ~/.finch || true
+          
+          # Reload systemd after cleanup
+          sudo systemctl daemon-reload
       - name: Install Finch
         run: |
           sudo apt install ./_output/deb/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb -y
@@ -123,7 +152,7 @@ jobs:
             eval $(ssh-agent)
             # sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
             # sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
-            sudo -E env "PATH=/usr/libexec/finch:$PATH" make test-e2e-daemon-linux
+            sudo make test-e2e-daemon-linux
       - name: Change ownership of reports
         if: always()
         run: |
