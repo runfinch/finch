@@ -109,6 +109,13 @@ jobs:
       - name: Set up REPORT_DIR
         run: |
           echo "REPORT_DIR=${{ github.workspace }}/reports" >> $GITHUB_ENV
+      - name: Clean environment of containers and images
+        run: |
+          # Remove all containers (running and stopped)
+          sudo finch container prune -f || true
+          sudo finch ps -a -q | xargs -r sudo finch rm -f || true
+          # System cleanup
+          sudo finch system prune -a -f --volumes || true
       - name: Run e2e tests
         run: |
             git status
