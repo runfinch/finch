@@ -342,7 +342,8 @@ test-e2e-daemon-linux:
 	DOCKER_HOST="unix:///run/finch.sock" \
 	DOCKER_API_VERSION="v1.41" \
 	TEST_E2E=1 \
-    go run github.com/onsi/ginkgo/v2/ginkgo --race --randomize-all --randomize-suites --subject="finch" ./e2e/...
+	go test ./e2e -test.v -ginkgo.v -ginkgo.randomize-all  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
+     --subject="$(OUTDIR)/bin/$(BINARYNAME)"
 
 .PHONY: test-benchmark
 test-benchmark:
