@@ -151,7 +151,7 @@ jobs:
             eval $(ssh-agent)
             # sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
             # sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
-            sudo make test-e2e-daemon-linux
+            sudo -E env "PATH=$PATH" make test-e2e-daemon-linux
       - name: Change ownership of reports
         if: always()
         run: |
