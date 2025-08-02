@@ -343,7 +343,8 @@ test-e2e-daemon-linux:
 	DOCKER_API_VERSION="v1.41" \
 	TEST_E2E=1 \
 	go test ./e2e -test.v -ginkgo.v -ginkgo.randomize-all  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
-     --subject="$(OUTDIR)/bin/$(BINARYNAME)"
+    --subject="$(OUTDIR)/bin/$(BINARYNAME)" \
+	--daemon-context-subject-env='PATH=/usr/libexec/finch:$$PATH NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock'
 
 .PHONY: test-benchmark
 test-benchmark:
