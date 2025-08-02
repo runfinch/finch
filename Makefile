@@ -339,7 +339,10 @@ test-e2e-daemon:
 .PHONY: test-e2e-daemon-linux
 test-e2e-daemon-linux:
 	cd $(FINCH_CORE_DIR)/src/finch-daemon && \
-    make test-e2e
+	DOCKER_HOST="unix:///run/finch.sock" \
+	DOCKER_API_VERSION="v1.41" \
+	TEST_E2E=1 \
+    go run github.com/onsi/ginkgo/v2/ginkgo --race --randomize-all --randomize-suites --subject="finch" ./e2e/...
 
 .PHONY: test-benchmark
 test-benchmark:
