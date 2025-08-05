@@ -1,13 +1,19 @@
 [Unit]
-Description=Finch
+Description=finch daemon
 Documentation=https://runfinch.com
-After=network.target local-fs.target finch-buildkit.service
+After=network.target local-fs.target containerd.service finch.socket
+Wants=network.target containerd.service
+Requires=finch.socket
 
 [Service]
-ExecStart=/usr/bin/true
-Type=oneshot
-Environment=PATH=/usr/libexec/finch/::/usr/bin:$PATH
+ExecStart=/usr/libexec/finch/finch-daemon --debug --config-file /etc/finch/nerdctl/nerdctl.toml  --socket-addr fd:// 
+Type=notify
+Delegate=yes
+Restart=always
+RestartSec=5
+Environment=PATH=/usr/libexec/finch:/usr/bin:/usr/libexec/finch/cni/bin/:/usr/sbin:$PATH
 Environment=BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock
+Environment=NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml
 
 [Install]
 WantedBy=multi-user.target

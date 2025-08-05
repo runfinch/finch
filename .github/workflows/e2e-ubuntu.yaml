@@ -69,6 +69,40 @@ jobs:
       - name: Clean Ubuntu workspace
         run: |
           rm -rf ${{ github.workspace }}/*
+      - name: Clean existing Finch environment
+        run: |
+          # Stop finch services if they exist
+          sudo systemctl stop finch.service || true
+          sudo systemctl stop finch.socket || true
+          sudo systemctl stop finch-buildkit.service || true
+          sudo systemctl stop finch-soci.service || true
+          sudo systemctl stop containerd.service || true
+          
+          # Disable services to prevent auto-start
+          sudo systemctl disable finch.service || true
+          sudo systemctl disable finch.socket || true
+          sudo systemctl disable finch-buildkit.service || true
+          sudo systemctl disable finch-soci.service || true
+          
+          # Remove existing finch packages
+          sudo apt remove --purge runfinch-finch -y || true
+          
+          # Clean up any leftover finch directories and files
+          sudo rm -rf /opt/finch || true
+          sudo rm -rf /usr/local/bin/finch || true
+          sudo rm -rf /etc/systemd/system/finch* || true
+          sudo rm -rf /var/lib/finch || true
+          sudo rm -rf ~/.finch || true
+          sudo rm -rf /run/containerd || true
+          
+          # Reload systemd after cleanup
+          sudo systemctl daemon-reload
+      - name: Check available disk space
+        run: |
+          sudo df -h
+          sudo df -h /tmp
+          sudo du -chx --max-depth=1
+          sudo du -chx --max-depth=1 /tmp
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
@@ -90,24 +124,34 @@ jobs:
           sudo apt install libseccomp-dev -y
           sudo apt install pkg-config -y
           sudo apt install zlib1g-dev -y
+          sudo apt install iptables -y
       - name: Build for Ubuntu ${{ inputs.output-arch }}
         run: |
           make
       - name: Generate deb
         run: |
           ./contrib/packaging/deb/package.sh --${{ inputs.output-arch }} --version ${{ needs.get-tag-and-version.outputs.version }}
+   
       - name: Install Finch
         run: |
           sudo apt install ./_output/deb/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb -y
           sudo systemctl daemon-reload
-          sudo systemctl start containerd.service
+          sudo systemctl restart containerd.service
           sudo systemctl restart finch.socket
-          sudo systemctl start finch.service
-          sudo systemctl start finch-buildkit.service
-          sudo systemctl start finch-soci.service
+          sudo systemctl restart finch.service
+          sudo systemctl restart finch-buildkit.service
+          sudo systemctl restart finch-soci.service
+
       - name: Set up REPORT_DIR
         run: |
           echo "REPORT_DIR=${{ github.workspace }}/reports" >> $GITHUB_ENV
+      - name: Clean environment of containers and images
+        run: |
+          # Remove all containers (running and stopped)
+          sudo finch container prune -f || true
+          sudo finch ps -a -q | xargs -r sudo finch rm -f || true
+          # System cleanup
+          sudo finch system prune -a -f --volumes || true
       - name: Run e2e tests
         run: |
             git status
@@ -115,6 +159,7 @@ jobs:
             eval $(ssh-agent)
             sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
             sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+            sudo -E env "PATH=/usr/libexec/finch:/usr/libexec/finch/cni/bin/:/usr/local/bin:$PATH" NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock make test-e2e-daemon-linux
       - name: Change ownership of reports
         if: always()
         run: |
