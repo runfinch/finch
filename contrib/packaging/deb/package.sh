@@ -181,7 +181,7 @@ for arch in "${BUILD_ARCHITECTURES[@]}"; do
         # install finchd
         sudo install -m 0755 "${TEMP_BUILD_DIR}/${FINCHD_SRC}/bin/finch-daemon" "${ARCH_DIR}/usr/libexec/finch/"
         sudo install -m 0755 "${TEMP_BUILD_DIR}/${FINCHD_SRC}/bin/docker-credential-finch" "${ARCH_DIR}/usr/libexec/finch/"
-        sudo install -m 0644 "$PKG_CONFIG/finch_ubuntu.service" "$ARCH_DIR/etc/systemd/system/finch.service"
+        sudo install -m 0644 "$PKG_CONFIG/finch.service" "$ARCH_DIR/etc/systemd/system/finch.service"
         sudo install -m 0644 "$PKG_CONFIG/finch.yaml" "$ARCH_DIR/etc/finch"
         sudo install -m 0644 "$PKG_CONFIG/finch.socket" "$ARCH_DIR/etc/systemd/system"
 

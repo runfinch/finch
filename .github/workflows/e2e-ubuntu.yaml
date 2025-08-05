@@ -71,18 +71,11 @@ jobs:
           rm -rf ${{ github.workspace }}/*
       - name: Clean existing Finch environment
         run: |
-          # Stop finch services if they exist
-          sudo systemctl stop finch.service || true
-          sudo systemctl stop finch.socket || true
-          sudo systemctl stop finch-buildkit.service || true
-          sudo systemctl stop finch-soci.service || true
-          sudo systemctl stop containerd.service || true
-          
-          # Disable services to prevent auto-start
-          sudo systemctl disable finch.service || true
-          sudo systemctl disable finch.socket || true
-          sudo systemctl disable finch-buildkit.service || true
-          sudo systemctl disable finch-soci.service || true
+          # Stop and Disable services to prevent auto-start
+          sudo systemctl disable --now finch.service || true
+          sudo systemctl disable --now finch.socket || true
+          sudo systemctl disable --now finch-buildkit.service || true
+          sudo systemctl disable --now finch-soci.service || true
           
           # Remove existing finch packages
           sudo apt remove --purge runfinch-finch -y || true
