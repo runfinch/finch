@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	ffmpegSociImage = "public.ecr.aws/soci-workshop-examples/ffmpeg:latest"
+	ffmpegSociImage = "public.ecr.aws/soci-workshop-examples/ffmpeg_v2:latest"
 	registryImage   = "public.ecr.aws/docker/library/registry:latest"
 	ubuntuImage     = "public.ecr.aws/docker/library/ubuntu:23.10"
 	sociMountString = "fuse.rawBridge"
