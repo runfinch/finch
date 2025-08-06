@@ -76,6 +76,10 @@ jobs:
           sudo systemctl disable --now finch.socket || true
           sudo systemctl disable --now finch-buildkit.service || true
           sudo systemctl disable --now finch-soci.service || true
+          sudo systemctl disable --now containerd.service|| true
+
+          sudo umount /run/containerd/io.containerd.runtime.v2.task/finch/82e19668110ef5182aca78b63172bbd547ab668e0270acfcd177987d1928f33b/rootfs || true
+          sudo umount /run/containerd/io.containerd.runtime.v2.task/finch/94c63751181188a6514ed4cd0651e4cc715a4f5315a31ad217c046161cbad4e0/rootfs || true
           
           # Remove existing finch packages
           sudo apt remove --purge runfinch-finch -y || true
