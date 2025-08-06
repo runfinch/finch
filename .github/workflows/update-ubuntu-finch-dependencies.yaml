@@ -1,0 +1,71 @@
+name: update-ubuntu-dependencies
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 9 * * *'  # Run daily at 9 AM UTC
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run dependency update
+        run: |
+          cd contrib/packaging/deb
+          chmod +x update-dependencies.sh
+          ./update-dependencies.sh
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet contrib/packaging/deb/package.sh; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+  ubuntu-e2e-tests:
+    needs: update-dependencies
+    if: needs.update-dependencies.outputs.changed == 'true'
+    uses: ./.github/workflows/e2e-ubuntu.yaml
+    secrets: inherit
+    with:
+      arch: ubuntu-x86-64
+      output-arch: amd64
+
+  create-pr:
+    needs: [update-dependencies, ubuntu-e2e-tests]
+    if: needs.update-dependencies.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create or update PR
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          signoff: true
+          commit-message: 'chore: update debian dependencies'
+          title: 'chore: update debian dependencies'
+          body: |
+            This PR updates the following dependencies to their latest versions:
+            
+            - finch-daemon
+            - nerdctl
+            - buildkit
+            - soci-snapshotter
+            - CNI plugins
+            - cosign
+            
+            This is an automated update created by the dependency update workflow. Review the changes before approving.
+          branch: update-dependencies
+          delete-branch: true
