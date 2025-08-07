@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.11.0](https://github.com/runfinch/finch/compare/v1.10.3...v1.11.0) (2025-08-06)
+
+
+### Features
+
+* Add finch daemon test for ubuntu and linux ([cb91eb9](https://github.com/runfinch/finch/commit/cb91eb9b3c87cec68989a6718711b8dbec31076f))
+* add finch daemon tests ([#1483](https://github.com/runfinch/finch/issues/1483)) ([cb91eb9](https://github.com/runfinch/finch/commit/cb91eb9b3c87cec68989a6718711b8dbec31076f))
+
+
+### Bug Fixes
+
+* downgrade go version to match max AL2 supported version ([#1497](https://github.com/runfinch/finch/issues/1497)) ([1382eea](https://github.com/runfinch/finch/commit/1382eeaa6d0dfc4009d7780d76b1455885c1c5f4))
+* unify finch.service files between linux distros ([#1496](https://github.com/runfinch/finch/issues/1496)) ([893483a](https://github.com/runfinch/finch/commit/893483ac8099926318175af1b9a2bec52f0eca08))
+
 ## [1.10.3](https://github.com/runfinch/finch/compare/v1.10.2...v1.10.3) (2025-07-31)
 
 
