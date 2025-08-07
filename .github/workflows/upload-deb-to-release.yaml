@@ -47,7 +47,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Configure Signing AWS credentials
-        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           role-to-assume: ${{ secrets.DEB_ROLE_PROD }}
           role-session-name: ubuntu-deb
@@ -98,7 +98,7 @@ jobs:
           KEY_ID=$(sudo gpg --import pool/main/f/runfinch-finch/publickey.pem 2>&1 | grep "gpg: key" | cut -d' ' -f3 | cut -d':' -f1)
           sudo gpg --import pool/main/f/runfinch-finch/publickey.pem && sudo gpg --export --armor $KEY_ID > GPG_KEY.pub
       - name: Configure Artifacts AWS credentials
-        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: ubuntu-deb-create-release
@@ -136,7 +136,7 @@ jobs:
           done
           } >> dists/noble/Release
       - name: Configure Signing AWS credentials
-        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           role-to-assume: ${{ secrets.DEB_ROLE_PROD }}
           role-session-name: ubuntu-deb
@@ -168,7 +168,7 @@ jobs:
           mv Release.gpg dists/noble/
           mv Release dists/noble/
       - name: Configure Artifacts AWS credentials
-        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: ubuntu-deb-create-release
