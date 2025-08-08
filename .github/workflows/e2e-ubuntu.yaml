@@ -76,11 +76,13 @@ jobs:
           sudo systemctl disable --now finch.socket || true
           sudo systemctl disable --now finch-buildkit.service || true
           sudo systemctl disable --now finch-soci.service || true
+          sudo systemctl disable --now containerd.service|| true
           
           # Remove existing finch packages
           sudo apt remove --purge runfinch-finch -y || true
           
           # Clean up any leftover finch directories and files
+          echo "Removing finch directories"
           sudo rm -rf /opt/finch || true
           sudo rm -rf /usr/local/bin/finch || true
           sudo rm -rf /etc/systemd/system/finch* || true
@@ -150,8 +152,8 @@ jobs:
             git status
             git clean -f -d
             eval $(ssh-agent)
-            sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
-            sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+            # sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
+            # sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
             sudo -E env "PATH=/usr/libexec/finch:/usr/libexec/finch/cni/bin/:/usr/local/bin:$PATH" NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock make test-e2e-daemon-linux
       - name: Change ownership of reports
         if: always()

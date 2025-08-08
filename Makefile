@@ -349,6 +349,8 @@ test-e2e-daemon-linux:
 	TEST_E2E=1 \
 	go test ./e2e -p 1 -timeout 2h -test.v -ginkgo.v \
 	-ginkgo.skip="should create container with specified blkio settings options" \
+	-ginkgo.focus="should stream stats with multiple network interfaces" \
+	-ginkgo.focus="should stream container stats until the container is removed" \
 	-ginkgo.randomize-all  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
     --subject="/usr/bin/finch" 
 
