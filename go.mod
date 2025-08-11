@@ -10,7 +10,7 @@ require (
 	github.com/docker/docker v28.3.3+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
-	github.com/lima-vm/lima v1.1.1
+	github.com/lima-vm/lima v1.2.1
 	github.com/onsi/ginkgo/v2 v2.23.4
 	github.com/onsi/gomega v1.38.0
 	github.com/pelletier/go-toml v1.9.5
@@ -30,7 +30,7 @@ require (
 	golang.org/x/sync v0.16.0
 	golang.org/x/tools v0.35.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.32.5
+	k8s.io/apimachinery v0.32.6
 )
 
 require (
@@ -40,10 +40,8 @@ require (
 	github.com/alecthomas/participle/v2 v2.1.4 // indirect
 	github.com/aws/smithy-go v1.22.5 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.7.1 // indirect
-	github.com/braydonk/yaml v0.9.0 // indirect
 	github.com/containerd/cgroups/v3 v3.0.5 // indirect
 	github.com/containerd/console v1.0.5 // indirect
-	github.com/containerd/containerd v1.7.27 // indirect
 	github.com/containerd/containerd/api v1.9.0 // indirect
 	github.com/containerd/containerd/v2 v2.1.1 // indirect
 	github.com/containerd/continuity v0.4.5 // indirect
@@ -79,7 +77,7 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/licenseclassifier/v2 v2.0.0 // indirect
 	github.com/google/pprof v0.0.0-20250403155104-27863c87afa6 // indirect
-	github.com/google/yamlfmt v0.16.0 // indirect
+	github.com/google/yamlfmt v0.17.2 // indirect
 	github.com/ipfs/go-cid v0.5.0 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
@@ -137,8 +135,8 @@ require (
 	go.uber.org/automaxprocs v1.6.0 // indirect
 	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/term v0.33.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250218202821-56aae31c358a // indirect
-	google.golang.org/grpc v1.72.1 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250324211829-b45e905df463 // indirect
+	google.golang.org/grpc v1.73.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/op/go-logging.v1 v1.0.0-20160211212156-b2cb9fa56473 // indirect
 	lukechampine.com/blake3 v1.3.0 // indirect
@@ -149,7 +147,7 @@ require (
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
-	github.com/goccy/go-yaml v1.17.1 // indirect
+	github.com/goccy/go-yaml v1.18.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
