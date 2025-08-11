@@ -1,6 +1,6 @@
 module github.com/runfinch/finch
 
-go 1.23.11
+go 1.24.0
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.37.2
@@ -30,7 +30,7 @@ require (
 	golang.org/x/sync v0.16.0
 	golang.org/x/tools v0.35.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.32.6
+	k8s.io/apimachinery v0.33.3
 )
 
 require (
