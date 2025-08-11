@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.11.0](https://github.com/runfinch/finch/compare/v1.10.3...v1.11.0) (2025-08-11)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.36.5 to 1.37.2 ([#1494](https://github.com/runfinch/finch/issues/1494)) ([94289c9](https://github.com/runfinch/finch/commit/94289c94c96bd020890cce93a2ef3f2e0dd050d7))
+* **deps:** bump github.com/lima-vm/lima from 1.1.1 to 1.2.1 ([#1486](https://github.com/runfinch/finch/issues/1486)) ([5d7676f](https://github.com/runfinch/finch/commit/5d7676f15bda176b3a64b56faa2340a120d2156c))
+* **deps:** bump github.com/onsi/gomega from 1.37.0 to 1.38.0 ([#1490](https://github.com/runfinch/finch/issues/1490)) ([d98d54d](https://github.com/runfinch/finch/commit/d98d54d034282de1c29ae575a6d5928c6cf25cb7))
+
+
+### Features
+
+* Add finch daemon test for ubuntu and linux ([cb91eb9](https://github.com/runfinch/finch/commit/cb91eb9b3c87cec68989a6718711b8dbec31076f))
+* add finch daemon tests ([#1483](https://github.com/runfinch/finch/issues/1483)) ([cb91eb9](https://github.com/runfinch/finch/commit/cb91eb9b3c87cec68989a6718711b8dbec31076f))
+
+
+### Bug Fixes
+
+* downgrade go version to match max AL2 supported version ([#1497](https://github.com/runfinch/finch/issues/1497)) ([1382eea](https://github.com/runfinch/finch/commit/1382eeaa6d0dfc4009d7780d76b1455885c1c5f4))
+* unify finch.service files between linux distros ([#1496](https://github.com/runfinch/finch/issues/1496)) ([893483a](https://github.com/runfinch/finch/commit/893483ac8099926318175af1b9a2bec52f0eca08))
+
 ## [1.10.3](https://github.com/runfinch/finch/compare/v1.10.2...v1.10.3) (2025-07-31)
 
 
