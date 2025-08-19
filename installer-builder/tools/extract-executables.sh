@@ -1,4 +1,6 @@
 #!/bin/bash
+set -o errexit
+set -o pipefail
 
 packageUnsignedExecutables() {
     #initialize executable directory
@@ -15,7 +17,7 @@ packageUnsignedExecutables() {
     extractExecutables ./installer-builder/output/origin/_output
 
     #prepare unsigned executable into .tar
-    cd ./installer-builder/output/executables/unsigned/package || exit
+    cd ./installer-builder/output/executables/unsigned/package
     tar -cvzf artifact.gz -C artifact .
     tar -cvzf  ../package.tar.gz manifest.yaml artifact.gz
 }
