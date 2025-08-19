@@ -6,11 +6,23 @@
 package vm
 
 import (
+	"time"
+
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
 )
+
+var restoreVM = func(o *option.Option) {
+	origFinchCfg := readFile(finchConfigFilePath)
+	writeFile(finchConfigFilePath, origFinchCfg)
+	command.New(o, virtualMachineRootCmd, "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+	time.Sleep(1 * time.Second)
+	command.New(o, virtualMachineRootCmd, "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(10).Run()
+	time.Sleep(1 * time.Second)
+	command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
+}
 
 func testVMDisk(o *option.Option) {
 	ginkgo.Describe("vm disk commands", ginkgo.Serial, func() {

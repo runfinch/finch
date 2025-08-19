@@ -1,5 +1,6 @@
 #!/bin/bash
 set -o errexit
+set -o pipefail
 
 #$1: the account name
 #$2: the credential
