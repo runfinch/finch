@@ -165,6 +165,6 @@ require (
 	golang.org/x/mod v0.26.0 // indirect
 	golang.org/x/net v0.42.0 // indirect
 	golang.org/x/sys v0.34.0
-	golang.org/x/text v0.27.0
+	golang.org/x/text v0.28.0
 	k8s.io/klog/v2 v2.130.1 // indirect
 )
