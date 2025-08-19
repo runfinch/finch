@@ -3,7 +3,7 @@ module github.com/runfinch/finch
 go 1.23.11
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.37.2
+	github.com/aws/aws-sdk-go-v2 v1.38.0
 	github.com/containerd/cgroups v1.1.0
 	github.com/containerd/nerdctl/v2 v2.1.2
 	github.com/docker/cli v28.3.3+incompatible
