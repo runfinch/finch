@@ -28,6 +28,7 @@ func newVirtualMachineCommand(
 	fp path.Finch,
 	fs afero.Fs,
 	diskManager disk.UserDataDiskManager,
+	finchRootPath string,
 ) *cobra.Command {
 	virtualMachineCommand := &cobra.Command{
 		Use:   virtualMachineRootCmd,
@@ -42,6 +43,7 @@ func newVirtualMachineCommand(
 		newInitVMCommand(limaCmdCreator, logger, optionalDepGroups, lca, nca, fp.BaseYamlFilePath(), fs,
 			fp.LimaSSHPrivateKeyPath(), diskManager),
 		newSettingsVMCommand(logger, lca, fs, os.Stdout),
+		newUpdateOSVMCommand(logger, finchRootPath),
 	)
 
 	return virtualMachineCommand
