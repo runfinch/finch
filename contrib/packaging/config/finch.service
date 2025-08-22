@@ -6,7 +6,7 @@ Wants=network.target containerd.service
 Requires=finch.socket
 
 [Service]
-ExecStart=/bin/sh -c 'PATH="/usr/libexec/finch:/usr/libexec/finch/cni/bin/:$PATH" exec /usr/libexec/finch/finch-daemon --debug --config-file /etc/finch/nerdctl/nerdctl.toml --socket-addr fd://'
+ExecStart=echo
 Type=notify
 Delegate=yes
 Restart=always
