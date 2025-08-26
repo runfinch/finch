@@ -8,7 +8,7 @@ require (
 	github.com/containerd/nerdctl/v2 v2.1.2
 	github.com/docker/cli v28.3.3+incompatible
 	github.com/docker/docker v28.3.3+incompatible
-	github.com/docker/go-connections v0.5.0
+	github.com/docker/go-connections v0.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
 	github.com/lima-vm/lima v1.2.1
 	github.com/onsi/ginkgo/v2 v2.24.0
