@@ -20,13 +20,13 @@ import (
 func TestVirtualMachineCommand(t *testing.T) {
 	t.Parallel()
 
-	cmd := newVirtualMachineCommand(nil, nil, nil, nil, nil, "", nil, nil)
+	cmd := newVirtualMachineCommand(nil, nil, nil, nil, nil, "", nil, nil, "")
 	assert.Equal(t, cmd.Use, virtualMachineRootCmd)
 
 	// check the number of subcommand for vm
-	expectedCmds := 6
+	expectedCmds := 7
 	if runtime.GOOS == "darwin" {
-		expectedCmds = 7 // Darwin includes disk commands
+		expectedCmds = 8 // Darwin includes disk commands
 	}
 	assert.Equal(t, len(cmd.Commands()), expectedCmds)
 }
