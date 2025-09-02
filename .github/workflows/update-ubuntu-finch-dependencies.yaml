@@ -32,17 +32,8 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-  ubuntu-e2e-tests:
-    needs: update-dependencies
-    if: needs.update-dependencies.outputs.changed == 'true'
-    uses: ./.github/workflows/e2e-ubuntu.yaml
-    secrets: inherit
-    with:
-      arch: ubuntu-x86-64
-      output-arch: amd64
-
   create-pr:
-    needs: [update-dependencies, ubuntu-e2e-tests]
+    needs: [update-dependencies]
     if: needs.update-dependencies.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
