@@ -8,6 +8,11 @@ on:
     - cron: '0 9 * * *'  # Run daily at 9 AM UTC
   workflow_dispatch:
 
+# Add permissions needed to create a PR
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update-dependencies:
     runs-on: ubuntu-latest
@@ -28,8 +33,11 @@ jobs:
         run: |
           if git diff --quiet contrib/packaging/deb/package.sh; then
             echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected in dependencies"
           else
             echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in dependencies:"
+            git diff contrib/packaging/deb/package.sh
           fi
 
   create-pr:
@@ -39,6 +47,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      
+      - name: Run dependency update
+        run: |
+          cd contrib/packaging/deb
+          chmod +x update-dependencies.sh
+          ./update-dependencies.sh
 
       - name: Create or update PR
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
@@ -58,5 +74,5 @@ jobs:
             - cosign
             
             This is an automated update created by the dependency update workflow. Review the changes before approving.
-          branch: update-dependencies
+          branch: update-ubuntu-dependencies
           delete-branch: true
