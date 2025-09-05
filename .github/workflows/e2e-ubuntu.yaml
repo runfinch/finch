@@ -13,10 +13,16 @@ env:
   GO111MODULE: on
   GO_VERSION: '1.24.5'
 
+permissions:
+  id-token: write # used when getting AWS credentials
+  contents: read
+
 jobs:
   get-latest-tag:
     name: Get the latest release tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 2
     outputs:
       tag: ${{ steps.latest-tag.outputs.tag }}
@@ -32,6 +38,8 @@ jobs:
     needs: get-latest-tag
     name: Get tag name
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 2
     outputs:
       tag: ${{ steps.check-tag.outputs.tag }}
@@ -59,6 +67,9 @@ jobs:
   e2e-test:
     needs: get-tag-and-version
     runs-on: codebuild-finch-${{ inputs.arch }}-1-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    permissions:
+      id-token: write # used when getting AWS credentials
+      contents: read
     timeout-minutes: 60
     outputs:
       has_creds: ${{ steps.vars.outputs.has_creds}}
