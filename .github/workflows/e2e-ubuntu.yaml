@@ -11,7 +11,7 @@ on:
 
 env:
   GO111MODULE: on
-  GO_VERSION: '1.24.5'
+  GO_VERSION: '1.24.6'
 
 jobs:
   get-latest-tag:
