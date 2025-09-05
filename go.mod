@@ -30,7 +30,7 @@ require (
 	golang.org/x/sync v0.16.0
 	golang.org/x/tools v0.36.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.33.3
+	k8s.io/apimachinery v0.34.0
 )
 
 require (
