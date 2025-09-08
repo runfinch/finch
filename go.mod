@@ -21,7 +21,7 @@ require (
 	github.com/spf13/afero v1.14.0
 	github.com/spf13/afero/sftpfs v1.14.0
 	github.com/spf13/cobra v1.10.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/tc-hib/go-winres v0.3.3
 	github.com/xorcare/pointer v1.2.2
 	go.uber.org/mock v0.6.0
