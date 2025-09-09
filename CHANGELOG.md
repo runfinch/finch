@@ -1,5 +1,44 @@
 # Changelog
 
+## [1.11.0](https://github.com/runfinch/finch/compare/v1.10.3...v1.11.0) (2025-09-08)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.36.5 to 1.37.2 ([#1494](https://github.com/runfinch/finch/issues/1494)) ([94289c9](https://github.com/runfinch/finch/commit/94289c94c96bd020890cce93a2ef3f2e0dd050d7))
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.37.2 to 1.38.0 ([#1510](https://github.com/runfinch/finch/issues/1510)) ([9ed1939](https://github.com/runfinch/finch/commit/9ed1939e6dfd90d019bfad048ca9e25d97afff9c))
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.38.0 to 1.38.3 ([#1543](https://github.com/runfinch/finch/issues/1543)) ([de9049b](https://github.com/runfinch/finch/commit/de9049be4d0a331700ca756930aa2974e9c82ad0))
+* **deps:** bump github.com/lima-vm/lima from 1.1.1 to 1.2.1 ([#1486](https://github.com/runfinch/finch/issues/1486)) ([5d7676f](https://github.com/runfinch/finch/commit/5d7676f15bda176b3a64b56faa2340a120d2156c))
+* **deps:** bump github.com/onsi/ginkgo/v2 from 2.23.4 to 2.24.0 ([#1511](https://github.com/runfinch/finch/issues/1511)) ([fbb7c24](https://github.com/runfinch/finch/commit/fbb7c2407b6facd36d135f1c87ab28f0e9f3767c))
+* **deps:** bump github.com/onsi/ginkgo/v2 from 2.25.1 to 2.25.3 ([#1542](https://github.com/runfinch/finch/issues/1542)) ([f693a0d](https://github.com/runfinch/finch/commit/f693a0d61899ccd70ded00ec6e454a020dc88945))
+* **deps:** bump github.com/onsi/gomega from 1.37.0 to 1.38.0 ([#1490](https://github.com/runfinch/finch/issues/1490)) ([d98d54d](https://github.com/runfinch/finch/commit/d98d54d034282de1c29ae575a6d5928c6cf25cb7))
+* **deps:** bump github.com/stretchr/testify from 1.10.0 to 1.11.1 ([#1541](https://github.com/runfinch/finch/issues/1541)) ([c970203](https://github.com/runfinch/finch/commit/c9702034142147e8faef16b77d6dba59e36aabe7))
+* **deps:** bump golang.org/x/crypto from 0.41.0 to 0.42.0 ([#1547](https://github.com/runfinch/finch/issues/1547)) ([5f5603d](https://github.com/runfinch/finch/commit/5f5603d28ffec5ef8226e0e5583c554d5da7b604))
+* **deps:** bump golang.org/x/tools from 0.35.0 to 0.36.0 ([#1505](https://github.com/runfinch/finch/issues/1505)) ([e9b1d41](https://github.com/runfinch/finch/commit/e9b1d41d186030a3be8a5c33c896951d02b80136))
+* **deps:** bump k8s.io/apimachinery from 0.32.6 to 0.34.0 ([#1525](https://github.com/runfinch/finch/issues/1525)) ([b7a4c6b](https://github.com/runfinch/finch/commit/b7a4c6bec09f60cd556ceb4779670ced2783c95c))
+* **deps:** Bump submodules and dependencies ([#1526](https://github.com/runfinch/finch/issues/1526)) ([94ad970](https://github.com/runfinch/finch/commit/94ad9709344790ab74d2f7baa2a163b3474ccc2d))
+* **deps:** Bump submodules and dependencies ([#1530](https://github.com/runfinch/finch/issues/1530)) ([8f073e4](https://github.com/runfinch/finch/commit/8f073e47d78f51289af84fa8ecee3482e55d8248))
+* **deps:** update go 1.24 ([#1540](https://github.com/runfinch/finch/issues/1540)) ([de1d5e0](https://github.com/runfinch/finch/commit/de1d5e0254f561f8ff46a29ff7a03d2f3ae8d4e9))
+
+
+### Features
+
+* Add finch daemon test for ubuntu and linux ([cb91eb9](https://github.com/runfinch/finch/commit/cb91eb9b3c87cec68989a6718711b8dbec31076f))
+* add finch daemon tests ([#1483](https://github.com/runfinch/finch/issues/1483)) ([cb91eb9](https://github.com/runfinch/finch/commit/cb91eb9b3c87cec68989a6718711b8dbec31076f))
+* add force remove test and re-arrange test based on state changes ([#1509](https://github.com/runfinch/finch/issues/1509)) ([558c80d](https://github.com/runfinch/finch/commit/558c80db8f4de858a727e4d5d387651d3cfc6598))
+* add workflow to create pr to update deb dependencies ([#1458](https://github.com/runfinch/finch/issues/1458)) ([392dd15](https://github.com/runfinch/finch/commit/392dd1524e8aee40a4617aa35a6ce08bdd81ad3c))
+* optimize vm lifecycle tests ([#1508](https://github.com/runfinch/finch/issues/1508)) ([fe19eef](https://github.com/runfinch/finch/commit/fe19eef4208a00d08c0e926793cb6f6ea3181145))
+
+
+### Bug Fixes
+
+* **ci:** Add hardfail to all steps of the .pkg release-installer scipt ([#1481](https://github.com/runfinch/finch/issues/1481)) ([5695017](https://github.com/runfinch/finch/commit/5695017c9b3067f9b067b036aac0bea2422e76ce))
+* downgrade go version to match max AL2 supported version ([#1497](https://github.com/runfinch/finch/issues/1497)) ([1382eea](https://github.com/runfinch/finch/commit/1382eeaa6d0dfc4009d7780d76b1455885c1c5f4))
+* fix service file PATH variable ([#1520](https://github.com/runfinch/finch/issues/1520)) ([7f960bb](https://github.com/runfinch/finch/commit/7f960bb57951dbe87f74782e19fb4fc64faf9800))
+* remove additional e2e run test ([#1528](https://github.com/runfinch/finch/issues/1528)) ([beb68ee](https://github.com/runfinch/finch/commit/beb68ee9e2f9c2e2c58c624806da540ca2a3434b))
+* unify finch.service files between linux distros ([#1496](https://github.com/runfinch/finch/issues/1496)) ([893483a](https://github.com/runfinch/finch/commit/893483ac8099926318175af1b9a2bec52f0eca08))
+* update permission to create pr ([#1536](https://github.com/runfinch/finch/issues/1536)) ([9277b7d](https://github.com/runfinch/finch/commit/9277b7d3a0dabcc11ca64aa7a0e72088cbbea69b))
+
 ## [1.10.3](https://github.com/runfinch/finch/compare/v1.10.2...v1.10.3) (2025-07-31)
 
 
