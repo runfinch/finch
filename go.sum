@@ -315,8 +315,8 @@ github.com/spaolacci/murmur3 v1.1.0 h1:7c1g84S4BPRrfL5Xrdp6fOJ206sU9y293DDHaoy0b
 github.com/spaolacci/murmur3 v1.1.0/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=
 github.com/spf13/afero v1.15.0 h1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=
 github.com/spf13/afero v1.15.0/go.mod h1:NC2ByUVxtQs4b3sIUphxK0NioZnmxgyCrfzeuq8lxMg=
-github.com/spf13/afero/sftpfs v1.14.0 h1:cddwKIesX1DYyuPOegZeW9VWiozffaOyj4z8SMGK6J0=
-github.com/spf13/afero/sftpfs v1.14.0/go.mod h1:E5opXKvg4WTQlIY/dg0MFBKF/bJOZsX3uzQQwRkDMU8=
+github.com/spf13/afero/sftpfs v1.15.0 h1:IKTINBf8mhsQ28u4s4TZbv7Wo6AthR9T9koiDE1+/hU=
+github.com/spf13/afero/sftpfs v1.15.0/go.mod h1:U6Dwvy/KjNSyWpHt1LPiTZISPfKtSI2fH9i4VS+d3PI=
 github.com/spf13/cobra v1.10.1 h1:lJeBwCfmrnXthfAupyUTzJ/J4Nc1RsHC/mSRU2dll/s=
 github.com/spf13/cobra v1.10.1/go.mod h1:7SmJGaTHFVBY0jW4NXGluQoLvhqFQM+6XSKD+P4XaB0=
 github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
