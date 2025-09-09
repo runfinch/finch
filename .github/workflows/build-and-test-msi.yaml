@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       ref_name:
+        description: "name of git ref for which to build installer"
         required: true
         type: string
   workflow_call:
@@ -32,6 +33,7 @@ jobs:
     outputs:
       tag: ${{ steps.check-tag.outputs.tag }}
       version: ${{ steps.check-tag.outputs.version }}
+      commit: ${{ steps.export-commit.outputs.commit }}
     steps:
       - name: Check tag from workflow input and github ref
         id: check-tag
@@ -51,7 +53,18 @@ jobs:
             version="0.0.1"
           fi
           echo "version=$version" >> ${GITHUB_OUTPUT}
-  
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ steps.check-tag.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - name: Export commit hash
+        id: export-commit
+        run: |
+          commit=$(git rev-parse HEAD)
+          echo "commit=$commit" >> ${GITHUB_OUTPUT}
+
   windows-msi-build:
     needs: get-tag-name
     runs-on: [self-hosted, windows, amd64, release]
@@ -78,7 +91,7 @@ jobs:
           cache: false
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          ref: ${{ needs.get-tag-name.outputs.tag }}
+          ref: ${{ needs.get-tag-name.outputs.commit }}
           fetch-depth: 0
           persist-credentials: false
           submodules: recursive
@@ -162,8 +175,6 @@ jobs:
     needs:
       - get-tag-name
       - windows-msi-build
-    strategy:
-      fail-fast: false
     runs-on: [self-hosted, windows, amd64, release]
     timeout-minutes: 180
     steps:
@@ -188,7 +199,7 @@ jobs:
           cache: false
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          ref: ${{ needs.get-tag-name.outputs.tag }}
+          ref: ${{ needs.get-tag-name.outputs.commit }}
           fetch-depth: 0
           persist-credentials: false
           submodules: recursive
