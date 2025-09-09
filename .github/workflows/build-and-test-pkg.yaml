@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       ref_name:
+        description: "name of git ref for which to build installer"
         required: true
         type: string
   workflow_call:
@@ -24,6 +25,7 @@ jobs:
     timeout-minutes: 2
     outputs:
       tag: ${{ steps.check-tag.outputs.tag }}
+      commit: ${{ steps.export-commit.outputs.commit }}
     steps:
       - name: Check tag from workflow input and github ref
         id: check-tag
@@ -33,7 +35,20 @@ jobs:
           else
             tag=${{ github.ref_name }}
           fi
+          echo "using tag=${tag}"
           echo "tag=$tag" >> ${GITHUB_OUTPUT}
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ steps.check-tag.outputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - name: Export commit hash
+        id: export-commit
+        run: |
+          commit=$(git rev-parse HEAD)
+          echo "using commit=${commit}"
+          echo "commit=$commit" >> ${GITHUB_OUTPUT}
 
   macos-aarch64-pkg-build:
     needs: get-tag-name
@@ -45,6 +60,7 @@ jobs:
       output_arch: aarch64
       version: 14
       tag: ${{ needs.get-tag-name.outputs.tag }}
+      commit: ${{ needs.get-tag-name.outputs.commit }}
 
   macos-x86-64-pkg-build:
     needs: get-tag-name
@@ -56,6 +72,7 @@ jobs:
       output_arch: x86_64
       version: 14
       tag: ${{ needs.get-tag-name.outputs.tag }}
+      commit: ${{ needs.get-tag-name.outputs.commit }}
 
   macos-aarch64-pkg-test:
     strategy:
@@ -73,6 +90,7 @@ jobs:
       output_arch: aarch64
       version: ${{ matrix.version }}
       tag: ${{ needs.get-tag-name.outputs.tag }}
+      commit: ${{ needs.get-tag-name.outputs.commit }}
 
   macos-x86-64-pkg-test:
     strategy:
@@ -90,3 +108,4 @@ jobs:
       output_arch: x86_64
       version: ${{ matrix.version }}
       tag: ${{ needs.get-tag-name.outputs.tag }}
+      commit: ${{ needs.get-tag-name.outputs.commit }}
