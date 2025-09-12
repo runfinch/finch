@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.1](https://github.com/runfinch/finch/compare/v1.11.0...v1.11.1) (2025-09-12)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/spf13/afero from 1.14.0 to 1.15.0 ([#1554](https://github.com/runfinch/finch/issues/1554)) ([edb8591](https://github.com/runfinch/finch/commit/edb8591de8ca41762baea541ccdf1220de38a88d))
+* **deps:** bump github.com/spf13/afero/sftpfs from 1.14.0 to 1.15.0 ([#1553](https://github.com/runfinch/finch/issues/1553)) ([d1b68a7](https://github.com/runfinch/finch/commit/d1b68a7e15cb36abc83309f8fd126643d88c6298))
+* **deps:** bump golang.org/x/tools from 0.36.0 to 0.37.0 ([#1557](https://github.com/runfinch/finch/issues/1557)) ([f7b25d3](https://github.com/runfinch/finch/commit/f7b25d3f3bff5fef3e0dad114b1bb6f713d894d7))
+
 ## [1.11.0](https://github.com/runfinch/finch/compare/v1.10.3...v1.11.0) (2025-09-08)
 
 
