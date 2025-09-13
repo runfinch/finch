@@ -11,10 +11,17 @@ on:
     paths:
       - 'go.mod'
       - '.github/workflows/go-version-protection.yaml'
+permissions:
+  id-token: write # used when getting AWS credentials
+  contents: write # used to create a release and upload files to a release
+  pull-requests: write # used to update the pull request
 
 jobs:
   prevent-go-version-minor-major-version-updates:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
