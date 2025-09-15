@@ -40,9 +40,14 @@ on:
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
 
+permissions:
+  contents: read
+
 jobs:
   git-secrets:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 2
     steps:
       - name: Pull latest awslabs/git-secrets repo
@@ -66,6 +71,8 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     timeout-minutes: 2
     steps:
       - run: echo "Skipping CI for docs & contrib files"
@@ -74,23 +81,31 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     timeout-minutes: 2
     steps:
       - run: echo "Skipping CI for docs & contrib files"
   go-linter:
     name: lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 2
     steps:
       - run: echo "Skipping CI for docs & contrib files"
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     timeout-minutes: 2
+    permissions:
+      contents: read
     steps:
       - run: echo "Skipping CI for docs & contrib files"
   check-licenses:
     runs-on: ubuntu-latest
     timeout-minutes: 2
+    permissions:
+      contents: read
     steps:
       - run: echo "Skipping CI for docs & contrib files"
   macos-e2e-tests:
@@ -101,6 +116,8 @@ jobs:
         arch: ['X64', 'arm64']
         runner-type: ['test']
     uses: ./.github/workflows/e2e-docs.yaml
+    permissions:
+      contents: read
   windows-e2e-tests:
     strategy:
       matrix:
@@ -108,6 +125,8 @@ jobs:
         arch: ['amd64']
         runner-type: ['test']
     uses: ./.github/workflows/e2e-docs.yaml
+    permissions:
+      contents: read
   linux-e2e-tests:
     strategy:
       matrix:
@@ -116,8 +135,12 @@ jobs:
         version: ['2023', '2']
         runner-type: ['test']
     uses: ./.github/workflows/e2e-docs.yaml
+    permissions:
+      contents: read
   mdlint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 2
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0

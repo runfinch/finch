@@ -7,6 +7,8 @@ jobs:
   get-latest-tag:
     name: Get the latest release tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 2
     outputs:
       tag: ${{ steps.latest-tag.outputs.tag }}
@@ -30,6 +32,11 @@ jobs:
       - get-latest-tag
       - build-and-test-finch-pkg
     uses: ./.github/workflows/upload-installer-to-release.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write
+      contents: write # this is used to upload to the release
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
@@ -37,6 +44,11 @@ jobs:
   build-and-test-finch-msi:
     needs: get-latest-tag
     uses: ./.github/workflows/build-and-test-msi.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write
+      contents: read # this is required for actions/checkout
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
@@ -46,6 +58,11 @@ jobs:
       - get-latest-tag
       - build-and-test-finch-msi
     uses: ./.github/workflows/upload-msi-to-release.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write
+      contents: read # this is required for actions/checkout
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
@@ -53,6 +70,11 @@ jobs:
   build-and-test-finch-deb:
     needs: get-latest-tag
     uses: ./.github/workflows/build-and-test-deb.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write
+      contents: read # this is required for actions/checkout
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
@@ -62,6 +84,11 @@ jobs:
       - get-latest-tag
       - build-and-test-finch-deb
     uses: ./.github/workflows/upload-deb-to-release.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write 
+      contents: write # this is required for uploading the release assets
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
