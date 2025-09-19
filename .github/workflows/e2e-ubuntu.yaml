@@ -82,12 +82,22 @@ jobs:
           rm -rf ${{ github.workspace }}/*
       - name: Clean existing Finch environment
         run: |
-          # Stop and Disable services to prevent auto-start
+          # Stop services
+          sudo systemctl stop finch.service || true
+          sudo systemctl stop finch.socket || true
+          sudo systemctl stop finch-buildkit.service || true
+          sudo systemctl stop finch-soci.service || true
+          sudo systemctl stop containerd.service || true
+
+          # Disable services to prevent auto-start
           sudo systemctl disable --now finch.service || true
           sudo systemctl disable --now finch.socket || true
           sudo systemctl disable --now finch-buildkit.service || true
           sudo systemctl disable --now finch-soci.service || true
-          
+
+          # Temp removal
+          sudo umount -f /run/containerd/io.containerd.runtime.v2.task/finch/0f875f402ff37afc44326a67a16fad11f724fbd8b3ed2672f5f0032edd7fa9d2/rootfs
+
           # Remove existing finch packages
           sudo apt remove --purge runfinch-finch -y || true
           
@@ -98,7 +108,11 @@ jobs:
           sudo rm -rf /var/lib/finch || true
           sudo rm -rf ~/.finch || true
           sudo rm -rf /run/containerd || true
-          
+          sudo rm -rf /var/lib/containerd || true
+          sudo rm -rf /var/lib/buildkit/ || true
+          sudo rm -rf /var/lib/soci-snapshotter-grpc/ || true
+
+   
           # Reload systemd after cleanup
           sudo systemctl daemon-reload
       - name: Check available disk space
@@ -156,14 +170,23 @@ jobs:
           sudo finch ps -a -q | xargs -r sudo finch rm -f || true
           # System cleanup
           sudo finch system prune -a -f --volumes || true
-      - name: Run e2e tests
+      - name: Run e2e finch tests
         run: |
-            git status
-            git clean -f -d
-            eval $(ssh-agent)
-            sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
-            sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
-            sudo -E env "PATH=/usr/libexec/finch:/usr/libexec/finch/cni/bin/:/usr/local/bin:$PATH" NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock make test-e2e-daemon-linux
+          git status
+          git clean -f -d
+          eval $(ssh-agent)
+          sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
+          sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+      - name: Clean environment of containers and images
+        run: |
+          # Remove all containers (running and stopped)
+          sudo finch container prune -f || true
+          sudo finch ps -a -q | xargs -r sudo finch rm -f || true
+          # System cleanup
+          sudo finch system prune -a -f --volumes || true
+      - name: Run e2e finch daemon tests
+        run: |
+          sudo -E env "PATH=/usr/libexec/finch:/usr/libexec/finch/cni/bin/:/usr/local/bin:$PATH" NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock make test-e2e-daemon-linux
       - name: Change ownership of reports
         if: always()
         run: |

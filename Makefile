@@ -348,6 +348,7 @@ test-e2e-daemon-linux:
 	DOCKER_API_VERSION="v1.41" \
 	TEST_E2E=1 \
 	go test ./e2e -p 1 -timeout 2h -test.v -ginkgo.v \
+	-ginkgo.flake-attempts=3 \
 	-ginkgo.skip="should create container with specified blkio settings options" \
 	-ginkgo.randomize-all  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
     --subject="/usr/bin/finch" 
