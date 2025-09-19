@@ -113,6 +113,7 @@ func TestContainer(t *testing.T) {
 		tests.NetworkLs(o)
 		tests.NetworkRm(o)
 		testCosign(o)
+		testCrossPlatformRun(o)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)
