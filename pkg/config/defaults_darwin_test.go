@@ -42,7 +42,7 @@ func applyDefaultPlatformSpecificTestCases() applyDefaultTestCases {
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want: makeConfig("vz", "3GiB", 2, false),
+			want: makeConfig("vz", "6GiB", 4, false),
 		},
 		{
 			name: "fills CPUs with default when unset",
@@ -62,7 +62,7 @@ func applyDefaultPlatformSpecificTestCases() applyDefaultTestCases {
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want: makeConfig("vz", "4GiB", 2, false),
+			want: makeConfig("vz", "4GiB", 4, false),
 		},
 		{
 			name: "fills memory with default when unset",
@@ -83,7 +83,7 @@ func applyDefaultPlatformSpecificTestCases() applyDefaultTestCases {
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want: makeConfig("vz", "3GiB", 6, false),
+			want: makeConfig("vz", "6GiB", 6, false),
 		},
 		{
 			name: "fills with fallbacks when defaults are too low",
@@ -94,7 +94,7 @@ func applyDefaultPlatformSpecificTestCases() applyDefaultTestCases {
 				ecc *mocks.CommandCreator,
 				ctrl *gomock.Controller,
 			) {
-				deps.EXPECT().NumCPU().Return(4)
+				deps.EXPECT().NumCPU().Return(3)
 				// 1,073,741,824 == 1GiB
 				mem.EXPECT().TotalMemory().Return(uint64(1_073_741_824))
 				c := mocks.NewCommand(ctrl)
@@ -125,7 +125,7 @@ func applyDefaultPlatformSpecificTestCases() applyDefaultTestCases {
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want: makeConfig("qemu", "3GiB", 2, false),
+			want: makeConfig("qemu", "6GiB", 4, false),
 		},
 		{
 			name: "falls back to qemu on old versions",
@@ -143,7 +143,7 @@ func applyDefaultPlatformSpecificTestCases() applyDefaultTestCases {
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("12.0.0"), nil)
 			},
-			want: makeConfig("qemu", "3GiB", 2, false),
+			want: makeConfig("qemu", "6GiB", 4, false),
 		},
 		{
 			name: "falls back to qemu if there's an error",
@@ -161,7 +161,7 @@ func applyDefaultPlatformSpecificTestCases() applyDefaultTestCases {
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("12.0.0"), fmt.Errorf("an error"))
 			},
-			want: makeConfig("qemu", "3GiB", 2, false),
+			want: makeConfig("qemu", "6GiB", 4, false),
 		},
 	}
 }

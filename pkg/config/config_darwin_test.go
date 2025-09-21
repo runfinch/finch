@@ -87,7 +87,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want:    makeConfig("vz", "3GiB", 2, false),
+			want:    makeConfig("vz", "6GiB", 2, false),
 			wantErr: nil,
 		},
 		{
@@ -129,7 +129,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want:    makeConfig("vz", "3GiB", 2, false),
+			want:    makeConfig("vz", "6GiB", 2, false),
 			wantErr: nil,
 		},
 		{
@@ -150,7 +150,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want:    makeExperimentalConfig("vz", "3GiB", 2, false, SharedExperimentalSettings{MountInotify: true}),
+			want:    makeExperimentalConfig("vz", "6GiB", 2, false, SharedExperimentalSettings{MountInotify: true}),
 			wantErr: nil,
 		},
 		{
@@ -171,7 +171,7 @@ cpus: 8
 				ecc.EXPECT().Create("sw_vers", "-productVersion").Return(c)
 				c.EXPECT().Output().Return([]byte("14.0.0"), nil)
 			},
-			want:    makeConfig("vz", "3GiB", 2, false),
+			want:    makeConfig("vz", "6GiB", 2, false),
 			wantErr: nil,
 		},
 	}
