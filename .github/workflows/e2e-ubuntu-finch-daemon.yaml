@@ -1,0 +1,208 @@
+name: e2e-ubuntu-finch-daemon
+on:
+  workflow_call:
+    inputs:
+      arch:
+        type: string
+        required: true
+      output-arch:
+        type: string
+        required: true
+
+env:
+  GO111MODULE: on
+  GO_VERSION: '1.24.6'
+
+permissions:
+  id-token: write # used when getting AWS credentials
+  contents: read
+
+jobs:
+  get-latest-tag:
+    name: Get the latest release tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.latest-tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+            fetch-depth: 0
+      - name: 'Get the latest tag'
+        id: latest-tag
+        uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
+  
+  get-tag-and-version:
+    needs: get-latest-tag
+    name: Get tag name
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+      version: ${{ steps.check-tag.outputs.version }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ needs.get-latest-tag.outputs.tag }}" ]; then
+            tag=${{ needs.get-latest-tag.outputs.tag }}
+          else
+            tag=${{ github.tag }}
+          fi
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+
+          version=${tag#v}
+          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version matches format: $version"
+          else
+            echo "Error: Version $version doesn't match format."
+            exit 1
+          fi
+          echo "version=$version" >> ${GITHUB_OUTPUT}
+  
+  e2e-test-finch-daemon:
+    needs: get-tag-and-version
+    runs-on: codebuild-finch-${{ inputs.arch }}-1-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    permissions:
+      id-token: write # used when getting AWS credentials
+      contents: read
+    timeout-minutes: 60
+    outputs:
+      has_creds: ${{ steps.vars.outputs.has_creds}}
+      daemon_report: ${{ steps.set-multiple-vars.outputs.DAEMON_REPORT }}
+    steps:
+      - name: Clean Ubuntu workspace
+        run: |
+          rm -rf ${{ github.workspace }}/*
+      - name: Clean existing Finch environment
+        run: |
+          # Stop services
+          sudo systemctl stop finch.service || true
+          sudo systemctl stop finch.socket || true
+          sudo systemctl stop finch-buildkit.service || true
+          sudo systemctl stop finch-soci.service || true
+          sudo systemctl stop containerd.service || true
+
+          # Disable services to prevent auto-start
+          sudo systemctl disable --now finch.service || true
+          sudo systemctl disable --now finch.socket || true
+          sudo systemctl disable --now finch-buildkit.service || true
+          sudo systemctl disable --now finch-soci.service || true
+
+          # Remove all containerd finch mounts
+          sudo umount -f $(sudo mount | grep "/run/containerd/io.containerd.runtime.v2.task/finch/" | awk '{print $3}') || true
+
+          # Remove existing finch packages
+          sudo apt remove --purge runfinch-finch -y || true
+          
+          # Clean up any leftover finch directories and files
+          sudo rm -rf /opt/finch || true
+          sudo rm -rf /usr/local/bin/finch || true
+          sudo rm -rf /etc/systemd/system/finch* || true
+          sudo rm -rf /var/lib/finch || true
+          sudo rm -rf ~/.finch || true
+          sudo rm -rf /run/containerd || true
+          sudo rm -rf /var/lib/containerd || true
+          sudo rm -rf /var/lib/buildkit/ || true
+          sudo rm -rf /var/lib/soci-snapshotter-grpc/ || true
+          sudo rm -rf /var/lib/nerdctl || true
+
+          # Clean up root cache
+          sudo rm -rf /root/.cache || true
+
+          # Reload systemd after cleanup
+          sudo systemctl daemon-reload
+      - name: Check available disk space
+        run: |
+          sudo df -h
+          sudo df -h /tmp
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - name: Set output variables
+        id: vars
+        run: |
+          has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
+          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
+      - name: Clean iptable rules
+        run: |
+          sudo chmod +x ./scripts/clean-iptables.sh
+          sudo ./scripts/clean-iptables.sh
+      - name: Install dependencies
+        run: |
+          sudo apt install build-essential -y
+          sudo apt install libseccomp-dev -y
+          sudo apt install pkg-config -y
+          sudo apt install zlib1g-dev -y
+          sudo apt install iptables -y
+      - name: Build for Ubuntu ${{ inputs.output-arch }}
+        run: |
+          make
+      - name: Generate deb
+        run: |
+          ./contrib/packaging/deb/package.sh --${{ inputs.output-arch }} --version ${{ needs.get-tag-and-version.outputs.version }}
+   
+      - name: Install Finch
+        run: |
+          sudo apt install ./_output/deb/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_${{ inputs.output-arch }}.deb -y
+          sudo systemctl daemon-reload
+          sudo systemctl restart containerd.service
+          sudo systemctl restart finch.socket
+          sudo systemctl restart finch.service
+          sudo systemctl restart finch-buildkit.service
+          sudo systemctl restart finch-soci.service
+
+      - name: Set up REPORT_DIR
+        run: |
+          echo "REPORT_DIR=${{ github.workspace }}/reports" >> $GITHUB_ENV
+      - name: Run e2e finch daemon tests
+        run: |
+          sudo -E env "PATH=/usr/libexec/finch:/usr/libexec/finch/cni/bin/:/usr/local/bin:$PATH" NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock make test-e2e-daemon-linux
+      - name: Change ownership of reports
+        if: always()
+        run: |
+          if [ ! -d "$REPORT_DIR" ]; then
+            echo "Error: Directory $REPORT_DIR does not exist."
+            exit 1
+          fi
+
+          USER=$(whoami)
+          GROUP=$(id -gn)
+
+          if sudo chown -R "$USER:$GROUP" "$REPORT_DIR"; then
+            echo "Ownership of $REPORT_DIR changed to $USER:$GROUP"
+          else
+            echo "Error: Failed to change ownership of $REPORT_DIR"
+            exit 1
+          fi
+      - name: Set artifacts name outputs
+        if: always()
+        id: set-multiple-vars
+        run: |
+          echo "DAEMON_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-daemon-report.json" >> $GITHUB_OUTPUT
+      - name: Upload reports artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ubuntu-test-e2e-finch-daemon-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
+          path: ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-*.json
+      - name: Clean Up Previous Environment
+        if: always()
+        timeout-minutes: 2
+        run: |
+          sudo apt remove runfinch-finch -y
+          sudo apt remove build-essential -y
+          sudo apt remove libseccomp-dev -y
+          sudo apt remove pkg-config -y
+          sudo apt remove zlib1g-dev -y
