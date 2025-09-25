@@ -45,7 +45,7 @@ jobs:
     steps:
       - name: Clean macOS runner workspace
         run: |
-          rm -rf ${{ github.workspace }}/*
+          setopt NULL_GLOB && rm -rf ${{ github.workspace }}/*
         shell: zsh {0}
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
