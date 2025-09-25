@@ -92,7 +92,7 @@ jobs:
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
-    
+
   update-latest-version-in-s3:
     needs: 
       - get-latest-tag
@@ -121,3 +121,46 @@ jobs:
           
           # Upload to S3
           aws s3 cp latest-version.json s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/manifest/latest-version.json --content-type "application/json"
+
+  upload-release-definition-to-s3:
+    needs: 
+      - get-latest-tag
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
+        with:
+          role-to-assume: ${{ vars.AWS_RELEASE_TRIGGER_ROLE }}
+          role-session-name: upload-release-definition-to-s3
+          aws-region: ${{ vars.AWS_RELEASE_TRIGGER_REGION }}
+          
+      - name: Create and upload release definition to S3
+        run: |
+          # Extract version without 'v' prefix for filename
+          VERSION="${{ needs.get-latest-tag.outputs.tag }}"
+          VERSION_NO_V="${VERSION#v}"
+          
+          # Create release definition JSON file
+          cat > "release-def-${VERSION_NO_V}.json" << EOF
+          {
+              "tag_name": "${VERSION}",
+              "assets": [
+                  {
+                      "name": "Finch-${{ needs.get-latest-tag.outputs.tag }}-aarch64.pkg",
+                      "os": "mac",
+                      "architecture": "aarch64"
+                  },
+                  {
+                      "name": "Finch-${{ needs.get-latest-tag.outputs.tag }}-x86_64.pkg",
+                      "os": "mac",
+                      "architecture": "x86_64"
+                  }
+              ]
+          }
+          EOF
+          
+          # Upload to S3
+          aws s3 cp "release-def-${VERSION_NO_V}.json" s3://${{ vars.AWS_RELEASE_TRIGGER_BUCKET }}/manifest/release-def-${VERSION_NO_V}.json --content-type "application/json"
