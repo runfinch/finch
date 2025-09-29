@@ -35,6 +35,30 @@ jobs:
         run: |
           git submodule update --remote
 
+      - name: Check for latest SOCI version
+        id: soci-version-check
+        uses: pozetroninc/github-action-get-latest-release@2a61c339ea7ef0a336d1daa35ef0cb1418e7676c # v0.8.0
+        with:
+          owner: awslabs
+          repo: soci-snapshotter
+          excludes: "prerelease, draft"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update SOCI snapshotter
+        run: bash scripts/update_soci_version.sh ${{ steps.soci-version-check.outputs.release }}
+
+      - name: Check for latest ECR credential helper version
+        id: ecr-credential-helper-version-check
+        uses: pozetroninc/github-action-get-latest-release@2a61c339ea7ef0a336d1daa35ef0cb1418e7676c # v0.8.0
+        with:
+          owner: awslabs
+          repo: amazon-ecr-credential-helper
+          excludes: "prerelease, draft"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update ECR credential helper
+        run: bash scripts/update_ecr_cred_helper.sh ${{ steps.ecr-credential-helper-version-check.outputs.release }}
+
       - name: Create PR
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
