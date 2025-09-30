@@ -175,6 +175,8 @@ jobs:
           eval $(ssh-agent)
           sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
           sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+      - name: Show test coverage
+        run: make test-e2e-cov
       - name: Change ownership of reports
         if: always()
         run: |

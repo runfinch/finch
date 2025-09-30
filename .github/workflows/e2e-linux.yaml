@@ -120,6 +120,8 @@ jobs:
           sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-container
           sudo -E env "PATH=$PATH" INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make test-e2e-vm
           sudo -E env "PATH=/usr/libexec/finch:/usr/libexec/finch/cni/bin/:/usr/local/bin:$PATH" NERDCTL_TOML=/etc/finch/nerdctl/nerdctl.toml BUILDKIT_HOST=unix:///var/lib/finch/buildkit/buildkitd.sock  make test-e2e-daemon-linux
+      - name: Show test coverage
+        run: make test-e2e-cov
       - name: Change ownership of reports
         if: always()
         run: |
