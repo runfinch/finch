@@ -55,5 +55,7 @@
     ],
     "packages": {
         ".": {}
-    }
+    },
+    "pull-request-header": "Ready for new finch release - Please verify the checklist items in the bottom of this PR before merging",
+    "pull-request-footer": "---\n\n### 🤖 IMPORTANT Please Read\n\nThis PR was generated automatically by [release-please](https://github.com/googleapis/release-please).\n\n**Please verify the following before merging this PR:**\n1. The Sync Submodules wortkflow has completed successfully in [finch-core](https://github.com/runfinch/finch-core/actions/workflows/submodulesync.yaml) repo\n2. The [Sync Submodules and Dependencies](https://github.com/runfinch/finch/actions/workflows/sync-submodules-and-deps.yaml) Workflow has completed successfully in this repo\n3. Latest run of [samcli-vm](https://github.com/runfinch/finch-daemon/actions/workflows/samcli-vm.yaml) tests are sucessful\n\n**Need to make changes?** Push additional commits to main and this PR will be updated automatically."
 }
