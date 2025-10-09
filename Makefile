@@ -8,6 +8,7 @@ DEST := $(shell echo "$(DESTDIR)/$(PREFIX)" | sed 's:///*:/:g; s://*$$::')
 BINDIR ?= /usr/local/bin
 OUTDIR ?= $(CURDIR)/_output
 OS_OUTDIR ?= $(OUTDIR)/os
+COVERAGE_DIR ?= $(CURDIR)/cov
 REPORT_DIR ?= $(CURDIR)/reports
 RUN_ID ?= $(GITHUB_RUN_ID)
 RUN_ATTEMPT ?= $(GITHUB_RUN_ATTEMPT)
@@ -177,7 +178,7 @@ $(OUTDIR)/finch-daemon/finch@.service:
 
 .PHONY: coverage
 coverage:
-	go test $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks) -coverprofile=test-coverage.out
+	go test $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks)
 	go tool cover -html=test-coverage.out
 
 .PHONY: download-licenses
@@ -291,6 +292,10 @@ test-unit:
 # Container tests and VM tests can be run in any order, but they must be run sequentially.
 # For more details, see the package-level comment of the e2e package.
 
+.PHONY: create-coverage-dir
+create-coverage-dir:
+	mkdir -p $(COVERAGE_DIR)
+
 .PHONY: create-report-dir
 create-report-dir:
 	mkdir -p $(REPORT_DIR)
@@ -299,16 +304,20 @@ create-report-dir:
 test-e2e: test-e2e-vm-serial test-e2e-container
 
 .PHONY: test-e2e-vm-serial
-test-e2e-vm-serial: create-report-dir
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
+test-e2e-vm-serial: create-report-dir create-coverage-dir
+	go test -coverpkg=./... -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
-test-e2e-container: create-report-dir
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
+test-e2e-container: create-report-dir create-coverage-dir
+	go test -coverpkg=./... -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
-test-e2e-vm: create-report-dir
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+test-e2e-vm: create-report-dir create-coverage-dir
+	go test -coverpkg=./... -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.v -ginkgo.timeout=2h  -ginkgo.focus "updates init-only config values when values are changed after init" -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+
+.PHONY: test-e2e-cov
+test-e2e-cov: create-coverage-dir
+	@go tool covdata percent -i=$(COVERAGE_DIR) -pkg=$(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v version | tr '\n' ',')
 
 GINKGO = go run github.com/onsi/ginkgo/v2/ginkgo
 # Common ginkgo options: -v for verbose mode, --focus="test name" for running single tests

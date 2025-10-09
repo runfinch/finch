@@ -98,6 +98,8 @@ jobs:
           git clean -f -d
 
           make ${{ inputs.test-command }}
+      - name: Show test coverage
+        run: make test-e2e-cov
       - name: Set artifacts name outputs
         if: always()
         id: set-multiple-vars
