@@ -13,6 +13,11 @@ updates:
     prefix: "build"
     include: "scope"
   groups:
+    non-breaking:
+      exclude-patterns: 
+        - "github.com/containerd/nerdctl/v2"
+        - "github.com/docker/docker"
+        - "github.com/docker/cli"
     docker:
       patterns:
         - "github.com/docker/docker"
