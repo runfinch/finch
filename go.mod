@@ -3,7 +3,7 @@ module github.com/runfinch/finch
 go 1.24.6
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.39.0
+	github.com/aws/aws-sdk-go-v2 v1.39.3
 	github.com/containerd/cgroups v1.1.0
 	github.com/containerd/nerdctl/v2 v2.1.4
 	github.com/docker/cli v28.4.0+incompatible
@@ -39,7 +39,7 @@ require (
 	github.com/Microsoft/hcsshim v0.13.0 // indirect
 	github.com/a8m/envsubst v1.4.2 // indirect
 	github.com/alecthomas/participle/v2 v2.1.4 // indirect
-	github.com/aws/smithy-go v1.23.0 // indirect
+	github.com/aws/smithy-go v1.23.1 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.7.1 // indirect
 	github.com/containerd/cgroups/v3 v3.0.5 // indirect
 	github.com/containerd/console v1.0.5 // indirect
