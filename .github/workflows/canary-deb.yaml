@@ -15,7 +15,7 @@ on:
 
   # This workflow will run every 5 min
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/10 * * * *'
   
   # This workflow will run when the workflow file is updated
   pull_request:
@@ -38,53 +38,54 @@ jobs:
         uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
 
   canary-deb:
-    name: Test Finch APT installation
+    name: Test Finch APT repo health
     runs-on: ubuntu-latest
     timeout-minutes: 3
     needs: get-latest-tag
     steps:
-      - name: Clean ubuntu runner workspace
-        run: rm -rf ${{ github.workspace }}/*
-        
-      - name: Install Finch dependencies
-        run: |
-          sudo apt-get update
-          sudo apt install build-essential libseccomp-dev pkg-config zlib1g-dev -y
-          
-      - name: Add Finch APT Repository
+      - name: Setup environment variables
         run: |
           ARCH=$(dpkg --print-architecture)
-          echo "Detected architecture: $ARCH"
+          echo "ARCH=${ARCH}" >> $GITHUB_ENV
+
+          # Strip v from tag
+          tag=${{ needs.get-latest-tag.outputs.tag }}
+          version=${tag/v/}
+          echo "version=${version}" >> $GITHUB_ENV
+
+          echo "filename=runfinch-finch_${version}_${ARCH}.deb" >> $GITHUB_ENV
+      - name: Add Finch APT Repository
+        run: |
+          echo "Detected architecture: ${{ env.ARCH }}"
           
-          curl -fsSL https://artifact.runfinch.com/deb/GPG_KEY.pub | sudo gpg --dearmor -o /usr/share/keyrings/runfinch-finch-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/runfinch-finch-archive-keyring.gpg arch=$ARCH] https://artifact.runfinch.com/deb noble main" | sudo tee /etc/apt/sources.list.d/runfinch-finch.list
+          curl -fsSL https://artifact.runfinch.com/deb/GPG_KEY.pub | gpg --dearmor -o /usr/share/keyrings/runfinch-finch-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/runfinch-finch-archive-keyring.gpg arch=${{ env.ARCH }}] https://artifact.runfinch.com/deb noble main" | sudo tee /etc/apt/sources.list.d/runfinch-finch.list
           sudo apt update
-          
-      - name: Prepare clean environment for Finch
-        run: |
-          sudo apt remove containerd containerd.io docker.io docker-ce docker-ce-cli runc -y || true
-          sudo apt autoremove -y
-          
-      - name: Install Finch with APT
-        run: sudo apt install runfinch-finch -y
+
+      - name: Download latest release from GitHub
+        uses: "robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05" # v1.12.0
+        with:
+          tag: ${{ needs.get-latest-tag.outputs.tag }}
+          fileName: ${{ env.filename }}
+          out-file-path: github-release
+
+      - name: Download .deb from APT repo
+        run: apt-get download runfinch-finch
         
-      - name: Verify version matches latest release
+      - name: Verify shasum matches GitHub release shasum
         run: |
-          LATEST_TAG="${{ needs.get-latest-tag.outputs.tag }}"
-          echo "Latest repository tag: $LATEST_TAG"
+          apt_file=${GITHUB_WORKSPACE}/${{ env.filename }}
+          apt_file_shasum=$(sha256sum ${apt_file} | awk '{print $1}')
+
+
+          github_file=${GITHUB_WORKSPACE}/github-release/${{ env.filename }}
+          github_file_shasum=$(sha256sum ${github_file} | awk '{print $1}')
           
-          INSTALLED_VERSION=$(finch -v)
-          echo "Installed Finch version: $INSTALLED_VERSION"
-          
-          EXPECTED_VERSION="finch version $LATEST_TAG"
-          if [[ "$INSTALLED_VERSION" == "$EXPECTED_VERSION" ]]; then
-            echo "✅ Version matches: $INSTALLED_VERSION"
-          else
-            echo "❌ Version mismatch!"
-            echo "  Expected: $EXPECTED_VERSION"
-            echo "  Found: $INSTALLED_VERSION"
+          if [[ $(diff <(echo ${apt_file_shasum}) <(echo ${github_file_shasum})) ]]; then
+            echo "❌ sha256sum mismatch!"
+            echo "apt repo shasum: ${apt_file_shasum}"
+            echo "GitHub release shasum: ${github_file_shasum}"
             exit 1
+          else
+            echo "✅ shasum ${apt_file_shasum} identical"
           fi
-          
-      - name: Clean up environment
-        run: sudo apt remove runfinch-finch -y
