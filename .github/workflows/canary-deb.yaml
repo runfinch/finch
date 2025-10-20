@@ -21,55 +21,18 @@ on:
   pull_request:
     paths:
       - '.github/workflows/canary-deb.yaml'
+      - 'scripts/canary-deb.sh'
   
 jobs:
   canary-deb:
     name: Test Finch APT repo health
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 2
     steps:
-      - name: Setup environment variables
-        run: |
-          ARCH=$(dpkg --print-architecture)
-          echo "ARCH=${ARCH}" >> $GITHUB_ENV
-      - name: Download latest Finch release from GitHub
-        id: release-download
-        uses: "robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05" # v1.12.0
+      - name: Checkout canary script
+        uses: actions/checkout@v5
         with:
-          latest: true
-          fileName: '*${{ env.ARCH }}.deb'
-          out-file-path: github-release
-      - name: Add Finch APT Repository
-        run: |
-          echo "Detected architecture: ${{ env.ARCH }}"
-          
-          curl -fsSL https://artifact.runfinch.com/deb/GPG_KEY.pub | gpg --dearmor -o /usr/share/keyrings/runfinch-finch-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/runfinch-finch-archive-keyring.gpg arch=${{ env.ARCH }}] https://artifact.runfinch.com/deb noble main" | sudo tee /etc/apt/sources.list.d/runfinch-finch.list
-
-          # This should only update the runfinch repo.
-          # If this breaks, changing it to `sudo apt-get update` should be acceptable, it just takes longer to run.
-          sudo apt-get update -o Dir::Etc::sourcelist="sources.list.d/runfinch-finch.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
-      - name: Download .deb from APT repo
-        run: apt-get download runfinch-finch
-        
-      - name: Verify shasum matches GitHub release shasum
-        run: |
-          # Strip v from tag
-          tag=${{ steps.release-download.outputs.tag_name }}
-          version=${tag/v/}
-          filename=runfinch-finch_${version}_${ARCH}.deb
-
-          apt_file=${GITHUB_WORKSPACE}/${filename}
-          apt_file_shasum=$(sha256sum ${apt_file} | awk '{print $1}')
-
-          github_file=${GITHUB_WORKSPACE}/github-release/${filename}
-          github_file_shasum=$(sha256sum ${github_file} | awk '{print $1}')
-          
-          if [[ $(diff <(echo ${apt_file_shasum}) <(echo ${github_file_shasum})) ]]; then
-            echo "❌ sha256sum mismatch!"
-            echo "apt repo shasum: ${apt_file_shasum}"
-            echo "GitHub release shasum: ${github_file_shasum}"
-            exit 1
-          else
-            echo "✅ shasum ${apt_file_shasum} identical"
-          fi
+          sparse-checkout: |
+            scripts/canary-deb.sh
+      - name: Run canary script
+        run: ./scripts/canary-deb.sh
