@@ -21,71 +21,18 @@ on:
   pull_request:
     paths:
       - '.github/workflows/canary-deb.yaml'
+      - 'scripts/canary-deb.sh'
   
 jobs:
-  get-latest-tag:
-    name: Get the latest release tag
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    outputs:
-      tag: ${{ steps.latest-tag.outputs.tag }}
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          fetch-depth: 0
-      - name: 'Get the latest tag'
-        id: latest-tag
-        uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
-
   canary-deb:
     name: Test Finch APT repo health
     runs-on: ubuntu-latest
-    timeout-minutes: 3
-    needs: get-latest-tag
+    timeout-minutes: 2
     steps:
-      - name: Setup environment variables
-        run: |
-          ARCH=$(dpkg --print-architecture)
-          echo "ARCH=${ARCH}" >> $GITHUB_ENV
-
-          # Strip v from tag
-          tag=${{ needs.get-latest-tag.outputs.tag }}
-          version=${tag/v/}
-          echo "version=${version}" >> $GITHUB_ENV
-
-          echo "filename=runfinch-finch_${version}_${ARCH}.deb" >> $GITHUB_ENV
-      - name: Add Finch APT Repository
-        run: |
-          echo "Detected architecture: ${{ env.ARCH }}"
-          
-          curl -fsSL https://artifact.runfinch.com/deb/GPG_KEY.pub | gpg --dearmor -o /usr/share/keyrings/runfinch-finch-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/runfinch-finch-archive-keyring.gpg arch=${{ env.ARCH }}] https://artifact.runfinch.com/deb noble main" | sudo tee /etc/apt/sources.list.d/runfinch-finch.list
-          sudo apt update
-
-      - name: Download latest release from GitHub
-        uses: "robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05" # v1.12.0
+      - name: Checkout canary script
+        uses: actions/checkout@v5
         with:
-          tag: ${{ needs.get-latest-tag.outputs.tag }}
-          fileName: ${{ env.filename }}
-          out-file-path: github-release
-
-      - name: Download .deb from APT repo
-        run: apt-get download runfinch-finch
-        
-      - name: Verify shasum matches GitHub release shasum
-        run: |
-          apt_file=${GITHUB_WORKSPACE}/${{ env.filename }}
-          apt_file_shasum=$(sha256sum ${apt_file} | awk '{print $1}')
-
-
-          github_file=${GITHUB_WORKSPACE}/github-release/${{ env.filename }}
-          github_file_shasum=$(sha256sum ${github_file} | awk '{print $1}')
-          
-          if [[ $(diff <(echo ${apt_file_shasum}) <(echo ${github_file_shasum})) ]]; then
-            echo "❌ sha256sum mismatch!"
-            echo "apt repo shasum: ${apt_file_shasum}"
-            echo "GitHub release shasum: ${github_file_shasum}"
-            exit 1
-          else
-            echo "✅ shasum ${apt_file_shasum} identical"
-          fi
+          sparse-checkout: |
+            scripts/canary-deb.sh
+      - name: Run canary script
+        run: ./scripts/canary-deb.sh
