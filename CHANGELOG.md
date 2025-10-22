@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.12.0](https://github.com/runfinch/finch/compare/v1.11.0...v1.12.0) (2025-10-22)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/aws/aws-sdk-go-v2 from 1.38.3 to 1.39.0 ([#1552](https://github.com/runfinch/finch/issues/1552)) ([0a3a2b2](https://github.com/runfinch/finch/commit/0a3a2b2292a5d9687b0ecb2f8756b392f7e5ea01))
+* **deps:** bump github.com/spf13/afero from 1.14.0 to 1.15.0 ([#1554](https://github.com/runfinch/finch/issues/1554)) ([edb8591](https://github.com/runfinch/finch/commit/edb8591de8ca41762baea541ccdf1220de38a88d))
+* **deps:** bump github.com/spf13/afero/sftpfs from 1.14.0 to 1.15.0 ([#1553](https://github.com/runfinch/finch/issues/1553)) ([d1b68a7](https://github.com/runfinch/finch/commit/d1b68a7e15cb36abc83309f8fd126643d88c6298))
+* **deps:** bump golang.org/x/tools from 0.36.0 to 0.37.0 ([#1557](https://github.com/runfinch/finch/issues/1557)) ([f7b25d3](https://github.com/runfinch/finch/commit/f7b25d3f3bff5fef3e0dad114b1bb6f713d894d7))
+* **deps:** bump k8s.io/apimachinery from 0.34.0 to 0.34.1 ([#1556](https://github.com/runfinch/finch/issues/1556)) ([836211b](https://github.com/runfinch/finch/commit/836211b2c0d90947cb86c3760ee9791c6a5c5f63))
+* **deps:** Bump submodules and dependencies ([#1565](https://github.com/runfinch/finch/issues/1565)) ([32829c6](https://github.com/runfinch/finch/commit/32829c6a08456731f34c356325ebaf2a21dfcaed))
+* **deps:** Bump submodules and dependencies ([#1585](https://github.com/runfinch/finch/issues/1585)) ([6793e06](https://github.com/runfinch/finch/commit/6793e0627985b61b4effc9862090fd356fb28103))
+* **deps:** Bump submodules and dependencies ([#1592](https://github.com/runfinch/finch/issues/1592)) ([ab0b93b](https://github.com/runfinch/finch/commit/ab0b93b0dd65b1b6828680bf5c07464bb64f5620))
+
+
+### Features
+
+* Increase default cpu and memory to 1/2 of system cpu and memory ([#1563](https://github.com/runfinch/finch/issues/1563)) ([90a9594](https://github.com/runfinch/finch/commit/90a9594d9a7c2e015bbcd0722bf458b2d7f3a44f))
+
+
+### Bug Fixes
+
+* ci permissions block for release-please ([#1587](https://github.com/runfinch/finch/issues/1587)) ([dcdf508](https://github.com/runfinch/finch/commit/dcdf50860032239e3af0fcf035ed895327d79a94))
+* glob expansion ([#1568](https://github.com/runfinch/finch/issues/1568)) ([579d326](https://github.com/runfinch/finch/commit/579d3266c5fb1be6b453cab87047256727de07a2))
+
 ## [1.11.0](https://github.com/runfinch/finch/compare/v1.10.3...v1.11.0) (2025-09-08)
 
 
