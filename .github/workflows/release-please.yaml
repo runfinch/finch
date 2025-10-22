@@ -28,4 +28,5 @@ jobs:
     permissions:
       contents: write    # Required for uploading release assets
       id-token: write    # Required for AWS OIDC authentication
+    secrets: inherit     # Pass all secrets to child workflows
     uses: ./.github/workflows/release-automation.yaml
