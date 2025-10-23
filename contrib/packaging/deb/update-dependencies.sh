@@ -79,6 +79,8 @@ update_dependency() {
         -e "s/${name}_COMMIT=\"[^\"]*\"/${name}_COMMIT=\"$new_commit\"/" \
         "$PACKAGE_SH" > "$temp_file"
     
+    # Use package file permissions
+    chmod --reference="$PACKAGE_SH" "$temp_file"
     mv "$temp_file" "$PACKAGE_SH"
 }
 
