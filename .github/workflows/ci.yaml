@@ -186,7 +186,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ['13', '14']
+        version: ['14', '15']
         test-command: ['test-e2e-vm-serial', 'test-e2e-container', 'test-e2e-daemon']
         arch: ['X64', 'arm64']
         runner-type: ['test']
