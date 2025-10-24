@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.1](https://github.com/runfinch/finch/compare/v1.12.0...v1.12.1) (2025-10-24)
+
+
+### Bug Fixes
+
+* Change permissions for package.sh ([#1600](https://github.com/runfinch/finch/issues/1600)) ([5906a3b](https://github.com/runfinch/finch/commit/5906a3bd5ec0bb5e97bea9b7ed1919b829d97600))
+* Preserve Permissions for package.sh ([5906a3b](https://github.com/runfinch/finch/commit/5906a3bd5ec0bb5e97bea9b7ed1919b829d97600))
+
 ## [1.12.0](https://github.com/runfinch/finch/compare/v1.11.0...v1.12.0) (2025-10-22)
 
 
