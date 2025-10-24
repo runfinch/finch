@@ -6,6 +6,9 @@ on:
         type: string
         required: true
 
+
+permissions: {}
+
 jobs:
   get-output-arch:
     outputs:
