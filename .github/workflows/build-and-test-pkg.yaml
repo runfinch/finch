@@ -99,7 +99,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [13, 14]
+        version: [15, 14]
     needs:
       - get-tag-name
       - macos-aarch64-pkg-build
@@ -123,7 +123,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [13, 14]
+        version: [15, 14]
     needs:
       - get-tag-name
       - macos-x86-64-pkg-build
