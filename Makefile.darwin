@@ -46,6 +46,12 @@ $(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/mac.
 	sed -i.bak -e "s|<finch_daemon_root>|$(FINCH_DAEMON_LOCATION_ROOT)|g" finch.yaml.temp
 	sed -i.bak -e "s|<finch_daemon_location>|$(FINCH_DAEMON_LOCATION)|g" finch.yaml.temp
 	sed -i.bak -e "s|<finch_daemon_credhelper_location>|$(FINCH_DAEMON_CREDHELPER_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s|<runc_override_aarch64_location>|$(RUNC_OVERRIDE_AARCH64_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<runc_override_aarch64_digest>/$(RUNC_OVERRIDE_AARCH64_DIGEST)/g" finch.yaml.temp
+	sed -i.bak -e "s|<runc_override_x86_64_location>|$(RUNC_OVERRIDE_X86_64_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<runc_override_x86_64_digest>/$(RUNC_OVERRIDE_X86_64_DIGEST)/g" finch.yaml.temp
+
+	cat finch.yaml.temp
 
 	# Replacement was successful, so cleanup .bak
 	@rm finch.yaml.temp.bak
