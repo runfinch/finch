@@ -112,6 +112,7 @@ func TestContainer(t *testing.T) {
 		tests.NetworkInspect(o)
 		tests.NetworkLs(o)
 		tests.NetworkRm(o)
+		tests.HealthCheck(o)
 		testCosign(o)
 		testCrossPlatformRun(o)
 	})
