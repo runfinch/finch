@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.13.0](https://github.com/runfinch/finch/compare/v1.12.0...v1.13.0) (2025-10-30)
+
+
+### Features
+
+* Override Runc Version ([#1611](https://github.com/runfinch/finch/issues/1611)) ([95939fe](https://github.com/runfinch/finch/commit/95939feb3c1724030425d0a74e89704c5a020ba4))
+
+
+### Bug Fixes
+
+* Change permissions for package.sh ([#1600](https://github.com/runfinch/finch/issues/1600)) ([5906a3b](https://github.com/runfinch/finch/commit/5906a3bd5ec0bb5e97bea9b7ed1919b829d97600))
+* Preserve Permissions for package.sh ([5906a3b](https://github.com/runfinch/finch/commit/5906a3bd5ec0bb5e97bea9b7ed1919b829d97600))
+
 ## [1.12.0](https://github.com/runfinch/finch/compare/v1.11.0...v1.12.0) (2025-10-22)
 
 
