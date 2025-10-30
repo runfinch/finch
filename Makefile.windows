@@ -32,7 +32,11 @@ $(OS_OUTDIR)/finch.yaml: $(OS_OUTDIR) finch.yaml.d/common.yaml finch.yaml.d/wind
 	sed -i.bak -e "s/<container_runtime_archive_aarch64_digest>/$(CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST)/g" finch.yaml.temp
 	sed -i.bak -e "s|<container_runtime_archive_x86_64_location>|$(CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION)|g" finch.yaml.temp
 	sed -i.bak -e "s/<container_runtime_archive_x86_64_digest>/$(CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST)/g" finch.yaml.temp
-
+	sed -i.bak -e "s|<runc_override_aarch64_location>|$(RUNC_OVERRIDE_AARCH64_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<runc_override_aarch64_digest>/$(RUNC_OVERRIDE_AARCH64_DIGEST)/g" finch.yaml.temp
+	sed -i.bak -e "s|<runc_override_x86_64_location>|$(RUNC_OVERRIDE_X86_64_LOCATION)|g" finch.yaml.temp
+	sed -i.bak -e "s/<runc_override_x86_64_digest>/$(RUNC_OVERRIDE_X86_64_DIGEST)/g" finch.yaml.temp
+	
 	# Replacement was successful, so cleanup .bak
 	@rm finch.yaml.temp.bak
 

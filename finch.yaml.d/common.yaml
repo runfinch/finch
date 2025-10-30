@@ -29,6 +29,44 @@ provision:
   - mode: user
     script: |
       #!/bin/bash
+      
+      # Override runc with specified version after container runtime is installed
+      ARCH=$(uname -m)
+      if [ "$ARCH" = "x86_64" ]; then
+        RUNC_URL="<runc_override_x86_64_location>"
+        RUNC_DIGEST="<runc_override_x86_64_digest>"
+      elif [ "$ARCH" = "aarch64" ]; then
+        RUNC_URL="<runc_override_aarch64_location>"
+        RUNC_DIGEST="<runc_override_aarch64_digest>"
+      else
+        echo "Unsupported architecture: $ARCH"
+        exit 1
+      fi
+      
+      # Download and verify runc override
+      curl -L --fail "$RUNC_URL" -o /tmp/runc-override
+      echo "$RUNC_DIGEST /tmp/runc-override" | sha256sum -c -
+      
+      # Replace the existing runc binary
+      sudo chmod +x /tmp/runc-override
+      sudo cp /tmp/runc-override /usr/local/bin/runc
+      sudo cp /tmp/runc-override /usr/bin/runc
+      sudo rm /tmp/runc-override
+      
+      # Verify runc version is >= 1.3.2
+      INSTALLED_VERSION=$(runc --version | head -n1 | awk '{print $3}')
+      REQUIRED_VERSION="1.3.2"
+      if ! printf '%s\n%s\n' "$REQUIRED_VERSION" "$INSTALLED_VERSION" | sort -V -C; then
+        echo "ERROR: runc version $INSTALLED_VERSION is less than required $REQUIRED_VERSION"
+        exit 1
+      fi
+      echo "SUCCESS: runc version $INSTALLED_VERSION meets requirement >= $REQUIRED_VERSION"
+      
+      # Restart containerd
+      sudo systemctl restart containerd.service
+  - mode: user
+    script: |
+      #!/bin/bash
 
       # Enable SSHing into the VM as root (e.g., in `nerdctlConfigApplier.Apply`).
       sudo cp ~/.ssh/authorized_keys /root/.ssh/
@@ -92,6 +130,7 @@ provision:
       sudo systemctl daemon-reload
 
       sudo systemctl restart containerd.service
+  
 env:
   # Containerd namespace is used by the lima cidata script
   # 40-install-containerd.sh. Specifically this variable is defining the
