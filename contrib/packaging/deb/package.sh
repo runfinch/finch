@@ -61,10 +61,10 @@ FINCHD_COMMIT="ef5d71ddf0a98f39f6ebcf0401b8706543c9f04e"
 FINCHD_SRC=finch-daemon-"${FINCHD_COMMIT}"
 
 # nerdctl
-NERDCTL_PACKAGE="github.com/containerd/nerdctl"
+NERDCTL_PACKAGE="github.com/coderbirju/nerdctl"
 NERDCTL_MODULE="github.com/containerd/nerdctl/v2"
-NERDCTL_RELEASE="2.1.6"
-NERDCTL_COMMIT="59253e9931873e79b92fe3400f14e69d6be34025"
+NERDCTL_RELEASE="2.2.3"
+NERDCTL_COMMIT="93bb9c75369cf7e13ffe462013704a7ac5759d2b"
 NERDCTL_SRC=nerdctl-"${NERDCTL_COMMIT}"
 NERDCTL_VERSION="v$(echo "$NERDCTL_RELEASE" | sed 's/-.*//')"
 
