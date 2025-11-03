@@ -2,6 +2,9 @@ name: e2e-docs
 on:
   workflow_call:
 
+
+permissions: {}
+
 jobs:
   test:
     runs-on: ubuntu-latest
