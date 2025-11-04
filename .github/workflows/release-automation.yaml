@@ -125,6 +125,8 @@ jobs:
   upload-release-definition-to-s3:
     needs: 
       - get-latest-tag
+      - upload-msi-to-release
+      - upload-pkg-and-dependency-source-code-to-release
     runs-on: ubuntu-latest
     permissions:
       id-token: write
