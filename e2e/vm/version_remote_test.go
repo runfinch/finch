@@ -22,7 +22,7 @@ const (
 	nerdctlVersion    = "v2.1.3"
 	buildKitVersion   = "v0.23.2"
 	containerdVersion = "v2.1.3"
-	runcVersion       = "1.3.2"
+	runcVersion       = "1.3.3"
 )
 
 type Versions struct {
