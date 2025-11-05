@@ -53,9 +53,9 @@ provision:
       sudo cp /tmp/runc-override /usr/bin/runc
       sudo rm /tmp/runc-override
       
-      # Verify runc version is >= 1.3.2
+      # Verify runc version is >= 1.3.3
       INSTALLED_VERSION=$(runc --version | head -n1 | awk '{print $3}')
-      REQUIRED_VERSION="1.3.2"
+      REQUIRED_VERSION="1.3.3"
       if ! printf '%s\n%s\n' "$REQUIRED_VERSION" "$INSTALLED_VERSION" | sort -V -C; then
         echo "ERROR: runc version $INSTALLED_VERSION is less than required $REQUIRED_VERSION"
         exit 1
