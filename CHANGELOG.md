@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.13.0](https://github.com/runfinch/finch/compare/v1.12.0...v1.13.0) (2025-11-05)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump submodules and dependencies ([#1614](https://github.com/runfinch/finch/issues/1614)) ([4df2f26](https://github.com/runfinch/finch/commit/4df2f2624da03e31bb171ae249cab8c9c42d7919))
+* **deps:** Bump submodules and dependencies ([#1617](https://github.com/runfinch/finch/issues/1617)) ([1a9c199](https://github.com/runfinch/finch/commit/1a9c1998acec554bbe2cd08afc86b21ff4fa8346))
+
+
+### Security
+
+* Upgrade Runc to v1.3.3 to resolve CVE findings. For more details: https://github.com/opencontainers/runc/releases/tag/v1.3.3
+
+
 ## [1.12.0](https://github.com/runfinch/finch/compare/v1.11.0...v1.12.0) (2025-10-22)
 
 
