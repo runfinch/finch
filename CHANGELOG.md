@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.13.1](https://github.com/runfinch/finch/compare/v1.13.0...v1.13.1) (2025-11-10)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/containerd/containerd/v2 ([b537d8c](https://github.com/runfinch/finch/commit/b537d8cb7035db56b36f66e6b8161a9f08616bfc))
+* **deps:** bump github.com/containerd/containerd/v2 from 2.1.4 to 2.1.5 ([#1618](https://github.com/runfinch/finch/issues/1618)) ([b537d8c](https://github.com/runfinch/finch/commit/b537d8cb7035db56b36f66e6b8161a9f08616bfc))
+
 ## [1.13.0](https://github.com/runfinch/finch/compare/v1.12.0...v1.13.0) (2025-11-05)
 
 
