@@ -286,7 +286,7 @@ check-licenses: GOBIN = $(CURDIR)/tools_bin
 check-licenses:
 	go mod download
 	GOBIN=$(GOBIN) go install github.com/google/go-licenses
-	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --ignore  github.com/multiformats/go-base36 --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT --include_tests ./...
+	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --ignore  github.com/multiformats/go-base36 --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT,MPL-2.0 --include_tests ./...
 
 COVERAGE_THRESH = 60
 .PHONY: test-unit
