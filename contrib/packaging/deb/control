@@ -6,5 +6,5 @@ Build-Depends: debhelper (>= 13)
 Homepage: https://runfinch.com
 Package: runfinch-finch
 Architecture: ${ARCH}
-Depends: containerd (>= 1.7.24), runc (>=1.1.5)
+Depends: ${REQUIREMENTS}
 Description: https://github.com/runfinch/finch
