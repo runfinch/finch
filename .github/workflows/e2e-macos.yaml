@@ -93,6 +93,18 @@ jobs:
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
         shell: zsh {0}
+      - name: Print memory usage
+        if: failure()
+        run: |
+          echo "=== vm_stat ==="
+          vm_stat
+          echo "=== Total memory (GB) ==="
+          sysctl -n hw.memsize | awk '{printf "%.2f GB\n", $1/1024/1024/1024}'
+          echo "=== Top memory consumers (by %MEM) ==="
+          ps aux | sort -nrk 4 | head -20
+          echo "=== Top memory consumers (by RSS in KB) ==="
+          ps aux | awk 'NR>1 {print $6, $11}' | sort -nr | head -20
+        shell: zsh {0}
       - name: Set artifacts name outputs
         if: always()
         id: set-multiple-vars
