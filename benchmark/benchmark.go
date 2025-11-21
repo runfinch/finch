@@ -16,6 +16,7 @@ import (
 
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/disk"
+	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/sirupsen/logrus"
 )
 
@@ -31,6 +32,8 @@ type Metrics struct {
 	PeakCPUUsage    float64
 	AverageCPUUsage float64
 	TotalCPUTime    time.Duration
+	PeakMemUsage    float64
+	AverageMemUsage float64
 	DiskUsageDelta  int64
 }
 
@@ -41,6 +44,8 @@ func (m *Metrics) Add(other Metrics) {
 	m.PeakCPUUsage += other.PeakCPUUsage
 	m.AverageCPUUsage += other.AverageCPUUsage
 	m.TotalCPUTime += other.TotalCPUTime
+	m.PeakMemUsage += other.PeakMemUsage
+	m.AverageMemUsage += other.AverageMemUsage
 	m.DiskUsageDelta += other.DiskUsageDelta
 }
 
@@ -76,12 +81,15 @@ func Wrapper(b *testing.B, targetFunc func(), cleanupFunc func()) {
 	b.ReportMetric(metricsSum.PeakCPUUsage/float64(b.N), "%cpu_peak/op")
 	b.ReportMetric(metricsSum.AverageCPUUsage/float64(b.N), "%cpu_avg/op")
 	b.ReportMetric(metricsSum.TotalCPUTime.Seconds()/float64(b.N), "cpu_seconds/op")
+	b.ReportMetric(metricsSum.PeakMemUsage/float64(b.N), "%mem_peak/op")
+	b.ReportMetric(metricsSum.AverageMemUsage/float64(b.N), "%mem_avg/op")
 	b.ReportMetric(float64(metricsSum.DiskUsageDelta/int64(b.N)), "disk_bytes/op")
 }
 
 func measureMetrics(targetFunc func()) (Metrics, error) { //nolint:unparam // make it extensible for future error handling
 	done := make(chan struct{})
 	var cpuUsage []float64
+	var memUsage []float64
 	var startTime time.Time
 	var diskUsageBefore, diskUsageAfter uint64
 
@@ -119,6 +127,14 @@ func measureMetrics(targetFunc func()) (Metrics, error) { //nolint:unparam // ma
 					return
 				}
 				cpuUsage = append(cpuUsage, percent[0])
+
+				memStat, err := mem.VirtualMemory()
+				if err != nil {
+					ticker.Stop()
+					wg.Done()
+					return
+				}
+				memUsage = append(memUsage, memStat.UsedPercent)
 			case <-done:
 
 				after, err := disk.Usage("/")
@@ -150,12 +166,24 @@ func measureMetrics(targetFunc func()) (Metrics, error) { //nolint:unparam // ma
 	avgCPU := sumCPU / float64(len(cpuUsage))
 	totalCPUTime := time.Since(startTime)
 
+	peakMem := 0.0
+	sumMem := 0.0
+	for _, usage := range memUsage {
+		if usage > peakMem {
+			peakMem = usage
+		}
+		sumMem += usage
+	}
+	avgMem := sumMem / float64(len(memUsage))
+
 	diskUsageDelta := new(big.Int).SetUint64(diskUsageBefore - diskUsageAfter)
 
 	return Metrics{
 		PeakCPUUsage:    peakCPU,
 		AverageCPUUsage: avgCPU,
 		TotalCPUTime:    totalCPUTime,
+		PeakMemUsage:    peakMem,
+		AverageMemUsage: avgMem,
 		DiskUsageDelta:  diskUsageDelta.Int64(),
 	}, nil
 }
