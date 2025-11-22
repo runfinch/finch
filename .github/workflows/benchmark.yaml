@@ -69,6 +69,7 @@ jobs:
           tool: 'go'
           benchmark-data-dir-path: "dev/bench/macOS/${{ env.OS_VERSION }}/${{ env.ARCH }}"
           output-file-path: benchmark.txt
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           alert-threshold: "200%"
           fail-on-alert: true
           comment-on-alert: true
