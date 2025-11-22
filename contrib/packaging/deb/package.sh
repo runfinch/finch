@@ -53,45 +53,37 @@ PKG_FILES="$(dirname "$SCRIPT_DIR")"
 ROOT_DIR="$(dirname "$(dirname "$PKG_FILES")")"
 PKG_CONFIG="$PKG_FILES/config"
 TEMP_BUILD_DIR="${SCRIPT_DIR}/TMP/build"
+UBUNTU_DEPS="$ROOT_DIR/deps/finch-core/deps/ubuntu-deps.conf"
+
+# load the ubuntu deps file
+source $UBUNTU_DEPS
 
 # finch daemon
 FINCHD_PACKAGE="github.com/runfinch/finch-daemon"
-FINCHD_RELEASE="0.20.0"
-FINCHD_COMMIT="ef5d71ddf0a98f39f6ebcf0401b8706543c9f04e"
 FINCHD_SRC=finch-daemon-"${FINCHD_COMMIT}"
 
 # nerdctl
 NERDCTL_PACKAGE="github.com/containerd/nerdctl"
 NERDCTL_MODULE="github.com/containerd/nerdctl/v2"
-NERDCTL_RELEASE="2.1.6"
-NERDCTL_COMMIT="59253e9931873e79b92fe3400f14e69d6be34025"
 NERDCTL_SRC=nerdctl-"${NERDCTL_COMMIT}"
 NERDCTL_VERSION="v$(echo "$NERDCTL_RELEASE" | sed 's/-.*//')"
 
 # buildkit
 BUILDKIT_PACKAGE="github.com/moby/buildkit"
-BUILDKIT_RELEASE="0.24.0"
-BUILDKIT_COMMIT="b772c318368090fb2ffc9c0fed92e0a35bf82389"
 BUILDKIT_SRC=buildkit-"${BUILDKIT_COMMIT}"
 BUILDKIT_VERSION=$(echo "$BUILDKIT_RELEASE" | sed 's/-.*//')
 
 # soci
 SOCI_PACKAGE="github.com/awslabs/soci-snapshotter"
-SOCI_RELEASE="0.11.1"
-SOCI_COMMIT="28781de6731978b2e2f0f43573a345e9fa14dbd1"
 SOCI_SRC=soci-snapshotter-"${SOCI_COMMIT}"
 SOCI_GO_LDFLAGS="-ldflags '-s -w -X ${SOCI_PACKAGE}/version.Version=v${SOCI_RELEASE} -X ${SOCI_PACKAGE}/version.Revision=${SOCI_COMMIT}'"
 
 # cni
 CNI_PACKAGE="github.com/containernetworking/plugins"
-CNI_RELEASE="1.8.0"
-CNI_COMMIT="0e648479e11c2c6d9109b14fc0c9ac64c677861b"
 CNI_SRC=plugins-"${CNI_COMMIT}"
 
 # cosign
 COSIGN_PACKAGE="github.com/sigstore/cosign"
-COSIGN_RELEASE="2.2.3"
-COSIGN_COMMIT="493e6e29e2ac830aaf05ec210b36d0a5a60c3b32"
 COSIGN_SRC=cosign-"${COSIGN_COMMIT}"
 
 # prep directories
@@ -152,71 +144,80 @@ popd
 
 # build dependencies and setup folder structure for each architecture
 for arch in "${BUILD_ARCHITECTURES[@]}"; do
-        ARCH_DIR="${SCRIPT_DIR}/runfinch-finch_${VERSION}_${arch}"
-        mkdir -p $ARCH_DIR
+    ARCH_DIR="${SCRIPT_DIR}/runfinch-finch_${VERSION}_${arch}"
+    mkdir -p $ARCH_DIR
 
-        # setup finch directories
-        mkdir -p "$ARCH_DIR/bin"
-        mkdir -p "$ARCH_DIR/usr/bin"
-        mkdir -p "$ARCH_DIR/usr/local/bin"
-        mkdir -p "$ARCH_DIR/usr/libexec/finch"
-        mkdir -p "$ARCH_DIR/usr/libexec/finch/cni/bin"
-        mkdir -p "$ARCH_DIR/var/lib/finch/buildkit"
-        mkdir -p "$ARCH_DIR/var/lib/finch/soci"
-        mkdir -p "$ARCH_DIR/etc/finch/cni/net.d"
-        mkdir -p "$ARCH_DIR/etc/finch/nerdctl"
-        mkdir -p "$ARCH_DIR/etc/finch/buildkit"
-        mkdir -p "$ARCH_DIR/etc/finch/soci"
-        mkdir -p "$ARCH_DIR/etc/containerd"
-        mkdir -p "$ARCH_DIR/etc/systemd/system"
+    # setup finch directories
+    mkdir -p "$ARCH_DIR/bin"
+    mkdir -p "$ARCH_DIR/usr/bin"
+    mkdir -p "$ARCH_DIR/usr/local/bin"
+    mkdir -p "$ARCH_DIR/usr/libexec/finch"
+    mkdir -p "$ARCH_DIR/usr/libexec/finch/cni/bin"
+    mkdir -p "$ARCH_DIR/var/lib/finch/buildkit"
+    mkdir -p "$ARCH_DIR/var/lib/finch/soci"
+    mkdir -p "$ARCH_DIR/etc/finch/cni/net.d"
+    mkdir -p "$ARCH_DIR/etc/finch/nerdctl"
+    mkdir -p "$ARCH_DIR/etc/finch/buildkit"
+    mkdir -p "$ARCH_DIR/etc/finch/soci"
+    mkdir -p "$ARCH_DIR/etc/containerd"
+    mkdir -p "$ARCH_DIR/etc/systemd/system"
 
-        # setup DEBIAN directory, control file, and cleanup scripts
-        mkdir -p "${ARCH_DIR}/DEBIAN"
-        cp "$SCRIPT_DIR/control" "$ARCH_DIR/DEBIAN/control" && echo "Version: $VERSION" >> "$ARCH_DIR/DEBIAN/control"
-        sed "s/\${ARCH}/$arch/g" "$ARCH_DIR/DEBIAN/control" | sudo tee "$ARCH_DIR/DEBIAN/control" > /dev/null
-        cp "$SCRIPT_DIR/postrm" "$ARCH_DIR/DEBIAN/"
-        cp "$SCRIPT_DIR/prerm" "$ARCH_DIR/DEBIAN/"
-        chmod 755 "$ARCH_DIR/DEBIAN/prerm" "$ARCH_DIR/DEBIAN/postrm"
+    # setup DEBIAN directory, control file, and cleanup scripts
+    mkdir -p "${ARCH_DIR}/DEBIAN"
+    cp "$SCRIPT_DIR/control" "$ARCH_DIR/DEBIAN/control" && echo "Version: $VERSION" >> "$ARCH_DIR/DEBIAN/control"
+    
+    # replace ${ARCH} with the actual architecture
+    sed "s/\${ARCH}/$arch/g" "$ARCH_DIR/DEBIAN/control" | sudo tee "$ARCH_DIR/DEBIAN/control" > /dev/null
+    echo "Replaced arch value in control file with $arch"
+    
+    # replace ${REQUIREMENTS} wit the actual requirements
+    requirements="containerd (>= $MIN_CONTAINERD_VERSION), runc (>= $MIN_RUNC_VERSION)"
+    sed "s/\${REQUIREMENTS}/$requirements/g" "$ARCH_DIR/DEBIAN/control" | sudo tee "$ARCH_DIR/DEBIAN/control" > /dev/null
+    echo "Replaced requirements value in control file with $requirements"
+    
+    cp "$SCRIPT_DIR/postrm" "$ARCH_DIR/DEBIAN/"
+    cp "$SCRIPT_DIR/prerm" "$ARCH_DIR/DEBIAN/"
+    chmod 755 "$ARCH_DIR/DEBIAN/prerm" "$ARCH_DIR/DEBIAN/postrm"
 
-        # install finchd
-        sudo install -m 0755 "${TEMP_BUILD_DIR}/${FINCHD_SRC}/bin/finch-daemon" "${ARCH_DIR}/usr/libexec/finch/"
-        sudo install -m 0755 "${TEMP_BUILD_DIR}/${FINCHD_SRC}/bin/docker-credential-finch" "${ARCH_DIR}/usr/libexec/finch/"
-        sudo install -m 0644 "$PKG_CONFIG/finch.service" "$ARCH_DIR/etc/systemd/system/finch.service"
-        sudo install -m 0644 "$PKG_CONFIG/finch.yaml" "$ARCH_DIR/etc/finch"
-        sudo install -m 0644 "$PKG_CONFIG/finch.socket" "$ARCH_DIR/etc/systemd/system"
+    # install finchd
+    sudo install -m 0755 "${TEMP_BUILD_DIR}/${FINCHD_SRC}/bin/finch-daemon" "${ARCH_DIR}/usr/libexec/finch/"
+    sudo install -m 0755 "${TEMP_BUILD_DIR}/${FINCHD_SRC}/bin/docker-credential-finch" "${ARCH_DIR}/usr/libexec/finch/"
+    sudo install -m 0644 "$PKG_CONFIG/finch.service" "$ARCH_DIR/etc/systemd/system/finch.service"
+    sudo install -m 0644 "$PKG_CONFIG/finch.yaml" "$ARCH_DIR/etc/finch"
+    sudo install -m 0644 "$PKG_CONFIG/finch.socket" "$ARCH_DIR/etc/systemd/system"
 
-        # install nerdctl
-        sudo install -m 0755 -t "$ARCH_DIR/usr/libexec/finch" $TEMP_BUILD_DIR/$NERDCTL_SRC/_output/nerdctl*
-        sudo install -m 0644 "$PKG_CONFIG/nerdctl_ubuntu.toml" "$ARCH_DIR/etc/finch/nerdctl/nerdctl.toml"
-        sudo install -m 0644 "$PKG_CONFIG/nerdctl_ubuntu.toml" "$ARCH_DIR/etc/finch/finch.toml"
+    # install nerdctl
+    sudo install -m 0755 -t "$ARCH_DIR/usr/libexec/finch" $TEMP_BUILD_DIR/$NERDCTL_SRC/_output/nerdctl*
+    sudo install -m 0644 "$PKG_CONFIG/nerdctl_ubuntu.toml" "$ARCH_DIR/etc/finch/nerdctl/nerdctl.toml"
+    sudo install -m 0644 "$PKG_CONFIG/nerdctl_ubuntu.toml" "$ARCH_DIR/etc/finch/finch.toml"
 
-        # install buildkit
-        sudo install -m 0755 "$TEMP_BUILD_DIR/$BUILDKIT_SRC/_output/buildkitd" "$ARCH_DIR/usr/libexec/finch"
-        sudo install "$TEMP_BUILD_DIR/$BUILDKIT_SRC/_output/buildctl" "$ARCH_DIR/usr/libexec/finch"
+    # install buildkit
+    sudo install -m 0755 "$TEMP_BUILD_DIR/$BUILDKIT_SRC/_output/buildkitd" "$ARCH_DIR/usr/libexec/finch"
+    sudo install "$TEMP_BUILD_DIR/$BUILDKIT_SRC/_output/buildctl" "$ARCH_DIR/usr/libexec/finch"
 
-        sudo install -m 0644 "$PKG_CONFIG/buildkitd.toml" "$ARCH_DIR/etc/finch/buildkit"
-        sudo install -m 0644 "$PKG_CONFIG/finch-buildkit.service" "$ARCH_DIR/etc/systemd/system"
-        sudo install -m 0644 "$PKG_CONFIG/finch-buildkit.socket" "$ARCH_DIR/etc/systemd/system"
+    sudo install -m 0644 "$PKG_CONFIG/buildkitd.toml" "$ARCH_DIR/etc/finch/buildkit"
+    sudo install -m 0644 "$PKG_CONFIG/finch-buildkit.service" "$ARCH_DIR/etc/systemd/system"
+    sudo install -m 0644 "$PKG_CONFIG/finch-buildkit.socket" "$ARCH_DIR/etc/systemd/system"
 
-        # install soci
-        sudo install "$TEMP_BUILD_DIR/$SOCI_SRC/out/soci" "$ARCH_DIR/usr/libexec/finch"
-        sudo install "$TEMP_BUILD_DIR/$SOCI_SRC/out/soci-snapshotter-grpc" "$ARCH_DIR/usr/libexec/finch"
+    # install soci
+    sudo install "$TEMP_BUILD_DIR/$SOCI_SRC/out/soci" "$ARCH_DIR/usr/libexec/finch"
+    sudo install "$TEMP_BUILD_DIR/$SOCI_SRC/out/soci-snapshotter-grpc" "$ARCH_DIR/usr/libexec/finch"
 
-        sudo install -m 0644 "$PKG_CONFIG/finch-soci.service" "$ARCH_DIR/etc/systemd/system"
-        sudo install -m 0644 "$PKG_CONFIG/finch-soci.socket" "$ARCH_DIR/etc/systemd/system"
-        sudo install -m 0644 "$PKG_CONFIG/soci-snapshotter-grpc.toml" "$ARCH_DIR/etc/finch/soci"
+    sudo install -m 0644 "$PKG_CONFIG/finch-soci.service" "$ARCH_DIR/etc/systemd/system"
+    sudo install -m 0644 "$PKG_CONFIG/finch-soci.socket" "$ARCH_DIR/etc/systemd/system"
+    sudo install -m 0644 "$PKG_CONFIG/soci-snapshotter-grpc.toml" "$ARCH_DIR/etc/finch/soci"
 
-        # install cni
-        sudo install -t "$ARCH_DIR/usr/libexec/finch/cni/bin" $TEMP_BUILD_DIR/$CNI_SRC/bin/*
+    # install cni
+    sudo install -t "$ARCH_DIR/usr/libexec/finch/cni/bin" $TEMP_BUILD_DIR/$CNI_SRC/bin/*
 
-        # install cosign
-        sudo install -m 0755 "$TEMP_BUILD_DIR/$COSIGN_SRC/cosign" "$ARCH_DIR/usr/libexec/finch"
+    # install cosign
+    sudo install -m 0755 "$TEMP_BUILD_DIR/$COSIGN_SRC/cosign" "$ARCH_DIR/usr/libexec/finch"
 
-        # install finch cli
-        sudo install -m 0755 "$ROOT_DIR/_output/bin/finch" "$ARCH_DIR/usr/bin"
+    # install finch cli
+    sudo install -m 0755 "$ROOT_DIR/_output/bin/finch" "$ARCH_DIR/usr/bin"
 
-        # build deb
-        dpkg-deb --build --root-owner-group ${SCRIPT_DIR}/runfinch-finch_${VERSION}_${arch}
+    # build deb
+    dpkg-deb --build --root-owner-group ${SCRIPT_DIR}/runfinch-finch_${VERSION}_${arch}
 done
 
 # clean up
