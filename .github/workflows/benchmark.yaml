@@ -69,5 +69,9 @@ jobs:
           tool: 'go'
           benchmark-data-dir-path: "dev/bench/macOS/${{ env.OS_VERSION }}/${{ env.ARCH }}"
           output-file-path: benchmark.txt
+          alert-threshold: "200%"
+          fail-on-alert: true
+          comment-on-alert: true
+          alert-comment-cc-users: '@runfinch/maintainers'
       - name: Push benchmark result
         run: git push 'https://github.com/runfinch/finch.git' gh-pages:gh-pages
