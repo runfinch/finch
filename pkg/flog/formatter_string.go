@@ -18,8 +18,9 @@ const _Formatter_name = "TextTextWithoutTruncationJSON"
 var _Formatter_index = [...]uint8{0, 4, 25, 29}
 
 func (i Formatter) String() string {
-	if i < 0 || i >= Formatter(len(_Formatter_index)-1) {
+	idx := int(i) - 0
+	if i < 0 || idx >= len(_Formatter_index)-1 {
 		return "Formatter(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _Formatter_name[_Formatter_index[i]:_Formatter_index[i+1]]
+	return _Formatter_name[_Formatter_index[idx]:_Formatter_index[idx+1]]
 }
