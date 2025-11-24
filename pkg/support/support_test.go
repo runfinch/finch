@@ -66,7 +66,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -97,6 +97,11 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					"log2",
 				})
 
+				config.EXPECT().JournalServices().Return([]string{
+					"service:containerd",
+					"service:finch@503.service",
+				})
+
 				config.EXPECT().ConfigFiles().Return([]string{
 					"config1",
 					"config2",
@@ -105,6 +110,31 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
 				logger.EXPECT().Debugf("Copying %s...", "log2")
+				logger.EXPECT().Debugln("Copying in journal logs...")
+
+				switch runtime.GOOS {
+				case "linux":
+					ecc.EXPECT().Create("journalctl", "-xu", "containerd").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ecc.EXPECT().Create("journalctl", "-xu", "finch@503.service").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+				case "windows", "darwin":
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "containerd").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "finch@503.service").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+				}
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugf("Copying %s...", "config2")
@@ -121,7 +151,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -151,12 +181,42 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					"log1",
 				})
 
+				config.EXPECT().JournalServices().Return([]string{
+					"service:containerd",
+					"service:finch@503.service",
+				})
+
 				config.EXPECT().ConfigFiles().Return([]string{
 					"config1",
 				})
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				logger.EXPECT().Debugln("Copying in journal logs...")
+
+				switch runtime.GOOS {
+				case "linux":
+					ecc.EXPECT().Create("journalctl", "-xu", "containerd").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ecc.EXPECT().Create("journalctl", "-xu", "finch@503.service").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+				case "windows", "darwin":
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "containerd").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "finch@503.service").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+				}
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -173,7 +233,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -203,12 +263,42 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					"log1",
 				})
 
+				config.EXPECT().JournalServices().Return([]string{
+					"service:containerd",
+					"service:finch@503.service",
+				})
+
 				config.EXPECT().ConfigFiles().Return([]string{
 					"config1",
 				})
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Infof("Excluding %s...", "log1")
+				logger.EXPECT().Debugln("Copying in journal logs...")
+
+				switch runtime.GOOS {
+				case "linux":
+					ecc.EXPECT().Create("journalctl", "-xu", "containerd").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ecc.EXPECT().Create("journalctl", "-xu", "finch@503.service").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+				case "windows", "darwin":
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "containerd").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "finch@503.service").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+				}
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -224,7 +314,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -254,12 +344,42 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					"log1",
 				})
 
+				config.EXPECT().JournalServices().Return([]string{
+					"service:containerd",
+					"service:finch@503.service",
+				})
+
 				config.EXPECT().ConfigFiles().Return([]string{
 					"config1",
 				})
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				logger.EXPECT().Debugln("Copying in journal logs...")
+
+				switch runtime.GOOS {
+				case "linux":
+					ecc.EXPECT().Create("journalctl", "-xu", "containerd").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ecc.EXPECT().Create("journalctl", "-xu", "finch@503.service").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+				case "windows", "darwin":
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "containerd").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "finch@503.service").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+				}
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Infof("Excluding %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -275,7 +395,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -305,12 +425,42 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					"log1",
 				})
 
+				config.EXPECT().JournalServices().Return([]string{
+					"service:containerd",
+					"service:finch@503.service",
+				})
+
 				config.EXPECT().ConfigFiles().Return([]string{
 					"config1",
 				})
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				logger.EXPECT().Debugln("Copying in journal logs...")
+
+				switch runtime.GOOS {
+				case "linux":
+					ecc.EXPECT().Create("journalctl", "-xu", "containerd").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ecc.EXPECT().Create("journalctl", "-xu", "finch@503.service").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+				case "windows", "darwin":
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "containerd").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "finch@503.service").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+				}
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -360,12 +510,42 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					"log1",
 				})
 
+				config.EXPECT().JournalServices().Return([]string{
+					"service:containerd",
+					"service:finch@503.service",
+				})
+
 				config.EXPECT().ConfigFiles().Return([]string{
 					"config1",
 				})
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				logger.EXPECT().Debugln("Copying in journal logs...")
+
+				switch runtime.GOOS {
+				case "linux":
+					ecc.EXPECT().Create("journalctl", "-xu", "containerd").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ecc.EXPECT().Create("journalctl", "-xu", "finch@503.service").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+				case "windows", "darwin":
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "containerd").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "finch@503.service").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+				}
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -404,7 +584,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -434,12 +614,42 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 					"log1",
 				})
 
+				config.EXPECT().JournalServices().Return([]string{
+					"service:containerd",
+					"service:finch@503.service",
+				})
+
 				config.EXPECT().ConfigFiles().Return([]string{
 					"config1",
 				})
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				logger.EXPECT().Debugln("Copying in journal logs...")
+
+				switch runtime.GOOS {
+				case "linux":
+					ecc.EXPECT().Create("journalctl", "-xu", "containerd").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ecc.EXPECT().Create("journalctl", "-xu", "finch@503.service").Return(cmd)
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+				case "windows", "darwin":
+					logger.EXPECT().Debugf("Copying %s...", "service:containerd")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "containerd").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+					logger.EXPECT().Debugf("Copying %s...", "service:finch@503.service")
+					ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", "finch@503.service").Return(cmd)
+					cmd.EXPECT().SetStdout(gomock.Any())
+					cmd.EXPECT().SetStderr(gomock.Any())
+					cmd.EXPECT().Start()
+					cmd.EXPECT().Wait()
+					lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+				}
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")

@@ -3,7 +3,9 @@
 
 package support
 
-import fpath "github.com/runfinch/finch/pkg/path"
+import (
+	fpath "github.com/runfinch/finch/pkg/path"
+)
 
 type bundleConfig struct {
 	finch   fpath.Finch
@@ -16,6 +18,7 @@ type bundleConfig struct {
 type BundleConfig interface {
 	LogFiles() []string
 	ConfigFiles() []string
+	JournalServices() []string
 }
 
 // NewBundleConfig creates a new bundleConfig.

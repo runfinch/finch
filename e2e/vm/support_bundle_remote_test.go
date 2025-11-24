@@ -33,6 +33,15 @@ var testSupportBundle = func(o *option.Option) {
 						bundleExists = true
 					}
 
+					reader, err := zip.OpenReader(dirEntry.Name())
+					gomega.Expect(err).Should(gomega.BeNil())
+
+					zipBaseName := filepath.Base(dirEntry.Name())
+					zipPrefix := strings.TrimSuffix(zipBaseName, filepath.Ext(zipBaseName))
+					_, err = reader.Open(path.Join(zipPrefix, "logs", "journalctl"))
+					gomega.Expect(err).Should(gomega.BeNil())
+					gomega.Expect(reader.Close()).Should(gomega.BeNil())
+
 					err = os.Remove(dirEntry.Name())
 					gomega.Expect(err).Should(gomega.BeNil())
 				}
