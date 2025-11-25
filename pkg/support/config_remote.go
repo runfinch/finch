@@ -31,5 +31,5 @@ func (bc *bundleConfig) ConfigFiles() []string {
 }
 
 func (bc *bundleConfig) JournalServices() []string {
-	return []string{"service:containerd", "service:finch@503.service"}
+	return []string{"service:containerd", "service:finch", "service:buildkit", "service:soci"}
 }
