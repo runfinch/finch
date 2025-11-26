@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.13.1](https://github.com/runfinch/finch/compare/v1.13.0...v1.13.1) (2025-11-26)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/containerd/containerd/v2 ([b537d8c](https://github.com/runfinch/finch/commit/b537d8cb7035db56b36f66e6b8161a9f08616bfc))
+* **deps:** bump github.com/containerd/containerd/v2 from 2.1.4 to 2.1.5 ([#1618](https://github.com/runfinch/finch/issues/1618)) ([b537d8c](https://github.com/runfinch/finch/commit/b537d8cb7035db56b36f66e6b8161a9f08616bfc))
+* **deps:** bump golang.org/x/crypto from 0.42.0 to 0.45.0 ([#1627](https://github.com/runfinch/finch/issues/1627)) ([32261b2](https://github.com/runfinch/finch/commit/32261b266a29b985e249f078401bc1659c97b720))
+* **deps:** Bump submodules and dependencies ([#1623](https://github.com/runfinch/finch/issues/1623)) ([c364e2a](https://github.com/runfinch/finch/commit/c364e2a71a88ee5314b959fb1f2bfe4550a4d4ed))
+* **deps:** Bump submodules and dependencies ([#1631](https://github.com/runfinch/finch/issues/1631)) ([4b339e4](https://github.com/runfinch/finch/commit/4b339e4235415e6b6c2c0985e74e9b520a7605a4))
+
 ## [1.13.0](https://github.com/runfinch/finch/compare/v1.12.0...v1.13.0) (2025-11-05)
 
 
