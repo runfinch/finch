@@ -8,6 +8,7 @@ RPMBUILD_DIR="${CURRENT_DIR}/rpmbuild"
 RPM_DIR="${RPMBUILD_DIR}/RPMS/$(uname -m)"
 CONFIG="${PROJECT_ROOT}/contrib/packaging/config/"
 OUTPUT="${PROJECT_ROOT}/_output/packages/"
+AL_DEPS="${PROJECT_ROOT}/deps/finch-core/deps/amazon-linux-deps.conf"
 
 usage() {
     cat <<EOF
@@ -70,10 +71,24 @@ mkdir -p ${RPMBUILD_DIR}/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS,tmp}
 commit=$(git rev-parse HEAD)
 debug_version=$(git describe --match 'v[0-9]*' --dirty='.modified' --always --tags | cut -c2-)
 
+# load amazon linux deps
+source $AL_DEPS
+
 rpmbuild_opts=(
     --undefine="_disable_source_fetch"
     --define="_topdir ${RPMBUILD_DIR}"
     --define="_tmppath ${RPMBUILD_DIR}/tmp"
+    --define="finch_daemon_release ${FINCHD_RELEASE}"
+    --define="finch_daemon_commit ${FINCHD_COMMIT}"
+    --define="buildkit_release ${BUILDKIT_RELEASE}"
+    --define="buildkit_commit ${BUILDKIT_COMMIT}"
+    --define="soci_release ${SOCI_RELEASE}"
+    --define="soci_commit ${SOCI_COMMIT}"
+    --define="cosign_release ${COSIGN_RELEASE}"
+    --define="cosign_commit ${COSIGN_COMMIT}"
+    --define="min_containerd_version ${MIN_CONTAINERD_VERSION}"
+    --define="min_nerdctl_version ${MIN_NERDCTL_VERSION}"
+    --define="min_cni_plugins_version ${MIN_CNI_PLUGINS_VERSION}"
 )
 
 if [ "${LOCAL}" = true ]; then

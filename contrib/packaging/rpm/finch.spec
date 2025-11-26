@@ -4,18 +4,38 @@
 %global debug_package %{nil}
 %global pkg_config ../config
 
-# latest release/commit
+# default versions and commit ids
+# actual values are passed as build options to rpmbuild in contrib/packaging/rpm/build.sh
 %global _finch_release 1.2.3
 %global _finch_commit b84b424926d5f4e2d2abf0c51507856a73221e9d
+%global _buildkit_release 0.15.1
+%global _buildkit_commit 979542e90f2cb38077c808e0867d8d2c16ed10b8
+%global _soci_release 0.7.0
+%global _soci_commit 7c6fae2c3848fe8ad161ce35d3423898cea5fde8
+%global _finch_daemon_release 0.19.1
+%global _finch_daemon_commit 7ee991cb3be01fdb0013649b9e8fc6b5e3c5a35d
+%global _cosign_release 2.4.0
+%global _cosign_commit b5e7dc123a272080f4af4554054797296271e902
+%global _min_containerd_version >=1.7.24
+%global _min_nerdctl_version >=2.1.5
+%global _min_cni_plugins_version >=1.7.0
 
-%if 0%{?amzn} > 2
-%global requires_systemd_macros false
-%endif
-
-# build_latst takes precendence because build_local is for debugging
+# build_latest takes precendence because build_local is for debugging
 %if %{undefined build_latest} && %{undefined build_local}
+# if neither is defined, fall back to default values
 %global finch_release %{_finch_release}
 %global finch_commit %{_finch_commit}
+%global buildkit_release %{_buildkit_release}
+%global buildkit_commit %{_buildkit_commit}
+%global soci_release %{_soci_release}
+%global soci_commit %{_soci_commit}
+%global finch_daemon_release %{_finch_daemon_release}
+%global finch_daemon_commit %{_finch_daemon_commit}
+%global cosign_release %{_cosign_release}
+%global cosign_commit %{_cosign_commit}
+%global min_containerd_version %{_min_containerd_version}
+%global min_nerdctl_version %{_min_nerdctl_version}
+%global min_cni_plugins_version %{_min_cni_plugins_version}
 %endif
 
 %global finch_package github.com/runfinch/finch
@@ -23,29 +43,21 @@
 %global finch_rpm_version %(r=%finch_release; echo ${r%%%%-*})
 
 # buildkit
-%global buildkit_release 0.15.1
-%global buildkit_commit 979542e90f2cb38077c808e0867d8d2c16ed10b8
 %global buildkit_package github.com/moby/buildkit
 %global buildkit_src buildkit-%{buildkit_commit}
 %global buildkit_rpm_version %(r=%buildkit_release; echo ${r%%%%-*})
 
 # soci-snapshotter
-%global soci_release 0.7.0
-%global soci_commit 7c6fae2c3848fe8ad161ce35d3423898cea5fde8
 %global soci_package github.com/awslabs/soci-snapshotter
 %global soci_src soci-snapshotter-%{soci_commit}
 %global soci_rpm_version %(r=%soci_release; echo ${r%%%%-*})
 
 # finch-daemon
-%global finch_daemon_release 0.19.1
-%global finch_daemon_commit 7ee991cb3be01fdb0013649b9e8fc6b5e3c5a35d
 %global finch_daemon_package github.com/runfinch/finch-daemon
 %global finch_daemon_src finch-daemon-%{finch_daemon_commit}
 %global finch_daemon_rpm_version %(r=%finch_daemon_release; echo ${r%%%%-*})
 
 # cosign
-%global cosign_release 2.4.0
-%global cosign_commit b5e7dc123a272080f4af4554054797296271e902
 %global cosign_package github.com/sigstore/cosign
 %global cosign_src cosign-%{cosign_commit}
 %global cosign_rpm_version %(r=%cosign_release; echo ${r%%%%-*})
@@ -90,7 +102,9 @@ Source2000: https://%{soci_package}/archive/%{soci_commit}/%{soci_src}.tar.gz
 Source3000: https://%{cosign_package}/archive/%{cosign_commit}/%{cosign_src}.tar.gz
 
 # Runtime requirements
-Requires: containerd nerdctl cni-plugins
+Requires: containerd >= %{min_containerd_version}
+Requires: nerdctl >= %{min_nerdctl_version}
+Requires: cni-plugins >= %{min_cni_plugins_version}
 
 Provides: finch = %{finch_rpm_version}
 # License: ASL 2.0
