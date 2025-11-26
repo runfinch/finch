@@ -6,7 +6,9 @@ package vm
 import (
 	"archive/zip"
 	"fmt"
+	"io"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -32,6 +34,15 @@ var testSupportBundle = func(o *option.Option) {
 					if err == nil {
 						bundleExists = true
 					}
+
+					reader, err := zip.OpenReader(dirEntry.Name())
+					gomega.Expect(err).Should(gomega.BeNil())
+
+					zipBaseName := filepath.Base(dirEntry.Name())
+					zipPrefix := strings.TrimSuffix(zipBaseName, filepath.Ext(zipBaseName))
+					_, err = reader.Open(path.Join(zipPrefix, "logs", "journalctl"))
+					gomega.Expect(err).Should(gomega.BeNil())
+					gomega.Expect(reader.Close()).Should(gomega.BeNil())
 
 					err = os.Remove(dirEntry.Name())
 					gomega.Expect(err).Should(gomega.BeNil())
@@ -340,6 +351,46 @@ var testSupportBundle = func(o *option.Option) {
 				}
 			}
 			gomega.Expect(bundleExists).Should(gomega.BeFalse())
+		})
+
+		ginkgo.It("Should generate a support bundle with populated service logs", func() {
+			switch runtime.GOOS {
+			case "linux":
+				exec.Command("systemctl", "start", "containerd")
+				ginkgo.DeferCleanup(exec.Command, "systemctl", "stop", "containerd")
+			case "darwin", "windows":
+				exec.Command("shell", "finch", "sudo", "systemctl", "start", "containerd")
+				ginkgo.DeferCleanup(exec.Command, "shell", "finch", "sudo", "systemctl", "stop", "containerd")
+			}
+
+			command.Run(o, "support-bundle", "generate")
+			entries, err := os.ReadDir(".")
+			gomega.Expect(err).Should(gomega.BeNil())
+			bundleExists := false
+			for _, dirEntry := range entries {
+				if strings.Contains(dirEntry.Name(), "finch-support") {
+					_, err := os.Stat(dirEntry.Name())
+					if err == nil {
+						bundleExists = true
+					}
+
+					reader, err := zip.OpenReader(dirEntry.Name())
+					gomega.Expect(err).Should(gomega.BeNil())
+
+					zipBaseName := filepath.Base(dirEntry.Name())
+					zipPrefix := strings.TrimSuffix(zipBaseName, filepath.Ext(zipBaseName))
+					r, err := reader.Open(path.Join(zipPrefix, "logs", "journalctl", "containerd"))
+					gomega.Expect(err).Should(gomega.BeNil())
+					b, err := io.ReadAll(r)
+					gomega.Expect(err).Should(gomega.BeNil())
+					gomega.Expect(b).ShouldNot(gomega.BeEmpty())
+					gomega.Expect(reader.Close()).Should(gomega.BeNil())
+
+					err = os.Remove(dirEntry.Name())
+					gomega.Expect(err).Should(gomega.BeNil())
+				}
+			}
+			gomega.Expect(bundleExists).Should(gomega.BeTrue())
 		})
 	})
 }

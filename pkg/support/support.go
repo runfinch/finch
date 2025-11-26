@@ -33,6 +33,7 @@ const (
 	platformFileName = "platform.yaml"
 	versionFileName  = "version-output.txt"
 	logPrefix        = "logs"
+	journalPrefix    = "logs/journalctl"
 	configPrefix     = "configs"
 	additionalPrefix = "misc"
 )
@@ -139,6 +140,19 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 		}
 	}
 
+	bb.logger.Debugln("Copying in journal logs...")
+	for _, file := range bb.config.JournalServices() {
+		if fileShouldBeExcluded(file, excludeFiles) {
+			bb.logger.Infof("Excluding %s...", file)
+			continue
+		}
+		bb.logger.Debugf("Copying %s...", file)
+		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, journalPrefix))
+		if err != nil {
+			bb.logger.Warnf("Could not copy in %q. Error: %s", file, err)
+		}
+	}
+
 	bb.logger.Debugln("Copying in config files...")
 	for _, file := range bb.config.ConfigFiles() {
 		if fileShouldBeExcluded(file, excludeFiles) {
@@ -178,7 +192,7 @@ type bufReader interface {
 }
 
 func (bb *bundleBuilder) copyFileFromVMOrLocal(writer *zip.Writer, filename, zipPath string) error {
-	if runtime.GOOS != "linux" && isFileFromVM(filename) {
+	if runtime.GOOS != "linux" && (isFileFromVM(filename) || isService(filename)) {
 		return bb.streamFileFromVM(writer, filename, zipPath)
 	}
 	return bb.copyInFile(writer, filename, zipPath)
@@ -219,10 +233,23 @@ func (bb *bundleBuilder) copyAndRedactFile(writer io.Writer, reader bufReader) e
 }
 
 func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix string) error {
-	// check filename validity?
-	f, err := bb.fs.Open(fileName)
-	if err != nil {
-		return err
+	var f io.Reader
+	if isService(fileName) {
+		service := strings.TrimPrefix(fileName, "service:")
+		cmd := bb.ecc.Create("journalctl", "-xu", service)
+		out, err := cmd.Output()
+		if err != nil {
+			return err
+		}
+		f = bytes.NewReader(out)
+		fileName = service
+	} else {
+		var err error
+		// check filename validity?
+		f, err = bb.fs.Open(fileName)
+		if err != nil {
+			return err
+		}
 	}
 
 	baseName := filepath.Base(fileName)
@@ -244,7 +271,12 @@ func (bb *bundleBuilder) streamFileFromVM(writer *zip.Writer, filename, prefix s
 	errBuf := new(bytes.Buffer)
 
 	_, filePathInVM, _ := strings.Cut(filename, ":")
-	cmd := bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "cat", filePathInVM)
+	var cmd command.Command
+	if isService(filename) {
+		cmd = bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", filePathInVM)
+	} else {
+		cmd = bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "cat", filePathInVM)
+	}
 	cmd.SetStdout(pipeWriter)
 	cmd.SetStderr(errBuf)
 
@@ -400,6 +432,10 @@ func fileShouldBeExcluded(filename string, exclude []string) bool {
 
 func isFileFromVM(filename string) bool {
 	return strings.HasPrefix(filename, "vm:")
+}
+
+func isService(filename string) bool {
+	return strings.HasPrefix(filename, "service:")
 }
 
 func writeVersionOutput(writer *zip.Writer, version, prefix string) error {

@@ -29,3 +29,7 @@ func (bc *bundleConfig) ConfigFiles() []string {
 		bc.finch.ConfigFilePath(bc.rootDir),
 	}
 }
+
+func (bc *bundleConfig) JournalServices() []string {
+	return []string{"service:containerd", "service:finch", "service:buildkit", "service:soci"}
+}
