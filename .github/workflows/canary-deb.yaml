@@ -23,6 +23,10 @@ on:
       - '.github/workflows/canary-deb.yaml'
       - 'scripts/canary-deb.sh'
   
+
+permissions:
+  contents: read
+
 jobs:
   canary-deb:
     name: Test Finch APT repo health
