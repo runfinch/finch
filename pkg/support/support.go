@@ -236,7 +236,7 @@ func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix 
 	var f io.Reader
 	if isService(fileName) {
 		service := strings.TrimPrefix(fileName, "service:")
-		cmd := bb.ecc.Create("journalctl", "-xu", service)
+		cmd := bb.ecc.Create("journalctl", "--no-pager", "-xu", service)
 		out, err := cmd.Output()
 		if err != nil {
 			return err
@@ -273,7 +273,7 @@ func (bb *bundleBuilder) streamFileFromVM(writer *zip.Writer, filename, prefix s
 	_, filePathInVM, _ := strings.Cut(filename, ":")
 	var cmd command.Command
 	if isService(filename) {
-		cmd = bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", filePathInVM)
+		cmd = bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "--no-pager", "-xu", filePathInVM)
 	} else {
 		cmd = bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "cat", filePathInVM)
 	}

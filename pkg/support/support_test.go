@@ -763,11 +763,11 @@ func checkJournalCmdOutputs(
 	for _, service := range services {
 		switch runtime.GOOS {
 		case "linux":
-			ecc.EXPECT().Create("journalctl", "-xu", service).Return(cmd)
+			ecc.EXPECT().Create("journalctl", "--no-pager", "-xu", service).Return(cmd)
 			logger.EXPECT().Debugf("Copying %s...", fmt.Sprintf("service:%s", service))
 		case "windows", "darwin":
 			logger.EXPECT().Debugf("Copying %s...", fmt.Sprintf("service:%s", service))
-			ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-xu", service).Return(cmd)
+			ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "--no-pager", "-xu", service).Return(cmd)
 			cmd.EXPECT().SetStdout(gomock.Any())
 			cmd.EXPECT().SetStderr(gomock.Any())
 			cmd.EXPECT().Start()
