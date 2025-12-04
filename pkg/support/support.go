@@ -14,6 +14,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -36,6 +37,7 @@ const (
 	journalPrefix    = "logs/journalctl"
 	configPrefix     = "configs"
 	additionalPrefix = "misc"
+	allServices      = "service:all"
 )
 
 // PlatformData defines the YAML structure for the platform data included in a support bundle.
@@ -140,16 +142,20 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 		}
 	}
 
-	bb.logger.Debugln("Copying in journal logs...")
-	for _, file := range bb.config.JournalServices() {
-		if fileShouldBeExcluded(file, excludeFiles) {
-			bb.logger.Infof("Excluding %s...", file)
-			continue
-		}
-		bb.logger.Debugf("Copying %s...", file)
-		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, journalPrefix))
-		if err != nil {
-			bb.logger.Warnf("Could not copy in %q. Error: %s", file, err)
+	if slices.Contains(excludeFiles, allServices) {
+		bb.logger.Info("Excluding all service logs...")
+	} else {
+		bb.logger.Debugln("Copying in journal logs...")
+		for _, file := range bb.config.JournalServices() {
+			if fileShouldBeExcluded(file, excludeFiles) {
+				bb.logger.Infof("Excluding %s...", file)
+				continue
+			}
+			bb.logger.Debugf("Copying %s...", file)
+			err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, journalPrefix))
+			if err != nil {
+				bb.logger.Warnf("Could not copy in %q. Error: %s", file, err)
+			}
 		}
 	}
 

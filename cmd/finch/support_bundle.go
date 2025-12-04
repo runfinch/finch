@@ -38,11 +38,14 @@ func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleB
 	if runtime.GOOS != "linux" {
 		includeUsage += ` To include a file from the VM, prefix the file path with "vm:"`
 	}
+	excludeUsage := `files to exclude from the support bundle. ` +
+		`If you specify a base name, all files matching that base name will be excluded. ` +
+		`If you specify an absolute or relative path, only exact matches will be excluded.` +
+		`To exclude journal logs for a service, prefix the file path with "service":".` +
+		`To exclude all journal logs, use "service:all"`
 
 	supportBundleGenerateCommand.Flags().StringArray("include", []string{}, includeUsage)
-	supportBundleGenerateCommand.Flags().StringArray("exclude", []string{},
-		//nolint:lll // usage string
-		"files to exclude from the support bundle. if you specify a base name, all files matching that base name will be excluded. if you specify an absolute or relative path, only exact matches will be excluded")
+	supportBundleGenerateCommand.Flags().StringArray("exclude", []string{}, excludeUsage)
 	return supportBundleGenerateCommand
 }
 
