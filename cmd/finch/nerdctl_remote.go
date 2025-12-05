@@ -94,9 +94,12 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	case "container run", "exec", "compose":
 		// check if an option flag is present; immediately following the command
 		switch {
-		case args[0] == "run" && strings.HasPrefix(args[1], "-"):
+		case len(args) > 1 && args[0] == "run" && strings.HasPrefix(args[1], "-"):
 			firstOptPos = 1
-		case strings.HasPrefix(args[0], "-"):
+		case len(args) > 0 && strings.HasPrefix(args[0], "-"):
+			firstOptPos = 0
+		case len(args) == 0:
+			args = append(args, "--help")
 			firstOptPos = 0
 		default:
 			firstOptPos = -1
