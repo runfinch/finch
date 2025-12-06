@@ -280,6 +280,8 @@ func (bb *bundleBuilder) streamFileFromVM(writer *zip.Writer, filename, prefix s
 	var cmd command.Command
 	if isService(filename) {
 		cmd = bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "--no-pager", "-xu", filePathInVM)
+		// omit service prefix
+		filename = filePathInVM
 	} else {
 		cmd = bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "cat", filePathInVM)
 	}
