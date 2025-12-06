@@ -56,6 +56,20 @@ func (mr *BundleConfigMockRecorder) ConfigFiles() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfigFiles", reflect.TypeOf((*BundleConfig)(nil).ConfigFiles))
 }
 
+// JournalServices mocks base method.
+func (m *BundleConfig) JournalServices() []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "JournalServices")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// JournalServices indicates an expected call of JournalServices.
+func (mr *BundleConfigMockRecorder) JournalServices() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "JournalServices", reflect.TypeOf((*BundleConfig)(nil).JournalServices))
+}
+
 // LogFiles mocks base method.
 func (m *BundleConfig) LogFiles() []string {
 	m.ctrl.T.Helper()
