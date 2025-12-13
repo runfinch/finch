@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -47,9 +48,16 @@ type PlatformData struct {
 	Finch string `yaml:"finch"`
 }
 
+// BundleCfg has all the required args for generating support bundles.
+type BundleCfg struct {
+	AdditionalFiles []string
+	ExcludeFiles    []string
+	LogLines        int
+}
+
 // BundleBuilder provides methods to generate support bundles.
 type BundleBuilder interface {
-	GenerateSupportBundle([]string, []string) (string, error)
+	GenerateSupportBundle(*BundleCfg) (string, error)
 }
 
 // SystemDeps provides methods to get system dependencies.
@@ -94,7 +102,11 @@ func NewBundleBuilder(
 }
 
 // GenerateSupportBundle generates a new support bundle.
-func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, excludeFiles []string) (string, error) {
+func (bb *bundleBuilder) GenerateSupportBundle(cfg *BundleCfg) (string, error) {
+	additionalFiles := cfg.AdditionalFiles
+	excludeFiles := cfg.ExcludeFiles
+	logLines := cfg.LogLines
+
 	zipFileName := bundleFileName()
 	bb.logger.Debugf("Creating %s...", zipFileName)
 	zipFile, err := bb.fs.Create(zipFileName)
@@ -136,7 +148,7 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 			continue
 		}
 		bb.logger.Debugf("Copying %s...", file)
-		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, logPrefix))
+		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, logPrefix), logLines)
 		if err != nil {
 			bb.logger.Warnf("Could not copy in %q. Error: %s", file, err)
 		}
@@ -152,7 +164,7 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 				continue
 			}
 			bb.logger.Debugf("Copying %s...", file)
-			err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, journalPrefix))
+			err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, journalPrefix), logLines)
 			if err != nil {
 				bb.logger.Warnf("Could not copy in %q. Error: %s", file, err)
 			}
@@ -166,7 +178,7 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 			continue
 		}
 		bb.logger.Debugf("Copying %s...", file)
-		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, configPrefix))
+		err = bb.copyFileFromVMOrLocal(writer, file, path.Join(zipPrefix, configPrefix), logLines)
 		if err != nil {
 			bb.logger.Warnf("Could not copy in %q. Error: %s", file, err)
 		}
@@ -179,7 +191,7 @@ func (bb *bundleBuilder) GenerateSupportBundle(additionalFiles []string, exclude
 			continue
 		}
 		bb.logger.Debugf("Copying %s...", file)
-		err = bb.copyFileFromVMOrLocal(writer, file, filepath.Join(zipPrefix, additionalPrefix))
+		err = bb.copyFileFromVMOrLocal(writer, file, filepath.Join(zipPrefix, additionalPrefix), logLines)
 		if err != nil {
 			bb.logger.Warnf("Could not add additional file %s. Error: %s", file, err)
 		}
@@ -197,11 +209,11 @@ type bufReader interface {
 	ReadBytes(delim byte) ([]byte, error)
 }
 
-func (bb *bundleBuilder) copyFileFromVMOrLocal(writer *zip.Writer, filename, zipPath string) error {
+func (bb *bundleBuilder) copyFileFromVMOrLocal(writer *zip.Writer, filename, zipPath string, logLines int) error {
 	if runtime.GOOS != "linux" && (isFileFromVM(filename) || isService(filename)) {
-		return bb.streamFileFromVM(writer, filename, zipPath)
+		return bb.streamFileFromVM(writer, filename, zipPath, logLines)
 	}
-	return bb.copyInFile(writer, filename, zipPath)
+	return bb.copyInFile(writer, filename, zipPath, logLines)
 }
 
 func (bb *bundleBuilder) copyAndRedactFile(writer io.Writer, reader bufReader) error {
@@ -238,11 +250,11 @@ func (bb *bundleBuilder) copyAndRedactFile(writer io.Writer, reader bufReader) e
 	return nil
 }
 
-func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix string) error {
+func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix string, logLines int) error {
 	var f io.Reader
 	if isService(fileName) {
 		service := strings.TrimPrefix(fileName, "service:")
-		cmd := bb.ecc.Create("journalctl", "--no-pager", "-xu", service)
+		cmd := bb.ecc.Create("journalctl", "-n", strconv.Itoa(logLines), "--no-pager", "-xu", service)
 		out, err := cmd.Output()
 		if err != nil {
 			return err
@@ -272,14 +284,14 @@ func (bb *bundleBuilder) copyInFile(writer *zip.Writer, fileName string, prefix 
 	return bb.copyAndRedactFile(zipCopy, buf)
 }
 
-func (bb *bundleBuilder) streamFileFromVM(writer *zip.Writer, filename, prefix string) error {
+func (bb *bundleBuilder) streamFileFromVM(writer *zip.Writer, filename, prefix string, logLines int) error {
 	pipeReader, pipeWriter := io.Pipe()
 	errBuf := new(bytes.Buffer)
 
 	_, filePathInVM, _ := strings.Cut(filename, ":")
 	var cmd command.Command
 	if isService(filename) {
-		cmd = bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "--no-pager", "-xu", filePathInVM)
+		cmd = bb.ncc.CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-n", strconv.Itoa(logLines), "--no-pager", "-xu", filePathInVM)
 		// omit service prefix
 		filename = filePathInVM
 	} else {

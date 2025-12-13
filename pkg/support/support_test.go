@@ -519,8 +519,13 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 			}
 
 			tc.mockSvc(logger, config, ecc, ncc, cmd, lima, systemDeps, fs)
+			cfg := &BundleCfg{
+				AdditionalFiles: tc.include,
+				ExcludeFiles:    tc.exclude,
+				LogLines:        100,
+			}
 
-			zipFile, err := builder.GenerateSupportBundle(tc.include, tc.exclude)
+			zipFile, err := builder.GenerateSupportBundle(cfg)
 			assert.NoError(t, err)
 
 			exists, err := afero.Exists(fs, zipFile)
@@ -763,11 +768,11 @@ func checkJournalCmdOutputs(
 	for _, service := range services {
 		switch runtime.GOOS {
 		case "linux":
-			ecc.EXPECT().Create("journalctl", "--no-pager", "-xu", service).Return(cmd)
+			ecc.EXPECT().Create("journalctl", "-n", "100", "--no-pager", "-xu", service).Return(cmd)
 			logger.EXPECT().Debugf("Copying %s...", fmt.Sprintf("service:%s", service))
 		case "windows", "darwin":
 			logger.EXPECT().Debugf("Copying %s...", fmt.Sprintf("service:%s", service))
-			ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "--no-pager", "-xu", service).Return(cmd)
+			ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "-n", "100", "--no-pager", "-xu", service).Return(cmd)
 			cmd.EXPECT().SetStdout(gomock.Any())
 			cmd.EXPECT().SetStderr(gomock.Any())
 			cmd.EXPECT().Start()
