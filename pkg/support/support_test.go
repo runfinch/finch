@@ -5,6 +5,7 @@ package support
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
 	"os/user"
 	"runtime"
@@ -66,7 +67,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -105,6 +106,8 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
 				logger.EXPECT().Debugf("Copying %s...", "log2")
+				checkJournalCmdOutputs(logger, config, ecc, ncc, cmd, lima, mockUser)
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugf("Copying %s...", "config2")
@@ -121,7 +124,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -157,6 +160,8 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				checkJournalCmdOutputs(logger, config, ecc, ncc, cmd, lima, mockUser)
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -173,7 +178,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -209,6 +214,8 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Infof("Excluding %s...", "log1")
+				checkJournalCmdOutputs(logger, config, ecc, ncc, cmd, lima, mockUser)
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -224,7 +231,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -260,6 +267,8 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				checkJournalCmdOutputs(logger, config, ecc, ncc, cmd, lima, mockUser)
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Infof("Excluding %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -275,7 +284,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -311,6 +320,8 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				checkJournalCmdOutputs(logger, config, ecc, ncc, cmd, lima, mockUser)
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -366,6 +377,8 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				checkJournalCmdOutputs(logger, config, ecc, ncc, cmd, lima, mockUser)
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -404,7 +417,7 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 				logger *mocks.Logger,
 				config *mocks.BundleConfig,
 				ecc *mocks.CommandCreator,
-				_ *mocks.NerdctlCmdCreator,
+				ncc *mocks.NerdctlCmdCreator,
 				cmd *mocks.Command,
 				lima *mocks.MockLimaWrapper,
 				systemDeps *mocks.SupportSystemDeps,
@@ -440,6 +453,8 @@ func TestSupportBundleBuilder_GenerateSupportBundle(t *testing.T) {
 
 				logger.EXPECT().Debugln("Copying in log files...")
 				logger.EXPECT().Debugf("Copying %s...", "log1")
+				checkJournalCmdOutputs(logger, config, ecc, ncc, cmd, lima, mockUser)
+
 				logger.EXPECT().Debugln("Copying in config files...")
 				logger.EXPECT().Debugf("Copying %s...", "config1")
 				logger.EXPECT().Debugln("Copying in additional files...")
@@ -723,5 +738,41 @@ func TestSupport_writeVersionOutput(t *testing.T) {
 			}
 			assert.True(t, found, "Expected file not found in zip archive")
 		})
+	}
+}
+
+func checkJournalCmdOutputs(
+	logger *mocks.Logger,
+	config *mocks.BundleConfig,
+	ecc *mocks.CommandCreator,
+	ncc *mocks.NerdctlCmdCreator,
+	cmd *mocks.Command,
+	lima *mocks.MockLimaWrapper,
+	mockUser *user.User,
+) {
+	config.EXPECT().JournalServices().Return([]string{
+		"service:containerd",
+		"service:finch",
+		"service:buildkit",
+		"service:soci-snapshotter",
+	})
+
+	services := []string{"containerd", "finch", "buildkit", "soci-snapshotter"}
+	logger.EXPECT().Debugln("Copying in journal logs...")
+
+	for _, service := range services {
+		switch runtime.GOOS {
+		case "linux":
+			ecc.EXPECT().Create("journalctl", "--no-pager", "-xu", service).Return(cmd)
+			logger.EXPECT().Debugf("Copying %s...", fmt.Sprintf("service:%s", service))
+		case "windows", "darwin":
+			logger.EXPECT().Debugf("Copying %s...", fmt.Sprintf("service:%s", service))
+			ncc.EXPECT().CreateWithoutStdio("shell", "finch", "sudo", "journalctl", "--no-pager", "-xu", service).Return(cmd)
+			cmd.EXPECT().SetStdout(gomock.Any())
+			cmd.EXPECT().SetStderr(gomock.Any())
+			cmd.EXPECT().Start()
+			cmd.EXPECT().Wait()
+			lima.EXPECT().LimaUser(false).Return(mockUser).AnyTimes()
+		}
 	}
 }

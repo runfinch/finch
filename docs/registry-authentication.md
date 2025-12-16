@@ -82,3 +82,5 @@ If the login has been successful, you should see:
 ```bash
 Login Succeeded
 ```
+
+**Note:** We do not recommend this approach in production environments as passwords are stored in plaintext on the system. More security-conscious users should opt to use a credential helper instead.

@@ -1,0 +1,38 @@
+name: Deb Canary
+
+on:
+  # This workflow will run from the release-automation.yaml automation on each merge
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+
+  # This workflow will run every 5 min
+  schedule:
+    - cron: '*/10 * * * *'
+  
+  # This workflow will run when the workflow file is updated
+  pull_request:
+    paths:
+      - '.github/workflows/canary-deb.yaml'
+      - 'scripts/canary-deb.sh'
+  
+jobs:
+  canary-deb:
+    name: Test Finch APT repo health
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Checkout canary script
+        uses: actions/checkout@v5
+        with:
+          sparse-checkout: |
+            scripts/canary-deb.sh
+      - name: Run canary script
+        run: ./scripts/canary-deb.sh

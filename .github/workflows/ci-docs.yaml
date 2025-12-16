@@ -21,6 +21,8 @@ on:
       - 'scripts/**'
       - 'msi-builder/**'
       - '.github/**'
+      - 'release-please-config.json'
+      - '.release-please-manifest.json'
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
@@ -36,6 +38,8 @@ on:
       - 'scripts/**'
       - 'msi-builder/**'
       - '.github/**'
+      - 'release-please-config.json'
+      - '.release-please-manifest.json'
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
@@ -111,7 +115,7 @@ jobs:
   macos-e2e-tests:
     strategy:
       matrix:
-        version: ['13', '14']
+        version: ['14', '15']
         test-command: ['test-e2e-vm-serial', 'test-e2e-container']
         arch: ['X64', 'arm64']
         runner-type: ['test']

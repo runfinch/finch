@@ -6,23 +6,27 @@ on:
 name: release-please
 
 permissions:
-  contents: read
+  contents: write # Required for trigger-release-automation job
   pull-requests: write
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
     timeout-minutes: 2
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
     steps:
-      - uses: googleapis/release-please-action@c2a5a2bd6a758a0937f1ddb1e8950609867ed15c # v4.3.0
+      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
         id: release
   trigger-release-automation:
     name: Trigger release-automation.yaml if PR is merged
     needs: [release-please]
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    permissions:
+      contents: write    # Required for uploading release assets
+      id-token: write    # Required for AWS OIDC authentication
+    secrets: inherit     # Pass all secrets to child workflows
     uses: ./.github/workflows/release-automation.yaml

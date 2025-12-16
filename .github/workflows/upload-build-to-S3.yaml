@@ -36,7 +36,7 @@ jobs:
         shell: zsh {0}
 
       - name: Upload macos aarch64 build
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: finch.macos-aarch64
           path: finch.*.aarch64.tar.gz
@@ -65,7 +65,7 @@ jobs:
         shell: zsh {0}
 
       - name: Upload macos x86_64 build
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: finch.macos-x86_64
           path: finch.*.x86_64.tar.gz
@@ -84,20 +84,20 @@ jobs:
           persist-credentials: false
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
+        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: dependency-upload-session
           aws-region: ${{ secrets.REGION }}
 
       - name: Download macos aarch64 build
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: finch.macos-aarch64
           path: build
 
       - name: Download macos x86_64 build
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: finch.macos-x86_64
           path: build

@@ -104,6 +104,14 @@ CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST ?= "sha256:$(AARCH64_256_DIGEST)"
 CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(X86_64_ARTIFACT)"
 CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST ?= "sha256:$(X86_64_256_DIGEST)"
 
+# For Finch on macOS and Windows, the runc override locations and digests are set
+# based on the values set in deps/finch-core/deps/runc-override.conf
+-include $(FINCH_CORE_DIR)/deps/runc-override.conf
+RUNC_OVERRIDE_AARCH64_LOCATION ?= "$(RUNC_ARTIFACT_BASE_URL)/$(RUNC_AARCH64_ARTIFACT)"
+RUNC_OVERRIDE_AARCH64_DIGEST ?= "sha256:$(RUNC_AARCH64_256_DIGEST)"
+RUNC_OVERRIDE_X86_64_LOCATION ?= "$(RUNC_ARTIFACT_BASE_URL)/$(RUNC_X86_64_ARTIFACT)"
+RUNC_OVERRIDE_X86_64_DIGEST ?= "sha256:$(RUNC_X86_64_256_DIGEST)"
+
 .PHONY: finch.yaml
 finch.yaml: $(OS_OUTDIR)/finch.yaml
 
@@ -278,7 +286,7 @@ check-licenses: GOBIN = $(CURDIR)/tools_bin
 check-licenses:
 	go mod download
 	GOBIN=$(GOBIN) go install github.com/google/go-licenses
-	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --ignore  github.com/multiformats/go-base36 --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT --include_tests ./...
+	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --ignore  github.com/multiformats/go-base36 --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT,MPL-2.0 --include_tests ./...
 
 COVERAGE_THRESH = 60
 .PHONY: test-unit

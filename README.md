@@ -282,6 +282,14 @@ LIMA_HOME=/Applications/Finch/lima/data /Applications/Finch/lima/bin/limactl she
 wsl -d lima-finch
 ```
 
+### Debugging
+
+See [Debugging Finch](./docs/debug.md) for common debugging scenarios.
+
+## Versioning
+
+Finch makes a best effort to follow [semantic versioning](https://semver.org/). Generally speaking, all minor version upgrades should be backwards compatible. With that said, we do not make any guarantees. Please let us know if anything breaks!
+
 ## What's next?
 
 We are excited to start this project in the open, and we'd love to hear from you. If you have ideas or find bugs please open an issue. Please feel free to start a discussion if you have something you'd like to propose or brainstorm. Pull requests are welcome, as well! See the [CONTRIBUTING](CONTRIBUTING.md) doc for more info on contributing, and the path to reviewer and maintainer roles for those interested.

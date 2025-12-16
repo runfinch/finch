@@ -62,7 +62,7 @@ jobs:
       # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
       # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
       id-token: write
-      contents: read # this is required for actions/checkout
+      contents: write # this is required for actions/checkout
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
@@ -104,7 +104,7 @@ jobs:
       contents: read
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
+        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: update-latest-version-in-s3
@@ -125,13 +125,15 @@ jobs:
   upload-release-definition-to-s3:
     needs: 
       - get-latest-tag
+      - upload-msi-to-release
+      - upload-pkg-and-dependency-source-code-to-release
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
+        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
         with:
           role-to-assume: ${{ vars.AWS_RELEASE_TRIGGER_ROLE }}
           role-session-name: upload-release-definition-to-s3

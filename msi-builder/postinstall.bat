@@ -3,7 +3,7 @@ SET InstallDir=%~1
 SET FilePath=%InstallDir%\os\finch.yaml
 
 if exist "%FilePath%" (
-    powershell -Command "$installPath = '%InstallDir%'.Replace('\', '/'); (Get-Content '%FilePath%') -replace '__INSTALLFOLDER__', $installPath | Set-Content -Encoding UTF8 '%FilePath%'"
+    powershell -Command "$installPath = '%InstallDir%'.Replace('\', '/'); $content = Get-Content '%FilePath%' -Raw; $content = $content -replace '__INSTALLFOLDER__', $installPath; $content = $content.Replace(\"`r`n\", \"`n\"); $utf8NoBom = New-Object System.Text.UTF8Encoding $false; [System.IO.File]::WriteAllText('%FilePath%', $content, $utf8NoBom)"
 )
 
 icacls "%InstallDir%\lima\data" /grant Users:(OI)(CI)M
