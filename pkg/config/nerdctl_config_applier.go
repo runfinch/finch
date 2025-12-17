@@ -25,6 +25,34 @@ const (
 	nerdctlRootfulCfgPath = "/etc/nerdctl/nerdctl.toml"
 )
 
+//nolint:gosec // G101: False positive - this is a shell script template, not hardcoded credentials
+const osxkeychainCredHelperScript = `#!/bin/bash
+input=$(cat)
+printf "%s\n%s\n" "$1" "$input" | socat - UNIX-CONNECT:/tmp/native-creds.sock 2>/dev/null
+exit_code=$?
+if [ $exit_code -ne 0 ]; then
+    echo '{"error": "credential helper connection failed"}'
+    exit 1
+fi
+`
+
+//nolint:gosec // G101: False positive - this is a shell script template, not hardcoded credentials
+const wincredCredHelperScript = `#!/bin/bash
+input=$(cat)
+SOCKET_PATH=$(wslpath "$(wslvar USERPROFILE)")/.finch/native-creds.sock
+printf "%s\n%s\n" "$1" "$input" | socat - UNIX-CONNECT:"$SOCKET_PATH" 2>/dev/null
+exit_code=$?
+if [ $exit_code -ne 0 ]; then
+    echo '{"error": "credential helper connection failed"}'
+    exit 1
+fi
+`
+
+var helperTemplateScripts = map[string]string{
+	"osxkeychain": osxkeychainCredHelperScript,
+	"wincred":     wincredCredHelperScript,
+}
+
 type nerdctlConfigApplier struct {
 	dialer           fssh.Dialer
 	fs               afero.Fs
@@ -95,12 +123,27 @@ func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir 
 	}
 
 	//nolint:gosec // G101: Potential hardcoded credentials false positive
-	const configureCredHelperTemplate = `([ -e "$FINCH_DIR"/cred-helpers/docker-credential-%s ] || \
+	const generalCredHelperTemplate = `([ -e "$FINCH_DIR"/cred-helpers/docker-credential-%s ] || \
   (echo "error: docker-credential-%s not found in $FINCH_DIR/cred-helpers directory.")) && \
   ([ -L /usr/local/bin/docker-credential-%s ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-%s /usr/local/bin)`
 
+	//nolint:gosec // G101: Potential hardcoded credentials false positive
+	const nativeCredHelperTemplate = `[ -x /usr/local/bin/docker-credential-%s ] || (
+  (sudo mkdir -p /usr/local/bin) && \
+  (echo '%s' | sudo tee /usr/local/bin/docker-credential-%s > /dev/null) && \
+  (sudo chmod 700 /usr/local/bin/docker-credential-%s))`
+
 	for _, credHelper := range fc.CredsHelpers {
-		cmdArr = append(cmdArr, fmt.Sprintf(configureCredHelperTemplate, credHelper, credHelper, credHelper, credHelper))
+		// Add the credhelper to config by default, removes need for user to add
+		cmdArr = append(cmdArr, fmt.Sprintf(`echo '{"credsStore": "%s"}' > "$FINCH_DIR"/config.json`, credHelper))
+
+		// If using native credstore, use overwrite instead of symlink
+		if credHelper == "osxkeychain" || credHelper == "wincred" {
+			helperScript := helperTemplateScripts[credHelper]
+			cmdArr = append(cmdArr, fmt.Sprintf(nativeCredHelperTemplate, credHelper, helperScript, credHelper, credHelper))
+		} else {
+			cmdArr = append(cmdArr, fmt.Sprintf(generalCredHelperTemplate, credHelper, credHelper, credHelper, credHelper))
+		}
 	}
 
 	awsDir := fmt.Sprintf("%s/.aws", homeDir)

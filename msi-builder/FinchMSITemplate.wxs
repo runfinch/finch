@@ -89,6 +89,13 @@
               <File Id="finch_yaml" Source="__SOURCE__\os\finch.yaml" />
             </Component>
           </Directory>
+          <Directory Id="finch_credhelper" Name="finch-credhelper">
+            <Component Id="Component_CredHelper" Guid="{B2C3D4E5-F6A7-8901-BCDE-F23456789012}" Win64="yes">
+              <File Id="finch_cred_bridge_exe" Source="__SOURCE__\finch-credhelper\finch-cred-bridge.exe" />
+              <File Id="native_creds_service_start_ps1" Source="__SOURCE__\finch-credhelper\native-creds-service-start.ps1" />
+              <File Id="native_creds_service_stop_ps1" Source="__SOURCE__\finch-credhelper\native-creds-service-stop.ps1" />
+            </Component>
+          </Directory>
         </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder" />
@@ -100,6 +107,7 @@
       <ComponentRef Id="Component_Data" />
       <ComponentRef Id="Component_Share" />
       <ComponentRef Id="Component_Roofts" />
+      <ComponentRef Id="Component_CredHelper" />
     </ComponentGroup>
     <CustomAction Id="RunPostInstallScript" FileKey="postinstall_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Return="check" Execute="deferred" Impersonate="no" />
     <CustomAction Id="RunUninstallScript" FileKey="uninstall_bat" ExeCommand="&quot;[INSTALLFOLDER]&quot;" Execute="deferred" Return="ignore" Impersonate="yes" />

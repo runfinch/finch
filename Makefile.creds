@@ -1,0 +1,122 @@
+# Credential helper configuration
+CRED_HELPER_BASE_URL := https://github.com/docker/docker-credential-helpers/releases/download/v0.9.4
+
+# Platform-specific artifacts and checksums
+ifeq ($(BUILD_OS), Darwin)
+  ifeq ($(ARCH), arm64)
+    CRED_HELPER_ARTIFACT := docker-credential-osxkeychain-v0.9.4.darwin-arm64
+    CRED_HELPER_DIGEST := 8db5b7cbcbe0870276e56aa416416161785e450708af64cda0f1be4c392dc2e5
+  else
+    CRED_HELPER_ARTIFACT := docker-credential-osxkeychain-v0.9.4.darwin-amd64
+    CRED_HELPER_DIGEST := ad76d1a1e03def49edfa57fdb2874adf2c468cfa0438aae1b2589434796f7c01
+  endif
+  CRED_HELPER_NAME := docker-credential-osxkeychain
+else ifeq ($(BUILD_OS), Windows_NT)
+  ifeq ($(ARCH), arm64)
+    CRED_HELPER_ARTIFACT := docker-credential-wincred-v0.9.4.windows-arm64.exe
+    CRED_HELPER_DIGEST := 80a6ddbbabc51a8952308acf4d03c044308357cf217300461c44df066c57fe03
+  else
+    CRED_HELPER_ARTIFACT := docker-credential-wincred-v0.9.4.windows-amd64.exe
+    CRED_HELPER_DIGEST := 66fdf4b50c83aeb04a9ea04af960abaf1a7b739ab263115f956b98bb0d16aa7e
+  endif
+  CRED_HELPER_NAME := docker-credential-wincred.exe
+endif
+
+CRED_HELPER_URL := $(CRED_HELPER_BASE_URL)/$(CRED_HELPER_ARTIFACT)
+CRED_HELPER_OUTPUT := $(HOME)/.finch/cred-helpers/$(CRED_HELPER_NAME)
+
+# Build finch credential bridge
+.PHONY: finch-cred-bridge
+finch-cred-bridge:
+	mkdir -p $(FINCH_CREDHELPER_DIR)
+	$(GO) build -ldflags $(LDFLAGS) -tags "$(GO_BUILD_TAGS)" -o $(FINCH_CREDHELPER_DIR)/finch-cred-bridge $(PACKAGE)/cmd/finch-credhelper
+	chmod 700 $(FINCH_CREDHELPER_DIR)/finch-cred-bridge
+
+# Download and verify credential helper
+.PHONY: docker-credential-helper
+docker-credential-helper:
+ifeq ($(BUILD_OS), Linux)
+	@echo "No credential helper needed for Linux"
+else
+	mkdir -p $(dir $(CRED_HELPER_OUTPUT))
+	curl -L $(CRED_HELPER_URL) -o $(CRED_HELPER_OUTPUT)
+	@echo "Verifying SHA256 checksum..."
+	@if echo "$(CRED_HELPER_DIGEST)  $(CRED_HELPER_OUTPUT)" | $(if $(findstring Darwin,$(BUILD_OS)),shasum -a 256,sha256sum) -c -; then \
+		echo "Checksum verification passed"; \
+	else \
+		echo "Checksum verification failed" && exit 1; \
+	fi
+	chmod 700 $(CRED_HELPER_OUTPUT)
+endif
+
+# macOS LaunchAgent management
+ifeq ($(BUILD_OS), Darwin)
+PLIST_NAME := com.runfinch.cred-bridge.plist
+PLIST_TEMPLATE := installer-builder/templates/$(PLIST_NAME).template
+PLIST_DEST := $(HOME)/Library/LaunchAgents/$(PLIST_NAME)
+
+.PHONY: install-launch-agent
+install-launch-agent:
+	@echo "Installing LaunchAgent..."
+	mkdir -p $(dir $(PLIST_DEST))
+	sed -e "s|\$$(FINCH_CREDHELPER_DIR)/finch-cred-bridge|$(FINCH_CREDHELPER_DIR)/finch-cred-bridge|g" \
+	    -e "s|\$$(FINCH_CREDHELPER_SOCKET_LOCATION)|$(FINCH_CREDHELPER_SOCKET_LOCATION)|g" \
+	    $(PLIST_TEMPLATE) > $(PLIST_DEST)
+	-launchctl bootout gui/$$(id -u)/com.runfinch.cred-bridge 2>/dev/null || true
+	launchctl bootstrap gui/$$(id -u) $(PLIST_DEST)
+	@echo "LaunchAgent installed and loaded"
+
+.PHONY: uninstall-launch-agent
+uninstall-launch-agent:
+	@echo "Uninstalling LaunchAgent..."
+	-launchctl unload $(PLIST_DEST) 2>/dev/null || true
+	-rm $(PLIST_DEST) 2>/dev/null || true
+	@echo "LaunchAgent uninstalled"
+
+.PHONY: setup-cred-bridge
+ifeq ($(INSTALLED), true)
+setup-cred-bridge: finch-cred-bridge
+	@echo "Built credential bridge binary - service installation deferred to installer"
+else
+setup-cred-bridge: finch-cred-bridge install-launch-agent
+	@echo "Credential bridge setup complete"
+endif
+
+else ifeq ($(BUILD_OS), Windows_NT)
+# Windows Service management
+.PHONY: install-service
+install-service:
+	@echo "Installing Windows Service..."
+	sc create "FinchCredBridge" binPath= "$(FINCH_CREDHELPER_DIR)\finch-cred-bridge.exe" start= demand
+	sc description "FinchCredBridge" "Finch Credential Bridge Service"
+	@echo "Windows Service installed"
+
+.PHONY: uninstall-service
+uninstall-service:
+	@echo "Uninstalling Windows Service..."
+	-sc stop "FinchCredBridge" 2>nul
+	-sc delete "FinchCredBridge" 2>nul
+	@echo "Windows Service uninstalled"
+
+.PHONY: setup-cred-bridge
+ifeq ($(INSTALLED), true)
+setup-cred-bridge: finch-cred-bridge
+	@echo "Built credential bridge binary - service installation deferred to installer"
+else
+setup-cred-bridge: finch-cred-bridge install-service
+	@echo "Credential bridge setup complete"
+endif
+
+else
+.PHONY: install-launch-agent uninstall-launch-agent setup-cred-bridge install-service uninstall-service
+install-launch-agent uninstall-launch-agent setup-cred-bridge install-service uninstall-service:
+	@echo "Service management is platform-specific"
+endif
+
+.PHONY: make-creds
+ifeq ($(BUILD_OS), Linux)
+make-creds:
+	@echo "No credential helpers needed for Linux"
+else
+make-creds: finch-cred-bridge docker-credential-helper setup-cred-bridge
+endif

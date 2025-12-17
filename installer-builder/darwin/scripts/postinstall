@@ -33,4 +33,15 @@ pkgutil --pkgs | grep '^org\.Finch\.' | grep -v '^org\.Finch\.__VERSION__' | whi
     sudo pkgutil --forget "$pkg"
 done
 
+# Secure credential helper directory after blanket 777
+chmod 750 /Applications/Finch/finch-credhelper
+chmod 750 /Applications/Finch/finch-credhelper/finch-cred-bridge
+chmod 750 /Applications/Finch/finch-credhelper/native-creds-agent-start.sh
+chmod 750 /Applications/Finch/finch-credhelper/native-creds-agent-stop.sh
+chmod 640 /Applications/Finch/finch-credhelper/com.runfinch.cred-bridge.plist.template
+# Socket will be created by LaunchAgent with correct 600 permissions
+
+# Create and add native credhelper .plist to LaunchAgents
+/Applications/Finch/finch-credhelper/native-creds-agent-start.sh
+
 echo "Post installation process finished."

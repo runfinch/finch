@@ -39,6 +39,8 @@ MIN_MACOS_VERSION ?= 11.0
 FINCH_DAEMON_LOCATION_ROOT ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/finch-daemon
 FINCH_DAEMON_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/finch-daemon
 FINCH_DAEMON_CREDHELPER_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/docker-credential-finch
+FINCH_CREDHELPER_DIR ?= $(OUTDIR)/finch-credhelper
+FINCH_CREDHELPER_SOCKET_LOCATION ?= $(FINCH_CREDHELPER_DIR)/native-creds.sock
 
 GOOS ?= $(shell $(GO) env GOOS)
 ifeq ($(GOOS),windows)
@@ -79,7 +81,10 @@ endif
 
 FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
 
-remote-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml $(OUTDIR)/finch-daemon/finch@.service
+# Include credential helper targets
+include Makefile.creds
+
+remote-all: arch-test finch make-creds install.finch-core-dependencies finch.yaml networks.yaml config.yaml $(OUTDIR)/finch-daemon/finch@.service
 
 ifeq ($(BUILD_OS), Windows_NT)
 include Makefile.windows
@@ -260,6 +265,8 @@ download-licenses:
 
 	mkdir -p "$(LICENSEDIR)/github.com/lima-vm/lima"
 	curl https://raw.githubusercontent.com/lima-vm/lima/master/LICENSE --output "$(LICENSEDIR)/github.com/lima-vm/lima/LICENSE"
+	mkdir -p "$(LICENSEDIR)/github.com/docker/docker-credential-helpers"
+	curl https://raw.githubusercontent.com/docker/docker-credential-helpers/master/LICENSE --output "$(LICENSEDIR)/github.com/docker/docker-credential-helpers/LICENSE"
 
     ### system-level dependencies - end ###
 
@@ -405,6 +412,14 @@ mdlint:
 # If markdownlint is not installed, you can run markdownlint within a container.
 mdlint-ctr:
 	$(BINARYNAME) run --rm -v "$(shell pwd):/repo:ro" -w /repo avtodev/markdown-lint:v1 --ignore CHANGELOG.md '**/*.md'
+
+.PHONY: dev-clean
+dev-clean:
+	-@rm -rf $(OUTDIR) 2>/dev/null || true
+	-@$(MAKE) -C $(FINCH_CORE_DIR) clean
+	-@rm ./*.tar.gz 2>/dev/null || true
+	-@rm ./*.qcow2 2>/dev/null || true
+	-@rm ./test-coverage.* 2>/dev/null || true
 
 .PHONY: clean
 ifeq ($(GOOS),windows)

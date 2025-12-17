@@ -40,6 +40,12 @@ buildPkgInstaller() {
     cp ./installer-builder/darwin/Resources/uninstall.sh $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch
     sed -i '' -e 's/__VERSION__/'"${VERSION}"'/g' $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch/uninstall.sh
     
+    #copy credential helper tools and templates, need to be accessible by postinstall and for re-init on error
+    mkdir -p $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch/finch-credhelper
+    cp ./installer-builder/templates/com.runfinch.cred-bridge.plist.template $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch/finch-credhelper/
+    cp ./installer-builder/tools/native-creds-agent-start.sh $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch/finch-credhelper/
+    cp ./installer-builder/tools/native-creds-agent-stop.sh $INSTALLER_FULL_PATH/darwinpkg/Applications/Finch/finch-credhelper/
+    
     #construct pkg directory
     mkdir -p $INSTALLER_FULL_PATH/package
     mkdir -p $INSTALLER_FULL_PATH/signed

@@ -1,5 +1,11 @@
 @echo off
 SET InstallDir=%~1
+SET CredHelperDir=%InstallDir%\finch-credhelper
+
+:: Stop and remove credential bridge service
+if exist "%CredHelperDir%\native-creds-service-stop.ps1" (
+    powershell -ExecutionPolicy Bypass -File "%CredHelperDir%\native-creds-service-stop.ps1"
+)
 
 :: Stop and remove any running instance
 finch.exe vm stop -f ^ & 

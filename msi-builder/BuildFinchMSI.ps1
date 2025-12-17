@@ -63,6 +63,11 @@ Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "uninstall.bat") -D
 Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "removevm.bat") -Destination (Join-Path -Path $scriptDirectory -ChildPath "build\Finch")
 Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "finch.ico") -Destination (Join-Path -Path $scriptDirectory -ChildPath "build\Finch")
 Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "LICENSE.rtf") -Destination (Join-Path -Path $scriptDirectory -ChildPath "build\Finch")
+
+# Copy credential service management scripts to finch-credhelper directory
+$credHelperDir = Join-Path -Path $scriptDirectory -ChildPath "build\Finch\finch-credhelper"
+Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "native-creds-service-start.ps1") -Destination $credHelperDir
+Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "native-creds-service-stop.ps1") -Destination $credHelperDir
 Write-Host "Files copied successfully."
 
 # 5. Copy WiX template and update resources path and version

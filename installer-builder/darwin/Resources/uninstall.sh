@@ -37,6 +37,24 @@ else
   echo "[2/4] [ERROR] Could not delete application informations" >&2
 fi
 
+#remove credential bridge LaunchAgent
+# handle the user who ran sudo ./uninstall.sh, or all users if run directly as root
+REAL_USER="${SUDO_USER:-}"
+if [ -n "$REAL_USER" ] && [ "$REAL_USER" != "root" ]; then
+    # Single user cleanup (most common case)
+    sudo -u "$REAL_USER" launchctl bootout gui/$(id -u "$REAL_USER")/com.runfinch.cred-bridge 2>/dev/null || true
+    rm -f "/Users/$REAL_USER/Library/LaunchAgents/com.runfinch.cred-bridge.plist" 2>/dev/null || true
+else
+    # Cleanup for all users (fallback)
+    for user_home in /Users/*; do
+        if [ -d "$user_home/Library/LaunchAgents" ]; then
+            username=$(basename "$user_home")
+            sudo -u "$username" launchctl bootout gui/$(id -u "$username")/com.runfinch.cred-bridge 2>/dev/null || true
+            rm -f "$user_home/Library/LaunchAgents/com.runfinch.cred-bridge.plist" 2>/dev/null || true
+        fi
+    done
+fi
+
 #remove application source distribution
 [ -e "/Applications/Finch" ] && rm -rf /Applications/Finch && rm -rf /opt/finch && rm -rf /private/var/run/finch-lima && rm -rf /private/etc/sudoers.d/finch-lima
 if [ $? -eq 0 ]

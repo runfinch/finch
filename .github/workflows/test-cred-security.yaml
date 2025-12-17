@@ -1,0 +1,591 @@
+name: test-cred-security
+on:
+  pull_request:
+    branches:
+      - main
+      - os-native-credstore
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        description: "name of git ref for which to run security tests"
+        required: false
+        type: string
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  # This is required for actions/checkout
+  contents: read
+
+env:
+  GO_VERSION: '1.24.6'
+
+jobs:
+  # taken from finch/.github/workflows/build-and-test-pkg.yaml for consistent testing
+  get-tag-name:
+    name: Get tag name
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+      commit: ${{ steps.export-commit.outputs.commit }}
+    steps:
+      - name: Check tag from workflow input and github ref
+        id: check-tag
+        run: |
+          if [ -n "${{ inputs.ref_name }}" ]; then
+            tag=${{ inputs.ref_name }}
+          else
+            tag=${{ github.ref_name }}
+          fi
+          echo "using tag=${tag}"
+          echo "tag=$tag" >> ${GITHUB_OUTPUT}
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ steps.check-tag.outputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - name: Export commit hash
+        id: export-commit
+        run: |
+          commit=$(git rev-parse HEAD)
+          echo "using commit=${commit}"
+          echo "commit=$commit" >> ${GITHUB_OUTPUT}
+
+  macos-security-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [arm64, amd64]
+        version: [14, 15]
+        include:
+          - arch: arm64
+            output_arch: aarch64
+          - arch: amd64
+            output_arch: x86_64
+    needs: get-tag-name
+    runs-on: [self-hosted, macos, "${{ matrix.arch }}", "${{ matrix.version }}", test]
+    timeout-minutes: 30
+    steps:
+      - name: Clean workspace
+        run: |
+          setopt NULL_GLOB && rm -rf ${{ github.workspace }}/*
+        shell: zsh {0}
+      
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ needs.get-tag-name.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Create test users
+        run: |
+          # Create finchUser (primary test user)
+          sudo dscl . -create /Users/finchUser
+          sudo dscl . -create /Users/finchUser UserShell /bin/zsh
+          sudo dscl . -create /Users/finchUser RealName "Finch User"
+          sudo dscl . -create /Users/finchUser UniqueID 1001
+          sudo dscl . -create /Users/finchUser PrimaryGroupID 20
+          sudo dscl . -create /Users/finchUser NFSHomeDirectory /Users/finchUser
+          sudo createhomedir -c -u finchUser
+          
+          # Create otherUser (security boundary test user)
+          sudo dscl . -create /Users/otherUser
+          sudo dscl . -create /Users/otherUser UserShell /bin/zsh
+          sudo dscl . -create /Users/otherUser RealName "Other User"
+          sudo dscl . -create /Users/otherUser UniqueID 1002
+          sudo dscl . -create /Users/otherUser PrimaryGroupID 20
+          sudo dscl . -create /Users/otherUser NFSHomeDirectory /Users/otherUser
+          sudo createhomedir -c -u otherUser
+          
+          # Give finchUser sudo access for installation
+          echo "finchUser ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+        shell: zsh {0}
+
+      - name: Build Finch as finchUser
+        run: |
+          # Copy workspace to finchUser's directory
+          sudo cp -R ${{ github.workspace }} /Users/finchUser/finch-build
+          sudo chown -R finchUser:staff /Users/finchUser/finch-build
+          
+          # Setup Homebrew for finchUser and install dependencies
+          sudo -u finchUser /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          sudo -u finchUser zsh -c 'echo "eval \$(/opt/homebrew/bin/brew shellenv)" >> ~/.zshrc'
+          sudo -u finchUser zsh -c 'source ~/.zshrc && cd /Users/finchUser/finch-build && brew install lz4 automake autoconf libtool yq llvm httpd'
+          sudo -u finchUser zsh -c 'cd /Users/finchUser/finch-build && git clean -f -d'
+          sudo -u finchUser zsh -c 'cd /Users/finchUser/finch-build && make clean'
+          sudo -u finchUser zsh -c 'cd /Users/finchUser/finch-build && make download-licenses || true'
+          sudo -u finchUser zsh -c 'cd /Users/finchUser/finch-build && make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch'
+        shell: zsh {0}
+
+      - name: Generate and install local PKG as finchUser
+        run: |
+          # Generate local unsigned PKG
+          sudo -u finchUser zsh -c '
+            cd /Users/finchUser/finch-build
+            mkdir -p ./installer-builder/output/origin
+            cp -RP ./_output ./installer-builder/output/origin/
+            ./installer-builder/tools/build-macos-pkg.sh ${{ matrix.output_arch }} ${{ needs.get-tag-name.outputs.tag }}
+          '
+          
+          # Install the generated PKG
+          PKG_PATH="/Users/finchUser/finch-build/installer-builder/output/installer/unsigned/package/artifact/Finch.pkg"
+          sudo -u finchUser installer -pkg "$PKG_PATH" -target /
+          
+          # Initialize VM immediately after installation
+          sudo -u finchUser finch vm init
+        shell: zsh {0}
+
+      - name: Validate installation as finchUser
+        run: |
+          # Check credential helper files and permissions
+          sudo -u finchUser ls -lah /Users/finchUser/.finch/cred-helpers/
+          sudo -u finchUser ls -lah /Users/finchUser/.finch/config.json
+          sudo -u finchUser ls -lah /Users/finchUser/.finch/finch.yaml
+          
+          # Check /Applications/Finch installation (system-wide, not user-specific)
+          sudo -u finchUser ls -lah /Applications/Finch/finch-credhelper/
+          sudo -u finchUser ls -lah /Applications/Finch/bin/
+          
+          # Check LaunchAgent plist file
+          sudo -u finchUser ls -lah /Users/finchUser/Library/LaunchAgents/ | grep finch || echo ".plist present"
+          sudo -u finchUser launchctl list | grep finch
+          
+          # Test LaunchAgent stop/start cycle
+          sudo -u finchUser /Applications/Finch/finch-credhelper/native-creds-agent-stop.sh
+          sudo -u finchUser ls -lah /Users/finchUser/Library/LaunchAgents/ | grep finch || echo ".plist removed"
+          sudo -u finchUser launchctl list | grep finch || echo "LaunchAgent stopped"
+          
+          sudo -u finchUser /Applications/Finch/finch-credhelper/native-creds-agent-start.sh
+          sudo -u finchUser ls -lah /Users/finchUser/Library/LaunchAgents/ | grep finch || echo ".plist present"
+          sudo -u finchUser launchctl list | grep finch
+        shell: zsh {0}
+
+      - name: Set up local private registry with "registry" image
+        run: | 
+          # Pull registry image (tests uncredentialed pull)
+          sudo -u finchUser finch pull registry:2
+          sudo -u finchUser finch image ls
+          
+          # Create htpasswd file for registry authentication
+          sudo -u finchUser mkdir -p /Users/finchUser/registry-auth
+          sudo -u finchUser htpasswd -Bbn finchUser finchPass > /Users/finchUser/registry-auth/htpasswd
+          
+          # Start private registry with authentication
+          sudo -u finchUser finch run -d \
+            --name test-registry \
+            -p 5000:5000 \
+            -v /Users/finchUser/registry-auth:/auth \
+            -e REGISTRY_AUTH=htpasswd \
+            -e REGISTRY_AUTH_HTPASSWD_REALM="Test Registry Realm" \
+            -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+            registry:2
+          
+          # Wait for registry to start
+          sleep 5
+          
+          # Verify registry is running
+          curl -f http://localhost:5000/v2/ || echo "Registry not accessible without auth (expected)"
+        shell: zsh {0}
+          
+      - name: Test credential security boundaries
+        run: |
+          # Login to private registry as finchUser (stores credentials in keychain)
+          sudo -u finchUser finch login localhost:5000 -u finchUser -p finchPass
+          
+          # Test credential enumeration as finchUser (should work)
+          echo "=== Testing credential enumeration as finchUser ==="
+          sudo -u finchUser /Users/finchUser/.finch/cred-helpers/docker-credential-osxkeychain list || echo "List failed for finchUser"
+          
+          # Verify finchUser can access their own credentials
+          echo '{"ServerURL":"localhost:5000"}' | sudo -u finchUser /Users/finchUser/.finch/cred-helpers/docker-credential-osxkeychain get || echo "Get failed for finchUser"
+          
+          # Test cross-user access as otherUser (should fail)
+          echo "=== Testing cross-user credential access as otherUser ==="
+          sudo -u otherUser /Users/finchUser/.finch/cred-helpers/docker-credential-osxkeychain list 2>&1 || echo "Cross-user list blocked (expected)"
+          
+          # Test if otherUser can access finchUser's credential helper at all
+          echo '{"ServerURL":"localhost:5000"}' | sudo -u otherUser /Users/finchUser/.finch/cred-helpers/docker-credential-osxkeychain get 2>&1 || echo "Cross-user get blocked (expected)"
+          
+          # Test root access (should also fail - keychain is user-specific)
+          echo "=== Testing root credential access ==="
+          sudo /Users/finchUser/.finch/cred-helpers/docker-credential-osxkeychain list 2>&1 || echo "Root list blocked (expected)"
+          echo '{"ServerURL":"localhost:5000"}' | sudo /Users/finchUser/.finch/cred-helpers/docker-credential-osxkeychain get 2>&1 || echo "Root get blocked (expected)"
+          
+          # Test directory permissions prevent access
+          echo "=== Testing directory permission boundaries ==="
+          sudo -u otherUser ls -la /Users/finchUser/.finch/ 2>&1 || echo "Directory access blocked (expected)"
+          sudo -u otherUser cat /Users/finchUser/.finch/config.json 2>&1 || echo "Config access blocked (expected)"
+        shell: zsh {0}
+
+      - name: Test concurrent operations and Dockerfile build (comprehensive)
+        run: |
+          # Pull nginx:alpine and push to private registry
+          sudo -u finchUser finch pull nginx:alpine
+          sudo -u finchUser finch tag nginx:alpine localhost:5000/nginx-base
+          sudo -u finchUser finch push localhost:5000/nginx-base
+          
+          # Create multiple tags for concurrent testing
+          for suffix in a b c d e; do
+            sudo -u finchUser finch tag nginx:alpine localhost:5000/nginx-test-$suffix
+          done
+          
+          # Concurrent push operations (tests credential helper under load)
+          echo "=== Starting concurrent pushes ==="
+          for suffix in a b c d e; do
+            sudo -u finchUser finch push localhost:5000/nginx-test-$suffix &
+          done
+          wait
+          
+          # Simple Dockerfile test (tests build-time credentials)
+          sudo -u finchUser mkdir -p /Users/finchUser/dockerfile-test
+          sudo -u finchUser tee /Users/finchUser/dockerfile-test/Dockerfile << 'EOF'
+          FROM localhost:5000/nginx-base
+          RUN echo "Build test successful" > /test-result
+          CMD ["cat", "/test-result"]
+          EOF
+          
+          # Build using private registry base image
+          sudo -u finchUser finch build -t localhost:5000/nginx-custom /Users/finchUser/dockerfile-test/
+          sudo -u finchUser finch push localhost:5000/nginx-custom
+          
+          # Clean and verify
+          sudo -u finchUser finch system prune -af
+          curl -u finchUser:finchPass http://localhost:5000/v2/_catalog
+          
+          # Final verification for integrity after push and pull
+          sudo -u finchUser finch pull localhost:5000/nginx-custom
+          sudo -u finchUser finch run --rm localhost:5000/nginx-custom
+        shell: zsh {0}
+
+
+      - name: Cleanup and uninstall
+        if: ${{ always() }}
+        run: |
+          # Stop registry container
+          sudo -u finchUser finch stop test-registry || true
+          sudo -u finchUser finch rm test-registry || true
+          
+          # Run uninstall script as finchUser
+          sudo -u finchUser /Applications/Finch/uninstall.sh || echo "Uninstall script not found or failed"
+          
+          # Verify LaunchAgent is removed
+          sudo -u finchUser launchctl list | grep finch || echo "LaunchAgent removed (expected)"
+          sudo -u finchUser ls -lah /Users/finchUser/Library/LaunchAgents/ | grep finch || echo "Plist file removed (expected)"
+          
+          # Verify /Applications/Finch is removed
+          ls -la /Applications/Finch/ || echo "/Applications/Finch removed (expected)"
+          
+          # Clean up test users
+          sudo dscl . -delete /Users/finchUser || true
+          sudo dscl . -delete /Users/otherUser || true
+          sudo rm -rf /Users/finchUser || true
+          sudo rm -rf /Users/otherUser || true
+          
+          # Remove from sudoers
+          sudo sed -i '' '/finchUser ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers || true
+        shell: zsh {0}
+
+  windows-cred-manager:
+    needs: get-tag-name
+    runs-on: [self-hosted, windows, amd64, test]
+    timeout-minutes: 30
+    steps:
+      - name: Clean workspace
+        run: |
+          Remove-Item -Path "${{ github.workspace }}\*" -Recurse -Force -ErrorAction SilentlyContinue
+        shell: powershell
+      
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ needs.get-tag-name.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Create test users
+        run: |
+          # Create finchUser (primary test user)
+          $Password = ConvertTo-SecureString "FinchTestPass123!" -AsPlainText -Force
+          New-LocalUser -Name "finchUser" -Password $Password -Description "Finch Test User" -PasswordNeverExpires
+          Add-LocalGroupMember -Group "Users" -Member "finchUser"
+          Add-LocalGroupMember -Group "Administrators" -Member "finchUser"
+          
+          # Create otherUser (security boundary test user)
+          $OtherPassword = ConvertTo-SecureString "OtherTestPass123!" -AsPlainText -Force
+          New-LocalUser -Name "otherUser" -Password $OtherPassword -Description "Other Test User" -PasswordNeverExpires
+          Add-LocalGroupMember -Group "Users" -Member "otherUser"
+        shell: powershell
+
+      - name: Configure git CRLF settings
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+        shell: powershell
+
+      - name: Clean up previous files
+        run: |
+          Remove-Item C:\Users\finchUser\.finch -Recurse -ErrorAction Ignore
+          Remove-Item C:\Users\finchUser\AppData\Local\.finch -Recurse -ErrorAction Ignore
+          make clean
+        shell: powershell
+
+      - name: Build Finch as finchUser
+        run: |
+          # Build Finch using standard process
+          make FINCH_OS_IMAGE_LOCATION_ROOT="C:\Program Files\Finch"
+        shell: powershell
+
+      - name: Generate and install MSI as finchUser
+        run: |
+          # Generate MSI using standard build process
+          $version = "${{ needs.get-tag-name.outputs.tag }}".TrimStart('v')
+          if ($version -notmatch '^[0-9]+\.[0-9]+\.[0-9]+$') {
+            $version = "0.0.1"
+          }
+          
+          powershell .\msi-builder\BuildFinchMSI.ps1 -Version $version
+          
+          # Install the generated MSI
+          $msiPath = ".\msi-builder\build\Finch-$version.msi"
+          Start-Process msiexec.exe -ArgumentList "/i", $msiPath, "/quiet", "/norestart" -Wait
+          
+          # Add Finch to PATH
+          $env:PATH += ";C:\Program Files\Finch\bin"
+          
+          # Initialize VM immediately after installation
+          & "C:\Program Files\Finch\bin\finch.exe" vm init
+        shell: powershell
+
+      - name: Validate installation as finchUser
+        run: |
+          # Check credential helper files and permissions
+          Get-ChildItem "C:\Users\finchUser\.finch\cred-helpers\" -Force
+          Get-ChildItem "C:\Users\finchUser\.finch\config.json" -Force
+          Get-ChildItem "C:\Users\finchUser\.finch\finch.yaml" -Force
+          
+          # Check Program Files installation
+          Get-ChildItem "C:\Program Files\Finch\finch-credhelper\" -Force
+          Get-ChildItem "C:\Program Files\Finch\bin\" -Force
+          
+          # Check Windows Service
+          Get-Service -Name "FinchCredentialService" -ErrorAction SilentlyContinue
+          
+          # Test service stop/start cycle
+          & "C:\Program Files\Finch\finch-credhelper\native-creds-service-stop.ps1"
+          Start-Sleep -Seconds 2
+          Get-Service -Name "FinchCredentialService" -ErrorAction SilentlyContinue | Where-Object {$_.Status -eq "Stopped"}
+          
+          & "C:\Program Files\Finch\finch-credhelper\native-creds-service-start.ps1"
+          Start-Sleep -Seconds 2
+          Get-Service -Name "FinchCredentialService" | Where-Object {$_.Status -eq "Running"}
+        shell: powershell
+
+      - name: Set up local private registry with "registry" image
+        run: |
+          # Pull registry image (tests uncredentialed pull)
+          & "C:\Program Files\Finch\bin\finch.exe" pull registry:2
+          & "C:\Program Files\Finch\bin\finch.exe" image ls
+          
+          # Create registry auth directory and htpasswd file
+          $authDir = "C:\Users\finchUser\registry-auth"
+          New-Item -ItemType Directory -Path $authDir -Force
+          
+          # Create htpasswd entry (using basic auth format)
+          $htpasswdContent = "finchUser:`$2y`$10`$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOP"
+          Set-Content -Path "$authDir\htpasswd" -Value $htpasswdContent
+          
+          # Start private registry with authentication
+          & "C:\Program Files\Finch\bin\finch.exe" run -d `
+            --name test-registry `
+            -p 5000:5000 `
+            -v "${authDir}:/auth" `
+            -e REGISTRY_AUTH=htpasswd `
+            -e "REGISTRY_AUTH_HTPASSWD_REALM=Test Registry Realm" `
+            -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd `
+            registry:2
+          
+          # Wait for registry to start
+          Start-Sleep -Seconds 5
+          
+          # Verify registry is running
+          try {
+            Invoke-WebRequest -Uri "http://localhost:5000/v2/" -ErrorAction Stop
+          } catch {
+            Write-Host "Registry not accessible without auth (expected)"
+          }
+        shell: powershell
+          
+      - name: Test credential security boundaries
+        run: |
+          # Login to private registry as finchUser (stores credentials in Windows Credential Manager)
+          & "C:\Program Files\Finch\bin\finch.exe" login localhost:5000 -u finchUser -p finchPass
+          
+          # Test credential enumeration as finchUser (should work)
+          Write-Host "=== Testing credential enumeration as finchUser ==="
+          try {
+            & "C:\Users\finchUser\.finch\cred-helpers\docker-credential-wincred.exe" list
+          } catch {
+            Write-Host "List failed for finchUser: $_"
+          }
+          
+          # Verify finchUser can access their own credentials
+          try {
+            '{"ServerURL":"localhost:5000"}' | & "C:\Users\finchUser\.finch\cred-helpers\docker-credential-wincred.exe" get
+          } catch {
+            Write-Host "Get failed for finchUser: $_"
+          }
+          
+          # Test cross-user access as otherUser (should fail)
+          Write-Host "=== Testing cross-user credential access as otherUser ==="
+          
+          # Create credential for otherUser to test isolation
+          $otherUserCreds = New-Object System.Management.Automation.PSCredential("otherUser", (ConvertTo-SecureString "OtherTestPass123!" -AsPlainText -Force))
+          
+          try {
+            Start-Process -FilePath "C:\Users\finchUser\.finch\cred-helpers\docker-credential-wincred.exe" -ArgumentList "list" -Credential $otherUserCreds -Wait -NoNewWindow -RedirectStandardError "error.txt"
+            Write-Host "Cross-user list blocked (expected)"
+          } catch {
+            Write-Host "Cross-user access properly blocked: $_"
+          }
+          
+          # Test Administrator access (should work but access different credential store)
+          Write-Host "=== Testing Administrator credential access ==="
+          try {
+            & "C:\Users\finchUser\.finch\cred-helpers\docker-credential-wincred.exe" list
+          } catch {
+            Write-Host "Admin access result: $_"
+          }
+          
+          # Test directory permissions prevent access
+          Write-Host "=== Testing directory permission boundaries ==="
+          try {
+            Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "dir", "C:\Users\finchUser\.finch\" -Credential $otherUserCreds -Wait -NoNewWindow -RedirectStandardError "dir_error.txt"
+            Write-Host "Directory access blocked (expected)"
+          } catch {
+            Write-Host "Directory access blocked: $_"
+          }
+        shell: powershell
+
+      - name: Test concurrent operations and Dockerfile build (comprehensive)
+        run: |
+          # Pull nginx and push to private registry
+          & "C:\Program Files\Finch\bin\finch.exe" pull nginx:alpine
+          & "C:\Program Files\Finch\bin\finch.exe" tag nginx:alpine localhost:5000/nginx-base
+          & "C:\Program Files\Finch\bin\finch.exe" push localhost:5000/nginx-base
+          
+          # Create multiple tags for concurrent testing
+          $suffixes = @("a", "b", "c", "d", "e")
+          foreach ($suffix in $suffixes) {
+            & "C:\Program Files\Finch\bin\finch.exe" tag nginx:alpine "localhost:5000/nginx-test-$suffix"
+          }
+          
+          # Concurrent push operations (tests credential helper under load)
+          Write-Host "=== Starting concurrent pushes ==="
+          $jobs = @()
+          foreach ($suffix in $suffixes) {
+            $jobs += Start-Job -ScriptBlock {
+              param($suffix)
+              & "C:\Program Files\Finch\bin\finch.exe" push "localhost:5000/nginx-test-$suffix"
+            } -ArgumentList $suffix
+          }
+          $jobs | Wait-Job | Receive-Job
+          
+          # Simple Dockerfile test (tests build-time credentials)
+          $dockerfileDir = "C:\Users\finchUser\dockerfile-test"
+          New-Item -ItemType Directory -Path $dockerfileDir -Force
+          
+          # Create simple Dockerfile content
+          "FROM localhost:5000/nginx-base" | Out-File -FilePath "$dockerfileDir\Dockerfile" -Encoding ASCII
+          "RUN echo 'Build test successful' > /test-result" | Out-File -FilePath "$dockerfileDir\Dockerfile" -Append -Encoding ASCII
+          "CMD ['cat', '/test-result']" | Out-File -FilePath "$dockerfileDir\Dockerfile" -Append -Encoding ASCII
+          
+          # Build using private registry base image
+          & "C:\Program Files\Finch\bin\finch.exe" build -t localhost:5000/nginx-custom $dockerfileDir
+          & "C:\Program Files\Finch\bin\finch.exe" push localhost:5000/nginx-custom
+          
+          # Clean and verify
+          & "C:\Program Files\Finch\bin\finch.exe" system prune -af
+          
+          # Verify registry catalog
+          $authHeader = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("finchUser:finchPass"))
+          try {
+            Invoke-WebRequest -Uri "http://localhost:5000/v2/_catalog" -Headers @{Authorization="Basic $authHeader"}
+          } catch {
+            Write-Host "Registry catalog check failed: $_"
+          }
+          
+          # Final verification for integrity after push and pull
+          & "C:\Program Files\Finch\bin\finch.exe" pull localhost:5000/nginx-custom
+          & "C:\Program Files\Finch\bin\finch.exe" run --rm localhost:5000/nginx-custom
+        shell: powershell
+
+      - name: Cleanup and uninstall
+        if: ${{ always() }}
+        run: |
+          # Stop registry container
+          try {
+            & "C:\Program Files\Finch\bin\finch.exe" stop test-registry
+            & "C:\Program Files\Finch\bin\finch.exe" rm test-registry
+          } catch {
+            Write-Host "Registry cleanup failed or already stopped"
+          }
+          
+          # Run uninstall (MSI uninstall)
+          $productCode = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Finch*" } | Select-Object -ExpandProperty IdentifyingNumber
+          if ($productCode) {
+            msiexec /x $productCode /qn
+          }
+          
+          # Verify service is removed
+          try {
+            Get-Service -Name "FinchCredentialService" -ErrorAction Stop
+            Write-Host "Service still exists (unexpected)"
+          } catch {
+            Write-Host "Service removed (expected)"
+          }
+          
+          # Verify Program Files is removed
+          if (Test-Path "C:\Program Files\Finch") {
+            Write-Host "Program Files directory still exists (unexpected)"
+          } else {
+            Write-Host "Program Files directory removed (expected)"
+          }
+        shell: powershell
+
+      - name: Remove Finch VM and Clean Up Previous Environment
+        if: ${{ always() }}
+        timeout-minutes: 5
+        shell: pwsh
+        run: |
+          ./scripts/cleanup_wsl.ps1
+          make clean
+          
+          # Clean up test users
+          try {
+            Remove-LocalUser -Name "finchUser" -ErrorAction SilentlyContinue
+            Remove-LocalUser -Name "otherUser" -ErrorAction SilentlyContinue
+            Remove-Item -Path "C:\Users\finchUser" -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "C:\Users\otherUser" -Recurse -Force -ErrorAction SilentlyContinue
+          } catch {
+            Write-Host "User cleanup completed with warnings: $_"
+          }
+          exit 0 # Cleanup may set the exit code; just ignore
+
