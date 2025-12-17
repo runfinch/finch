@@ -14,9 +14,9 @@ import (
 
 	"github.com/runfinch/finch/pkg/mocks"
 
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 )
 
 const nerdctlMockVersion = `{
@@ -115,7 +115,6 @@ func TestVersionAction_runAdaptor(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -295,7 +294,6 @@ func TestVersionAction_run(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 

@@ -1,0 +1,23 @@
+name: e2e-ubuntu
+on:
+  workflow_call:
+    inputs:
+      arch:
+        type: string
+        required: true
+      output-arch:
+        type: string
+        required: true
+
+jobs:
+  e2e-ubuntu-finch:
+    uses: ./.github/workflows/e2e-ubuntu-finch.yaml
+    with:
+      arch: ${{ inputs.arch }}
+      output-arch: ${{ inputs.output-arch }}
+
+  e2e-ubuntu-finch-daemon:
+    uses: ./.github/workflows/e2e-ubuntu-finch-daemon.yaml
+    with:
+      arch: ${{ inputs.arch }}
+      output-arch: ${{ inputs.output-arch }}

@@ -14,11 +14,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
@@ -1247,6 +1247,35 @@ func TestNerdctlCommand_run(t *testing.T) {
 					"--tty=true", "--debug-full=false", "--sig-proxy=0",
 					"--experimental=false", "--oom-kill-disable=false", "--read-only=false",
 					"--privileged=false", "alpine:latest", "env").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
+			name: "with single letter entry in args",
+			cmd: &cobra.Command{
+				Use: "run",
+			},
+			fc:      &config.Finch{},
+			args:    []string{"-i", "--name", "myContainer", "--rm", "a", "env"},
+			wantErr: nil,
+			mockSvc: func(
+				_ *testing.T,
+				lcc *mocks.NerdctlCmdCreator,
+				_ *mocks.CommandCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				_ afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				AddEmptyEnvLookUps(ncsd)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().
+					Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "run",
+						"-i", "--name", "myContainer", "--rm", "a", "env").Return(c)
 				c.EXPECT().Run()
 			},
 		},

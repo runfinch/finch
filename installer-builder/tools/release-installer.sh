@@ -1,4 +1,6 @@
 #!/bin/bash
+set -o errexit
+set -o pipefail
 
 source ./installer-builder/tools/artifact-helper.sh
 

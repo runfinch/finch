@@ -39,7 +39,7 @@ func rosettaDefault(cfg *Finch) {
 
 func memoryDefault(cfg *Finch, mem fmemory.Memory) {
 	if cfg.Memory == nil {
-		defaultMemory := math.Round(float64(mem.TotalMemory()) * 0.25)
+		defaultMemory := math.Round(float64(mem.TotalMemory()) * 0.5)
 		if defaultMemory >= fallbackMemory {
 			cfg.Memory = pointer.String(units.BytesSize(defaultMemory))
 		} else {
@@ -50,7 +50,7 @@ func memoryDefault(cfg *Finch, mem fmemory.Memory) {
 
 func cpuDefault(cfg *Finch, deps LoadSystemDeps) {
 	if cfg.CPUs == nil {
-		defaultCPUs := int(math.Round(float64(deps.NumCPU()) * 0.25))
+		defaultCPUs := int(math.Round(float64(deps.NumCPU()) * 0.5))
 		if defaultCPUs >= fallbackCPUs {
 			cfg.CPUs = pointer.Int(defaultCPUs)
 		} else {

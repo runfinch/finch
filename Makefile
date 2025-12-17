@@ -28,7 +28,7 @@ VDE_INSTALL ?= /opt/finch
 ARCH ?= $(shell uname -m)
 SUPPORTED_ARCH = false
 LICENSEDIR := $(OUTDIR)/license-files
-VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified'  --abbrev=0 --always --tags)
 GITCOMMIT ?= $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 VERSION_INJECTION := -X $(PACKAGE)/pkg/version.Version=$(VERSION)
 VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
@@ -38,6 +38,7 @@ MIN_MACOS_VERSION ?= 11.0
 
 FINCH_DAEMON_LOCATION_ROOT ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/finch-daemon
 FINCH_DAEMON_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/finch-daemon
+FINCH_DAEMON_CREDHELPER_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/docker-credential-finch
 
 GOOS ?= $(shell $(GO) env GOOS)
 ifeq ($(GOOS),windows)
@@ -58,7 +59,7 @@ endif
 
 # This variable is used to inject the version of Lima (via ldflags) to be used with Lima's
 # osutil.LimaUser function.
-LIMA_TAG=$(shell cd deps/finch-core/src/lima && git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+LIMA_TAG=$(shell cd deps/finch-core/src/lima && git describe --match 'v[0-9]*' --dirty='.modified'  --abbrev=0 --always --tags)
 LIMA_VERSION := $(patsubst v%,%,$(LIMA_TAG))
 # This value isn't used on Linux, but the symbol is currently defined on all platforms, so
 # it doesn't hurt to always inject it right now.
@@ -102,6 +103,14 @@ CONTAINER_RUNTIME_ARCHIVE_AARCH64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(AARCH64_AR
 CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST ?= "sha256:$(AARCH64_256_DIGEST)"
 CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(X86_64_ARTIFACT)"
 CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST ?= "sha256:$(X86_64_256_DIGEST)"
+
+# For Finch on macOS and Windows, the runc override locations and digests are set
+# based on the values set in deps/finch-core/deps/runc-override.conf
+-include $(FINCH_CORE_DIR)/deps/runc-override.conf
+RUNC_OVERRIDE_AARCH64_LOCATION ?= "$(RUNC_ARTIFACT_BASE_URL)/$(RUNC_AARCH64_ARTIFACT)"
+RUNC_OVERRIDE_AARCH64_DIGEST ?= "sha256:$(RUNC_AARCH64_256_DIGEST)"
+RUNC_OVERRIDE_X86_64_LOCATION ?= "$(RUNC_ARTIFACT_BASE_URL)/$(RUNC_X86_64_ARTIFACT)"
+RUNC_OVERRIDE_X86_64_DIGEST ?= "sha256:$(RUNC_X86_64_256_DIGEST)"
 
 .PHONY: finch.yaml
 finch.yaml: $(OS_OUTDIR)/finch.yaml
@@ -199,9 +208,9 @@ download-licenses:
 
     ### dependencies in tools.go - start ###
 
-    # for github.com/golang/mock/mockgen
-	mkdir -p "$(LICENSEDIR)/github.com/golang/mock"
-	curl https://raw.githubusercontent.com/golang/mock/main/LICENSE --output "$(LICENSEDIR)/github.com/golang/mock/LICENSE"
+    # for go.uber.org/mock/mockgen
+	mkdir -p "$(LICENSEDIR)/go.uber.org/mock"
+	curl https://raw.githubusercontent.com/golang/mock/main/LICENSE --output "$(LICENSEDIR)/go.uber.org/mock/LICENSE"
     # for github.com/google/go-licenses
 	mkdir -p "$(LICENSEDIR)/github.com/google/go-licenses"
 	curl https://raw.githubusercontent.com/google/go-licenses/master/LICENSE --output "$(LICENSEDIR)/github.com/google/go-licenses/LICENSE"
@@ -277,7 +286,7 @@ check-licenses: GOBIN = $(CURDIR)/tools_bin
 check-licenses:
 	go mod download
 	GOBIN=$(GOBIN) go install github.com/google/go-licenses
-	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --ignore  github.com/multiformats/go-base36 --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT --include_tests ./...
+	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --ignore  github.com/multiformats/go-base36 --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT,MPL-2.0 --include_tests ./...
 
 COVERAGE_THRESH = 60
 .PHONY: test-unit
@@ -335,6 +344,23 @@ test-e2e-daemon:
 	  --daemon-context-subject-prefix="$(OUTDIR)/lima/bin/limactl shell finch sudo" \
 	  --daemon-context-subject-env="LIMA_HOME=$(OUTDIR)/lima/data"
 
+# TODO: Blkio devices are not getting created in test environment, skipping for now
+.PHONY: test-e2e-daemon-linux
+test-e2e-daemon-linux:
+	# Create symlink for buildkit socket path compatibility
+	mkdir -p /run/buildkit
+	mkdir -p /var/lib/finch/buildkit
+	ln -sf /var/lib/finch/buildkit/buildkitd.sock /run/buildkit/buildkitd.sock || true
+	cd $(FINCH_CORE_DIR)/src/finch-daemon && \
+	DOCKER_HOST="unix:///run/finch.sock" \
+	DOCKER_API_VERSION="v1.41" \
+	TEST_E2E=1 \
+	go test ./e2e -p 1 -timeout 2h -test.v -ginkgo.v \
+	-ginkgo.flake-attempts=3 \
+	-ginkgo.skip="should create container with specified blkio settings options" \
+	-ginkgo.randomize-all  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
+    --subject="/usr/bin/finch" 
+
 .PHONY: test-benchmark
 test-benchmark:
 	cd benchmark/all && go test -ldflags $(LDFLAGS) -bench=. -benchmem --installed="$(INSTALLED)"
@@ -354,7 +380,7 @@ test-benchmark-container:
 # To add a new tool binary to the recipe below, please also checkout out `pkg/tools.go`.
 gen-code: GOBIN = $(CURDIR)/tools_bin
 gen-code:
-	GOBIN=$(GOBIN) go install github.com/golang/mock/mockgen
+	GOBIN=$(GOBIN) go install go.uber.org/mock/mockgen
 	GOBIN=$(GOBIN) go install golang.org/x/tools/cmd/stringer
 	# Make sure that we are using the tool binaries which are just built to generate code.
 ifeq ($(GOOS),windows)

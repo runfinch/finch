@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	ffmpegSociImage = "public.ecr.aws/soci-workshop-examples/ffmpeg:latest"
+	ffmpegSociImage = "public.ecr.aws/soci-workshop-examples/ffmpeg_v2:latest"
 	registryImage   = "public.ecr.aws/docker/library/registry:latest"
 	ubuntuImage     = "public.ecr.aws/docker/library/ubuntu:23.10"
 	sociMountString = "fuse.rawBridge"
@@ -59,6 +59,7 @@ var testSoci = func(o *option.Option, installed bool) {
 				"sudo", "nerdctl", "--snapshotter=soci", "pull", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
 			nerdctlPullMounts := countMounts(limactlO)
 			command.Run(o, "rmi", "-f", ffmpegSociImage)
+			gomega.Expect(finchPullMounts).ShouldNot(gomega.BeZero())
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
 		})
 
@@ -68,13 +69,14 @@ var testSoci = func(o *option.Option, installed bool) {
 			writeFile(finchConfigFilePath, []byte(fmt.Sprintf("cpus: 6\nmemory: 4GiB\nsnapshotters:\n    "+
 				"- soci\nvmType: %s\nrosetta: false", vmType)))
 			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
-			command.New(o, "run", "--snapshotter=soci", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
+			command.New(o, "run", "--snapshotter=soci", ffmpegSociImage, "-version").WithTimeoutInSeconds(30).Run()
 			finchPullMounts := countMounts(limactlO)
 			command.Run(o, "rmi", "-f", ffmpegSociImage)
 			command.New(limactlO, "shell", "finch",
-				"sudo", "nerdctl", "--snapshotter=soci", "run", ffmpegSociImage).WithTimeoutInSeconds(30).Run()
+				"sudo", "nerdctl", "--snapshotter=soci", "run", ffmpegSociImage, "-version").WithTimeoutInSeconds(30).Run()
 			nerdctlPullMounts := countMounts(limactlO)
 			command.Run(o, "rmi", "-f", ffmpegSociImage)
+			gomega.Expect(finchPullMounts).ShouldNot(gomega.BeZero())
 			gomega.Expect(finchPullMounts).Should(gomega.Equal(nerdctlPullMounts))
 		})
 		ginkgo.It("finch push should work", func() {
@@ -104,6 +106,6 @@ var testSoci = func(o *option.Option, installed bool) {
 
 // counts the mounts present in the VM after pulling an image.
 func countMounts(limactlO *option.Option) int {
-	mountOutput := command.StdoutStr(limactlO, "shell", "finch", "mount")
+	mountOutput := command.StdoutStr(limactlO, "shell", "finch", "mount", "--type=fuse.rawBridge")
 	return strings.Count(mountOutput, sociMountString)
 }

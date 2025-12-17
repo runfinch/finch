@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  GO_VERSION: '1.23.8'
+  GO_VERSION: '1.24.6'
 
 jobs:
   test:
@@ -38,6 +38,9 @@ jobs:
       container_report: ${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}
       vm_serial_report: ${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}  
     steps:
+      - name: Clean GitHub runner workspace
+        run: |
+          Remove-Item -Path "${{ github.workspace }}\*" -Recurse -Force -ErrorAction SilentlyContinue
       - name: Configure git CRLF settings
         run: |
           git config --global core.autocrlf false
@@ -46,7 +49,7 @@ jobs:
         run: |
           takeown /F C:\actions-runner\_work\finch /R
           Remove-Item C:\actions-runner\_work\finch\finch -Recurse -Force -ErrorAction Ignore
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0
@@ -59,7 +62,7 @@ jobs:
           echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
+        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
         if: env.has_creds == 'true'
         with:
           role-to-assume: ${{ secrets.ROLE }}
@@ -74,7 +77,7 @@ jobs:
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
           make clean
           cd deps/finch-core && make clean
-      - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
@@ -104,7 +107,7 @@ jobs:
           "VM_SERIAL_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-vm-serial-report.json" >> $env:GITHUB_OUTPUT
       - name: Upload reports artifact
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: windows-${{ inputs.test-command }}-2022-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
           path: ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-*.json

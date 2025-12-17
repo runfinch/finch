@@ -11,9 +11,9 @@ import (
 	"path"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/xorcare/pointer"
+	"go.uber.org/mock/gomock"
 
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/mocks"

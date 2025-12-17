@@ -20,9 +20,9 @@ import (
 )
 
 const (
-	sociVersion                              = "0.9.0"
-	sociAMD64Sha256Sum                       = "deff4c4d5aeaf88cf658f487dbde800e4073f4714d55c36d20bd8097350173c9"
-	sociARM64Sha256Sum                       = "836922af9284923934bcbd0e721fe6218d3acbe1c3ab150f5adca1f89496a276"
+	sociVersion                              = "0.11.1"
+	sociAMD64Sha256Sum                       = "52d72692880150f974a48dbfa44bff01f1a3ba97815658cc16f835e5e7f96d49"
+	sociARM64Sha256Sum                       = "da055b182000dbac3e916a8c731cbc0d7a204791311260c94d960a1160d25b3e"
 	snapshotterProvisioningScriptHeader      = "# snapshotter provisioning script"
 	sociInstallationProvisioningScriptHeader = snapshotterProvisioningScriptHeader + ": soci"
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
@@ -137,6 +137,10 @@ func (lca *limaConfigApplier) ConfigureDefaultLimaYaml() error {
 	if limaCfg.Rosetta.Enabled == nil {
 		limaCfg.Rosetta.Enabled = pointer.Bool(false)
 		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
+	}
+
+	if lca.cfg.Experimental.MountInotify {
+		limaCfg.MountInotify = pointer.Bool(lca.cfg.Experimental.MountInotify)
 	}
 
 	cfgAfterInit, err := lca.configureVirtualizationFramework(&limaCfg)

@@ -7,11 +7,13 @@ jobs:
   get-latest-tag:
     name: Get the latest release tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 2
     outputs:
       tag: ${{ steps.latest-tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
             fetch-depth: 0
       - name: 'Get the latest tag'
@@ -30,6 +32,11 @@ jobs:
       - get-latest-tag
       - build-and-test-finch-pkg
     uses: ./.github/workflows/upload-installer-to-release.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write
+      contents: write # this is used to upload to the release
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
@@ -37,6 +44,11 @@ jobs:
   build-and-test-finch-msi:
     needs: get-latest-tag
     uses: ./.github/workflows/build-and-test-msi.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write
+      contents: read # this is required for actions/checkout
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
@@ -46,6 +58,111 @@ jobs:
       - get-latest-tag
       - build-and-test-finch-msi
     uses: ./.github/workflows/upload-msi-to-release.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write
+      contents: write # this is required for actions/checkout
     secrets: inherit
     with:
       ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+
+  build-and-test-finch-deb:
+    needs: get-latest-tag
+    uses: ./.github/workflows/build-and-test-deb.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write
+      contents: read # this is required for actions/checkout
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+  
+  upload-deb-to-release:
+    needs:
+      - get-latest-tag
+      - build-and-test-finch-deb
+    uses: ./.github/workflows/upload-deb-to-release.yaml
+    permissions:
+      # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+      # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+      id-token: write 
+      contents: write # this is required for uploading the release assets
+    secrets: inherit
+    with:
+      ref_name: ${{ needs.get-latest-tag.outputs.tag }}
+
+  update-latest-version-in-s3:
+    needs: 
+      - get-latest-tag
+      - upload-pkg-and-dependency-source-code-to-release
+      - upload-msi-to-release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: update-latest-version-in-s3
+          aws-region: ${{ secrets.REGION }}
+          
+      - name: Update latest version in S3
+        run: |
+          # Create latest-version.json with the latest Finch release version to track updates
+          cat > latest-version.json << EOF
+          {
+            "latest_version": "${{ needs.get-latest-tag.outputs.tag }}"
+          }
+          EOF
+          
+          # Upload to S3
+          aws s3 cp latest-version.json s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/manifest/latest-version.json --content-type "application/json"
+
+  upload-release-definition-to-s3:
+    needs: 
+      - get-latest-tag
+      - upload-msi-to-release
+      - upload-pkg-and-dependency-source-code-to-release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
+        with:
+          role-to-assume: ${{ vars.AWS_RELEASE_TRIGGER_ROLE }}
+          role-session-name: upload-release-definition-to-s3
+          aws-region: ${{ vars.AWS_RELEASE_TRIGGER_REGION }}
+          
+      - name: Create and upload release definition to S3
+        run: |
+          # Extract version without 'v' prefix for filename
+          VERSION="${{ needs.get-latest-tag.outputs.tag }}"
+          VERSION_NO_V="${VERSION#v}"
+          
+          # Create release definition JSON file
+          cat > "release-def-${VERSION_NO_V}.json" << EOF
+          {
+              "tag_name": "${VERSION}",
+              "assets": [
+                  {
+                      "name": "Finch-${{ needs.get-latest-tag.outputs.tag }}-aarch64.pkg",
+                      "os": "mac",
+                      "architecture": "aarch64"
+                  },
+                  {
+                      "name": "Finch-${{ needs.get-latest-tag.outputs.tag }}-x86_64.pkg",
+                      "os": "mac",
+                      "architecture": "x86_64"
+                  }
+              ]
+          }
+          EOF
+          
+          # Upload to S3
+          aws s3 cp "release-def-${VERSION_NO_V}.json" s3://${{ vars.AWS_RELEASE_TRIGGER_BUCKET }}/manifest/release-def-${VERSION_NO_V}.json --content-type "application/json"

@@ -2,42 +2,29 @@
 %global _buildid .1
 
 %global debug_package %{nil}
+%global pkg_config ../config
 
-# latest release/commit
-%global _finch_release 1.2.3
-%global _finch_commit b84b424926d5f4e2d2abf0c51507856a73221e9d
-
-%if 0%{?amzn} > 2
-%global requires_systemd_macros false
-%endif
-
-# build_latst takes precendence because build_local is for debugging
-%if %{undefined build_latest} && %{undefined build_local}
-%global finch_release %{_finch_release}
-%global finch_commit %{_finch_commit}
-%endif
-
+# finch
 %global finch_package github.com/runfinch/finch
 %global finch_src finch-%{finch_commit}
 %global finch_rpm_version %(r=%finch_release; echo ${r%%%%-*})
 
 # buildkit
-%global buildkit_release 0.15.1
-%global buildkit_commit 979542e90f2cb38077c808e0867d8d2c16ed10b8
 %global buildkit_package github.com/moby/buildkit
 %global buildkit_src buildkit-%{buildkit_commit}
 %global buildkit_rpm_version %(r=%buildkit_release; echo ${r%%%%-*})
 
 # soci-snapshotter
-%global soci_release 0.7.0
-%global soci_commit 7c6fae2c3848fe8ad161ce35d3423898cea5fde8
 %global soci_package github.com/awslabs/soci-snapshotter
 %global soci_src soci-snapshotter-%{soci_commit}
 %global soci_rpm_version %(r=%soci_release; echo ${r%%%%-*})
 
+# finch-daemon
+%global finch_daemon_package github.com/runfinch/finch-daemon
+%global finch_daemon_src finch-daemon-%{finch_daemon_commit}
+%global finch_daemon_rpm_version %(r=%finch_daemon_release; echo ${r%%%%-*})
+
 # cosign
-%global cosign_release 2.4.0
-%global cosign_commit b5e7dc123a272080f4af4554054797296271e902
 %global cosign_package github.com/sigstore/cosign
 %global cosign_src cosign-%{cosign_commit}
 %global cosign_rpm_version %(r=%cosign_release; echo ${r%%%%-*})
@@ -58,15 +45,19 @@ Source0: finch-%{finch_release}.tar.gz
 Source0: https://%{finch_package}/archive/%{finch_commit}/%{finch_release}.tar.gz
 %endif
 %endif
-Source1: finch.service
-Source2: finch.yaml
-Source3: nerdctl.toml
-Source4: buildkitd.toml
-Source5: finch-buildkit.service
-Source6: finch-buildkit.socket
-Source7: finch-soci.service
-Source8: finch-soci.socket
-Source9: soci-snapshotter-grpc.toml
+Source1: %{pkg_config}/finch.service
+Source2: %{pkg_config}/finch.socket
+Source3: %{pkg_config}/finch.yaml
+Source4: %{pkg_config}/nerdctl.toml
+Source5: %{pkg_config}/buildkitd.toml
+Source6: %{pkg_config}/finch-buildkit.service
+Source7: %{pkg_config}/finch-buildkit.socket
+Source8: %{pkg_config}/finch-soci.service
+Source9: %{pkg_config}/finch-soci.socket
+Source10: %{pkg_config}/soci-snapshotter-grpc.toml
+
+# finch-daemon
+Source500: https://%{finch_daemon_package}/archive/%{finch_daemon_commit}/%{finch_daemon_src}.tar.gz
 
 # buildkit
 Source1000: https://%{buildkit_package}/archive/%{buildkit_commit}/%{buildkit_src}.tar.gz
@@ -78,7 +69,9 @@ Source2000: https://%{soci_package}/archive/%{soci_commit}/%{soci_src}.tar.gz
 Source3000: https://%{cosign_package}/archive/%{cosign_commit}/%{cosign_src}.tar.gz
 
 # Runtime requirements
-Requires: containerd nerdctl cni-plugins
+Requires: containerd >= %{min_containerd_version}
+Requires: nerdctl >= %{min_nerdctl_version}
+Requires: cni-plugins >= %{min_cni_plugins_version}
 
 Provides: finch = %{finch_rpm_version}
 # License: ASL 2.0
@@ -117,6 +110,8 @@ while offering a simple native client to tie it all together.
 mv "finch-%{latest_branch}" "%{finch_src}"
 %endif
 
+# extract finch-daemon
+%setup -D -T -a 500
 # extract buildkit
 %setup -D -T -a 1000
 # extract soci
@@ -129,6 +124,11 @@ mv "finch-%{latest_branch}" "%{finch_src}"
 # build finch
 pushd "%{finch_src}"
 VERSION=%{finch_release} GITCOMMIT=%{finch_commit} make finch
+popd
+
+# build finch-daemon
+pushd "%{finch_daemon_src}"
+make build
 popd
 
 # build buildkit
@@ -159,27 +159,32 @@ install -d %{buildroot}%{_unitdir}
 install -d %{buildroot}%{_sharedstatedir}/finch/nerdctl
 install -p %{finch_src}/_output/bin/finch %{buildroot}%{_bindir}
 install -D -p -m 0644 %{S:1} %{buildroot}%{_unitdir}/finch.service
+install -D -p -m 0644 %{S:2} %{buildroot}%{_unitdir}/finch.socket
 install -d -p -m 0755 %{buildroot}%{_sysconfdir}/finch
-install -D -p -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/finch/finch.yaml
+install -D -p -m 0644 %{S:3} %{buildroot}%{_sysconfdir}/finch/finch.yaml
 install -d -p -m 0755 %{buildroot}%{_sysconfdir}/finch/nerdctl/
-install -D -p -m 0644 %{S:3} %{buildroot}%{_sysconfdir}/finch/nerdctl/nerdctl.toml
+install -D -p -m 0644 %{S:4} %{buildroot}%{_sysconfdir}/finch/nerdctl/nerdctl.toml
+
+# install finch-daemon
+install -D -p -m 0755 %{finch_daemon_src}/bin/finch-daemon %{buildroot}%{_libexecdir}/finch/finch-daemon
+install -D -p -m 0755 %{finch_daemon_src}/bin/docker-credential-finch %{buildroot}%{_libexecdir}/finch/docker-credential-finch
 
 # install buildkit
 install -d %{buildroot}%{_sharedstatedir}/finch/buildkit
 install -D -p %{buildkit_src}/_output/buildkitd %{buildroot}%{_libexecdir}/finch/buildkitd
 install -D -p %{buildkit_src}/_output/buildctl %{buildroot}%{_libexecdir}/finch/buildctl
 install -d -p -m 0755 %{buildroot}%{_sysconfdir}/finch/buildkit/
-install -D -p -m 0644 %{S:4} %{buildroot}%{_sysconfdir}/finch/buildkit/buildkitd.toml
-install -D -p -m 0644 %{S:5} %{buildroot}%{_unitdir}/finch-buildkit.service
-install -D -p -m 0644 %{S:6} %{buildroot}%{_unitdir}/finch-buildkit.socket
+install -D -p -m 0644 %{S:5} %{buildroot}%{_sysconfdir}/finch/buildkit/buildkitd.toml
+install -D -p -m 0644 %{S:6} %{buildroot}%{_unitdir}/finch-buildkit.service
+install -D -p -m 0644 %{S:7} %{buildroot}%{_unitdir}/finch-buildkit.socket
 
 # install soci
 install -d %{buildroot}%{_sharedstatedir}/finch/soci
 install -D -p %{soci_src}/out/soci %{buildroot}%{_libexecdir}/finch/soci
 install -D -p %{soci_src}/out/soci-snapshotter-grpc %{buildroot}%{_libexecdir}/finch/soci-snapshotter-grpc
-install -D -p -m 0644 %{S:7} %{buildroot}%{_unitdir}/finch-soci.service
-install -D -p -m 0644 %{S:8} %{buildroot}%{_unitdir}/finch-soci.socket
-install -D -p -m 0644 %{S:9} %{buildroot}%{_sysconfdir}/finch/soci/soci-snapshotter-grpc.toml
+install -D -p -m 0644 %{S:8} %{buildroot}%{_unitdir}/finch-soci.service
+install -D -p -m 0644 %{S:9} %{buildroot}%{_unitdir}/finch-soci.socket
+install -D -p -m 0644 %{S:10} %{buildroot}%{_sysconfdir}/finch/soci/soci-snapshotter-grpc.toml
 
 # install cosign
 install -D -p %{cosign_src}/cosign %{buildroot}%{_libexecdir}/finch/cosign
@@ -218,6 +223,11 @@ fi
 %config(noreplace) %{_sysconfdir}/finch/finch.yaml
 %config(noreplace) %{_sysconfdir}/finch/nerdctl/nerdctl.toml
 %{_unitdir}/finch.service
+%{_unitdir}/finch.socket
+
+# finch-daemon
+%{_libexecdir}/finch/finch-daemon
+%{_libexecdir}/finch/docker-credential-finch
 
 # buildkit
 %config(noreplace) %{_sysconfdir}/finch/buildkit/buildkitd.toml

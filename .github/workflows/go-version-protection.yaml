@@ -1,0 +1,79 @@
+name: Go Version Protection
+
+on:
+  pull_request:
+    paths:
+      - 'go.mod'
+      - '.github/workflows/go-version-protection.yaml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'go.mod'
+      - '.github/workflows/go-version-protection.yaml'
+permissions:
+  id-token: write # used when getting AWS credentials
+  contents: write # used to create a release and upload files to a release
+  pull-requests: write # used to update the pull request
+
+jobs:
+  prevent-go-version-minor-major-version-updates:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check Go version against allowed version
+        run: |
+          # Get current Go version from go.mod
+          CURRENT_VERSION=$(grep '^go ' go.mod | awk '{print $2}')
+          echo "Current Go version: $CURRENT_VERSION"
+          
+          # Hard-coded allowed major.minor version
+          ALLOWED_MAJOR_MINOR="1.24"
+          echo "Allowed major.minor version: $ALLOWED_MAJOR_MINOR"
+          
+          # Extract major.minor from current version
+          CURRENT_MAJOR_MINOR=$(echo $CURRENT_VERSION | cut -d. -f1,2)
+          echo "Current major.minor: $CURRENT_MAJOR_MINOR"
+          
+          if [ "$CURRENT_MAJOR_MINOR" != "$ALLOWED_MAJOR_MINOR" ]; then
+            echo ""
+            echo "BLOCKED: Go version $CURRENT_VERSION is not allowed!"
+            echo "   Current version: $CURRENT_VERSION (major.minor: $CURRENT_MAJOR_MINOR)"
+            echo "   Allowed version: $ALLOWED_MAJOR_MINOR.x"
+            echo ""
+            echo "Only Go $ALLOWED_MAJOR_MINOR.x versions are allowed."
+            echo "Patch updates within $ALLOWED_MAJOR_MINOR.x are permitted."
+            echo "If you need to change the major/minor version:"
+            echo "  1. Get explicit approval from maintainers"
+            echo "  2. Update the ALLOWED_MAJOR_MINOR in this workflow"
+            echo "  3. Consider the impact on compatibility and CI/CD"
+            echo ""
+            exit 1
+          else
+            echo "Go version $CURRENT_VERSION is allowed (within $ALLOWED_MAJOR_MINOR.x range)"
+          fi
+
+      - name: Validate Go version format
+        run: |
+          CURRENT_VERSION=$(grep '^go ' go.mod | awk '{print $2}')
+          if ! echo "$CURRENT_VERSION" | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$'; then
+            echo "Invalid Go version format: $CURRENT_VERSION"
+            echo "Expected Semver format"
+            exit 1
+          fi
+          echo "Go version format is valid: $CURRENT_VERSION"
+
+      - name: Report current Go version
+        run: |
+          CURRENT_VERSION=$(grep '^go ' go.mod | awk '{print $2}')
+          MAJOR_MINOR=$(echo $CURRENT_VERSION | cut -d. -f1,2)
+          echo "## Go Version Status" >> $GITHUB_STEP_SUMMARY
+          echo "- **Current version:** $CURRENT_VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "- **Major.Minor:** $MAJOR_MINOR" >> $GITHUB_STEP_SUMMARY

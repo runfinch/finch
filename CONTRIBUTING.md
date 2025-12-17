@@ -235,6 +235,10 @@ The VM instance is not expected to exist before running e2e tests, please make s
 ./_output/bin/finch vm remove
 ```
 
+### Setting Up Testing Infrastructure
+
+If you want to set up your own testing infrastructure in your fork (including self-hosted runners and S3 buckets), please refer to the [runfinch/infrastructure repository](https://github.com/runfinch/infrastructure) for detailed setup instructions.
+
 ## Commits
 
 ### Conventional Commit Messages

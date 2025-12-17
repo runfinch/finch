@@ -1,0 +1,10 @@
+Source: runfinch-finch
+Section: devel
+Priority: optional
+Maintainer: AWS finch-package-maintainers@amazon.com
+Build-Depends: debhelper (>= 13)
+Homepage: https://runfinch.com
+Package: runfinch-finch
+Architecture: ${ARCH}
+Depends: ${REQUIREMENTS}
+Description: https://github.com/runfinch/finch
