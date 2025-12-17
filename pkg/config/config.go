@@ -76,6 +76,12 @@ const (
 	DefaultMemory = ""
 )
 
+// Directory constants used across Finch.
+const (
+	FinchConfigDir = ".finch"
+	CredHelpersDir = "cred-helpers"
+)
+
 // LimaConfigApplier applies lima configuration changes.
 //
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_lima_config_applier.go -package=mocks -mock_names LimaConfigApplier=LimaConfigApplier . LimaConfigApplier

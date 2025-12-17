@@ -11,12 +11,12 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/runfinch/finch/pkg/config"
 )
 
 const (
-	maxBufferSize  = 4096
-	credHelpersDir = "cred-helpers"
-	finchConfigDir = ".finch"
+	maxBufferSize = 4096
 )
 
 type ConnectionInterface interface {
@@ -59,7 +59,7 @@ func getCredentialHelperPath() (string, error) {
 		return "", fmt.Errorf("failed to get home directory")
 	}
 
-	path := filepath.Join(homeDir, finchConfigDir, credHelpersDir, helperName)
+	path := filepath.Join(homeDir, config.FinchConfigDir, config.CredHelpersDir, helperName)
 	if _, err := os.Stat(path); err != nil {
 		return "", fmt.Errorf("credential helper not found")
 	}

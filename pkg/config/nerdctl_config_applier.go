@@ -123,9 +123,9 @@ func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir 
 	}
 
 	//nolint:gosec // G101: Potential hardcoded credentials false positive
-	const generalCredHelperTemplate = `([ -e "$FINCH_DIR"/cred-helpers/docker-credential-%s ] || \
-  (echo "error: docker-credential-%s not found in $FINCH_DIR/cred-helpers directory.")) && \
-  ([ -L /usr/local/bin/docker-credential-%s ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-%s /usr/local/bin)`
+	const generalCredHelperTemplate = `([ -e "$FINCH_DIR"/` + CredHelpersDir + `/docker-credential-%s ] || \
+  (echo "error: docker-credential-%s not found in $FINCH_DIR/` + CredHelpersDir + ` directory.")) && \
+  ([ -L /usr/local/bin/docker-credential-%s ] || sudo ln -s "$FINCH_DIR"/` + CredHelpersDir + `/docker-credential-%s /usr/local/bin)`
 
 	//nolint:gosec // G101: Potential hardcoded credentials false positive
 	const nativeCredHelperTemplate = `[ -x /usr/local/bin/docker-credential-%s ] || (
