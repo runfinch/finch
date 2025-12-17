@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
 
-PLIST_PATH="$HOME/Library/LaunchAgents/com.runfinch.cred-bridge.plist"
+PLIST_NAME="com.runfinch.cred-bridge.plist"
+PLIST_PATH="$HOME/Library/LaunchAgents/$PLIST_NAME"
 
 # Unload the LaunchAgent
-launchctl bootout gui/$(id -u)/com.runfinch.cred-bridge 2>/dev/null || true
+launchctl unload $PLIST_PATH 2>/dev/null || true
 
 # Remove the plist file
 rm -f "$PLIST_PATH"

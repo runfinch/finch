@@ -42,6 +42,7 @@ chmod 640 /Applications/Finch/finch-credhelper/com.runfinch.cred-bridge.plist.te
 # Socket will be created by LaunchAgent with correct 600 permissions
 
 # Create and add native credhelper .plist to LaunchAgents
+PLIST_NAME="com.runfinch.cred-bridge.plist"
 /Applications/Finch/finch-credhelper/native-creds-agent-start.sh
 
 echo "Post installation process finished."

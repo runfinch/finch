@@ -38,19 +38,22 @@ else
 fi
 
 #remove credential bridge LaunchAgent
+PLIST_NAME="com.runfinch.cred-bridge.plist"
 # handle the user who ran sudo ./uninstall.sh, or all users if run directly as root
 REAL_USER="${SUDO_USER:-}"
 if [ -n "$REAL_USER" ] && [ "$REAL_USER" != "root" ]; then
     # Single user cleanup (most common case)
-    sudo -u "$REAL_USER" launchctl bootout gui/$(id -u "$REAL_USER")/com.runfinch.cred-bridge 2>/dev/null || true
-    rm -f "/Users/$REAL_USER/Library/LaunchAgents/com.runfinch.cred-bridge.plist" 2>/dev/null || true
+    PLIST_PATH="/Users/$REAL_USER/Library/LaunchAgents/$PLIST_NAME"
+    sudo -u "$REAL_USER" launchctl unload "$PLIST_PATH" 2>/dev/null || true
+    rm -f "$PLIST_PATH" 2>/dev/null || true
 else
     # Cleanup for all users (fallback)
     for user_home in /Users/*; do
         if [ -d "$user_home/Library/LaunchAgents" ]; then
             username=$(basename "$user_home")
-            sudo -u "$username" launchctl bootout gui/$(id -u "$username")/com.runfinch.cred-bridge 2>/dev/null || true
-            rm -f "$user_home/Library/LaunchAgents/com.runfinch.cred-bridge.plist" 2>/dev/null || true
+            PLIST_PATH="$user_home/Library/LaunchAgents/$PLIST_NAME"
+            sudo -u "$username" launchctl unload "$PLIST_PATH" 2>/dev/null || true
+            rm -f "$PLIST_PATH" 2>/dev/null || true
         fi
     done
 fi

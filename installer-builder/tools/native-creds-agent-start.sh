@@ -3,8 +3,9 @@ set -e
 
 # Setting relevant paths
 FINCH_INSTALL_DIR="/Applications/Finch"
-TEMPLATE_PATH="$FINCH_INSTALL_DIR/finch-credhelper/com.runfinch.cred-bridge.plist.template"
-PLIST_PATH="$HOME/Library/LaunchAgents/com.runfinch.cred-bridge.plist"
+PLIST_NAME="com.runfinch.cred-bridge.plist"
+TEMPLATE_PATH="$FINCH_INSTALL_DIR/finch-credhelper/$PLIST_NAME.template"
+PLIST_PATH="$HOME/Library/LaunchAgents/$PLIST_NAME"
 mkdir -p "$HOME/Library/LaunchAgents"
 
 # Replace placeholders in template
@@ -13,6 +14,6 @@ sed -e "s|\$(FINCH_CREDHELPER_DIR)/finch-cred-bridge|$FINCH_INSTALL_DIR/finch-cr
     "$TEMPLATE_PATH" > "$PLIST_PATH"
 
 # Load the .plist into LaunchAgent
-launchctl bootstrap gui/$(id -u) "$PLIST_PATH"
+launchctl load "$PLIST_PATH"
 
 echo "Finch credential bridge LaunchAgent installed and loaded"
