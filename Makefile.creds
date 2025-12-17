@@ -23,7 +23,11 @@ else ifeq ($(BUILD_OS), Windows_NT)
 endif
 
 CRED_HELPER_URL := $(CRED_HELPER_BASE_URL)/$(CRED_HELPER_ARTIFACT)
-CRED_HELPER_OUTPUT := $(HOME)/.finch/cred-helpers/$(CRED_HELPER_NAME)
+ifeq ($(BUILD_OS), Windows_NT)
+  CRED_HELPER_OUTPUT := $(USERPROFILE)/.finch/cred-helpers/$(CRED_HELPER_NAME)
+else
+  CRED_HELPER_OUTPUT := $(HOME)/.finch/cred-helpers/$(CRED_HELPER_NAME)
+endif
 
 # Build finch credential bridge
 .PHONY: finch-cred-bridge
@@ -63,8 +67,8 @@ install-launch-agent:
 	    -e "s|\$$(FINCH_CREDHELPER_SOCKET_LOCATION)|$(FINCH_CREDHELPER_SOCKET_LOCATION)|g" \
 	    $(PLIST_TEMPLATE) > $(PLIST_DEST)
 	-launchctl bootout gui/$$(id -u)/com.runfinch.cred-bridge 2>/dev/null || true
-	launchctl bootstrap gui/$$(id -u) $(PLIST_DEST)
-	@echo "LaunchAgent installed and loaded"
+	-launchctl bootstrap gui/$$(id -u) $(PLIST_DEST) 2>/dev/null || true
+	@echo "LaunchAgent plist installed"
 
 .PHONY: uninstall-launch-agent
 uninstall-launch-agent:
@@ -87,9 +91,9 @@ else ifeq ($(BUILD_OS), Windows_NT)
 .PHONY: install-service
 install-service:
 	@echo "Installing Windows Service..."
-	sc create "FinchCredBridge" binPath= "$(FINCH_CREDHELPER_DIR)\finch-cred-bridge.exe" start= demand
-	sc description "FinchCredBridge" "Finch Credential Bridge Service"
-	@echo "Windows Service installed"
+	-sc create "FinchCredBridge" binPath= "$(FINCH_CREDHELPER_DIR)\finch-cred-bridge.exe" start= demand 2>nul || true
+	-sc description "FinchCredBridge" "Finch Credential Bridge Service" 2>nul || true
+	@echo "Windows Service installation attempted"
 
 .PHONY: uninstall-service
 uninstall-service:
