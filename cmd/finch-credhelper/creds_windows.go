@@ -8,15 +8,22 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+
+	"github.com/runfinch/finch/pkg/path"
 )
 
 // Windows socket server (for WSL2 socket forwarding).
 func startWindowsCredentialServer() error {
-	userProfile := os.Getenv("USERPROFILE")
-	if userProfile == "" {
-		return fmt.Errorf("USERPROFILE not set")
+	// Adding to make path in lima/../sock (consistent with mac)
+	finchPath, err := path.FindFinch(path.NewFinchFinderDeps())
+	if err != nil {
+		return fmt.Errorf("failed to find Finch installation: %w", err)
 	}
-	socketPath := filepath.Join(userProfile, ".finch", "native-creds.sock")
+	sockDir := filepath.Join(finchPath.LimaInstancePath(), "sock")
+	if err := os.MkdirAll(sockDir, 0o755); err != nil {
+		return fmt.Errorf("failed to create sock directory: %w", err)
+	}
+	socketPath := filepath.Join(sockDir, "native-creds.sock")
 	_ = os.Remove(socketPath) // Ignore error if file doesn't exist
 
 	listener, err := net.Listen("unix", socketPath)
