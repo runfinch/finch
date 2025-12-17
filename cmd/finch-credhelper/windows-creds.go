@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 )
 
-// Windows socket server (for WSL2 socket forwarding)
+// Windows socket server (for WSL2 socket forwarding).
 func startWindowsCredentialServer() error {
 	userProfile := os.Getenv("USERPROFILE")
 	if userProfile == "" {
@@ -25,7 +25,7 @@ func startWindowsCredentialServer() error {
 	}
 
 	// set socket file permissions to owner only
-	if err := os.Chmod(socketPath, 0600); err != nil {
+	if err := os.Chmod(socketPath, 0o600); err != nil {
 		return fmt.Errorf("failed to set socket permissions: %w", err)
 	}
 

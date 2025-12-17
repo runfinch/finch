@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 // Package main implements the finch credential helper bridge.
 package main
 
@@ -93,10 +96,7 @@ func createEmptyCredentials(serverURL string) string {
 }
 
 // Processes inbound credential requests from Lima VM bridge.
-func processCredentialRequest(conn interface {
-	Read([]byte) (int, error)
-	Write([]byte) (int, error)
-}) error {
+func processCredentialRequest(conn interface{ Read([]byte) (int, error); Write([]byte) (int, error) }) error {
 	buffer := make([]byte, 0, maxBufferSize)
 	buffer = buffer[:maxBufferSize]
 	n, err := conn.Read(buffer)
