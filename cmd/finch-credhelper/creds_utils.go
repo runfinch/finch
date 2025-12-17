@@ -19,6 +19,11 @@ const (
 	finchConfigDir = ".finch"
 )
 
+type ConnectionInterface interface {
+	Read([]byte) (int, error)
+	Write([]byte) (int, error)
+}
+
 var credentialHelperNames = map[string]string{
 	"darwin":  "docker-credential-osxkeychain",
 	"windows": "docker-credential-wincred.exe",
@@ -96,7 +101,7 @@ func createEmptyCredentials(serverURL string) string {
 }
 
 // Processes inbound credential requests from Lima VM bridge.
-func processCredentialRequest(conn interface{ Read([]byte) (int, error); Write([]byte) (int, error) }) error {
+func processCredentialRequest(conn ConnectionInterface) error {
 	buffer := make([]byte, 0, maxBufferSize)
 	buffer = buffer[:maxBufferSize]
 	n, err := conn.Read(buffer)

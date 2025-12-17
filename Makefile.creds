@@ -66,8 +66,8 @@ install-launch-agent:
 	sed -e "s|\$$(FINCH_CREDHELPER_DIR)/finch-cred-bridge|$(FINCH_CREDHELPER_DIR)/finch-cred-bridge|g" \
 	    -e "s|\$$(FINCH_CREDHELPER_SOCKET_LOCATION)|$(FINCH_CREDHELPER_SOCKET_LOCATION)|g" \
 	    $(PLIST_TEMPLATE) > $(PLIST_DEST)
-	-launchctl bootout gui/$$(id -u)/com.runfinch.cred-bridge 2>/dev/null || true
-	-launchctl bootstrap gui/$$(id -u) $(PLIST_DEST) 2>/dev/null || true
+	-launchctl unload $(PLIST_DEST) 2>/dev/null || true
+	launchctl load $(PLIST_DEST)
 	@echo "LaunchAgent plist installed"
 
 .PHONY: uninstall-launch-agent
