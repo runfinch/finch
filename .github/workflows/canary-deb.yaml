@@ -30,7 +30,7 @@ jobs:
     timeout-minutes: 2
     steps:
       - name: Checkout canary script
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6.0.1
         with:
           sparse-checkout: |
             scripts/canary-deb.sh
