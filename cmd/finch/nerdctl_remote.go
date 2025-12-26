@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"maps"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -339,6 +340,10 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 	}
 
 	var additionalEnv []string
+
+	// add env var to indicate use of native credstore
+	additionalEnv = append(additionalEnv, "USE_NATIVE_CREDSTORE=1")
+	
 	switch cmdName {
 	case "image":
 		if slices.Contains(args, "build") || slices.Contains(args, "pull") || slices.Contains(args, "push") {
@@ -377,7 +382,17 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		return nil
 	}
 
-	return nc.ncc.Create(runArgs...).Run()
+	// Get finch root path for socket
+	execPath, err := os.Executable()
+	if err != nil {
+		return err
+	}
+	finchRootPath := filepath.Dir(filepath.Dir(execPath))
+	
+	// Wrap nerdctl execution with credential socket
+	return withCredSocket(finchRootPath, func() error {
+		return nc.ncc.Create(runArgs...).Run()
+	})
 }
 
 func (nc *nerdctlCommand) assertVMIsRunning(creator command.NerdctlCmdCreator, logger flog.Logger) error {

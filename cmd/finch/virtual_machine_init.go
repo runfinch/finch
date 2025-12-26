@@ -7,6 +7,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"runtime"
 
 	"github.com/runfinch/finch/pkg/disk"
@@ -123,6 +125,69 @@ func (iva *initVMAction) run() error {
 	}
 
 	iva.logger.Info("Finch virtual machine started successfully")
+
+	// Setup credential helpers
+	if err := iva.ensureNativeCredentialHelpers(); err != nil {
+		iva.logger.Warnf("Failed to setup credential helpers: %v", err)
+	}
+
+	return nil
+}
+
+func (iva *initVMAction) ensureNativeCredentialHelpers() error {
+	// For now, assume finch credential helper is enabled by default
+	// THe default is available whether needed or not
+	finchEnabled := true
+	if !finchEnabled {
+		return nil // Skip if finch credential helper not configured
+	}
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+
+	destDir := filepath.Join(homeDir, ".finch", "cred-helpers")
+	if err := os.MkdirAll(destDir, 0700); err != nil {
+		return err
+	}
+
+	var helperName string
+	switch runtime.GOOS {
+	case "darwin":
+		helperName = "docker-credential-osxkeychain"
+	case "windows":
+		helperName = "docker-credential-wincred.exe"
+	default:
+		return nil // Skip on other platforms
+	}
+
+	destPath := filepath.Join(destDir, helperName)
+	if _, err := os.Stat(destPath); err == nil {
+		return nil // Already exists
+	}
+
+	// Find finch exec install path
+	var srcPath string
+	if finchPath, err := os.Executable(); err == nil {
+		finchDir := filepath.Dir(finchPath) // e.g., /Applications/Finch/bin or _output/bin
+		finchRoot := filepath.Dir(finchDir) // e.g., /Applications/Finch or _output
+		srcPath = filepath.Join(finchRoot, "cred-helpers", helperName)
+	} else {
+		// Fallback to current working directory for development
+		if cwd, err := os.Getwd(); err == nil {
+			srcPath = filepath.Join(cwd, "_output", "cred-helpers", helperName)
+		}
+	}
+
+	if _, err := os.Stat(srcPath); os.IsNotExist(err) {
+		return fmt.Errorf("credential helper not found: %s", srcPath)
+	}
+
+	if err := os.Symlink(srcPath, destPath); err != nil {
+		return fmt.Errorf("failed to create symlink from %s to %s: %w", srcPath, destPath, err)
+	}
+
 	return nil
 }
 

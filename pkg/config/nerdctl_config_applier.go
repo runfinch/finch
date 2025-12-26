@@ -95,12 +95,24 @@ func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir 
 	}
 
 	//nolint:gosec // G101: Potential hardcoded credentials false positive
-	const configureCredHelperTemplate = `([ -e "$FINCH_DIR"/cred-helpers/docker-credential-%s ] || \
+	const configureGeneralCredHelperTemplate = `([ -e "$FINCH_DIR"/cred-helpers/docker-credential-%s ] || \
   (echo "error: docker-credential-%s not found in $FINCH_DIR/cred-helpers directory.")) && \
   ([ -L /usr/local/bin/docker-credential-%s ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-%s /usr/local/bin)`
 
+	// template for finch credential helper (copies from /usr/bin to /usr/local/bin to follow existing flow)
+	//nolint:gosec // G101: Potential hardcoded credentials false positive - this is a template string
+	const configureFinchCredHelperTemplate = `[ -L /usr/local/bin/docker-credential-finch ] || \
+  (sudo ln -s /usr/bin/docker-credential-finch /usr/local/bin/docker-credential-finch)`
+
 	for _, credHelper := range fc.CredsHelpers {
-		cmdArr = append(cmdArr, fmt.Sprintf(configureCredHelperTemplate, credHelper, credHelper, credHelper, credHelper))
+		if credHelper == "finch" {
+			cmdArr = append(cmdArr, configureFinchCredHelperTemplate)
+			// Add as default in credStore to work with nerdctl command flow. 
+			// TODO: support multi-registry workflows. Will involve set registries as credStore vs credHelpers in config.json.
+			cmdArr = append(cmdArr, fmt.Sprintf(`echo '{"credsStore": "%s"}' > "$FINCH_DIR"/config.json`, credHelper))
+		} else {
+			cmdArr = append(cmdArr, fmt.Sprintf(configureGeneralCredHelperTemplate, credHelper, credHelper, credHelper, credHelper))
+		}
 	}
 
 	awsDir := fmt.Sprintf("%s/.aws", homeDir)
