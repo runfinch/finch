@@ -5,9 +5,8 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
-
-	"golang.org/x/exp/slices"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
@@ -42,11 +41,6 @@ type nerdctlCommandCreator struct {
 	fc         *config.Finch
 }
 
-type (
-	argHandler     func(systemDeps NerdctlCommandSystemDeps, fc *config.Finch, args []string, index int) error
-	commandHandler func(systemDeps NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string, inspectType *string) error
-)
-
 func newNerdctlCommandCreator(
 	ncc command.NerdctlCmdCreator,
 	ecc command.Creator,
@@ -72,6 +66,175 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 	return command
 }
 
+func (ncc *nerdctlCommandCreator) handleLoadOpt(args []string) []string {
+	for i, arg := range args {
+		if arg == "--load" {
+			args[i] = "--output=type=docker"
+		}
+	}
+	return args
+}
+
+func (ncc *nerdctlCommandCreator) createDockerCompatRunCmd() *cobra.Command {
+	runCmd := &cobra.Command{
+		Use:                "run",
+		Short:              "Run a command in a new container",
+		DisableFlagParsing: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cleanConsistencyOpt := func(arg string) string {
+				re := regexp.MustCompile(`consistency=[^,]*`)
+				arg = re.ReplaceAllString(arg, "")
+				arg = strings.ReplaceAll(arg, ",,", ",")
+				return strings.Trim(arg, ", ")
+			}
+
+			for idx, arg := range args {
+				if arg == "--mount" && (idx < len(args)-1) {
+					args[idx+1] = cleanConsistencyOpt(args[idx+1])
+					continue
+				}
+
+				if strings.Contains(arg, "--mount") && strings.Contains(arg, "=") {
+					args[idx] = cleanConsistencyOpt(arg)
+					continue
+				}
+			}
+
+			return newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter(cmd, args)
+		},
+	}
+	return runCmd
+}
+
+func (ncc *nerdctlCommandCreator) createDockerCompatBuildCmd() *cobra.Command {
+	buildCmd := &cobra.Command{
+		Use:                "build",
+		Aliases:            []string{"buildx"},
+		Short:              "Build an image from Dockerfile",
+		DisableFlagParsing: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cmd.CalledAs() == "buildx" {
+				logrus.Warn("buildx is not supported. using standard buildkit instead...")
+			}
+			return newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter(cmd, args)
+		},
+	}
+
+	buildSubCmd := &cobra.Command{
+		Use:                "build",
+		Aliases:            []string{"b"},
+		Short:              "Alias for main build command",
+		DisableFlagParsing: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logrus.Warn("buildx is not supported. using standard buildkit instead...")
+			args = ncc.handleLoadOpt(args)
+			return buildCmd.RunE(cmd, args)
+		},
+	}
+
+	buildUnsupportedSubCmd := &cobra.Command{
+		Use:                "unsupported",
+		Aliases:            []string{"bake", "create", "debug", "du", "imagetools", "inspect", "ls", "prune", "rm", "stop", "use", "version"},
+		Short:              "Alias for main build command",
+		DisableFlagParsing: true,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			return fmt.Errorf("unsupported buildx command: %s", cmd.CalledAs())
+		},
+	}
+
+	buildCmd.AddCommand(buildSubCmd)
+	buildCmd.AddCommand(buildUnsupportedSubCmd)
+
+	return buildCmd
+}
+
+func (ncc *nerdctlCommandCreator) createDockerCompatImageCmd() *cobra.Command {
+	imageCmd := &cobra.Command{
+		Use:                "image",
+		Short:              "Manage images",
+		DisableFlagParsing: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ncc.handleLoadOpt(args)
+			return newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter(cmd, args)
+		},
+	}
+	return imageCmd
+}
+
+func (ncc *nerdctlCommandCreator) createDockerCompatComposeCmd() *cobra.Command {
+	composeCmd := &cobra.Command{
+		Use:                "compose",
+		Short:              "Compose",
+		DisableFlagParsing: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter(cmd, args)
+		},
+	}
+
+	composeVersionSubCmd := &cobra.Command{
+		Use:                "version",
+		Short:              "Version",
+		DisableFlagParsing: true,
+		RunE:               newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runDockerCompatComposeVersionAdapter,
+	}
+
+	composeCmd.AddCommand(composeVersionSubCmd)
+
+	return composeCmd
+}
+
+func (ncc *nerdctlCommandCreator) createDockerCompatInspectCmd() *cobra.Command {
+	inspectCmd := &cobra.Command{
+		Use:                "inspect",
+		Short:              "Return low-level information on Docker objects",
+		DisableFlagParsing: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			modeDockerCompat := "--mode=dockercompat"
+			var inspectType string
+			inspectType = ""
+			var processedArgs []string
+			var sizeArg string
+			for idx := 0; idx < len(args); idx++ {
+				if (args[idx] == "--type") && (idx < len(args)-1) {
+					inspectType = args[idx+1]
+					idx++
+					continue
+				}
+
+				if strings.Contains(args[idx], "--type") && strings.Contains(args[idx], "=") {
+					inspectType = strings.Split(args[idx], "=")[1]
+					continue
+				}
+
+				if args[idx] == "-s" || args[idx] == "--size" {
+					sizeArg = "--size"
+					continue
+				}
+				processedArgs = append(processedArgs, args[idx])
+			}
+
+			switch inspectType {
+			case "image":
+				return newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps,
+					ncc.logger, ncc.fs, ncc.fc).runDockerCompatImageInspectAdapter(append([]string{"inspect", modeDockerCompat},
+					processedArgs...))
+			case "volume":
+				if sizeArg != "" {
+					processedArgs = append([]string{sizeArg}, processedArgs...)
+				} else {
+					processedArgs = append([]string{}, processedArgs...)
+				}
+				return newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps,
+					ncc.logger, ncc.fs, ncc.fc).runDockerCompatVolumeInspectAdapter(append([]string{"inspect"}, processedArgs...))
+			default:
+				return newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps,
+					ncc.logger, ncc.fs, ncc.fc).runDockerCompatInspectAdapter(cmd, append([]string{modeDockerCompat}, processedArgs...))
+			}
+		},
+	}
+	return inspectCmd
+}
+
 type nerdctlCommand struct {
 	ncc        command.NerdctlCmdCreator
 	ecc        command.Creator
@@ -94,6 +257,22 @@ func newNerdctlCommand(
 
 func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {
 	return nc.run(cmd.Name(), args)
+}
+
+func (nc *nerdctlCommand) runDockerCompatInspectAdapter(cmd *cobra.Command, args []string) error {
+	return nc.runDockerCompatInspect(cmd.Name(), args)
+}
+
+func (nc *nerdctlCommand) runDockerCompatVolumeInspectAdapter(args []string) error {
+	return nc.runDockerCompatInspect("volume", args)
+}
+
+func (nc *nerdctlCommand) runDockerCompatImageInspectAdapter(args []string) error {
+	return nc.runDockerCompatInspect("image", args)
+}
+
+func (nc *nerdctlCommand) runDockerCompatComposeVersionAdapter(_ *cobra.Command, _ []string) error {
+	return handleDockerCompatComposeVersion(*nc)
 }
 
 // shouldReplaceForHelp returns true if we should replace "nerdctl" with "finch" for the output of the given command.
@@ -160,213 +339,4 @@ var nerdctlCmds = map[string]string{
 	"update":    "Update configuration of one or more containers",
 	"volume":    "Manage volumes",
 	"wait":      "Block until one or more containers stop, then print their exit codes",
-}
-
-var dockerCompatCmds = map[string]string{
-	"buildx": "build version",
-}
-
-var aliasMap = map[string]string{
-	"build": "image build",
-	"run":   "container run",
-	"cp":    "container cp",
-}
-
-var commandHandlerMap = map[string]commandHandler{
-	"buildx":  handleBuildx,
-	"inspect": handleDockerCompatInspect,
-}
-
-var argHandlerMap = map[string]map[string]argHandler{
-	"image build": {
-		"--load": handleDockerBuildLoad,
-	},
-	"container run": {
-		"--mount": handleBindMounts,
-	},
-}
-
-var cmdFlagSetMap = map[string]map[string]sets.Set[string]{
-	"container run": {
-		"shortBoolFlags": sets.New[string]("-d", "-i", "-t"),
-		"longBoolFlags": sets.New[string](
-			"--detach", "--init", "--interactive", "--oom-kill-disable",
-			"--privileged", "--read-only", "--rm", "--rootfs", "--tty", "--sig-proxy"),
-		"shortArgFlags": sets.New[string]("-e", "-h", "-m", "-u", "-w", "-p", "-l", "-v"),
-	},
-	"exec": {
-		"shortBoolFlags": sets.New[string]("-d", "-i", "-t"),
-		"longBoolFlags": sets.New[string](
-			"--detach", "--init", "--interactive", "--oom-kill-disable",
-			"--privileged", "--read-only", "--rm", "--rootfs", "--tty"),
-		"shortArgFlags": sets.New[string]("-e", "-h", "-m", "-u", "-w", "-p", "-l", "-v"),
-	},
-	"compose": {
-		"shortBoolFlags": sets.New[string]("-d", "-i", "-t"),
-		"longBoolFlags": sets.New[string](
-			"--detach", "--init", "--interactive", "--oom-kill-disable",
-			"--privileged", "--read-only", "--rm", "--rootfs", "--tty"),
-		"shortArgFlags": sets.New[string]("-e", "-h", "-m", "-u", "-w", "-p", "-l", "-v"),
-	},
-}
-
-// converts "docker build --load" flag to "nerdctl build --output=type=docker".
-func handleDockerBuildLoad(_ NerdctlCommandSystemDeps, fc *config.Finch, nerdctlCmdArgs []string, index int) error {
-	if fc != nil && fc.DockerCompat {
-		nerdctlCmdArgs[index] = "--output=type=docker"
-	}
-
-	return nil
-}
-
-func handleBuildx(_ NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string, _ *string) error {
-	if fc == nil || !fc.DockerCompat {
-		return nil
-	}
-
-	if cmdName != nil && *cmdName == "buildx" {
-		subCmd := (*args)[0]
-		buildxSubcommands := []string{"bake", "create", "debug", "du", "imagetools", "inspect", "ls", "prune", "rm", "stop", "use", "version"}
-
-		if slices.Contains(buildxSubcommands, subCmd) {
-			return fmt.Errorf("unsupported buildx command: %s", subCmd)
-		}
-
-		logrus.Warn("buildx is not supported. using standard buildkit instead...")
-		if subCmd == "build" {
-			*args = (*args)[1:]
-		}
-		*cmdName = "build"
-	}
-	// else, continue with the original command
-	return nil
-}
-
-func handleDockerCompatInspect(_ NerdctlCommandSystemDeps, fc *config.Finch, cmdName *string, args *[]string, inspectType *string) error {
-	if fc == nil || !fc.DockerCompat {
-		return nil
-	}
-
-	if *args == nil {
-		return fmt.Errorf("invalid arguments: args (null pointer)")
-	}
-
-	modeDockerCompat := `--mode=dockercompat`
-	sizeArg := ""
-	savedArgs := []string{}
-	skip := false
-	*inspectType = ""
-
-	for idx, arg := range *args {
-		if skip {
-			skip = false
-			continue
-		}
-
-		if (arg == "--type") && (idx < len(*args)-1) {
-			*inspectType = (*args)[idx+1]
-			skip = true
-			continue
-		}
-
-		if strings.Contains(arg, "--type") && strings.Contains(arg, "=") {
-			*inspectType = strings.Split(arg, "=")[1]
-			continue
-		}
-
-		if (arg == "--size") || (arg == "-s") {
-			sizeArg = "--size"
-			continue
-		}
-
-		savedArgs = append(savedArgs, arg)
-	}
-
-	switch *inspectType {
-	case "image":
-		*cmdName = "image inspect"
-		*args = append([]string{modeDockerCompat}, savedArgs...)
-	case "volume":
-		*cmdName = "volume inspect"
-		if sizeArg != "" {
-			*args = append([]string{sizeArg}, savedArgs...)
-		} else {
-			*args = append([]string{}, savedArgs...)
-		}
-	case "container":
-		*cmdName = "inspect"
-		*args = append([]string{modeDockerCompat}, savedArgs...)
-	case "":
-		*cmdName = "inspect"
-		*args = append([]string{modeDockerCompat}, savedArgs...)
-		*inspectType = "container"
-	default:
-		return fmt.Errorf("unsupported inspect type: %s", *inspectType)
-	}
-
-	return nil
-}
-
-// handles the argument & value of --mount option
-//
-//	invokes OS specific path handler for source path of the bind mount
-//	and removes the consistency key-value entity from value
-func handleBindMounts(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlCmdArgs []string, index int) error {
-	prefix := nerdctlCmdArgs[index]
-	var (
-		v      string
-		found  bool
-		before string
-	)
-	if strings.Contains(nerdctlCmdArgs[index], "=") {
-		before, v, found = strings.Cut(prefix, "=")
-	} else {
-		if (index + 1) < len(nerdctlCmdArgs) {
-			v = nerdctlCmdArgs[index+1]
-		} else {
-			return fmt.Errorf("invalid positional parameter for %s", prefix)
-		}
-	}
-
-	// eg --mount type=bind,source="$(pwd)"/target,target=/app,readonly
-	// eg --mount type=bind, source=${pwd}/source_dir, target=<path>/target_dir, consistency=cached
-	// https://docs.docker.com/storage/bind-mounts/#choose-the--v-or---mount-flag  order does not matter, so convert to a map
-	entries := strings.Split(v, ",")
-	m := make(map[string]string)
-	ro := []string{}
-	for _, e := range entries {
-		parts := strings.Split(e, "=")
-		if len(parts) < 2 {
-			ro = append(ro, parts...)
-		} else {
-			m[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
-		}
-	}
-	// Check if type is bind mount, else return
-	if m["type"] != "bind" {
-		return nil
-	}
-
-	// Remove 'consistency' key-value pair, if present
-	delete(m, "consistency")
-
-	// Invoke the OS specific path handler
-	err := handleBindMountPath(systemDeps, m)
-	if err != nil {
-		return err
-	}
-
-	// Convert to string representation
-	s := mapToString(m)
-	// append read-only key if present
-	if len(ro) > 0 {
-		s = s + "," + strings.Join(ro, ",")
-	}
-	if found {
-		nerdctlCmdArgs[index] = fmt.Sprintf("%s=%s", before, s)
-	} else {
-		nerdctlCmdArgs[index+1] = s
-	}
-
-	return nil
 }
