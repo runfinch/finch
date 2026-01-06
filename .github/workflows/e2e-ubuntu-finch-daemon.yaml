@@ -11,7 +11,7 @@ on:
 
 env:
   GO111MODULE: on
-  GO_VERSION: '1.24.6'
+  GO_VERSION: '1.24.11'
 
 permissions:
   id-token: write # used when getting AWS credentials
@@ -27,7 +27,7 @@ jobs:
     outputs:
       tag: ${{ steps.latest-tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
             fetch-depth: 0
       - name: 'Get the latest tag'
@@ -120,13 +120,13 @@ jobs:
         run: |
           sudo df -h
           sudo df -h /tmp
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0
           persist-credentials: false
           submodules: recursive
-      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+      - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
@@ -193,7 +193,7 @@ jobs:
           echo "DAEMON_REPORT=${{ github.run_id }}-${{ github.run_attempt }}-e2e-daemon-report.json" >> $GITHUB_OUTPUT
       - name: Upload reports artifact
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ubuntu-test-e2e-finch-daemon-${{ inputs.arch }}-${{ github.run_id }}-${{ github.run_attempt }}-e2e-reports
           path: ${{ github.workspace }}/reports/${{ github.run_id }}-${{ github.run_attempt }}-*.json

@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"runtime"
 
 	"github.com/spf13/cobra"
@@ -46,6 +47,7 @@ func newSupportBundleGenerateCommand(logger flog.Logger, builder support.BundleB
 
 	supportBundleGenerateCommand.Flags().StringArray("include", []string{}, includeUsage)
 	supportBundleGenerateCommand.Flags().StringArray("exclude", []string{}, excludeUsage)
+	supportBundleGenerateCommand.Flags().IntP("num-lines", "n", 100, "max number of lines for journalctl services (default 100)")
 	return supportBundleGenerateCommand
 }
 
@@ -76,16 +78,28 @@ func (gsa *generateSupportBundleAction) runAdapter(cmd *cobra.Command, _ []strin
 	if err != nil {
 		return err
 	}
-	return gsa.run(additionalFiles, excludeFiles)
+	logLines, err := cmd.Flags().GetInt("num-lines")
+	if err != nil {
+		return err
+	}
+	if logLines < 0 {
+		return fmt.Errorf("num-lines cannot be less than zero (provided value: %d)", logLines)
+	}
+	cfg := &support.BundleCfg{
+		AdditionalFiles: additionalFiles,
+		ExcludeFiles:    excludeFiles,
+		LogLines:        logLines,
+	}
+	return gsa.run(cfg)
 }
 
-func (gsa *generateSupportBundleAction) run(additionalFiles []string, excludeFiles []string) error {
+func (gsa *generateSupportBundleAction) run(cfg *support.BundleCfg) error {
 	err := gsa.canCreateBundle()
 	if err != nil {
 		return err
 	}
 	gsa.logger.Info("Generating support bundle...")
-	bundleFile, err := gsa.builder.GenerateSupportBundle(additionalFiles, excludeFiles)
+	bundleFile, err := gsa.builder.GenerateSupportBundle(cfg)
 	if err != nil {
 		return err
 	}
