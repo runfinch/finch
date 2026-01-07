@@ -4,7 +4,7 @@ go 1.24.11
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.41.0
-	github.com/containerd/cgroups v1.1.0
+	github.com/containerd/cgroups/v3 v3.1.2
 	github.com/containerd/nerdctl/v2 v2.2.1
 	github.com/docker/cli v29.1.3+incompatible
 	github.com/docker/docker v28.5.2+incompatible
@@ -42,7 +42,6 @@ require (
 	github.com/alecthomas/participle/v2 v2.1.4 // indirect
 	github.com/aws/smithy-go v1.24.0 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.7.1 // indirect
-	github.com/containerd/cgroups/v3 v3.1.2 // indirect
 	github.com/containerd/console v1.0.5 // indirect
 	github.com/containerd/containerd/api v1.10.0 // indirect
 	github.com/containerd/containerd/v2 v2.2.1 // indirect
