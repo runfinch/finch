@@ -18,7 +18,7 @@ import (
 	"github.com/runfinch/finch/pkg/version"
 )
 
-// TODO: read this from finch-core/deps
+// TODO: read this from finch-core/deps.
 const (
 	nerdctlVersion    = "v2.2.1"
 	buildKitVersion   = "v0.26.3"
