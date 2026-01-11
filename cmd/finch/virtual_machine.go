@@ -78,10 +78,12 @@ func virtualMachineCommands(
 	home string,
 	finchRootPath string,
 ) *cobra.Command {
+	finchDir := fp.FinchDir(finchRootPath)
+
 	return newVirtualMachineCommand(
 		ncc,
 		logger,
-		dependencies(ecc, fc, fp, fs, ncc, logger, fp.FinchDir(finchRootPath)),
+		dependencies(ecc, fc, fp, fs, ncc, logger, finchDir),
 		config.NewLimaApplier(
 			fc,
 			ecc,
@@ -95,7 +97,7 @@ func virtualMachineCommands(
 			fssh.NewDialer(),
 			fs,
 			fp.LimaSSHPrivateKeyPath(),
-			fp.FinchDir(finchRootPath),
+			finchDir,
 			home,
 			fp.LimaInstancePath(),
 			fc,
@@ -103,5 +105,7 @@ func virtualMachineCommands(
 		fp,
 		fs,
 		disk.NewUserDataDiskManager(ncc, ecc, &afero.OsFs{}, fp, finchRootPath, fc, logger),
+		finchDir,
+		fc,
 	)
 }

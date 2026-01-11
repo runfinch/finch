@@ -5,9 +5,12 @@
 package credhelper
 
 import (
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 
+	"github.com/docker/cli/cli/config/configfile"
+	"github.com/docker/cli/cli/config/types"
 	"github.com/spf13/afero"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -95,4 +98,49 @@ func newDeps(
 	}
 
 	return deps
+}
+
+// RefreshConfigFile refreshes config.json according to finch.yaml.
+func RefreshConfigFile(fs afero.Fs, finchCfg *config.Finch, configJSONPath string) error {
+	if len(finchCfg.CredsHelpers) > 0 {
+		return nil
+	}
+
+	fileExists, err := afero.Exists(fs, configJSONPath)
+	if err != nil {
+		return err
+	}
+	if !fileExists {
+		return nil
+	}
+
+	bytes, err := afero.ReadFile(fs, configJSONPath)
+	if err != nil {
+		return err
+	}
+	if len(bytes) == 0 {
+		return nil
+	}
+
+	var cfg configfile.ConfigFile
+
+	err = json.Unmarshal(bytes, &cfg)
+	if err != nil {
+		return err
+	}
+	if cfg.CredentialsStore == "" {
+		return nil
+	}
+
+	cfg.CredentialsStore = ""
+	if cfg.AuthConfigs == nil {
+		cfg.AuthConfigs = map[string]types.AuthConfig{}
+	}
+
+	finalCfgBytes, err := json.Marshal(&cfg)
+	if err != nil {
+		return err
+	}
+
+	return afero.WriteFile(fs, configJSONPath, finalCfgBytes, 0o600)
 }
