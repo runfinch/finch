@@ -507,8 +507,11 @@ func (nc *nerdctlCommand) handleFlagArg(arg string, nextArg string) (bool, strin
 		// long flag concatenated to value by '=': --<long_flag>="<value>"
 		skip = false
 		flagKey, flagVal, _ = strings.Cut(arg, "=")
-	case strings.HasPrefix(arg, "--") && !strings.HasPrefix(nextArg, "-"):
-		// long flag followed by a value: --<long_flag> "<value>"
+	case strings.HasPrefix(arg, "--") && isNumericArg(nextArg),
+		strings.HasPrefix(arg, "--") && !strings.HasPrefix(nextArg, "-"):
+		// long flag followed by a value (including a negative number): --<long_flag> "<value>".
+		// the isNumeric check is needed because the value can be a negative number.
+		// for example, in our health check tests where we pass --health-retries -5 or --health-timeout -5s
 		skip = true
 		flagKey = arg
 		flagVal = nextArg
@@ -522,8 +525,9 @@ func (nc *nerdctlCommand) handleFlagArg(arg string, nextArg string) (bool, strin
 		skip = false
 		flagKey = arg[:2]
 		flagVal = arg[2:]
-	case strings.HasPrefix(arg, "-") && len(arg) == 2 && !strings.HasPrefix(nextArg, "-"):
-		// short flag followed by a value: -? "<value>" or -? <value>
+	case strings.HasPrefix(arg, "-") && len(arg) == 2 && isNumericArg(nextArg),
+		strings.HasPrefix(arg, "-") && len(arg) == 2 && !strings.HasPrefix(nextArg, "-"):
+		// short flag followed by a value (including a negative number): -? "<value>" or -? <value>
 		skip = true
 		flagKey = arg
 		flagVal = nextArg
@@ -612,4 +616,30 @@ func handleEnvFile(fs afero.Fs, systemDeps NerdctlCommandSystemDeps, arg, arg2 s
 		return skip, []string{}, err
 	}
 	return skip, envs, nil
+}
+
+// isNumericArg returns whether the passed argument is a numeric argument or not.
+// For example, it returns true for cases like 5, -5, 5s and -5s.
+func isNumericArg(arg string) bool {
+	if arg == "" {
+		return false
+	}
+	// handle the case where the arg is a negative number followed by a char
+	// for example: --health-timeout -5s
+	if arg[0] == '-' && len(arg) > 1 {
+		for i := 1; i < len(arg); i++ {
+			if arg[i] < '0' || arg[i] > '9' {
+				return i > 1
+			}
+		}
+		return true
+	}
+	// handle the case where the arg is a positive number followed by a char
+	// for example: --health-timeout -5s
+	for i := 0; i < len(arg); i++ {
+		if arg[i] < '0' || arg[i] > '9' {
+			return i > 0
+		}
+	}
+	return true
 }

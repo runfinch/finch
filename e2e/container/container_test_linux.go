@@ -7,7 +7,7 @@
 package container
 
 import (
-	"github.com/containerd/cgroups"
+	"github.com/containerd/cgroups/v3"
 	"github.com/runfinch/common-tests/tests"
 )
 

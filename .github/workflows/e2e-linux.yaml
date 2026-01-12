@@ -86,6 +86,7 @@ jobs:
           sudo systemctl daemon-reload
           sudo rm -rf /etc/finch
           sudo rm -rf /var/lib/finch
+          sudo rm -rf /var/lib/nerdctl
           sudo rm -rf /var/lib/containerd
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
@@ -99,6 +100,18 @@ jobs:
       - name: Install Finch
         run: |
           sudo rpm -i ./_output/packages/$(ls -t ./_output/packages/ | grep runfinch-finch | head -1)
+          
+          # TODO: remove this once nerdctl v2.2.1 is released in AL
+          ARCH=$(uname -m)
+          case $ARCH in
+            x86_64) NERDCTL_ARCH="amd64" ;;
+            aarch64) NERDCTL_ARCH="arm64" ;;
+          esac
+          wget "https://github.com/containerd/nerdctl/releases/download/v2.2.1/nerdctl-2.2.1-linux-${NERDCTL_ARCH}.tar.gz"
+          sudo tar Cxzvf /usr/local/bin nerdctl-2.2.1-linux-${NERDCTL_ARCH}.tar.gz
+          rm nerdctl-2.2.1-linux-${NERDCTL_ARCH}.tar.gz
+          /usr/local/bin/nerdctl --version
+
           sudo systemctl daemon-reload
           sudo systemctl restart containerd.service
           sudo systemctl restart finch.socket

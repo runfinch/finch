@@ -132,3 +132,177 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 		})
 	}
 }
+
+func TestHandleFlagArg(t *testing.T) {
+	t.Parallel()
+	testCases := []struct {
+		inputArgs    []string
+		expectedArgs []string
+	}{
+		{
+			inputArgs:    []string{"--flag", "value"},
+			expectedArgs: []string{"--flag", "value"},
+		},
+		{
+			inputArgs:    []string{"--flag=value", ""},
+			expectedArgs: []string{"--flag", "value"},
+		},
+		{
+			inputArgs:    []string{"--flag=\"value\"", ""},
+			expectedArgs: []string{"--flag", "\"value\""},
+		},
+		{
+			inputArgs:    []string{"--flag", "10"},
+			expectedArgs: []string{"--flag", "10"},
+		},
+		{
+			inputArgs:    []string{"--flag", "-10"},
+			expectedArgs: []string{"--flag", "-10"},
+		},
+		{
+			inputArgs:    []string{"--flag", "10s"},
+			expectedArgs: []string{"--flag", "10s"},
+		},
+		{
+			inputArgs:    []string{"--flag", "-10s"},
+			expectedArgs: []string{"--flag", "-10s"},
+		},
+		{
+			inputArgs:    []string{"--flag=10", ""},
+			expectedArgs: []string{"--flag", "10"},
+		},
+		{
+			inputArgs:    []string{"--flag=10s", ""},
+			expectedArgs: []string{"--flag", "10s"},
+		},
+		{
+			inputArgs:    []string{"--flag=-10", ""},
+			expectedArgs: []string{"--flag", "-10"},
+		},
+		{
+			inputArgs:    []string{"--flag=-10s", ""},
+			expectedArgs: []string{"--flag", "-10s"},
+		},
+		{
+			inputArgs:    []string{"--flag=\"10\"", ""},
+			expectedArgs: []string{"--flag", "\"10\""},
+		},
+		{
+			inputArgs:    []string{"--flag=\"-10\"", ""},
+			expectedArgs: []string{"--flag", "\"-10\""},
+		},
+		{
+			inputArgs:    []string{"--flag=\"10s\"", ""},
+			expectedArgs: []string{"--flag", "\"10s\""},
+		},
+		{
+			inputArgs:    []string{"--flag=\"-10s\"", ""},
+			expectedArgs: []string{"--flag", "\"-10s\""},
+		},
+		{
+			inputArgs:    []string{"-f", "value"},
+			expectedArgs: []string{"-f", "value"},
+		},
+		{
+			inputArgs:    []string{"-f=value", ""},
+			expectedArgs: []string{"-f", "value"},
+		},
+		{
+			inputArgs:    []string{"-f=\"value\"", ""},
+			expectedArgs: []string{"-f", "\"value\""},
+		},
+		{
+			inputArgs:    []string{"-f", "10s"},
+			expectedArgs: []string{"-f", "10s"},
+		},
+		{
+			inputArgs:    []string{"-f", "-10s"},
+			expectedArgs: []string{"-f", "-10s"},
+		},
+		{
+			inputArgs:    []string{"-f=10", ""},
+			expectedArgs: []string{"-f", "10"},
+		},
+		{
+			inputArgs:    []string{"-f=10s", ""},
+			expectedArgs: []string{"-f", "10s"},
+		},
+		{
+			inputArgs:    []string{"-f=-10", ""},
+			expectedArgs: []string{"-f", "-10"},
+		},
+		{
+			inputArgs:    []string{"-f=-10s", ""},
+			expectedArgs: []string{"-f", "-10s"},
+		},
+		{
+			inputArgs:    []string{"-f=\"10\"", ""},
+			expectedArgs: []string{"-f", "\"10\""},
+		},
+		{
+			inputArgs:    []string{"-f=\"10s\"", ""},
+			expectedArgs: []string{"-f", "\"10s\""},
+		},
+		{
+			inputArgs:    []string{"-f=\"-10\"", ""},
+			expectedArgs: []string{"-f", "\"-10\""},
+		},
+		{
+			inputArgs:    []string{"-f=\"-10s\"", ""},
+			expectedArgs: []string{"-f", "\"-10s\""},
+		},
+		{
+			inputArgs:    []string{"-f10", ""},
+			expectedArgs: []string{"-f", "10"},
+		},
+	}
+	for _, tc := range testCases {
+		ctrl := gomock.NewController(t)
+		ecc := mocks.NewCommandCreator(ctrl)
+		ncc := mocks.NewNerdctlCmdCreator(ctrl)
+		ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
+		logger := mocks.NewLogger(ctrl)
+		fs := afero.NewMemMapFs()
+		nc := newNerdctlCommand(ncc, ecc, ncsd, logger, fs, nil)
+		// the first return value is never used
+		_, flagKey, flagVal := nc.handleFlagArg(tc.inputArgs[0], tc.inputArgs[1])
+		assert.Equal(t, flagKey, tc.expectedArgs[0])
+		assert.Equal(t, flagVal, tc.expectedArgs[1])
+	}
+}
+
+func TestIsNumericArg(t *testing.T) {
+	t.Parallel()
+	testCases := []struct {
+		arg      string
+		expected bool
+	}{
+		{
+			arg:      "5",
+			expected: true,
+		},
+		{
+			arg:      "5s",
+			expected: true,
+		},
+		{
+			arg:      "-5",
+			expected: true,
+		},
+		{
+			arg:      "-5s",
+			expected: true,
+		},
+		{
+			arg:      "abc",
+			expected: false,
+		},
+		{
+			arg:      "-abc",
+			expected: false,
+		},
+	}
+	for _, tc := range testCases {
+		assert.Equal(t, tc.expected, isNumericArg(tc.arg))
+	}
+}
