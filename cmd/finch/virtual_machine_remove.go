@@ -7,14 +7,15 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 
-	"github.com/spf13/cobra"
-
+	credserver "github.com/runfinch/finch/pkg/credserver"
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/disk"
+	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
 
-	"github.com/runfinch/finch/pkg/flog"
+	"github.com/spf13/cobra"
 )
 
 func newRemoveVMCommand(limaCmdCreator command.NerdctlCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *cobra.Command {
@@ -77,6 +78,11 @@ func (rva *removeVMAction) assertVMIsStopped(creator command.NerdctlCmdCreator, 
 }
 
 func (rva *removeVMAction) removeVM(force bool) error {
+	// Stop credential server before VM removal (macOS only)
+	if runtime.GOOS == "darwin" {
+		credserver.StopCredentialServer()
+	}
+
 	_ = rva.diskManager.DetachUserDataDisk()
 	limaCmd := rva.createVMRemoveCommand(force)
 	if force {

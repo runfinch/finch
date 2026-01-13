@@ -75,6 +75,7 @@ func TestVM(t *testing.T) {
 		testNonDefaultOptions(o, *e2e.Installed)
 		testSupportBundle(o)
 		testCredHelper(o, *e2e.Installed, *e2e.Registry)
+		testNativeCredHelper(o, *e2e.Installed)
 		testSoci(o, *e2e.Installed)
 		testVMNetwork(o, *e2e.Installed)
 		testDaemon(o, *e2e.Installed)

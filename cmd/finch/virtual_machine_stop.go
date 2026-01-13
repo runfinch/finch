@@ -7,7 +7,9 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 
+	credserver "github.com/runfinch/finch/pkg/credserver"
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/flog"
@@ -75,6 +77,11 @@ func (sva *stopVMAction) assertVMIsRunning(creator command.NerdctlCmdCreator, lo
 }
 
 func (sva *stopVMAction) stopVM(force bool) error {
+	// Stop credential server before VM stops (macOS only)
+	if runtime.GOOS == "darwin" {
+		credserver.StopCredentialServer()
+	}
+
 	limaCmd := sva.createLimaStopCommand(force)
 	if force {
 		sva.logger.Info("Forcibly stopping Finch virtual machine...")

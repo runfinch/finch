@@ -7,12 +7,16 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/fssh"
 	"github.com/runfinch/finch/pkg/system"
 
+	credserver "github.com/runfinch/finch/pkg/credserver"
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
@@ -65,6 +69,18 @@ func (p *postVMStartInitAction) run() error {
 		p.logger.Warnln("SSH port = 0, is the instance running? Not able to apply VM configuration options")
 		return nil
 	}
+
+	// Start credential server after VM is running (macOS only)
+	if runtime.GOOS == "darwin" {
+		execPath, err := os.Executable()
+		if err == nil {
+			finchRootPath := filepath.Dir(filepath.Dir(execPath))
+			if err := credserver.StartCredentialServer(finchRootPath); err != nil {
+				p.logger.Warnf("Failed to start credential server: %v", err)
+			}
+		}
+	}
+
 	return p.nca.Apply(fmt.Sprintf("127.0.0.1:%v", portString))
 }
 
