@@ -195,7 +195,7 @@ jobs:
       - name: Upload deb archives and signatures to release
         uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v0.1.15
         with:
-          tag_name: ${{ needs.get-tag-name.outputs.version }}
+          tag_name: ${{ needs.get-tag-and-version.outputs.tag }}
           files: |
             pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb
             pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig
