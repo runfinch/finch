@@ -79,7 +79,7 @@ endif
 
 FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
 
-remote-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml $(OUTDIR)/finch-daemon/finch@.service
+remote-all: arch-test install.finch-core-dependencies finch finch.yaml networks.yaml config.yaml $(OUTDIR)/finch-daemon/finch@.service
 
 ifeq ($(BUILD_OS), Windows_NT)
 include Makefile.windows
@@ -176,6 +176,26 @@ finch-native: finch-all
 
 finch-all:
 	$(GO) build -ldflags $(LDFLAGS) -tags "$(GO_BUILD_TAGS)" -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
+	"$(MAKE)" build-credential-helper
+	"$(MAKE)" build-credential-daemon
+
+.PHONY: build-credential-helper
+build-credential-helper:
+ifeq ($(GOOS),darwin)
+	# Build finchhost credential helper for VM
+	GOOS=linux GOARCH=$(shell go env GOARCH) $(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/docker-credential-finchhost $(PACKAGE)/cmd/finchhost-credential-helper
+	# Copy to /tmp/lima which is mounted in macOS VM
+	mkdir -p /tmp/lima/finchhost
+	cp $(OUTDIR)/bin/docker-credential-finchhost /tmp/lima/finchhost/
+	chmod +x /tmp/lima/finchhost/docker-credential-finchhost
+endif
+
+.PHONY: build-credential-daemon
+build-credential-daemon:
+ifeq ($(GOOS),darwin)
+	# Build credential daemon for host
+	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/bin/finch-cred-daemon $(PACKAGE)/cmd/finch-cred-daemon
+endif
 
 .PHONY: release
 release: check-licenses all download-licenses
@@ -289,9 +309,21 @@ check-licenses:
 	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --ignore  github.com/multiformats/go-base36 --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT,MPL-2.0 --include_tests ./...
 
 COVERAGE_THRESH = 60
+
+# macOS Keychain e2e test requires credhelper in PATH
+.PHONY: test-setup-credhelper-in-path
+test-setup-credhelper-in-path:
+ifeq ($(GOOS),darwin)
+	# Setup credential helper symlink for testing only
+	@if [ -f $(OUTDIR)/cred-helpers/docker-credential-osxkeychain ]; then \
+		chmod +x $(OUTDIR)/cred-helpers/docker-credential-osxkeychain; \
+		sudo ln -sf $(OUTDIR)/cred-helpers/docker-credential-osxkeychain /usr/local/bin/docker-credential-osxkeychain; \
+	fi
+endif
+
 .PHONY: test-unit
 test-unit:
-	go test -coverprofile=coverage.out $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks | grep -v version | grep -v flog | grep -v system | grep -v fmemory | grep -v coverage | grep -v devcontainer_patch) -shuffle on
+	go test -coverprofile=coverage.out $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks | grep -v version | grep -v flog | grep -v system | grep -v fmemory | grep -v coverage | grep -v devcontainer_patch | grep -v finch-cred-daemon | grep -v finchhost-credential-helper | grep -v credserver) -shuffle on
 	go run coverage/coverage.go $(COVERAGE_THRESH)
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
@@ -307,7 +339,7 @@ create-report-dir:
 test-e2e: test-e2e-vm-serial test-e2e-container
 
 .PHONY: test-e2e-vm-serial
-test-e2e-vm-serial: create-report-dir
+test-e2e-vm-serial: create-report-dir test-setup-credhelper-in-path
 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
