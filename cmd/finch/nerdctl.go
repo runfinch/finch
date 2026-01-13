@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 	"strings"
 
 	"golang.org/x/exp/slices"
@@ -119,48 +120,54 @@ func (nc *nerdctlCommand) shouldReplaceForHelp(cmdName string, args []string) bo
 	return false
 }
 
-var nerdctlCmds = map[string]string{
-	"build":     "Build an image from Dockerfile",
-	"builder":   "Manage builds",
-	"commit":    "Create a new image from a container's changes",
-	"compose":   "Compose",
-	"container": "Manage containers",
-	"create":    "Create a new container",
-	"cp":        "Copy files/folders between a running container and the local filesystem",
-	"events":    "Get real time events from the server",
-	"exec":      "Run a command in a running container",
-	"history":   "Show the history of an image",
-	"image":     "Manage images",
-	"images":    "List images",
-	"info":      "Display system-wide information",
-	"inspect":   "Return low-level information on Docker objects",
-	"kill":      "Kill one or more running containers",
-	"load":      "Load an image from a tar archive or STDIN",
-	"login":     "Log in to a container registry",
-	"logout":    "Log out from a container registry",
-	"logs":      "Fetch the logs of a container",
-	"network":   "Manage networks",
-	"pause":     "Pause all processes within one or more containers",
-	"port":      "List port mappings or a specific mapping for the container",
-	"ps":        "List containers",
-	"pull":      "Pull an image from a registry",
-	"push":      "Push an image or a repository to a registry",
-	"restart":   "Restart one or more containers",
-	"rm":        "Remove one or more containers",
-	"rmi":       "Remove one or more images",
-	"run":       "Run a command in a new container",
-	"save":      "Save one or more images to a tar archive (streamed to STDOUT by default)",
-	"start":     "Start one or more stopped containers",
-	"stats":     "Display a live stream of container(s) resource usage statistics",
-	"stop":      "Stop one or more running containers",
-	"system":    "Manage containerd",
-	"tag":       "Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE",
-	"top":       "Display the running processes of a container",
-	"unpause":   "Unpause all processes within one or more containers",
-	"update":    "Update configuration of one or more containers",
-	"volume":    "Manage volumes",
-	"wait":      "Block until one or more containers stop, then print their exit codes",
-}
+var nerdctlCmds = func() map[string]string {
+	cmds := map[string]string{
+		"build":     "Build an image from Dockerfile",
+		"builder":   "Manage builds",
+		"commit":    "Create a new image from a container's changes",
+		"compose":   "Compose",
+		"container": "Manage containers",
+		"create":    "Create a new container",
+		"cp":        "Copy files/folders between a running container and the local filesystem",
+		"events":    "Get real time events from the server",
+		"exec":      "Run a command in a running container",
+		"history":   "Show the history of an image",
+		"image":     "Manage images",
+		"images":    "List images",
+		"info":      "Display system-wide information",
+		"inspect":   "Return low-level information on Docker objects",
+		"kill":      "Kill one or more running containers",
+		"load":      "Load an image from a tar archive or STDIN",
+		"logs":      "Fetch the logs of a container",
+		"network":   "Manage networks",
+		"pause":     "Pause all processes within one or more containers",
+		"port":      "List port mappings or a specific mapping for the container",
+		"ps":        "List containers",
+		"pull":      "Pull an image from a registry",
+		"push":      "Push an image or a repository to a registry",
+		"restart":   "Restart one or more containers",
+		"rm":        "Remove one or more containers",
+		"rmi":       "Remove one or more images",
+		"run":       "Run a command in a new container",
+		"save":      "Save one or more images to a tar archive (streamed to STDOUT by default)",
+		"start":     "Start one or more stopped containers",
+		"stats":     "Display a live stream of container(s) resource usage statistics",
+		"stop":      "Stop one or more running containers",
+		"system":    "Manage containerd",
+		"tag":       "Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE",
+		"top":       "Display the running processes of a container",
+		"unpause":   "Unpause all processes within one or more containers",
+		"update":    "Update configuration of one or more containers",
+		"volume":    "Manage volumes",
+		"wait":      "Block until one or more containers stop, then print their exit codes",
+	}
+	// Add login/logout commands for Linux
+	if runtime.GOOS == "linux" {
+		cmds["login"] = "Log in to a container registry"
+		cmds["logout"] = "Log out from a container registry"
+	}
+	return cmds
+}()
 
 var dockerCompatCmds = map[string]string{
 	"buildx": "build version",
