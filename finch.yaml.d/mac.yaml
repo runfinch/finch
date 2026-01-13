@@ -7,6 +7,11 @@ provision:
   - mode: boot
     script: |
       modprobe virtiofs
+  - mode: boot
+    script: |
+      # Create user-writable directory in /run for credential socket
+      mkdir -p /run/finch-user-sockets
+      chmod 777 /run/finch-user-sockets
   # port this to common.yaml after windows socket forwarding is added
   - mode: user
     script: |
@@ -16,6 +21,15 @@ provision:
 
       sudo systemctl daemon-reload
       sudo systemctl enable --now finch@${UID}
+  - mode: user
+    script: |
+      #!/bin/bash
+      # Install finchhost credential helper to PATH
+      if [ -f /tmp/lima/finchhost/docker-credential-finchhost ]; then
+        sudo cp /tmp/lima/finchhost/docker-credential-finchhost /usr/bin/docker-credential-finchhost
+        sudo chmod +x /usr/bin/docker-credential-finchhost
+      fi
+
 mounts:
   - location: "~"
     mountPoint: null
@@ -57,3 +71,6 @@ hostResolver:
 portForwards:
 - guestSocket: "/run/finch.sock"
   hostSocket: "{{.Dir}}/sock/finch.sock"
+- guestSocket: "/run/finch-user-sockets/creds.sock"
+  hostSocket: "{{.Dir}}/sock/creds.sock"
+  reverse: true
