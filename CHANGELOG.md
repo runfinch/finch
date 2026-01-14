@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.14.1](https://github.com/runfinch/finch/compare/v1.14.0...v1.14.1) (2026-01-14)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump submodules and dependencies ([#1672](https://github.com/runfinch/finch/issues/1672)) ([e83c6fb](https://github.com/runfinch/finch/commit/e83c6fb9196d6157b5ef3bacc1f440c85134004d))
+
+
+### Bug Fixes
+
+* **ci:** get-tag-name and permissions of release automation workflow ([#1670](https://github.com/runfinch/finch/issues/1670)) ([9c82c73](https://github.com/runfinch/finch/commit/9c82c735276c500e3093b3930712d0d455b328b1))
+
 ## [1.14.0](https://github.com/runfinch/finch/compare/v1.13.0...v1.14.0) (2026-01-12)
 
 
