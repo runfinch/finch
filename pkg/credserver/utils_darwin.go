@@ -72,7 +72,17 @@ func EnsureConfigExists(finchPath string) error {
 	}
 
 	fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists creating new config\n")
-	cfg := configfile.ConfigFile{CredentialsStore: "osxkeychain"}
+	
+	// Check if osxkeychain credential helper is available
+	var cfg configfile.ConfigFile
+	if _, err := exec.LookPath("docker-credential-osxkeychain"); err == nil {
+		fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists osxkeychain helper found, setting as credsStore\n")
+		cfg.CredentialsStore = "osxkeychain"
+	} else {
+		fmt.Fprintf(os.Stderr, "Warning: docker-credential-osxkeychain not found in PATH, credentials will be stored in plaintext\n")
+		// Leave CredentialsStore empty - will use plaintext storage
+	}
+	
 	data, err := json.MarshalIndent(&cfg, "", "  ")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists marshal failed: %v\n", err)
