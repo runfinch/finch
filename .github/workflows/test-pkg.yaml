@@ -83,12 +83,12 @@ jobs:
         run: |
           PKG_FILE="Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg"
           PKG_SIGNATURE=$(pkgutil --check-signature "$PKG_FILE")
-          if ! echo "$PKG_SIGNATURE" | grep -q "Status: signed by a developer certificate issued by Apple for distribution" || \
-             ! echo "$PKG_SIGNATURE" | grep -q "Notarization: trusted by the Apple notary service"; then
-            echo "Finch installer signature/notarization check failed"
+          if ! echo "$PKG_SIGNATURE" | grep -q "Status: signed by a developer certificate issued by Apple for distribution"; then
+            echo "Finch installer signature check failed"
             exit 1
           fi
-          if ! spctl -a -vv -t install "$PKG_FILE" 2>&1 | grep -q "accepted"; then
+          if ! echo "$PKG_SIGNATURE" | grep -q "Notarization: trusted by the Apple notary service" || \
+            ! spctl -a -vv -t install "$PKG_FILE" 2>&1 | grep -q "accepted"; then
             echo "Finch installer notarization check failed"
             exit 1
           fi

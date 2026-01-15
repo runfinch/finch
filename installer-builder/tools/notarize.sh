@@ -6,11 +6,10 @@ set -o pipefail
 #$2: the credential
 cd ./installer-builder/output/installer/signed/Payload
 ditto -c -k --sequesterRsrc --keepParent Finch.pkg Finch.zip
-notarization_output=$(xcrun notarytool submit Finch.zip --apple-id "${1}" --password "${2}" --team-id 94KV3E626L --wait)
-echo "$notarization_output"
+xcrun notarytool submit Finch.zip --apple-id "${1}" --password "${2}" --team-id 94KV3E626L --wait | tee /tmp/notarization-output.log
 
 # validate notarization result
-if echo "$notarization_output" | grep -q "status: Accepted"; then
+if grep -q "status: Accepted" /tmp/notarization-output.log; then
     echo "Notarization successful"
 else
     echo "Notarization failed"
