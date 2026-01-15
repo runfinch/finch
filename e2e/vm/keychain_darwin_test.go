@@ -172,6 +172,7 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 				gomega.Equal(string(configContent)),
 				"Config should remain unchanged after EnsureConfigExists")
 			fmt.Printf("✓ Existing config preserved\n")
+			fmt.Printf("Config before push: %s\n", string(configContentAfter))
 
 			// 4. Re-login to verify credentials work
 			ginkgo.By("Testing push with credentials")
