@@ -322,6 +322,13 @@ ifeq ($(GOOS),darwin)
 	fi
 endif
 
+.PHONY: ensure-plaintext-config
+ensure-plaintext-config:
+	@mkdir -p $(HOME)/.finch
+	@if [ ! -f $(HOME)/.finch/config.json ]; then \
+		echo '{}' > $(HOME)/.finch/config.json; \
+	fi
+
 .PHONY: test-unit
 test-unit:
 	go test -coverprofile=coverage.out $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks | grep -v version | grep -v flog | grep -v system | grep -v fmemory | grep -v coverage | grep -v devcontainer_patch | grep -v finch-cred-daemon | grep -v finchhost-credential-helper | grep -v credserver) -shuffle on
@@ -340,11 +347,11 @@ create-report-dir:
 test-e2e: test-e2e-vm-serial test-e2e-container
 
 .PHONY: test-e2e-vm-serial
-test-e2e-vm-serial: create-report-dir add-credhelper-to-path
+test-e2e-vm-serial: create-report-dir add-credhelper-to-path ensure-plaintext-config
 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
-test-e2e-container: create-report-dir add-credhelper-to-path
+test-e2e-container: create-report-dir add-credhelper-to-path ensure-plaintext-config
 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
