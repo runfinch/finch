@@ -20,7 +20,7 @@ import (
 // GetCredentials retrieves credentials from configured helper or auths in config. Returns empty credentials if not found.
 func GetCredentials(registryHostname string, envVars ...map[string]string) (*credentials.Credentials, error) {
 	fmt.Fprintf(os.Stderr, "DEBUG: GetCredentials called for registry: %s\n", registryHostname)
-	
+
 	cfg, err := loadConfig()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "DEBUG: GetCredentials loadConfig failed: %v\n", err)
@@ -57,7 +57,7 @@ func GetCredentials(registryHostname string, envVars ...map[string]string) (*cre
 		fmt.Fprintf(os.Stderr, "DEBUG: GetCredentials unmarshal failed: %v\n", err)
 		return nil, fmt.Errorf("failed to parse credential response: %w", err)
 	}
-	
+
 	fmt.Fprintf(os.Stderr, "DEBUG: GetCredentials successfully retrieved credentials\n")
 	return &creds, nil
 }
@@ -133,7 +133,7 @@ func loadConfig() (*configfile.ConfigFile, error) {
 		fmt.Fprintf(os.Stderr, "DEBUG: loadConfig failed to parse config: %v\n", err)
 		return nil, err
 	}
-	
+
 	fmt.Fprintf(os.Stderr, "DEBUG: loadConfig successfully loaded config (credsStore: %s)\n", cfg.CredentialsStore)
 	return cfg, nil
 }
@@ -144,7 +144,7 @@ func getCredHelperPath(registryHostname string, cfg *configfile.ConfigFile) stri
 		fmt.Fprintf(os.Stderr, "DEBUG: getCredHelperPath config is nil\n")
 		return ""
 	}
-	
+
 	if cfg.CredentialHelpers != nil && registryHostname != "" {
 		if helper, exists := cfg.CredentialHelpers[registryHostname]; exists {
 			fmt.Fprintf(os.Stderr, "DEBUG: getCredHelperPath found registry-specific helper: %s\n", helper)
@@ -168,7 +168,7 @@ func getCredHelperPath(registryHostname string, cfg *configfile.ConfigFile) stri
 		fmt.Fprintf(os.Stderr, "DEBUG: getCredHelperPath resolved to: %s\n", path)
 		return path
 	}
-	
+
 	fmt.Fprintf(os.Stderr, "DEBUG: getCredHelperPath no helper configured\n")
 	return ""
 }
@@ -179,16 +179,17 @@ func readCredentialsFromConfig(registryHostname string, cfg *configfile.ConfigFi
 		fmt.Fprintf(os.Stderr, "DEBUG: readCredentialsFromConfig config or AuthConfigs is nil\n")
 		return &credentials.Credentials{ServerURL: registryHostname}
 	}
-	
+
 	if authConfig, exists := cfg.AuthConfigs[registryHostname]; exists {
-		fmt.Fprintf(os.Stderr, "DEBUG: readCredentialsFromConfig found credentials for %s (username: %s)\n", registryHostname, authConfig.Username)
+		fmt.Fprintf(os.Stderr, "DEBUG: readCredentialsFromConfig found credentials for %s (username: %s)\n",
+			registryHostname, authConfig.Username)
 		return &credentials.Credentials{
 			ServerURL: registryHostname,
 			Username:  authConfig.Username,
 			Secret:    authConfig.Password,
 		}
 	}
-	
+
 	fmt.Fprintf(os.Stderr, "DEBUG: readCredentialsFromConfig no credentials found for %s\n", registryHostname)
 	return &credentials.Credentials{ServerURL: registryHostname}
 }
@@ -196,7 +197,7 @@ func readCredentialsFromConfig(registryHostname string, cfg *configfile.ConfigFi
 // isOSXKeychainUsable checks if osxkeychain credential helper is both available and functional.
 func isOSXKeychainUsable() bool {
 	fmt.Fprintf(os.Stderr, "DEBUG: isOSXKeychainUsable checking osxkeychain availability\n")
-	
+
 	// Check 1: Binary exists in PATH
 	helperPath, err := exec.LookPath("docker-credential-osxkeychain")
 	if err != nil {
@@ -216,7 +217,7 @@ func isOSXKeychainUsable() bool {
 		fmt.Fprintf(os.Stderr, "DEBUG: osxkeychain login keychain not found at %s: %v\n", loginKeychainPath, err)
 		return false
 	}
-	
+
 	fmt.Fprintf(os.Stderr, "DEBUG: isOSXKeychainUsable osxkeychain is fully functional\n")
 	return true
 }

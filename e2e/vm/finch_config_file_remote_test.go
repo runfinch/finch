@@ -49,6 +49,7 @@ var testFinchConfigFile = func(o *option.Option) {
 			}
 
 			fmt.Printf("DEBUG: Config before login - checking %s\n", configPath)
+			// #nosec G304 -- configPath is constructed from user home directory, not user input
 			if data, err := os.ReadFile(configPath); err == nil {
 				fmt.Printf("DEBUG: Config exists before login: %s\n", string(data))
 			} else {
