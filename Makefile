@@ -39,6 +39,9 @@ MIN_MACOS_VERSION ?= 11.0
 FINCH_DAEMON_LOCATION_ROOT ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/finch-daemon
 FINCH_DAEMON_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/finch-daemon
 FINCH_DAEMON_CREDHELPER_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/docker-credential-finch
+FINCH_CRED_LOCATION_ROOT ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/finch-cred
+FINCH_CRED_DAEMON_LOCATION ?= $(FINCH_CRED_LOCATION_ROOT)/finch-cred-daemon
+FINCHHOST_CREDHELPER_LOCATION ?= $(FINCH_CRED_LOCATION_ROOT)/docker-credential-finchhost
 
 GOOS ?= $(shell $(GO) env GOOS)
 ifeq ($(GOOS),windows)
@@ -79,7 +82,7 @@ endif
 
 FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
 
-remote-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml $(OUTDIR)/finch-daemon/finch@.service
+remote-all: arch-test install.finch-core-dependencies finch finch.yaml networks.yaml config.yaml $(OUTDIR)/finch-daemon/finch@.service
 
 ifeq ($(BUILD_OS), Windows_NT)
 include Makefile.windows
@@ -133,10 +136,14 @@ copy:
 .PHONY: install
 install: copy
 	sudo ln -sf $(DEST)/bin/finch "$(BINDIR)/finch"
+	@if [ -f $(DEST)/cred-helpers/docker-credential-osxkeychain ]; then \
+		sudo ln -sf $(DEST)/cred-helpers/docker-credential-osxkeychain "$(BINDIR)/docker-credential-osxkeychain"; \
+	fi
 
 uninstall.finch:
 	@test -f "$(BINDIR)/$(BINARYNAME)" || echo "finch not found in $(BINDIR) prefix"
 	if [ "$$(readlink "$(BINDIR)/$(BINARYNAME)")" = "$(DEST)/bin/$(BINARYNAME)" ]; then sudo rm "$(BINDIR)/$(BINARYNAME)"; fi
+	if [ "$$(readlink "$(BINDIR)/docker-credential-osxkeychain")" = "$(DEST)/cred-helpers/docker-credential-osxkeychain" ]; then sudo rm "$(BINDIR)/docker-credential-osxkeychain"; fi
 	-@rm -rf $(DEST)/bin 2>/dev/null || true
 	-@rm -rf $(DEST)/lima 2>/dev/null || true
 	-@rm -rf $(DEST)/os 2>/dev/null || true
@@ -176,6 +183,22 @@ finch-native: finch-all
 
 finch-all:
 	$(GO) build -ldflags $(LDFLAGS) -tags "$(GO_BUILD_TAGS)" -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
+	"$(MAKE)" build-credential-helper
+	"$(MAKE)" build-credential-daemon
+
+.PHONY: build-credential-helper
+build-credential-helper:
+ifeq ($(GOOS),darwin)
+	# Build finchhost credential helper for VM
+	GOOS=linux GOARCH=$(shell go env GOARCH) $(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/finch-cred/docker-credential-finchhost $(PACKAGE)/cmd/finchhost-credential-helper
+endif
+
+.PHONY: build-credential-daemon
+build-credential-daemon:
+ifeq ($(GOOS),darwin)
+	# Build credential daemon for host
+	$(GO) build -ldflags $(LDFLAGS) -o $(OUTDIR)/finch-cred/finch-cred-daemon $(PACKAGE)/cmd/finch-cred-daemon
+endif
 
 .PHONY: release
 release: check-licenses all download-licenses
@@ -289,9 +312,19 @@ check-licenses:
 	$(GOBIN)/go-licenses check --ignore golang.org/x,github.com/runfinch/finch --ignore  github.com/multiformats/go-base36 --allowed_licenses Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT,MPL-2.0 --include_tests ./...
 
 COVERAGE_THRESH = 60
+
+.PHONY: add-credhelper-to-path
+add-credhelper-to-path:
+ifeq ($(GOOS),darwin)
+	@if [ -f $(OUTDIR)/cred-helpers/docker-credential-osxkeychain ]; then \
+		chmod +x $(OUTDIR)/cred-helpers/docker-credential-osxkeychain; \
+		sudo ln -sf $(OUTDIR)/cred-helpers/docker-credential-osxkeychain /usr/local/bin/docker-credential-osxkeychain; \
+	fi
+endif
+
 .PHONY: test-unit
 test-unit:
-	go test -coverprofile=coverage.out $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks | grep -v version | grep -v flog | grep -v system | grep -v fmemory | grep -v coverage | grep -v devcontainer_patch) -shuffle on
+	go test -coverprofile=coverage.out $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks | grep -v version | grep -v flog | grep -v system | grep -v fmemory | grep -v coverage | grep -v devcontainer_patch | grep -v finch-cred-daemon | grep -v finchhost-credential-helper | grep -v credserver) -shuffle on
 	go run coverage/coverage.go $(COVERAGE_THRESH)
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.
@@ -307,11 +340,11 @@ create-report-dir:
 test-e2e: test-e2e-vm-serial test-e2e-container
 
 .PHONY: test-e2e-vm-serial
-test-e2e-vm-serial: create-report-dir
+test-e2e-vm-serial: create-report-dir add-credhelper-to-path
 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
-test-e2e-container: create-report-dir
+test-e2e-container: create-report-dir add-credhelper-to-path
 	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
@@ -339,7 +372,7 @@ test-e2e-daemon:
 	DOCKER_HOST=$(DAEMON_DOCKER_HOST) \
 	DOCKER_API_VERSION="v1.41" \
 	TEST_E2E=1 \
-	go test ./e2e -test.v -ginkgo.v -ginkgo.randomize-all -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
+	go test ./e2e -timeout 15m -test.v -ginkgo.v -ginkgo.randomize-all -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
 	  --subject="$(OUTDIR)/bin/$(BINARYNAME)" \
 	  --daemon-context-subject-prefix="$(OUTDIR)/lima/bin/limactl shell finch sudo" \
 	  --daemon-context-subject-env="LIMA_HOME=$(OUTDIR)/lima/data"

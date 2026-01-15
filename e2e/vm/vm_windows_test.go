@@ -45,6 +45,11 @@ func TestVM(t *testing.T) {
 		time.Sleep(1 * time.Second)
 		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 		gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Running"))
+		// Ensure DOCKER_CONFIG is set to %LOCALAPPDATA%\.finch
+		finchRootDir := os.Getenv("LOCALAPPDATA")
+		finchConfigDir := filepath.Join(finchRootDir, ".finch")
+		_ = os.MkdirAll(finchConfigDir, 0o700)
+		o.UpdateEnv("DOCKER_CONFIG", finchConfigDir)
 		return nil
 	}, func(_ []byte) {})
 

@@ -49,12 +49,18 @@ var testFinchConfigFile = func(o *option.Option) {
 				registryImage)
 			ginkgo.DeferCleanup(command.Run, o, "rmi", "-f", registryImage)
 			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", registryContainer)
+			tries := 0
 			for command.StdoutStr(o, "inspect", "-f", "{{.State.Running}}", containerID) != "true" {
+				if tries >= 5 {
+					ginkgo.Fail("Registry container failed to start after 5 seconds")
+				}
 				time.Sleep(1 * time.Second)
+				tries++
 			}
 			time.Sleep(10 * time.Second)
 			registry := fmt.Sprintf(`localhost:%d`, port)
-			command.Run(o, "login", registry, "-u", "testUser", "-p", "testPassword")
+			loginSession := command.New(o, "login", registry, "-u", "testUser", "-p", "testPassword").WithoutCheckingExitCode().Run()
+			gomega.Expect(loginSession.ExitCode()).Should(gomega.Equal(0))
 
 			var finchRootDir string
 			var err error

@@ -7,14 +7,16 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/spf13/cobra"
+	"os"
+	"path/filepath"
 
 	"github.com/runfinch/finch/pkg/command"
+	credserver "github.com/runfinch/finch/pkg/credserver"
 	"github.com/runfinch/finch/pkg/disk"
+	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
 
-	"github.com/runfinch/finch/pkg/flog"
+	"github.com/spf13/cobra"
 )
 
 func newRemoveVMCommand(limaCmdCreator command.NerdctlCmdCreator, diskManager disk.UserDataDiskManager, logger flog.Logger) *cobra.Command {
@@ -77,6 +79,15 @@ func (rva *removeVMAction) assertVMIsStopped(creator command.NerdctlCmdCreator, 
 }
 
 func (rva *removeVMAction) removeVM(force bool) error {
+	// Stop credential server before VM removal (no-op on Windows)
+	execPath, err := os.Executable()
+	if err == nil {
+		finchRootPath := filepath.Dir(filepath.Dir(execPath))
+		if err := credserver.StopCredentialServer(finchRootPath); err != nil {
+			rva.logger.Warnf("Failed to stop credential server: %v", err)
+		}
+	}
+
 	_ = rva.diskManager.DetachUserDataDisk()
 	limaCmd := rva.createVMRemoveCommand(force)
 	if force {

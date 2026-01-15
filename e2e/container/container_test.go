@@ -6,7 +6,9 @@ package container
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"testing"
@@ -31,6 +33,17 @@ func TestContainer(t *testing.T) {
 	}
 
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
+		// Set DOCKER_CONFIG to /.finch
+		var finchConfigDir string
+		if runtime.GOOS == "windows" {
+			finchConfigDir = filepath.Join(os.Getenv("LOCALAPPDATA"), ".finch")
+		} else {
+			homeDir, _ := os.UserHomeDir()
+			finchConfigDir = filepath.Join(homeDir, ".finch")
+		}
+		_ = os.MkdirAll(finchConfigDir, 0o700)
+		o.UpdateEnv("DOCKER_CONFIG", finchConfigDir)
+
 		if runtime.GOOS != "linux" {
 			command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
 			time.Sleep(1 * time.Second)
@@ -60,7 +73,9 @@ func TestContainer(t *testing.T) {
 			// get ip address for adapter vEthernet (WSL)
 			n, err := exec.Command("cmd", "/C", "netsh", "interface", "ipv4", "show",
 				"addresses", "vEthernet (WSL)").Output()
-			gomega.Expect(err).Should(gomega.BeNil())
+			if err != nil {
+				panic(fmt.Sprintf("Failed to get WSL IP address: %v", err))
+			}
 			hostIP := extractIPAddress(string(n))
 			// wsl2 cgroup v2 is mounted at /sys/fs/cgroup/unified,
 			// containerd expects it at /sys/fs/cgroup based on

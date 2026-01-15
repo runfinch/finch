@@ -74,8 +74,9 @@ func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd st
 // Bash is the default shell and Bash will not load ~/.profile if ~/.bash_profile exists (which it does).
 // ~/.bash_profile sources ~/.bashrc, so ~/.bashrc is currently the best place to define additional variables.
 // The [GNU docs for Bash] explain how these files work together in more details.
-// The default location of DOCKER_CONFIG is ~/.docker/config.json. This config change sets the location to
-// ~/.finch/config.json, but from the perspective of macOS (/Users/<user>/.finch/config.json).
+// The default location of DOCKER_CONFIG is ~/.docker/config.json. This config change sets the location in a
+// platform-specific manner. On macOS (Lima), this is set to ~/.finch/vm-config/config.json to allow nerdctl to
+// use a custom credential helper. On Windows (WSL2), the config points to ~/.finch/config.json.
 // This config change also symlinks ~/.finch in the macOS/Windows perspective (e.g. /User/<user>/.finch) to
 // ~/.finch in the vm's perspective (/home/<user>/.finch) so that it can be found in a well known location
 // that doesn't require loading the user's bash rc.
@@ -89,18 +90,31 @@ func addLineToBashrc(fs afero.Fs, profileFilePath string, profStr string, cmd st
 // [registry nerdctl docs]: https://github.com/containerd/nerdctl/blob/master/docs/registry.md
 
 func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir string) error {
-	cmdArr := []string{
-		`export DOCKER_CONFIG="$FINCH_DIR"`,
-		`[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws`,
+	// Platform-specific config initialization; macOs requires alternative in-VM DOCKER_CONFIG.
+	var cmdArr []string
+	if *fc.VMType == "wsl2" {
+		cmdArr = []string{
+			`export DOCKER_CONFIG="$FINCH_DIR"`,
+		}
+	} else {
+		cmdArr = []string{
+			`export DOCKER_CONFIG="$FINCH_DIR/vm-config"`,
+			`mkdir -p "$FINCH_DIR/vm-config"`,
+			`echo '{"credsStore": "finchhost"}' > "$FINCH_DIR/vm-config/config.json"`,
+		}
 	}
+	cmdArr = append(cmdArr, `[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws`)
 
-	//nolint:gosec // G101: Potential hardcoded credentials false positive
-	const configureCredHelperTemplate = `([ -e "$FINCH_DIR"/cred-helpers/docker-credential-%s ] || \
-  (echo "error: docker-credential-%s not found in $FINCH_DIR/cred-helpers directory.")) && \
-  ([ -L /usr/local/bin/docker-credential-%s ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-%s /usr/local/bin)`
+	// Credential helper configuration in-VM only necessary on Windows.
+	if *fc.VMType == "wsl2" {
+		//nolint:gosec // G101: Potential hardcoded credentials false positive
+		const configureCredHelperTemplate = `([ -e "$FINCH_DIR"/cred-helpers/docker-credential-%s ] || \
+			(echo "error: docker-credential-%s not found in $FINCH_DIR/cred-helpers directory.")) && \
+			([ -L /usr/local/bin/docker-credential-%s ] || sudo ln -s "$FINCH_DIR"/cred-helpers/docker-credential-%s /usr/local/bin)`
 
-	for _, credHelper := range fc.CredsHelpers {
-		cmdArr = append(cmdArr, fmt.Sprintf(configureCredHelperTemplate, credHelper, credHelper, credHelper, credHelper))
+		for _, credHelper := range fc.CredsHelpers {
+			cmdArr = append(cmdArr, fmt.Sprintf(configureCredHelperTemplate, credHelper, credHelper, credHelper, credHelper))
+		}
 	}
 
 	awsDir := fmt.Sprintf("%s/.aws", homeDir)

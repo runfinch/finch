@@ -5,9 +5,11 @@ go 1.24.11
 require (
 	github.com/aws/aws-sdk-go-v2 v1.41.0
 	github.com/containerd/cgroups/v3 v3.1.2
+	github.com/containerd/log v0.1.0
 	github.com/containerd/nerdctl/v2 v2.2.1
 	github.com/docker/cli v29.1.3+incompatible
 	github.com/docker/docker v28.5.2+incompatible
+	github.com/docker/docker-credential-helpers v0.8.2
 	github.com/docker/go-connections v0.6.0
 	github.com/google/go-licenses v1.6.1-0.20230903011517-706b9c60edd4
 	github.com/lima-vm/lima v1.2.2
@@ -15,7 +17,7 @@ require (
 	github.com/onsi/gomega v1.38.3
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.10
-	github.com/runfinch/common-tests v0.10.3
+	github.com/runfinch/common-tests v0.10.4
 	github.com/shirou/gopsutil/v3 v3.24.5
 	github.com/sirupsen/logrus v1.9.4-0.20230606125235-dd1b4c2e81af
 	github.com/spf13/afero v1.15.0
@@ -51,7 +53,6 @@ require (
 	github.com/containerd/fifo v1.1.0 // indirect
 	github.com/containerd/go-cni v1.1.13 // indirect
 	github.com/containerd/imgcrypt/v2 v2.0.2 // indirect
-	github.com/containerd/log v0.1.0 // indirect
 	github.com/containerd/platforms v1.0.0-rc.2 // indirect
 	github.com/containerd/plugin v1.0.0 // indirect
 	github.com/containerd/stargz-snapshotter v0.18.1 // indirect
@@ -66,7 +67,6 @@ require (
 	github.com/cyphar/filepath-securejoin v0.6.1 // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/distribution/reference v0.6.0 // indirect
-	github.com/docker/docker-credential-helpers v0.8.2 // indirect
 	github.com/elliotchance/orderedmap v1.8.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.2 // indirect

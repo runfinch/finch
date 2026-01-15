@@ -7,8 +7,11 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/runfinch/finch/pkg/command"
+	credserver "github.com/runfinch/finch/pkg/credserver"
 	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/lima"
@@ -75,6 +78,15 @@ func (sva *stopVMAction) assertVMIsRunning(creator command.NerdctlCmdCreator, lo
 }
 
 func (sva *stopVMAction) stopVM(force bool) error {
+	// Stop credential server before VM stops (no-op on Windows)
+	execPath, err := os.Executable()
+	if err == nil {
+		finchRootPath := filepath.Dir(filepath.Dir(execPath))
+		if err := credserver.StopCredentialServer(finchRootPath); err != nil {
+			sva.logger.Warnf("Failed to stop credential server: %v", err)
+		}
+	}
+
 	limaCmd := sva.createLimaStopCommand(force)
 	if force {
 		sva.logger.Info("Forcibly stopping Finch virtual machine...")

@@ -45,6 +45,12 @@ func TestVM(t *testing.T) {
 		time.Sleep(1 * time.Second)
 		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
 		gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Running"))
+		// Ensure DOCKER_CONFIG is set to ~/.finch
+		homeDir, err := os.UserHomeDir()
+		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+		finchConfigDir := filepath.Join(homeDir, ".finch")
+		_ = os.MkdirAll(finchConfigDir, 0o700)
+		o.UpdateEnv("DOCKER_CONFIG", finchConfigDir)
 		return nil
 	}, func(_ []byte) {})
 
@@ -75,6 +81,7 @@ func TestVM(t *testing.T) {
 		testNonDefaultOptions(o, *e2e.Installed)
 		testSupportBundle(o)
 		testCredHelper(o, *e2e.Installed, *e2e.Registry)
+		testNativeCredHelper(o, *e2e.Installed)
 		testSoci(o, *e2e.Installed)
 		testVMNetwork(o, *e2e.Installed)
 		testDaemon(o, *e2e.Installed)
