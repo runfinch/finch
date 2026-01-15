@@ -318,6 +318,7 @@ add-credhelper-to-path:
 ifeq ($(GOOS),darwin)
 	@if [ -f $(OUTDIR)/cred-helpers/docker-credential-osxkeychain ]; then \
 		chmod +x $(OUTDIR)/cred-helpers/docker-credential-osxkeychain; \
+		codesign -s - -f $(OUTDIR)/cred-helpers/docker-credential-osxkeychain; \
 		sudo ln -sf $(OUTDIR)/cred-helpers/docker-credential-osxkeychain /usr/local/bin/docker-credential-osxkeychain; \
 	fi
 endif

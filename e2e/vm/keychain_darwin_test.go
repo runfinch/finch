@@ -271,11 +271,9 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 			gomega.Expect(err).Should(gomega.HaveOccurred(), "Daemon process should be stopped after VM stop")
 			fmt.Printf("✓ Daemon stopped cleanly with VM\n")
 
-			// Final cleanup
+			// Cleanup config
 			ginkgo.By("Final cleanup")
 			_ = os.Remove(configPath)
-			command.Run(o, virtualMachineRootCmd, "remove", "-f")
-			command.Run(o, "system", "prune", "-f", "-a", "--volumes")
 		})
 	})
 }
