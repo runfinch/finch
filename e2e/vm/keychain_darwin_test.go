@@ -156,7 +156,7 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			fmt.Printf("Config after login: %s\n", string(configContent))
 			gomega.Expect(string(configContent)).To(
-				gomega.ContainSubstring(`"credsStore":"osxkeychain"`),
+				gomega.ContainSubstring(`"credsStore": "osxkeychain"`),
 				"Config should have osxkeychain as credsStore")
 			gomega.Expect(string(configContent)).To(gomega.ContainSubstring(registry), "Registry should appear in auths after login")
 			gomega.Expect(string(configContent)).ToNot(gomega.ContainSubstring("testPassword"), "Password should not be stored in config")
