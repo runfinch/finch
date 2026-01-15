@@ -161,8 +161,8 @@ echo '{"credsStore": "finchhost"}' > "$FINCH_DIR/vm-config/config.json"`), strin
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
 				require.NoError(t, err)
 				assert.Equal(t, string(`
-FINCH_DIR=/finch/dir
-AWS_DIR=/home/dir/.aws
+FINCH_DIR="$(/usr/bin/wslpath '/finch/dir')"
+AWS_DIR="$(/usr/bin/wslpath '/home/dir/.aws')"
 export DOCKER_CONFIG="$FINCH_DIR"
 [ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws
 [ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`), string(fileBytes))
@@ -191,18 +191,16 @@ export DOCKER_CONFIG="$FINCH_DIR"
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
 				require.NoError(t, err)
 				assert.Equal(t, string(
-					"\nFINCH_DIR=/finch/dir\n"+
-						"AWS_DIR=/home/dir/.aws\n"+
+					"\nFINCH_DIR=\"$(/usr/bin/wslpath '/finch/dir')\"\n"+
+						"AWS_DIR=\"$(/usr/bin/wslpath '/home/dir/.aws')\"\n"+
 						"export DOCKER_CONFIG=\"$FINCH_DIR\"\n"+
-						"([ -e \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login ] || "+
-						"(echo \"error: docker-credential-ecr-login not found in $FINCH_DIR/cred-helpers directory.\")) && "+
-						"([ -L /usr/local/bin/docker-credential-ecr-login ] || "+
-						"sudo ln -s \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login /usr/local/bin)\n"+
-						"([ -e \"$FINCH_DIR\"/cred-helpers/docker-credential-secretservice ] || "+
-						"(echo \"error: docker-credential-secretservice not found in $FINCH_DIR/cred-helpers directory.\")) && "+
-						"([ -L /usr/local/bin/docker-credential-secretservice ] || "+
-						"sudo ln -s \"$FINCH_DIR\"/cred-helpers/docker-credential-secretservice /usr/local/bin)\n"+
 						"[ -L /root/.aws ] || sudo ln -fs \"$AWS_DIR\" /root/.aws\n"+
+						"([ -e \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login ] || \\\n"+
+						"\t\t\t(echo \"error: docker-credential-ecr-login not found in $FINCH_DIR/cred-helpers directory.\")) && \\\n"+
+						"\t\t\t([ -L /usr/local/bin/docker-credential-ecr-login ] || sudo ln -s \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login /usr/local/bin)\n"+
+						"([ -e \"$FINCH_DIR\"/cred-helpers/docker-credential-secretservice ] || \\\n"+
+						"\t\t\t(echo \"error: docker-credential-secretservice not found in $FINCH_DIR/cred-helpers directory.\")) && \\\n"+
+						"\t\t\t([ -L /usr/local/bin/docker-credential-secretservice ] || sudo ln -s \"$FINCH_DIR\"/cred-helpers/docker-credential-secretservice /usr/local/bin)\n"+
 						"[ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch"),
 					string(fileBytes),
 				)
