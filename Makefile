@@ -369,6 +369,7 @@ test-e2e-daemon:
 
 	cd $(FINCH_CORE_DIR)/src/finch-daemon && \
 	STATIC=1 GOOS=linux GOARCH=$(GOARCH) make && \
+	DOCKER_CONFIG="$(HOME)/.finch" \
 	DOCKER_HOST=$(DAEMON_DOCKER_HOST) \
 	DOCKER_API_VERSION="v1.41" \
 	TEST_E2E=1 \
