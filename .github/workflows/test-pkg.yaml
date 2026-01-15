@@ -79,6 +79,19 @@ jobs:
             s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg \
             Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg
         shell: zsh {0}
+      - name: Verify signature and notarization of Finch installer
+        run: |
+          PKG_FILE="Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg"
+          PKG_SIGNATURE=$(pkgutil --check-signature "$PKG_FILE")
+          if ! echo "$PKG_SIGNATURE" | grep -q "Status: signed by a developer certificate issued by Apple for distribution"; then
+            echo "Finch installer signature check failed"
+            exit 1
+          fi
+          if ! echo "$PKG_SIGNATURE" | grep -q "Notarization: trusted by the Apple notary service" || \
+            ! spctl -a -vv -t install "$PKG_FILE" 2>&1 | grep -q "accepted"; then
+            echo "Finch installer notarization check failed"
+            exit 1
+          fi
       - name: Silently install
         run: sudo installer -pkg Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg -target /
       - name: Install Rosetta 2

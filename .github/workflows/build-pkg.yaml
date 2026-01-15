@@ -41,7 +41,7 @@ jobs:
         '${{ inputs.arch }}',
         '${{ inputs.version }}',
       ]
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - name: Clean macOS runner workspace
         run: |
