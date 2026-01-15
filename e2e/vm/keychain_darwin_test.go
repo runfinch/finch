@@ -86,7 +86,7 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 			ginkgo.By("Verifying daemon is running")
 			homeDir, err := os.UserHomeDir()
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			pidFile := filepath.Join(homeDir, ".finch", "lima", "data", "finch", "cred-daemon.pid")
+			pidFile := filepath.Join(limaDataDirPath(installed), "finch", "cred-daemon.pid")
 			// #nosec G304 -- pidFile path is constructed from user home directory, not user input
 			pidData, err := os.ReadFile(pidFile)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred(), "PID file should exist")
