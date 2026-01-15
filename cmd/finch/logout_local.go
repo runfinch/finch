@@ -50,17 +50,24 @@ func newLogoutLocalCommand() *cobra.Command {
 }
 
 func logoutAction(cmd *cobra.Command, args []string) error {
+	log.L.Debug("logoutAction: starting")
 	if home, err := os.UserHomeDir(); err == nil {
 		finchDir := filepath.Join(home, ".finch")
-		_ = credserver.EnsureConfigExists(finchDir)
+		log.L.Debugf("logoutAction: ensuring config exists at %s", finchDir)
+		if err := credserver.EnsureConfigExists(finchDir); err != nil {
+			log.L.Debugf("logoutAction: EnsureConfigExists failed: %v", err)
+		}
 	}
 
 	logoutServer := ""
 	if len(args) > 0 {
 		logoutServer = args[0]
+		log.L.Debugf("logoutAction: server set to %s", logoutServer)
 	}
 
+	log.L.Debug("logoutAction: calling nerdctl logout")
 	errGroup, err := logout.Logout(cmd.Context(), logoutServer)
+	log.L.Debugf("logoutAction: nerdctl logout returned with err=%v, errGroup=%v", err, errGroup)
 	if err != nil {
 		log.L.WithError(err).Errorf("Failed to erase credentials for: %s", logoutServer)
 	}

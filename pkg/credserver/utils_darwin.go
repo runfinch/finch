@@ -54,25 +54,34 @@ func GetCredentials(registryHostname string, envVars ...map[string]string) (*cre
 
 // EnsureConfigExists creates config.json with osxkeychain if it doesn't exist. Leaves existing config untouched.
 func EnsureConfigExists(finchPath string) error {
+	fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists called with path: %s\n", finchPath)
 	// #nosec G301 -- finchPath is user's home directory, 0755 is appropriate
 	if err := os.MkdirAll(finchPath, 0o755); err != nil {
+		fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists MkdirAll failed: %v\n", err)
 		return fmt.Errorf("failed to create finch directory: %w", err)
 	}
 
 	cfgPath := filepath.Join(finchPath, "config.json")
+	fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists checking config at: %s\n", cfgPath)
 	if _, err := os.Stat(cfgPath); err == nil {
+		fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists config already exists\n")
 		return nil
 	} else if !os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists stat failed: %v\n", err)
 		return fmt.Errorf("failed to check config file: %w", err)
 	}
 
+	fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists creating new config\n")
 	cfg := configfile.ConfigFile{CredentialsStore: "osxkeychain"}
 	data, err := json.MarshalIndent(&cfg, "", "  ")
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists marshal failed: %v\n", err)
 		return err
 	}
 
-	return os.WriteFile(cfgPath, data, 0o644)
+	err = os.WriteFile(cfgPath, data, 0o644)
+	fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists WriteFile result: %v\n", err)
+	return err
 }
 
 // Ensures config file exists, loads it, and returns decoded ConfigFile.

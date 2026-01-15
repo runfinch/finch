@@ -104,19 +104,29 @@ func loginOptions(cmd *cobra.Command) (types.LoginCommandOptions, error) {
 }
 
 func loginAction(cmd *cobra.Command, args []string) error {
+	log.L.Debug("loginAction: starting")
 	if home, err := os.UserHomeDir(); err == nil {
 		finchDir := filepath.Join(home, ".finch")
-		_ = credserver.EnsureConfigExists(finchDir)
+		log.L.Debugf("loginAction: ensuring config exists at %s", finchDir)
+		if err := credserver.EnsureConfigExists(finchDir); err != nil {
+			log.L.Debugf("loginAction: EnsureConfigExists failed: %v", err)
+		}
 	}
 
+	log.L.Debug("loginAction: parsing options")
 	options, err := loginOptions(cmd)
 	if err != nil {
+		log.L.Debugf("loginAction: loginOptions failed: %v", err)
 		return err
 	}
 
 	if len(args) == 1 {
 		options.ServerAddress = args[0]
+		log.L.Debugf("loginAction: server address set to %s", args[0])
 	}
 
-	return login.Login(cmd.Context(), options, cmd.OutOrStdout())
+	log.L.Debug("loginAction: calling nerdctl login")
+	err = login.Login(cmd.Context(), options, cmd.OutOrStdout())
+	log.L.Debugf("loginAction: nerdctl login returned with err=%v", err)
+	return err
 }

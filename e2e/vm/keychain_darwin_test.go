@@ -54,7 +54,7 @@ func setupKeychain() func() {
 	// #nosec G204 -- loginKeychainPath is constructed from user home directory, not user input
 	_ = exec.Command("security", "set-keychain-settings", "-t", "0", "-l", loginKeychainPath).Run()
 	// #nosec G204 -- loginKeychainPath is constructed from user home directory, not user input
-	_ = exec.Command("security", "unlock-keychain", loginKeychainPath).Run()
+	_ = exec.Command("security", "unlock-keychain", "-p", keychainPassword, loginKeychainPath).Run()
 	// #nosec G204 -- loginKeychainPath is constructed from user home directory, not user input
 	_ = exec.Command("security", "list-keychains", "-s", loginKeychainPath, "/Library/Keychains/System.keychain").Run()
 	// #nosec G204 -- loginKeychainPath is constructed from user home directory, not user input
@@ -269,6 +269,12 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 			err = checkCmd.Run()
 			gomega.Expect(err).Should(gomega.HaveOccurred(), "Daemon process should be stopped after VM stop")
 			fmt.Printf("✓ Daemon stopped cleanly with VM\n")
+
+			// Final cleanup
+			ginkgo.By("Final cleanup")
+			_ = os.Remove(configPath)
+			command.Run(o, virtualMachineRootCmd, "remove", "-f")
+			command.Run(o, "system", "prune", "-f", "-a", "--volumes")
 		})
 	})
 }
