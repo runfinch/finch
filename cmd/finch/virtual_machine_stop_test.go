@@ -8,6 +8,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"runtime"
 	"testing"
 
 	"github.com/runfinch/finch/pkg/mocks"
@@ -46,6 +47,9 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("stop", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
+				if runtime.GOOS != "windows" {
+					logger.EXPECT().Warnf("Failed to stop credential server: %v", gomock.Any())
+				}
 				logger.EXPECT().Info(gomock.Any()).AnyTimes()
 			},
 			wantErr: nil,
@@ -60,6 +64,9 @@ func TestStopVMAction_runAdapter(t *testing.T) {
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				creator.EXPECT().CreateWithoutStdio("stop", "--force", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
+				if runtime.GOOS != "windows" {
+					logger.EXPECT().Warnf("Failed to stop credential server: %v", gomock.Any())
+				}
 				logger.EXPECT().Info(gomock.Any()).AnyTimes()
 			},
 			wantErr: nil,
@@ -106,6 +113,9 @@ func TestStopVMAction_run(t *testing.T) {
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("stop", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
+				if runtime.GOOS != "windows" {
+					logger.EXPECT().Warnf("Failed to stop credential server: %v", gomock.Any())
+				}
 				logger.EXPECT().Info("Stopping existing Finch virtual machine...")
 				logger.EXPECT().Info("Finch virtual machine stopped successfully")
 			},
@@ -168,6 +178,9 @@ func TestStopVMAction_run(t *testing.T) {
 				command := mocks.NewCommand(ctrl)
 				command.EXPECT().CombinedOutput().Return(logs, errors.New("error"))
 				creator.EXPECT().CreateWithoutStdio("stop", limaInstanceName).Return(command)
+				if runtime.GOOS != "windows" {
+					logger.EXPECT().Warnf("Failed to stop credential server: %v", gomock.Any())
+				}
 				logger.EXPECT().Info("Stopping existing Finch virtual machine...")
 				logger.EXPECT().Errorf("Finch virtual machine failed to stop, debug logs:\n%s", logs)
 			},
@@ -181,6 +194,9 @@ func TestStopVMAction_run(t *testing.T) {
 				creator.EXPECT().CreateWithoutStdio("stop", "--force", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
+				if runtime.GOOS != "windows" {
+					logger.EXPECT().Warnf("Failed to stop credential server: %v", gomock.Any())
+				}
 				logger.EXPECT().Info("Forcibly stopping Finch virtual machine...")
 				logger.EXPECT().Info("Finch virtual machine stopped successfully")
 			},

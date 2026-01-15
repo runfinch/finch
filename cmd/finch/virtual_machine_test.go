@@ -47,7 +47,9 @@ func TestPostVMStartInitAction_runAdapter(t *testing.T) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("80"), nil)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
-				logger.EXPECT().Warnf("Failed to start credential server: %v", gomock.Any())
+				if runtime.GOOS != "windows" {
+					logger.EXPECT().Warnf("Failed to start credential server: %v", gomock.Any())
+				}
 				nca.EXPECT().Apply("127.0.0.1:80").Return(nil)
 			},
 			cmd: &cobra.Command{
@@ -89,7 +91,9 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("80"), nil)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
-				logger.EXPECT().Warnf("Failed to start credential server: %v", gomock.Any())
+				if runtime.GOOS != "windows" {
+					logger.EXPECT().Warnf("Failed to start credential server: %v", gomock.Any())
+				}
 				nca.EXPECT().Apply("127.0.0.1:80").Return(nil)
 			},
 			wantErr: nil,
@@ -119,7 +123,9 @@ func TestPostVMStartInitAction_run(t *testing.T) {
 				logger.EXPECT().Debugln("Applying guest configuration options")
 				command.EXPECT().Output().Return([]byte("80"), nil)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.SSHLocalPort}}", limaInstanceName).Return(command)
-				logger.EXPECT().Warnf("Failed to start credential server: %v", gomock.Any())
+				if runtime.GOOS != "windows" {
+					logger.EXPECT().Warnf("Failed to start credential server: %v", gomock.Any())
+				}
 				nca.EXPECT().Apply("127.0.0.1:80").Return(errors.New("applyNerdctlConfig has an error"))
 			},
 			wantErr: errors.New("applyNerdctlConfig has an error"),
