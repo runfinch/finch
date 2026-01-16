@@ -370,7 +370,7 @@ DAEMON_DOCKER_HOST := "unix://$(OUTDIR)/lima/data/finch/sock/finch.sock"
 endif
 
 .PHONY: test-e2e-daemon
-test-e2e-daemon:
+test-e2e-daemon: ensure-plaintext-config
 	-@$(OUTDIR)/bin/$(BINARYNAME) vm stop -f || true
 	-@$(OUTDIR)/bin/$(BINARYNAME) vm remove -f
 	-@$(OUTDIR)/bin/$(BINARYNAME) vm init

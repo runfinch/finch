@@ -36,25 +36,12 @@ var testFinchConfigFile = func(o *option.Option) {
 			}
 			configPath := filepath.Join(finchRootDir, ".finch", "config.json")
 			_ = os.Remove(configPath)
+			// Create empty config to prevent automatic osxkeychain setup
+			err = os.MkdirAll(filepath.Dir(configPath), 0o755)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			err = os.WriteFile(configPath, []byte("{}"), 0o600)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			ginkgo.DeferCleanup(os.Remove, configPath)
-
-			// Check keychain availability
-			if runtime.GOOS == "darwin" {
-				keychainPath := filepath.Join(finchRootDir, "Library", "Keychains", "login.keychain-db")
-				if _, err := os.Stat(keychainPath); err != nil {
-					fmt.Printf("DEBUG: Login keychain not found at %s: %v\n", keychainPath, err)
-				} else {
-					fmt.Printf("DEBUG: Login keychain exists at %s\n", keychainPath)
-				}
-			}
-
-			fmt.Printf("DEBUG: Config before login - checking %s\n", configPath)
-			// #nosec G304 -- configPath is constructed from user home directory, not user input
-			if data, err := os.ReadFile(configPath); err == nil {
-				fmt.Printf("DEBUG: Config exists before login: %s\n", string(data))
-			} else {
-				fmt.Printf("DEBUG: Config does not exist before login: %v\n", err)
-			}
 
 			filename := "htpasswd"
 			registryImage := "public.ecr.aws/docker/library/registry:2"
@@ -90,15 +77,10 @@ var testFinchConfigFile = func(o *option.Option) {
 			}
 			time.Sleep(10 * time.Second)
 			registry := fmt.Sprintf(`localhost:%d`, port)
-			fmt.Printf("DEBUG: Attempting login to %s\n", registry)
-			loginSession := command.New(o, "login", registry, "-u", "testUser", "-p", "testPassword").WithoutCheckingExitCode().Run()
-			fmt.Printf("DEBUG: Login exit code: %d\n", loginSession.ExitCode())
-			gomega.Expect(loginSession.ExitCode()).Should(gomega.Equal(0))
+			command.Run(o, "login", registry, "-u", "testUser", "-p", "testPassword")
 
-			fmt.Printf("DEBUG: Config after login - reading %s\n", configPath)
 			configContent, err := os.ReadFile(filepath.Clean(configPath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			fmt.Printf("DEBUG: Config content after login: %s\n", string(configContent))
 
 			gomega.Expect(string(configContent)).Should(gomega.ContainSubstring(registry))
 			command.Run(o, "logout", registry)

@@ -83,14 +83,9 @@ func EnsureConfigExists(finchPath string) error {
 
 	fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists creating new config\n")
 
-	// Check if osxkeychain credential helper is available AND usable
 	var cfg configfile.ConfigFile
 	if isOSXKeychainUsable() {
-		fmt.Fprintf(os.Stderr, "DEBUG: EnsureConfigExists osxkeychain is usable, setting as credsStore\n")
 		cfg.CredentialsStore = "osxkeychain"
-	} else {
-		fmt.Fprintf(os.Stderr, "Warning: osxkeychain does not exist or not usable, credentials will be stored in plaintext\n")
-		// Leave CredentialsStore empty - will use plaintext storage
 	}
 
 	data, err := json.MarshalIndent(&cfg, "", "  ")
@@ -196,25 +191,15 @@ func readCredentialsFromConfig(registryHostname string, cfg *configfile.ConfigFi
 
 // isOSXKeychainUsable checks if osxkeychain credential helper is both available and functional.
 func isOSXKeychainUsable() bool {
-	fmt.Fprintf(os.Stderr, "DEBUG: isOSXKeychainUsable checking osxkeychain availability\n")
-
-	// Check 1: Binary exists in PATH
+	// Check if binary exists in PATH
 	helperPath, err := exec.LookPath("docker-credential-osxkeychain")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "DEBUG: osxkeychain helper not in PATH: %v\n", err)
 		return false
 	}
-	fmt.Fprintf(os.Stderr, "DEBUG: isOSXKeychainUsable found helper at: %s\n", helperPath)
 
-	// Check 2: Test if helper can execute (will fail gracefully if keychain unavailable)
+	// Test if helper can execute (will fail if keychain unavailable)
 	// #nosec G204 -- helperPath is from exec.LookPath, not user input
 	cmd := exec.Command(helperPath, "list")
 	err = cmd.Run()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "DEBUG: osxkeychain helper execution failed: %v\n", err)
-		return false
-	}
-
-	fmt.Fprintf(os.Stderr, "DEBUG: isOSXKeychainUsable osxkeychain is fully functional\n")
-	return true
+	return err == nil
 }
