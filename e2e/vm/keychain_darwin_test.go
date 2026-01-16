@@ -117,8 +117,6 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 				"-e", "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm",
 				"-e", fmt.Sprintf("REGISTRY_AUTH_HTPASSWD_PATH=/auth/%s", filename),
 				registryImage)
-			ginkgo.DeferCleanup(command.Run, o, "rmi", "-f", registryImage)
-			ginkgo.DeferCleanup(command.Run, o, "rm", "-f", registryContainer)
 			tries := 0
 			for command.StdoutStr(o, "inspect", "-f", "{{.State.Running}}", containerID) != "true" {
 				if tries >= 5 {
@@ -270,10 +268,6 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 			err = checkCmd.Run()
 			gomega.Expect(err).Should(gomega.HaveOccurred(), "Daemon process should be stopped after VM stop")
 			fmt.Printf("✓ Daemon stopped cleanly with VM\n")
-
-			// Cleanup config
-			ginkgo.By("Final cleanup")
-			_ = os.Remove(configPath)
 		})
 	})
 }
