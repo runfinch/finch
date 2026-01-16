@@ -111,13 +111,13 @@ jobs:
           if [ -s PackagesAMD64 ]; then
             echo "" >> dists/noble/main/binary-amd64/Packages
             cat PackagesAMD64 >> dists/noble/main/binary-amd64/Packages
-            gzip -kf dists/noble/main/binary-amd64/Packages
+            gzip -knf dists/noble/main/binary-amd64/Packages
           fi
 
           if [ -s PackagesARM64 ]; then
             echo "" >> dists/noble/main/binary-arm64/Packages
             cat PackagesARM64 >> dists/noble/main/binary-arm64/Packages
-            gzip -kf dists/noble/main/binary-arm64/Packages
+            gzip -knf dists/noble/main/binary-arm64/Packages
           fi
 
           echo "Date: $(date -Ru)" >> dists/noble/Release
