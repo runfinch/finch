@@ -332,7 +332,7 @@ ensure-plaintext-config:
 
 .PHONY: test-unit
 test-unit:
-	go test -coverprofile=coverage.out $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks | grep -v version | grep -v flog | grep -v system | grep -v fmemory | grep -v coverage | grep -v devcontainer_patch | grep -v finch-cred-daemon | grep -v finchhost-credential-helper | grep -v credserver) -shuffle on
+	go test -coverprofile=coverage.out $(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v mocks | grep -v version | grep -v flog | grep -v system | grep -v fmemory | grep -v coverage | grep -v devcontainer_patch) -shuffle on
 	go run coverage/coverage.go $(COVERAGE_THRESH)
 
 # test-e2e assumes the VM instance doesn't exist, please make sure to remove it before running.

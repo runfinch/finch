@@ -206,15 +206,12 @@ func isOSXKeychainUsable() bool {
 	}
 	fmt.Fprintf(os.Stderr, "DEBUG: isOSXKeychainUsable found helper at: %s\n", helperPath)
 
-	// Check 2: Verify login keychain exists
-	homeDir, err := os.UserHomeDir()
+	// Check 2: Test if helper can execute (will fail gracefully if keychain unavailable)
+	// #nosec G204 -- helperPath is from exec.LookPath, not user input
+	cmd := exec.Command(helperPath, "list")
+	err = cmd.Run()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "DEBUG: osxkeychain failed to get home dir: %v\n", err)
-		return false
-	}
-	loginKeychainPath := filepath.Join(homeDir, "Library", "Keychains", "login.keychain-db")
-	if _, err := os.Stat(loginKeychainPath); err != nil {
-		fmt.Fprintf(os.Stderr, "DEBUG: osxkeychain login keychain not found at %s: %v\n", loginKeychainPath, err)
+		fmt.Fprintf(os.Stderr, "DEBUG: osxkeychain helper execution failed: %v\n", err)
 		return false
 	}
 
