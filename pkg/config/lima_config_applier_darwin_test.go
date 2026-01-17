@@ -110,13 +110,13 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				deps.EXPECT().Arch().Return(runtime.GOARCH)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, runtime.GOARCH)
-				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
-				sociShaSum := sociAMD64Sha256Sum
+				sociFileName := fmt.Sprintf(sociFileNameFormat, SociVersion, runtime.GOARCH)
+				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, SociVersion, sociFileName)
+				sociShaSum := SociAMD64Sha256Sum
 				if runtime.GOARCH == "arm64" {
-					sociShaSum = sociARM64Sha256Sum
+					sociShaSum = SociARM64Sha256Sum
 				}
-				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, SociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
 					sociFileName,
@@ -285,13 +285,13 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				deps.EXPECT().Arch().Return(runtime.GOARCH)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, runtime.GOARCH)
-				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
-				sociShaSum := sociAMD64Sha256Sum
+				sociFileName := fmt.Sprintf(sociFileNameFormat, SociVersion, runtime.GOARCH)
+				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, SociVersion, sociFileName)
+				sociShaSum := SociAMD64Sha256Sum
 				if runtime.GOARCH == "arm64" {
-					sociShaSum = sociARM64Sha256Sum
+					sociShaSum = SociARM64Sha256Sum
 				}
-				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, SociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
 					sociFileName,
@@ -355,13 +355,13 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				deps.EXPECT().Arch().Return(runtime.GOARCH)
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
-				sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, runtime.GOARCH)
-				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
-				sociShaSum := sociAMD64Sha256Sum
+				sociFileName := fmt.Sprintf(sociFileNameFormat, SociVersion, runtime.GOARCH)
+				sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, SociVersion, sociFileName)
+				sociShaSum := SociAMD64Sha256Sum
 				if runtime.GOARCH == "arm64" {
-					sociShaSum = sociARM64Sha256Sum
+					sociShaSum = SociARM64Sha256Sum
 				}
-				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, SociVersion)
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
 					sociFileName,
