@@ -27,12 +27,17 @@ jobs:
   canary-deb:
     name: Test Finch APT repo health
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 10
     steps:
       - name: Checkout canary script
         uses: actions/checkout@v6.0.1
         with:
           sparse-checkout: |
             scripts/canary-deb.sh
-      - name: Run canary script
-        run: ./scripts/canary-deb.sh
+      - name: Run canary script with retry
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 2
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: ./scripts/canary-deb.sh
