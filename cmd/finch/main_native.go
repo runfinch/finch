@@ -112,6 +112,7 @@ var newApp = func(
 	// append finch specific commands
 	allCommands = append(allCommands,
 		newVersionCommand(ncc, logger, stdOut),
+		newUpdateCommand(logger, stdOut),
 		newSupportBundleCommand(logger, supportBundleBuilder, ncc),
 		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
 	)
