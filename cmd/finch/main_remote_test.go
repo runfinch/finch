@@ -195,7 +195,7 @@ func TestNewApp(t *testing.T) {
 	assert.Equal(t, cmd.SilenceUsage, true)
 	assert.Equal(t, cmd.SilenceErrors, true)
 	// confirm the number of command, comprised of nerdctl commands + finch commands
-	assert.Equal(t, len(cmd.Commands()), len(nerdctlCmds)+4)
+	assert.Equal(t, len(cmd.Commands()), len(nerdctlCmds)+6)
 
 	// PersistentPreRunE should set logger level to debug if the debug flag exists.
 	mockCmd := &cobra.Command{}

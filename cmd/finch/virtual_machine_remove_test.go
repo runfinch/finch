@@ -39,6 +39,7 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+				logger.EXPECT().Warnf(gomock.Any(), gomock.Any()).AnyTimes()
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("remove", limaInstanceName).Return(command)
@@ -52,6 +53,7 @@ func TestRemoveVMAction_runAdapter(t *testing.T) {
 				"--force",
 			},
 			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
+				logger.EXPECT().Warnf(gomock.Any(), gomock.Any()).AnyTimes()
 				command := mocks.NewCommand(ctrl)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				creator.EXPECT().CreateWithoutStdio("remove", "--force", limaInstanceName).Return(command)
@@ -95,6 +97,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+				logger.EXPECT().Warnf(gomock.Any(), gomock.Any()).AnyTimes()
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 
 				command := mocks.NewCommand(ctrl)
@@ -157,6 +160,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 				creator.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+				logger.EXPECT().Warnf(gomock.Any(), gomock.Any()).AnyTimes()
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 
 				logs := []byte("stdout + stderr")
@@ -172,6 +176,7 @@ func TestRemoveVMAction_run(t *testing.T) {
 			name:    "should forcibly remove the instance",
 			wantErr: nil,
 			mockSvc: func(logger *mocks.Logger, creator *mocks.NerdctlCmdCreator, dm *mocks.UserDataDiskManager, ctrl *gomock.Controller) {
+				logger.EXPECT().Warnf(gomock.Any(), gomock.Any()).AnyTimes()
 				command := mocks.NewCommand(ctrl)
 				creator.EXPECT().CreateWithoutStdio("remove", "--force", limaInstanceName).Return(command)
 				command.EXPECT().CombinedOutput()
