@@ -105,8 +105,20 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Append to Packages and generate final Release
         run: |
-          aws s3 cp cp s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/dists/noble/main/binary-amd64/Packages PackagesAMD64 || touch PackagesAMD64
-          aws s3 cp cp s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/dists/noble/main/binary-arm64/Packages PackagesARM64 || touch PackagesARM64
+          # Download existing Packages or create empty file for first release
+          if aws s3 cp s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/dists/noble/main/binary-amd64/Packages PackagesAMD64; then
+            echo "✓ Downloaded existing PackagesAMD64 from S3 - will merge with new release"
+          else
+            echo "ℹ No existing PackagesAMD64 in S3 - creating empty file (first release or new architecture)"
+            touch PackagesAMD64
+          fi
+
+          if aws s3 cp s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/dists/noble/main/binary-arm64/Packages PackagesARM64; then
+            echo "✓ Downloaded existing PackagesARM64 from S3 - will merge with new release"
+          else
+            echo "ℹ No existing PackagesARM64 in S3 - creating empty file (first release or new architecture)"
+            touch PackagesARM64
+          fi
 
           if [ -s PackagesAMD64 ]; then
             echo "" >> dists/noble/main/binary-amd64/Packages
