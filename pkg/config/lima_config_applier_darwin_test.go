@@ -117,12 +117,16 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 					sociShaSum = sociARM64Sha256Sum
 				}
 				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+				dockerConfigSetup := `	sudo mkdir -p /etc/systemd/system/soci-snapshotter.service.d/
+	printf '[Service]\nEnvironment="DOCKER_CONFIG=$HOME/.finch-vm-config"\n' | ` +
+					`sudo tee /etc/systemd/system/soci-snapshotter.service.d/override.conf`
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
 					sociFileName,
 					sociDownloadURL,
 					sociShaSum,
-					sociServiceDownloadURL)
+					sociServiceDownloadURL,
+					dockerConfigSetup)
 
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
@@ -292,12 +296,16 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 					sociShaSum = sociARM64Sha256Sum
 				}
 				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+				dockerConfigSetup := `	sudo mkdir -p /etc/systemd/system/soci-snapshotter.service.d/
+	printf '[Service]\nEnvironment="DOCKER_CONFIG=$HOME/.finch-vm-config"\n' | ` +
+					`sudo tee /etc/systemd/system/soci-snapshotter.service.d/override.conf`
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
 					sociFileName,
 					sociDownloadURL,
 					sociShaSum,
-					sociServiceDownloadURL)
+					sociServiceDownloadURL,
+					dockerConfigSetup)
 
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
@@ -362,12 +370,16 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 					sociShaSum = sociARM64Sha256Sum
 				}
 				sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+				dockerConfigSetup := `	sudo mkdir -p /etc/systemd/system/soci-snapshotter.service.d/
+	printf '[Service]\nEnvironment="DOCKER_CONFIG=$HOME/.finch-vm-config"\n' | ` +
+					`sudo tee /etc/systemd/system/soci-snapshotter.service.d/override.conf`
 				sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat,
 					sociInstallationProvisioningScriptHeader,
 					sociFileName,
 					sociDownloadURL,
 					sociShaSum,
-					sociServiceDownloadURL)
+					sociServiceDownloadURL,
+					dockerConfigSetup)
 
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)

@@ -25,6 +25,23 @@ import (
 var testFinchConfigFile = func(o *option.Option) {
 	ginkgo.Describe("finch config file", func() {
 		ginkgo.It("should store login credentials", func() {
+			// Ensure clean config at start to enforce plaintext.
+			var finchRootDir string
+			var err error
+			if runtime.GOOS == "windows" {
+				finchRootDir = os.Getenv("LOCALAPPDATA")
+			} else {
+				finchRootDir, err = os.UserHomeDir()
+				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			}
+			configPath := filepath.Join(finchRootDir, ".finch", "config.json")
+			_ = os.Remove(configPath)
+			err = os.MkdirAll(filepath.Dir(configPath), 0o750)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			err = os.WriteFile(configPath, []byte("{}"), 0o600)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			ginkgo.DeferCleanup(os.Remove, configPath)
+
 			filename := "htpasswd"
 			registryImage := "public.ecr.aws/docker/library/registry:2"
 			registryContainer := "auth-registry"
@@ -61,16 +78,6 @@ var testFinchConfigFile = func(o *option.Option) {
 			registry := fmt.Sprintf(`localhost:%d`, port)
 			command.Run(o, "login", registry, "-u", "testUser", "-p", "testPassword")
 
-			var finchRootDir string
-			var err error
-			if runtime.GOOS == "windows" {
-				finchRootDir = os.Getenv("LOCALAPPDATA")
-			} else {
-				finchRootDir, err = os.UserHomeDir()
-				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			}
-
-			configPath := filepath.Join(finchRootDir, ".finch", "config.json")
 			configContent, err := os.ReadFile(filepath.Clean(configPath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 

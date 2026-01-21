@@ -66,7 +66,9 @@ func Test_updateEnvironment(t *testing.T) {
 					string(`
 FINCH_DIR=/finch/dir
 AWS_DIR=/home/dir/.aws
-export DOCKER_CONFIG="$FINCH_DIR"
+mkdir -p "$HOME/.finch-vm-config"
+export DOCKER_CONFIG="$HOME/.finch-vm-config"
+echo '{"credsStore": "finchhost"}' > "$DOCKER_CONFIG/config.json"
 [ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws
 [ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`), string(fileBytes))
 			},
@@ -109,7 +111,10 @@ FINCH_DIR=/finch/dir
 AWS_DIR=/home/dir/.aws
 export DOCKER_CONFIG="$FINCH_DIR"
 [ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws)
-[ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`), string(fileBytes))
+[ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch
+mkdir -p "$HOME/.finch-vm-config"
+export DOCKER_CONFIG="$HOME/.finch-vm-config"
+echo '{"credsStore": "finchhost"}' > "$DOCKER_CONFIG/config.json"`), string(fileBytes))
 			},
 			want: nil,
 		},
@@ -138,47 +143,38 @@ export DOCKER_CONFIG="$FINCH_DIR"
 			),
 		},
 		{
-			name: "put docker-credential-ecr-login in path",
+			name: "WSL2 basic configuration",
 			cfg: &Finch{
 				SystemSettings: SystemSettings{
 					SharedSystemSettings: SharedSystemSettings{
-						VMType: pointer.String("vz"),
+						VMType: pointer.String("wsl2"),
 					},
-				},
-				SharedSettings: SharedSettings{
-					CredsHelpers: []string{"ecr-login"},
 				},
 			},
 			finchDir:      "/finch/dir",
 			homeDir:       "/home/dir",
-			limaVMHomeDir: "/home/mock_user.linux",
+			limaVMHomeDir: "/home/mock_user.linux/",
 			mockSvc: func(t *testing.T, fs afero.Fs) {
 				require.NoError(t, afero.WriteFile(fs, "/home/mock_user.linux/.bashrc", []byte(""), 0o644))
 			},
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
 				require.NoError(t, err)
-				assert.Equal(t, string(
-					"\nFINCH_DIR=/finch/dir\n"+
-						"AWS_DIR=/home/dir/.aws\n"+
-						"export DOCKER_CONFIG=\"$FINCH_DIR\"\n"+
-						"[ -L /root/.aws ] || sudo ln -fs \"$AWS_DIR\" /root/.aws\n"+
-						"([ -e \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login ] || \\\n"+
-						"  (echo \"error: docker-credential-ecr-login not found in $FINCH_DIR/cred-helpers directory.\")) && \\\n"+
-						"  ([ -L /usr/local/bin/docker-credential-ecr-login ] "+
-						"|| sudo ln -s \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login /usr/local/bin)\n"+
-						"[ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch"),
-					string(fileBytes),
-				)
+				assert.Equal(t, string(`
+FINCH_DIR="$(/usr/bin/wslpath '/finch/dir')"
+AWS_DIR="$(/usr/bin/wslpath '/home/dir/.aws')"
+export DOCKER_CONFIG="$FINCH_DIR"
+[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws
+[ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`), string(fileBytes))
 			},
 			want: nil,
 		},
 		{
-			name: "put docker-credential-ecr-login and secretservice in path",
+			name: "WSL2 with credential helpers in PATH",
 			cfg: &Finch{
 				SystemSettings: SystemSettings{
 					SharedSystemSettings: SharedSystemSettings{
-						VMType: pointer.String("vz"),
+						VMType: pointer.String("wsl2"),
 					},
 				},
 				SharedSettings: SharedSettings{
@@ -195,18 +191,20 @@ export DOCKER_CONFIG="$FINCH_DIR"
 				fileBytes, err := afero.ReadFile(fs, "/home/mock_user.linux/.bashrc")
 				require.NoError(t, err)
 				assert.Equal(t, string(
-					"\nFINCH_DIR=/finch/dir\n"+
-						"AWS_DIR=/home/dir/.aws\n"+
+					"\nFINCH_DIR=\"$(/usr/bin/wslpath '/finch/dir')\"\n"+
+						"AWS_DIR=\"$(/usr/bin/wslpath '/home/dir/.aws')\"\n"+
 						"export DOCKER_CONFIG=\"$FINCH_DIR\"\n"+
 						"[ -L /root/.aws ] || sudo ln -fs \"$AWS_DIR\" /root/.aws\n"+
 						"([ -e \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login ] || \\\n"+
-						"  (echo \"error: docker-credential-ecr-login not found in $FINCH_DIR/cred-helpers directory.\")) && \\\n"+
-						"  ([ -L /usr/local/bin/docker-credential-ecr-login ] "+
-						"|| sudo ln -s \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login /usr/local/bin)\n"+
+						"\t\t\t(echo \"error: docker-credential-ecr-login not found in "+
+						"$FINCH_DIR/cred-helpers directory.\")) && \\\n"+
+						"\t\t\t([ -L /usr/local/bin/docker-credential-ecr-login ] || "+
+						"sudo ln -s \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login /usr/local/bin)\n"+
 						"([ -e \"$FINCH_DIR\"/cred-helpers/docker-credential-secretservice ] || \\\n"+
-						"  (echo \"error: docker-credential-secretservice not found in $FINCH_DIR/cred-helpers directory.\")) && \\\n"+
-						"  ([ -L /usr/local/bin/docker-credential-secretservice ] "+
-						"|| sudo ln -s \"$FINCH_DIR\"/cred-helpers/docker-credential-secretservice /usr/local/bin)\n"+
+						"\t\t\t(echo \"error: docker-credential-secretservice not found in "+
+						"$FINCH_DIR/cred-helpers directory.\")) && \\\n"+
+						"\t\t\t([ -L /usr/local/bin/docker-credential-secretservice ] || "+
+						"sudo ln -s \"$FINCH_DIR\"/cred-helpers/docker-credential-secretservice /usr/local/bin)\n"+
 						"[ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch"),
 					string(fileBytes),
 				)
