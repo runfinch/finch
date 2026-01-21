@@ -59,6 +59,12 @@ func cpuDefault(cfg *Finch, deps LoadSystemDeps) {
 	}
 }
 
+func credHelperDefault(cfg *Finch) {
+	if len(cfg.CredsHelpers) == 0 {
+		cfg.CredsHelpers = []string{"osxkeychain"}
+	}
+}
+
 // applyDefaults sets default configuration options if they are not already set.
 func applyDefaults(
 	cfg *Finch,
@@ -75,6 +81,7 @@ func applyDefaults(
 	}
 	vmDefault(cfg, supportsVz)
 	rosettaDefault(cfg)
+	credHelperDefault(cfg)
 
 	return cfg
 }

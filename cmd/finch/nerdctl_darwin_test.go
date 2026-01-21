@@ -189,6 +189,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -223,6 +224,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -257,259 +259,12 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test",
 					nerdctlCmdName, "pull", "test:tag").Return(c)
-				c.EXPECT().Run()
-			},
-		},
-		{
-			name:    "with ECR credential helper and environment set",
-			cmdName: "pull",
-			fc: &config.Finch{
-				SharedSettings: config.SharedSettings{
-					CredsHelpers: []string{"ecr-login"},
-				},
-			},
-			args:    []string{"test:tag"},
-			wantErr: nil,
-			mockSvc: func(
-				_ *testing.T,
-				ncc *mocks.NerdctlCmdCreator,
-				ecc *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
-				logger *mocks.Logger,
-				ctrl *gomock.Controller,
-				_ afero.Fs,
-			) {
-				getVMStatusC := mocks.NewCommand(ctrl)
-				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
-				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", true)
-				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", true)
-				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
-				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
-				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
-				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
-
-				awsCmd := mocks.NewCommand(ctrl)
-				ecc.EXPECT().Create(
-					"aws",
-					"configure",
-					"export-credentials",
-					"--format",
-					"process",
-				).Return(awsCmd)
-				awsCmd.EXPECT().CombinedOutput().Return([]byte(`{
-    "AccessKeyID": "TEST_ACCESS_KEY_FROM_PROCESS",
-    "SecretAccessKey": "TEST_SECRET_ACCESS_KEY_FROM_PROCESS",
-    "SessionToken": "TEST_SESSION_TOKEN_FROM_PROCESS"
-}
-`), nil)
-
-				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell",
-					limaInstanceName,
-					"sudo",
-					"-E",
-					"AWS_ACCESS_KEY_ID=TEST_ACCESS_KEY_FROM_PROCESS",
-					"AWS_SECRET_ACCESS_KEY=TEST_SECRET_ACCESS_KEY_FROM_PROCESS",
-					"AWS_SESSION_TOKEN=TEST_SESSION_TOKEN_FROM_PROCESS",
-					"AWS_ACCESS_KEY_ID=TEST_ACCESS_KEY",
-					"AWS_SECRET_ACCESS_KEY=TEST_SECRET_ACCESS_KEY",
-					"AWS_SESSION_TOKEN=TEST_SESSION_TOKEN",
-					nerdctlCmdName,
-					"pull",
-					"test:tag",
-				).Return(c)
-				c.EXPECT().Run()
-			},
-		},
-		{
-			name:    "with ECR credential helper, no environment set",
-			cmdName: "pull",
-			fc: &config.Finch{
-				SharedSettings: config.SharedSettings{
-					CredsHelpers: []string{"ecr-login"},
-				},
-			},
-			args:    []string{"test:tag"},
-			wantErr: nil,
-			mockSvc: func(
-				_ *testing.T,
-				ncc *mocks.NerdctlCmdCreator,
-				ecc *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
-				logger *mocks.Logger,
-				ctrl *gomock.Controller,
-				_ afero.Fs,
-			) {
-				getVMStatusC := mocks.NewCommand(ctrl)
-				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
-				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", false)
-				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", false)
-				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", false)
-				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
-				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
-				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
-
-				awsCmd := mocks.NewCommand(ctrl)
-				ecc.EXPECT().Create(
-					"aws",
-					"configure",
-					"export-credentials",
-					"--format",
-					"process",
-				).Return(awsCmd)
-				awsCmd.EXPECT().CombinedOutput().Return([]byte(`{
-    "AccessKeyID": "TEST_ACCESS_KEY_FROM_PROCESS",
-    "SecretAccessKey": "TEST_SECRET_ACCESS_KEY_FROM_PROCESS",
-    "SessionToken": "TEST_SESSION_TOKEN_FROM_PROCESS"
-}
-`), nil)
-
-				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell",
-					limaInstanceName,
-					"sudo",
-					"-E",
-					"AWS_ACCESS_KEY_ID=TEST_ACCESS_KEY_FROM_PROCESS",
-					"AWS_SECRET_ACCESS_KEY=TEST_SECRET_ACCESS_KEY_FROM_PROCESS",
-					"AWS_SESSION_TOKEN=TEST_SESSION_TOKEN_FROM_PROCESS",
-					nerdctlCmdName,
-					"pull",
-					"test:tag",
-				).Return(c)
-				c.EXPECT().Run()
-			},
-		},
-		{
-			name:    "with ECR credential helper, aws command fails but environment is used",
-			cmdName: "pull",
-			fc: &config.Finch{
-				SharedSettings: config.SharedSettings{
-					CredsHelpers: []string{"ecr-login"},
-				},
-			},
-			args:    []string{"test:tag"},
-			wantErr: nil,
-			mockSvc: func(
-				_ *testing.T,
-				ncc *mocks.NerdctlCmdCreator,
-				ecc *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
-				logger *mocks.Logger,
-				ctrl *gomock.Controller,
-				_ afero.Fs,
-			) {
-				getVMStatusC := mocks.NewCommand(ctrl)
-				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
-				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", true)
-				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", true)
-				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
-				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
-				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
-				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
-
-				awsCmd := mocks.NewCommand(ctrl)
-				ecc.EXPECT().Create(
-					"aws",
-					"configure",
-					"export-credentials",
-					"--format",
-					"process",
-				).Return(awsCmd)
-				awsCmd.EXPECT().CombinedOutput().Return(nil, fmt.Errorf("an error"))
-				logger.EXPECT().Debugln("failed to run `aws configure` command")
-
-				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell",
-					limaInstanceName,
-					"sudo",
-					"-E",
-					"AWS_ACCESS_KEY_ID=TEST_ACCESS_KEY",
-					"AWS_SECRET_ACCESS_KEY=TEST_SECRET_ACCESS_KEY",
-					"AWS_SESSION_TOKEN=TEST_SESSION_TOKEN",
-					nerdctlCmdName,
-					"pull",
-					"test:tag",
-				).Return(c)
-				c.EXPECT().Run()
-			},
-		},
-		{
-			name:    "with ECR credential helper, aws command fails but returns unexpected response",
-			cmdName: "pull",
-			fc: &config.Finch{
-				SharedSettings: config.SharedSettings{
-					CredsHelpers: []string{"ecr-login"},
-				},
-			},
-			args:    []string{"test:tag"},
-			wantErr: nil,
-			mockSvc: func(
-				_ *testing.T,
-				ncc *mocks.NerdctlCmdCreator,
-				ecc *mocks.CommandCreator,
-				ncsd *mocks.NerdctlCommandSystemDeps,
-				logger *mocks.Logger,
-				ctrl *gomock.Controller,
-				_ afero.Fs,
-			) {
-				getVMStatusC := mocks.NewCommand(ctrl)
-				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
-				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-				ncsd.EXPECT().LookupEnv("AWS_ACCESS_KEY_ID").Return("TEST_ACCESS_KEY", true)
-				ncsd.EXPECT().LookupEnv("AWS_SECRET_ACCESS_KEY").Return("TEST_SECRET_ACCESS_KEY", true)
-				ncsd.EXPECT().LookupEnv("AWS_SESSION_TOKEN").Return("TEST_SESSION_TOKEN", true)
-				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("", false)
-				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
-				ncsd.EXPECT().LookupEnv("SOURCE_DATE_EPOCH").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
-				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
-
-				awsCmd := mocks.NewCommand(ctrl)
-				ecc.EXPECT().Create(
-					"aws",
-					"configure",
-					"export-credentials",
-					"--format",
-					"process",
-				).Return(awsCmd)
-				awsCmd.EXPECT().CombinedOutput().Return([]byte("unexpected response"), nil)
-				logger.EXPECT().Debugln("`aws configure export-credentials` output is unexpected, is command available? " +
-					"This may result in a broken ecr-credential helper experience.")
-
-				c := mocks.NewCommand(ctrl)
-				ncc.EXPECT().Create("shell",
-					limaInstanceName,
-					"sudo",
-					"-E",
-					"AWS_ACCESS_KEY_ID=TEST_ACCESS_KEY",
-					"AWS_SECRET_ACCESS_KEY=TEST_SECRET_ACCESS_KEY",
-					"AWS_SESSION_TOKEN=TEST_SESSION_TOKEN",
-					nerdctlCmdName,
-					"pull",
-					"test:tag",
-				).Return(c)
 				c.EXPECT().Run()
 			},
 		},
@@ -1611,6 +1366,7 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
 				ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
+				ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
 				c := mocks.NewCommand(ctrl)
@@ -1675,6 +1431,7 @@ func AddEmptyEnvLookUps(ncsd *mocks.NerdctlCommandSystemDeps) {
 	ncsd.EXPECT().LookupEnv("AWS_ECR_DISABLE_CACHE").Return("", false)
 	ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
 	ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
+	ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 }
 
 type ContainsSubstring struct {
