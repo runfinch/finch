@@ -84,6 +84,7 @@ jobs:
       - name: Build project
         run: |
           git status
+          $env:E2E_COVERAGE="1"
           make
       - name: Run e2e tests
         run: |

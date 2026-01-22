@@ -93,7 +93,7 @@ jobs:
           sudo rm -rf /run/containerd || true
       - name: Build project
         run: |
-          ./contrib/packaging/rpm/build.sh --local
+          E2E_COVERAGE=1 ./contrib/packaging/rpm/build.sh --local
       - name: Install Dependencies
         run: |
           sudo yum install iptables -y

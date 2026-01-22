@@ -85,7 +85,7 @@ jobs:
       - name: Build project
         run: |
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          make
+          E2E_COVERAGE=1 make
         shell: zsh {0}
       - name: Run e2e tests
         run: |
