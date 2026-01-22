@@ -79,7 +79,7 @@ jobs:
     steps:
       - name: Clean Ubuntu workspace
         run: |
-          rm -rf ${{ github.workspace }}/*
+          sudo rm -rf ${{ github.workspace }}/*
       - name: Clean existing Finch environment
         run: |
           # Stop services
@@ -115,6 +115,7 @@ jobs:
 
           # Clean up root cache
           sudo rm -rf /root/.cache || true
+          sudo rm -rf ${{ github.workspace }}/cov || true
           
           # Reload systemd after cleanup
           sudo systemctl daemon-reload
