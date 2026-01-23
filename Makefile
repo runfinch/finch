@@ -326,7 +326,7 @@ test-e2e-vm: create-report-dir create-coverage-dir
 
 .PHONY: test-e2e-cov
 test-e2e-cov:
-	@go tool covdata percent -i=$(COVERAGE_DIR) -pkg=$(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v version | paste -sd ',' -)
+	go tool covdata percent -i=$(COVERAGE_DIR) -pkg=$(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v version | paste -sd ',' -)
 
 GINKGO = go run github.com/onsi/ginkgo/v2/ginkgo
 # Common ginkgo options: -v for verbose mode, --focus="test name" for running single tests
