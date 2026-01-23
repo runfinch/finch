@@ -7,9 +7,6 @@ on:
       - '**.go'
       - 'go.mod'
       - 'go.sum'
-      - '.github/workflows/e2e-macos.yaml'
-      - '.github/workflows/e2e-windows.yaml'
-      - '.github/workflows/e2e-linux.yaml'
       - 'contrib/packaging/**'
       - 'deps/**'
       - 'finch.yaml.d/**'
@@ -17,6 +14,11 @@ on:
       - 'Makefile*'
       - '.golangci.yaml'
       - '!contrib/hello-finch/**'
+      - '.github/workflows/e2e-macos.yaml'
+      - '.github/workflows/e2e-windows.yaml'
+      - '.github/workflows/e2e-linux.yaml'
+      - '.github/workflows/e2e-ubuntu.yaml'
+      - '.github/workflows/ci.yaml'
       - '.github/workflows/ci-release.yaml'
       - '.github/workflows/release-automation.yaml'
       - '.github/workflows/upload-installer-to-release.yaml'
@@ -27,10 +29,6 @@ on:
       - '.github/workflows/test-pkg.yaml'
       - '.github/workflows/build-and-test-msi.yaml'
       - '.github/workflows/build-and-test-deb.yaml'
-      - '.github/workflows/e2e-macos.yaml'
-      - '.github/workflows/e2e-windows.yaml'
-      - '.github/workflows/e2e-linux.yaml'
-      - '.github/workflows/e2e-ubuntu.yaml'
       - '.github/workflows/get-version-and-tag-for-ref.yaml'
       # - '.github/workflows/build-linux.yaml'
   pull_request:
@@ -44,15 +42,16 @@ on:
       - '.github/workflows/test-pkg.yaml'
       - '.github/workflows/build-and-test-msi.yaml'
       - '.github/workflows/build-and-test-deb.yaml'
-      - '.github/workflows/get-version-and-tag-for-ref.yaml'
       - 'installer-builder/**'
       - 'msi-builder/**'
+      - 'contrib/packaging/deb/**'
       # - '.github/workflows/build-linux.yaml'
   workflow_dispatch:
 
 permissions:
   id-token: write
   contents: write
+  pull-requests: read
 
 env:
   DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
@@ -62,6 +61,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    uses: ./.github/workflows/detect-changes.yaml
+    secrets: inherit
+
   run-ci-checks:
     uses: ./.github/workflows/ci.yaml
     secrets: inherit
@@ -85,7 +88,8 @@ jobs:
             echo "version=$version" >> ${GITHUB_OUTPUT}
 
   build-and-test-finch-pkg:
-    needs: get-intermediate-version
+    needs: [get-intermediate-version, changes]
+    if: ${{ needs.changes.outputs.mac-build == 'true' }}
     uses: ./.github/workflows/build-and-test-pkg.yaml
     permissions:
       id-token: write
@@ -96,7 +100,8 @@ jobs:
       version: ${{ needs.get-intermediate-version.outputs.version }}
   
   build-and-test-finch-msi:
-    needs: get-intermediate-version
+    needs: [get-intermediate-version, changes]
+    if: ${{ needs.changes.outputs.win-build == 'true' }}
     uses: ./.github/workflows/build-and-test-msi.yaml
     permissions:
       id-token: write
@@ -107,7 +112,8 @@ jobs:
       version: ${{ needs.get-intermediate-version.outputs.version }}
 
   build-and-test-finch-deb:
-    needs: get-intermediate-version
+    needs: [get-intermediate-version, changes]
+    if: ${{ needs.changes.outputs.ubuntu-build == 'true' }}
     uses: ./.github/workflows/build-and-test-deb.yaml
     permissions:
       id-token: write

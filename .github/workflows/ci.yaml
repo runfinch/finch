@@ -26,10 +26,6 @@ on:
       - '**.go'
       - 'go.mod'
       - 'go.sum'
-      - '.github/workflows/e2e-macos.yaml'
-      - '.github/workflows/e2e-windows.yaml'
-      - '.github/workflows/e2e-linux.yaml'
-      - '.github/workflows/e2e-ubuntu.yaml'
       - 'contrib/packaging/**'
       - 'deps/**'
       - 'finch.yaml.d/**'
@@ -37,12 +33,19 @@ on:
       - 'Makefile*'
       - '.golangci.yaml'
       - '!contrib/hello-finch/**'
+      - '.github/workflows/ci.yaml'
+      - '.github/workflows/e2e-macos.yaml'
+      - '.github/workflows/e2e-windows.yaml'
+      - '.github/workflows/e2e-linux.yaml'
+      - '.github/workflows/e2e-ubuntu.yaml'
+      - '.github/workflows/get-version-and-tag-for-ref.yaml'
   workflow_dispatch:
   workflow_call:
 
 permissions:
   id-token: write
   contents: write
+  pull-requests: read
 
 env:
   DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
@@ -53,6 +56,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    uses: ./.github/workflows/detect-changes.yaml
+    secrets: inherit
+  
   git-secrets:
     runs-on: ubuntu-latest
     timeout-minutes: 2
@@ -88,6 +95,8 @@ jobs:
         uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
 
   gen-code-no-diff:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.code == 'true' }}
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
@@ -103,6 +112,8 @@ jobs:
       - run: git diff --exit-code
   
   unit-tests:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.code == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -123,6 +134,8 @@ jobs:
   
   # It's recommended to run golangci-lint in a job separate from other jobs (go test, etc) because different jobs run in parallel.
   go-linter:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.code == 'true' }}
     name: lint
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -168,6 +181,8 @@ jobs:
         continue-on-error: true
   
   go-mod-tidy-check:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.code == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
@@ -179,6 +194,8 @@ jobs:
       - run: go mod tidy -diff
   
   check-licenses:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
@@ -190,6 +207,8 @@ jobs:
       - run: make check-licenses
   
   macos-e2e-tests:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.mac-e2e == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -206,6 +225,8 @@ jobs:
       test-command: ${{ matrix.test-command }}
   
   windows-e2e-tests:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.win-e2e == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -220,6 +241,8 @@ jobs:
       test-command: ${{ matrix.test-command }}
   
   linux-e2e-tests:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.linux-e2e == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -236,6 +259,8 @@ jobs:
       runner-type: ${{ matrix.runner-type }}
   
   ubuntu-e2e-tests:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.ubuntu-e2e == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -252,6 +277,8 @@ jobs:
       output-arch: ${{ matrix.output-arch }}
 
   mdlint:
+    needs: [changes]
+    if: ${{ needs.changes.outputs.docs == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
