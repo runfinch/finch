@@ -92,6 +92,8 @@ jobs:
           git status
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
+          echo "Coverage directory after tests:"
+          ls -la ./cov || echo "Coverage directory does not exist"
         shell: zsh {0}
       - name: Show test coverage
         if: ${{ inputs.test-command != 'test-e2e-daemon' }}
