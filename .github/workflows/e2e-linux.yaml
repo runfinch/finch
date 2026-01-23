@@ -44,9 +44,9 @@ jobs:
       container_report: ${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}
       vm_serial_report: ${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}
     steps:
-      - name: Clean macOS runner workspace
+      - name: Clean runner workspace
         run: |
-          rm -rf ${{ github.workspace }}/*
+          sudo rm -rf ${{ github.workspace }}/*
       - name: Allow Node16 on AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |

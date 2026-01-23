@@ -67,6 +67,12 @@ Write-Host "Files copied successfully."
 
 # 5. Copy WiX template and update resources path and version
 Write-Host "5. Copy Wix template and update value..."
+
+# Seems like version must follow major.minor.patch format https://docs.firegiant.com/wix/schema/wxs/validate/#ProductVersion.
+# So sanitize version for wix, but keep original for filename.
+$wixVersion = $Version -replace '^v', '' -replace '-.*$', ''
+Write-Host "Original version: $Version, WiX version: $wixVersion"
+
 Copy-Item -Path (Join-Path -Path $scriptDirectory -ChildPath "FinchMSITemplate.wxs") -Destination (Join-Path -Path $scriptDirectory -ChildPath "build\")
 $wxsFilePath = Join-Path -Path $scriptDirectory -ChildPath "build\FinchMSITemplate.wxs"
 
@@ -78,7 +84,7 @@ $roofsFileName = $roofsFile.Name
 # Replace __ROOTFS__, __SOURCE__ and __VERSION__
 $content = Get-Content -Path $wxsFilePath -Raw
 $updatedContent = $content -replace '__SOURCE__', $finchResourcePath `
-    -replace '__VERSION__', $Version `
+    -replace '__VERSION__', $wixVersion `
     -replace '__ROOTFS__', $roofsFileName
 $updatedContent | Set-Content -Path $wxsFilePath
 Write-Host "Source path and version are updated successfully."
@@ -93,10 +99,34 @@ $candleArgs = "$wxsFilePath -out $wixobjPath"
 $lightPath = Join-Path -Path $wixToolPath -ChildPath "light.exe"
 $lightArgs = "$wixobjPath -ext WixUIExtension -out $msiPath"
 
-Start-Process -FilePath $candlePath -ArgumentList $candleArgs -Wait
-Write-Host "Candle finished."
+Write-Host "Candle started..."
+$candleProcess = Start-Process -FilePath $candlePath -ArgumentList $candleArgs -PassThru -NoNewWindow -RedirectStandardOutput "$buildFolderPath\candle_stdout.txt" -RedirectStandardError "$buildFolderPath\candle_stderr.txt" -Wait
+if ($candleProcess.ExitCode -ne 0) {
+    Write-Error "Candle failed with exit code: $($candleProcess.ExitCode)"
+    Write-Host "--- Candle stdout ---"
+    Get-Content "$buildFolderPath\candle_stdout.txt"
+    Write-Host "--- Candle stderr ---"
+    Get-Content "$buildFolderPath\candle_stderr.txt"
+    exit 1
+} else {
+    Write-Host "Candle finished."
+}
+
 Write-Host "Light started, it may take some time..."
-Start-Process -FilePath $lightPath -ArgumentList $lightArgs -Wait
-Write-Host "Light finished."
+$lightProcess = Start-Process -FilePath $lightPath -ArgumentList $lightArgs -PassThru -NoNewWindow -RedirectStandardOutput "$buildFolderPath\light_stdout.txt" -RedirectStandardError "$buildFolderPath\light_stderr.txt" -Wait
+if ($lightProcess.ExitCode -ne 0) {
+    Write-Error "Light failed with exit code: $($lightProcess.ExitCode)"
+    Write-Host "--- Light stdout ---"
+    Get-Content "$buildFolderPath\light_stdout.txt"
+    Write-Host "--- Light stderr ---"
+    Get-Content "$buildFolderPath\light_stderr.txt"
+    exit 1
+} else {
+    Write-Host "Light finished."
+}
 
 Write-Host "Finch-$Version.msi is generated. Location: $msiPath"
+if (-not (Test-Path $msiPath)) {
+    Write-Error "MSI file was not created at: $msiPath"
+    exit 1
+}

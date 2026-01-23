@@ -17,7 +17,7 @@ on:
       tag:
         type: string
         required: true
-      commit:
+      finch_version:
         type: string
         required: true
 
@@ -48,7 +48,7 @@ jobs:
       - name: Checkout the tag
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          ref: ${{ inputs.commit }}
+          ref: ${{ inputs.tag }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
@@ -76,12 +76,12 @@ jobs:
       - name: Download from S3
         run: |
           aws s3 cp \
-            s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg \
-            Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg
+            s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ inputs.finch_version }}-${{ inputs.output_arch }}.pkg \
+            Finch-${{ inputs.finch_version }}-${{ inputs.output_arch }}.pkg
         shell: zsh {0}
       - name: Verify signature and notarization of Finch installer
         run: |
-          PKG_FILE="Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg"
+          PKG_FILE="Finch-${{ inputs.finch_version }}-${{ inputs.output_arch }}.pkg"
           PKG_SIGNATURE=$(pkgutil --check-signature "$PKG_FILE")
           if ! echo "$PKG_SIGNATURE" | grep -q "Status: signed by a developer certificate issued by Apple for distribution"; then
             echo "Finch installer signature check failed"
@@ -93,7 +93,7 @@ jobs:
             exit 1
           fi
       - name: Silently install
-        run: sudo installer -pkg Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg -target /
+        run: sudo installer -pkg Finch-${{ inputs.finch_version }}-${{ inputs.output_arch }}.pkg -target /
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true
       - name: Install build dependencies
@@ -151,7 +151,7 @@ jobs:
           # Need to reinstall because there were errors on arm64 11.7 and arm64 12.6 hosts after running multiple instances tests,
           # that caused the VM initialization failure in the e2e test. 
           # Example workflow run https://github.com/runfinch/finch/actions/runs/4367457552/jobs/7638794529
-          sudo installer -pkg Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg -target /
+          sudo installer -pkg Finch-${{ inputs.finch_version }}-${{ inputs.output_arch }}.pkg -target /
       - name: Run VM e2e tests
         uses: nick-fields/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v3.0.2
         with:
@@ -173,4 +173,4 @@ jobs:
       - name: Silently uninstall
         run: echo 'y' | sudo bash /Applications/Finch/uninstall.sh
       - name: Delete installer
-        run: rm -rf Finch-${{ inputs.tag }}-${{ inputs.output_arch }}.pkg
+        run: rm -rf Finch-${{ inputs.finch_version }}-${{ inputs.output_arch }}.pkg

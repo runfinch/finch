@@ -2,23 +2,23 @@
 # - When a job is added/removed/renamed, please make corresponding changes in ci-docs.yaml.
 name: CI
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '**.go'
-      - 'go.mod'
-      - 'go.sum'
-      - '.github/workflows/e2e-macos.yaml'
-      - '.github/workflows/e2e-windows.yaml'
-      - '.github/workflows/e2e-linux.yaml'
-      - 'contrib/packaging/**'
-      - 'deps/**'
-      - 'finch.yaml.d/**'
-      - 'winres'
-      - 'Makefile*'
-      - '.golangci.yaml'
-      - '!contrib/hello-finch/**'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - '**.go'
+  #     - 'go.mod'
+  #     - 'go.sum'
+  #     - '.github/workflows/e2e-macos.yaml'
+  #     - '.github/workflows/e2e-windows.yaml'
+  #     - '.github/workflows/e2e-linux.yaml'
+  #     - 'contrib/packaging/**'
+  #     - 'deps/**'
+  #     - 'finch.yaml.d/**'
+  #     - 'winres'
+  #     - 'Makefile*'
+  #     - '.golangci.yaml'
+  #     - '!contrib/hello-finch/**'
   pull_request:
     branches:
       - main
@@ -29,6 +29,7 @@ on:
       - '.github/workflows/e2e-macos.yaml'
       - '.github/workflows/e2e-windows.yaml'
       - '.github/workflows/e2e-linux.yaml'
+      - '.github/workflows/e2e-ubuntu.yaml'
       - 'contrib/packaging/**'
       - 'deps/**'
       - 'finch.yaml.d/**'
@@ -37,6 +38,8 @@ on:
       - '.golangci.yaml'
       - '!contrib/hello-finch/**'
   workflow_dispatch:
+  workflow_call:
+
 permissions:
   id-token: write
   contents: write
@@ -98,6 +101,7 @@ jobs:
           cache: false
       - run: make gen-code
       - run: git diff --exit-code
+  
   unit-tests:
     strategy:
       fail-fast: false
@@ -116,6 +120,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
       - run: make test-unit
+  
   # It's recommended to run golangci-lint in a job separate from other jobs (go test, etc) because different jobs run in parallel.
   go-linter:
     name: lint
@@ -149,6 +154,7 @@ jobs:
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
           version: v2.1.0
           args: --fix=false --timeout=5m --skip-dirs="(^|/)deps($|/)"
+  
   shellcheck:
     name: ShellCheck
     runs-on: ubuntu-latest
@@ -160,6 +166,7 @@ jobs:
         with:
           version: v0.9.0
         continue-on-error: true
+  
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -169,9 +176,8 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
-      # TODO: Use `go mod tidy --check` after https://github.com/golang/go/issues/27005 is fixed.
-      - run: go mod tidy
-      - run: git diff --exit-code
+      - run: go mod tidy -diff
+  
   check-licenses:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -182,6 +188,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
       - run: make check-licenses
+  
   macos-e2e-tests:
     strategy:
       fail-fast: false
@@ -197,6 +204,7 @@ jobs:
       version: ${{ matrix.version }}
       runner-type: ${{ matrix.runner-type }}
       test-command: ${{ matrix.test-command }}
+  
   windows-e2e-tests:
     strategy:
       fail-fast: false
@@ -210,6 +218,7 @@ jobs:
       arch: ${{ matrix.arch }}
       runner-type: ${{ matrix.runner-type }}
       test-command: ${{ matrix.test-command }}
+  
   linux-e2e-tests:
     strategy:
       fail-fast: false
@@ -225,6 +234,7 @@ jobs:
       arch: ${{ matrix.arch }}
       version: ${{ matrix.version }}
       runner-type: ${{ matrix.runner-type }}
+  
   ubuntu-e2e-tests:
     strategy:
       fail-fast: false

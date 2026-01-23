@@ -1,0 +1,129 @@
+name: CI Release
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.go'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/e2e-macos.yaml'
+      - '.github/workflows/e2e-windows.yaml'
+      - '.github/workflows/e2e-linux.yaml'
+      - 'contrib/packaging/**'
+      - 'deps/**'
+      - 'finch.yaml.d/**'
+      - 'winres'
+      - 'Makefile*'
+      - '.golangci.yaml'
+      - '!contrib/hello-finch/**'
+      - '.github/workflows/ci-release.yaml'
+      - '.github/workflows/release-automation.yaml'
+      - '.github/workflows/upload-installer-to-release.yaml'
+      - '.github/workflows/upload-msi-to-release.yaml'
+      - '.github/workflows/upload-deb-to-release.yaml'
+      - '.github/workflows/build-and-test-pkg.yaml'
+      - '.github/workflows/build-pkg.yaml'
+      - '.github/workflows/test-pkg.yaml'
+      - '.github/workflows/build-and-test-msi.yaml'
+      - '.github/workflows/build-and-test-deb.yaml'
+      - '.github/workflows/e2e-macos.yaml'
+      - '.github/workflows/e2e-windows.yaml'
+      - '.github/workflows/e2e-linux.yaml'
+      - '.github/workflows/e2e-ubuntu.yaml'
+      - '.github/workflows/get-version-and-tag-for-ref.yaml'
+      # - '.github/workflows/build-linux.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/ci-release.yaml'
+      - '.github/workflows/release-automation.yaml'
+      - '.github/workflows/build-and-test-pkg.yaml'
+      - '.github/workflows/build-pkg.yaml'
+      - '.github/workflows/test-pkg.yaml'
+      - '.github/workflows/build-and-test-msi.yaml'
+      - '.github/workflows/build-and-test-deb.yaml'
+      - '.github/workflows/get-version-and-tag-for-ref.yaml'
+      - 'installer-builder/**'
+      - 'msi-builder/**'
+      # - '.github/workflows/build-linux.yaml'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+
+env:
+  DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-ci-checks:
+    uses: ./.github/workflows/ci.yaml
+    secrets: inherit
+
+  get-intermediate-version:
+      name: Get intermediate version
+      runs-on: ubuntu-latest
+      outputs:
+        version: ${{ steps.calculate-version.outputs.version }}
+      steps:
+        - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+          with:
+            ref: ${{ github.head_ref || github.ref_name }}
+            fetch-depth: 0
+        - name: Gets an intermediate version string
+          id: calculate-version
+          run: |
+            version=$(git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
+            version="${version}"
+            echo "${version}"
+            echo "version=$version" >> ${GITHUB_OUTPUT}
+
+  build-and-test-finch-pkg:
+    needs: get-intermediate-version
+    uses: ./.github/workflows/build-and-test-pkg.yaml
+    permissions:
+      id-token: write
+      contents: read
+    secrets: inherit
+    with:
+      ref_name: ${{ github.head_ref || github.ref_name }}
+      version: ${{ needs.get-intermediate-version.outputs.version }}
+  
+  build-and-test-finch-msi:
+    needs: get-intermediate-version
+    uses: ./.github/workflows/build-and-test-msi.yaml
+    permissions:
+      id-token: write
+      contents: read
+    secrets: inherit
+    with:
+      ref_name: ${{ github.head_ref || github.ref_name }}
+      version: ${{ needs.get-intermediate-version.outputs.version }}
+
+  build-and-test-finch-deb:
+    needs: get-intermediate-version
+    uses: ./.github/workflows/build-and-test-deb.yaml
+    permissions:
+      id-token: write
+      contents: read
+    secrets: inherit
+    with:
+      ref_name: ${{ github.head_ref || github.ref_name }}
+      version: ${{ needs.get-intermediate-version.outputs.version }}
+
+  # build-static-linux-binaries:
+  #   needs: get-intermediate-version
+  #   uses: ./.github/workflows/build-linux.yaml
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   secrets: inherit
+  #   with:
+  #     ref_name: ${{ github.head_ref || github.ref_name }}
+  #     version: ${{ needs.get-intermediate-version.outputs.version }}

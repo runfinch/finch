@@ -7,7 +7,7 @@
 # However, due to GitHub's logic, even though the one from ci-docs.yaml passes,
 # the one from ci.yaml still has to pass for the PR to be merged,
 # so it functionally works, while it's visually confusing.
-name: CI
+name: CI Docs
 on:
   push:
     branches:
@@ -26,6 +26,15 @@ on:
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
+      - '!.github/workflows/release-automation.yaml'
+      - '!.github/workflows/build-linux.yaml'
+      - '!.github/workflows/upload-build-to-S3.yaml'
+      - '!.github/workflows/build-and-test-msi.yaml'
+      - '!.github/workflows/build-and-test-pkg.yaml'
+      - '!.github/workflows/ci-release.yaml'
+      - '!.github/workflows/get-version-and-tag-for-ref.yaml'
+      - '!.github/workflows/ci-docs.yaml'
+      - '!CHANGELOG.md'
   pull_request:
     branches:
       - main
@@ -43,6 +52,15 @@ on:
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
+      - '!.github/workflows/release-automation.yaml'
+      - '!.github/workflows/build-linux.yaml'
+      - '!.github/workflows/upload-build-to-S3.yaml'
+      - '!.github/workflows/build-and-test-msi.yaml'
+      - '!.github/workflows/build-and-test-pkg.yaml'
+      - '!.github/workflows/ci-release.yaml'
+      - '!.github/workflows/get-version-and-tag-for-ref.yaml'
+      - '!.github/workflows/ci-docs.yaml'
+      - '!CHANGELOG.md'
 
 permissions:
   contents: read

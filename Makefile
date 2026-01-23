@@ -28,10 +28,9 @@ VDE_INSTALL ?= /opt/finch
 ARCH ?= $(shell uname -m)
 SUPPORTED_ARCH = false
 LICENSEDIR := $(OUTDIR)/license-files
-VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified'  --abbrev=0 --always --tags)
+VERSION ?= $(shell git describe --match 'v[0-9]*' --dirty='.modified' --always --tags)
 GITCOMMIT ?= $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelain)" || echo .m)
 VERSION_INJECTION := -X $(PACKAGE)/pkg/version.Version=$(VERSION)
-VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
 VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
 LDFLAGS = "-w $(VERSION_INJECTION)"
 MIN_MACOS_VERSION ?= 11.0
@@ -155,10 +154,8 @@ ifeq ($(GOOS),windows)
 finch: finch-windows finch-all
 else ifeq ($(GOOS),darwin)
 finch: finch-macos
-else ifeq ($(NATIVE_BUILD),true)
-finch: finch-native
 else
-finch: finch-all
+finch: finch-linux
 endif
 
 finch-windows:
@@ -171,9 +168,11 @@ finch-macos: finch-unix
 
 finch-unix: finch-all
 
-finch-native: GO_BUILD_TAGS += native
-finch-native: finch-all
+finch-linux: finch-all
 
+ifneq ($(STATIC),)
+finch-all: export CGO_ENABLED=0
+endif
 finch-all:
 	$(GO) build -ldflags $(LDFLAGS) -tags "$(GO_BUILD_TAGS)" -o $(OUTDIR)/bin/$(BINARYNAME) $(PACKAGE)/cmd/finch
 
@@ -204,62 +203,62 @@ coverage:
 download-licenses: GOBIN = $(CURDIR)/tools_bin
 download-licenses:
 	GOBIN=$(GOBIN) go install github.com/google/go-licenses
-	$(GOBIN)/go-licenses save ./... --save_path="$(LICENSEDIR)" --force --include_tests
+	$(GOBIN)/go-licenses save ./... --ignore github.com/multiformats/go-base36 --ignore github.com/spf13/afero/sftpfs --save_path="$(LICENSEDIR)" --force --include_tests
 
     ### dependencies in tools.go - start ###
 
     # for go.uber.org/mock/mockgen
 	mkdir -p "$(LICENSEDIR)/go.uber.org/mock"
-	curl https://raw.githubusercontent.com/golang/mock/main/LICENSE --output "$(LICENSEDIR)/go.uber.org/mock/LICENSE"
+	curl -L https://raw.githubusercontent.com/golang/mock/main/LICENSE --output "$(LICENSEDIR)/go.uber.org/mock/LICENSE"
     # for github.com/google/go-licenses
 	mkdir -p "$(LICENSEDIR)/github.com/google/go-licenses"
-	curl https://raw.githubusercontent.com/google/go-licenses/master/LICENSE --output "$(LICENSEDIR)/github.com/google/go-licenses/LICENSE"
+	curl -L https://raw.githubusercontent.com/google/go-licenses/master/LICENSE --output "$(LICENSEDIR)/github.com/google/go-licenses/LICENSE"
     # for golang.org/x/tools/cmd/stringer
 	mkdir -p "$(LICENSEDIR)/golang.org/x/tools"
-	curl https://raw.githubusercontent.com/golang/tools/master/LICENSE --output "$(LICENSEDIR)/golang.org/x/tools/LICENSE"
+	curl -L https://raw.githubusercontent.com/golang/tools/master/LICENSE --output "$(LICENSEDIR)/golang.org/x/tools/LICENSE"
 
     ### dependencies in tools.go - end ###
 
     ### dependencies in benchmark.yaml - start ###
 
 	mkdir -p "$(LICENSEDIR)/github.com/benchmark-action/github-action-benchmark"
-	curl https://raw.githubusercontent.com/benchmark-action/github-action-benchmark/master/LICENSE.txt --output "$(LICENSEDIR)/github.com/benchmark-action/github-action-benchmark/LICENSE.txt"
+	curl -L https://raw.githubusercontent.com/benchmark-action/github-action-benchmark/master/LICENSE.txt --output "$(LICENSEDIR)/github.com/benchmark-action/github-action-benchmark/LICENSE.txt"
 
     ### dependencies in benchmark.yaml - end ###
 
     ### dependencies in ci.yaml - start ###
 
 	mkdir -p "$(LICENSEDIR)/github.com/actions/checkout"
-	curl https://raw.githubusercontent.com/actions/checkout/main/LICENSE --output "$(LICENSEDIR)/github.com/actions/checkout/LICENSE"
+	curl -L https://raw.githubusercontent.com/actions/checkout/main/LICENSE --output "$(LICENSEDIR)/github.com/actions/checkout/LICENSE"
 	mkdir -p "$(LICENSEDIR)/github.com/actions/setup-go"
-	curl https://raw.githubusercontent.com/actions/setup-go/main/LICENSE --output "$(LICENSEDIR)/github.com/actions/setup-go/LICENSE"
+	curl -L https://raw.githubusercontent.com/actions/setup-go/main/LICENSE --output "$(LICENSEDIR)/github.com/actions/setup-go/LICENSE"
 	mkdir -p "$(LICENSEDIR)/github.com/golangci/golangci-lint-action"
-	curl https://raw.githubusercontent.com/golangci/golangci-lint-action/master/LICENSE --output "$(LICENSEDIR)/github.com/golangci/golangci-lint-action/LICENSE"
+	curl -L https://raw.githubusercontent.com/golangci/golangci-lint-action/master/LICENSE --output "$(LICENSEDIR)/github.com/golangci/golangci-lint-action/LICENSE"
 	mkdir -p "$(LICENSEDIR)/github.com/avto-dev/markdown-lint"
-	curl https://raw.githubusercontent.com/avto-dev/markdown-lint/master/LICENSE --output "$(LICENSEDIR)/github.com/avto-dev/markdown-lint/LICENSE"
+	curl -L https://raw.githubusercontent.com/avto-dev/markdown-lint/master/LICENSE --output "$(LICENSEDIR)/github.com/avto-dev/markdown-lint/LICENSE"
 	mkdir -p "$(LICENSEDIR)/github.com/ludeeus/action-shellcheck"
-	curl https://raw.githubusercontent.com/ludeeus/action-shellcheck/blob/2.0.0/LICENSE --output "$(LICENSEDIR)/github.com/ludeeus/action-shellcheck/LICENSE"
+	curl -L https://raw.githubusercontent.com/ludeeus/action-shellcheck/blob/2.0.0/LICENSE --output "$(LICENSEDIR)/github.com/ludeeus/action-shellcheck/LICENSE"
 
     ### dependencies in ci.yaml - end ###
 
     ### dependencies in lint-pr-title.yaml - start ###
 
 	mkdir -p "$(LICENSEDIR)/github.com/amannn/action-semantic-pull-request"
-	curl https://raw.githubusercontent.com/amannn/action-semantic-pull-request/main/LICENSE --output "$(LICENSEDIR)/github.com/amannn/action-semantic-pull-request/LICENSE"
+	curl -L https://raw.githubusercontent.com/amannn/action-semantic-pull-request/main/LICENSE --output "$(LICENSEDIR)/github.com/amannn/action-semantic-pull-request/LICENSE"
 
     ### dependencies in lint-pr-title.yaml - end ###
 
     ### dependencies in release-please.yaml - start ###
 
 	mkdir -p "$(LICENSEDIR)/github.com/googleapis/release-please"
-	curl https://raw.githubusercontent.com/googleapis/release-please/main/LICENSE --output "$(LICENSEDIR)/github.com/googleapis/release-please/LICENSE"
+	curl -L https://raw.githubusercontent.com/googleapis/release-please/main/LICENSE --output "$(LICENSEDIR)/github.com/googleapis/release-please/LICENSE"
 
     ### dependencies in release-please.yaml - end ###
 
     ### system-level dependencies - start ###
 
 	mkdir -p "$(LICENSEDIR)/github.com/lima-vm/lima"
-	curl https://raw.githubusercontent.com/lima-vm/lima/master/LICENSE --output "$(LICENSEDIR)/github.com/lima-vm/lima/LICENSE"
+	curl -L https://raw.githubusercontent.com/lima-vm/lima/master/LICENSE --output "$(LICENSEDIR)/github.com/lima-vm/lima/LICENSE"
 
     ### system-level dependencies - end ###
 

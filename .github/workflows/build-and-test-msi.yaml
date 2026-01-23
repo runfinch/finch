@@ -5,13 +5,18 @@ on:
   workflow_dispatch:
     inputs:
       ref_name:
-        description: "name of git ref for which to build installer"
+        description: "the ref (tag/branch) to use to extract tag/version"
         required: true
         type: string
   workflow_call:
     inputs:
       ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
         required: true
+        type: string
+      version:
+        description: "override for version, will be used instead of ref if set, used for testing"
+        required: false
         type: string
   schedule:
     - cron: '0 9 * * *'
@@ -28,43 +33,11 @@ permissions:
 jobs:
   get-tag-name:
     name: Get tag name
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    outputs:
-      tag: ${{ steps.check-tag.outputs.tag }}
-      version: ${{ steps.check-tag.outputs.version }}
-      commit: ${{ steps.export-commit.outputs.commit }}
-    steps:
-      - name: Check tag from workflow input and github ref
-        id: check-tag
-        run: |
-          if [ -n "${{ inputs.ref_name }}" ]; then
-            tag=${{ inputs.ref_name }}
-          else
-            tag=${{ github.ref_name }}
-          fi
-          echo "tag=$tag" >> ${GITHUB_OUTPUT}
-
-          version=${tag#v}
-          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Version matches format: $version"
-          else
-            echo "Version $version doesn't match format. Using test version: 0.0.1"
-            version="0.0.1"
-          fi
-          echo "version=$version" >> ${GITHUB_OUTPUT}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          ref: ${{ steps.check-tag.outputs.tag }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - name: Export commit hash
-        id: export-commit
-        run: |
-          commit=$(git rev-parse HEAD)
-          echo "commit=$commit" >> ${GITHUB_OUTPUT}
-
+    uses: ./.github/workflows/get-version-and-tag-for-ref.yaml
+    with:
+      ref_name: ${{ inputs.ref_name }}
+      version: ${{ inputs.version }}
+  
   windows-msi-build:
     needs: get-tag-name
     runs-on: [self-hosted, windows, amd64, release]
@@ -91,7 +64,7 @@ jobs:
           cache: false
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          ref: ${{ needs.get-tag-name.outputs.commit }}
+          ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
           persist-credentials: false
           submodules: recursive
@@ -118,16 +91,15 @@ jobs:
       - name: generate and download signed msi
         run: |
           $version="${{ needs.get-tag-name.outputs.version }}"
-          $tag="${{ needs.get-tag-name.outputs.tag }}"
           powershell .\msi-builder\BuildFinchMSI.ps1 -Version $version
           $timestamp=[math]::truncate((Get-Date (Get-Date).ToUniversalTime() -UFormat "%s"))
-          $unsignedMSI="Finch-$tag-$timestamp.msi"
+          $unsignedMSI="Finch-$version-$timestamp.msi"
           Write-Host "Upload unsigned MSI: $unsignedMSI"
-
+          
           aws s3 cp "./msi-builder/build/Finch-$version.msi" "${{ secrets.WINDOWS_UNSIGNED_BUCKET }}$unsignedMSI" --acl bucket-owner-full-control --no-progress
           New-Item -Path "./msi-builder/build/signed/" -ItemType Directory -Force
 
-          Write-Host "Attemp to download signed MSI"
+          Write-Host "Attempt to download signed MSI"
           $retryCount = 0
           $maxRetries = 20
           $delay = 5
@@ -137,7 +109,7 @@ jobs:
               $signedMSI = aws s3 ls ${{ secrets.WINDOWS_SIGNED_BUCKET }} 2>&1 | Where-Object { $_ -match "$unsignedMSI" } | Sort-Object -Descending | Select-Object -First 1 | ForEach-Object { ($_ -split '\s+')[-1] }
               if ($signedMSI -and ($signedMSI -notlike "*An error occurred (404) when calling the HeadObject operation*")) {
                   try {
-                      aws s3 cp "${{ secrets.WINDOWS_SIGNED_BUCKET }}$signedMSI" "./msi-builder/build/signed/Finch-$tag.msi"
+                      aws s3 cp "${{ secrets.WINDOWS_SIGNED_BUCKET }}$signedMSI" "./msi-builder/build/signed/Finch-$version.msi"
                       break
                   } catch {
                       Write-Host "Error during copy: $_"
@@ -159,8 +131,8 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: upload signed MSI to S3
         run: |
-          $tag="${{ needs.get-tag-name.outputs.tag }}"
-          aws s3 cp "./msi-builder/build/signed/Finch-$tag.msi" "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$tag.msi" --no-progress
+          $version="${{ needs.get-tag-name.outputs.version }}"
+          aws s3 cp "./msi-builder/build/signed/Finch-$version.msi" "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$version.msi" --no-progress
       - name: Remove Finch VM and Clean Up Previous Environment
         if: ${{ always() }}
         timeout-minutes: 5
@@ -199,7 +171,7 @@ jobs:
           cache: false
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          ref: ${{ needs.get-tag-name.outputs.commit }}
+          ref: ${{ needs.get-tag-name.outputs.tag }}
           fetch-depth: 0
           persist-credentials: false
           submodules: recursive
@@ -235,8 +207,8 @@ jobs:
           }
       - name: Download MSI from S3
         run: |
-          $tag="${{ needs.get-tag-name.outputs.tag }}"
-          aws s3 cp "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$tag.msi" ./Finch.msi
+          $version="${{ needs.get-tag-name.outputs.version }}"
+          aws s3 cp "s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-$version.msi" ./Finch.msi
       - name: Install MSI silently
         run: |
           Start-Process 'Finch.msi' -ArgumentList '/quiet' -Wait
