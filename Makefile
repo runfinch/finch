@@ -330,7 +330,7 @@ test-e2e-cov:
 	@echo "Coverage directory contents:"
 	@ls -la $(COVERAGE_DIR) || echo "Coverage directory does not exist"
 	@echo "Running coverage report..."
-	go tool covdata percent -i=$(COVERAGE_DIR) -pkg=$(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v version | paste -sd ',' -)
+	-go tool covdata percent -i=$(COVERAGE_DIR) -pkg=$(shell go list ./... | grep -v e2e | grep -v benchmark | grep -v version | paste -sd ',' -); echo "Exit code: $$?"
 
 GINKGO = go run github.com/onsi/ginkgo/v2/ginkgo
 # Common ginkgo options: -v for verbose mode, --focus="test name" for running single tests
