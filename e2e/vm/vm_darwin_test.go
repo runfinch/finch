@@ -37,6 +37,16 @@ func TestVM(t *testing.T) {
 	// Test Stopped -> Nonexistent
 	// Test Nonexistent -> Running
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
+		// Set DOCKER_CONFIG to /.finch
+		homeDir, err := os.UserHomeDir()
+		gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+		finchConfigDir := filepath.Join(homeDir, ".finch")
+		_ = os.MkdirAll(finchConfigDir, 0o700)
+		o.UpdateEnv("DOCKER_CONFIG", finchConfigDir)
+		// Ensure empty /.finch/config.json
+		configPath := filepath.Join(finchConfigDir, "config.json")
+		_ = os.WriteFile(configPath, []byte("{}"), 0o644)
+
 		resetDisks(o, *e2e.Installed)
 		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
 		time.Sleep(1 * time.Second)
