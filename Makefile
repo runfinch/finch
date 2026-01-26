@@ -333,6 +333,7 @@ test-e2e-daemon:
 	-@$(OUTDIR)/bin/$(BINARYNAME) vm stop -f || true
 	-@$(OUTDIR)/bin/$(BINARYNAME) vm remove -f
 	-@$(OUTDIR)/bin/$(BINARYNAME) vm init
+	@echo '{}' > $(HOME)/.finch/config.json
 
 	cd $(FINCH_CORE_DIR)/src/finch-daemon && \
 	STATIC=1 GOOS=linux GOARCH=$(GOARCH) make && \
