@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.14.2](https://github.com/runfinch/finch/compare/v1.14.1...v1.14.2) (2026-01-26)
+
+
+### Bug Fixes
+
+* generate date-agnostic gzip files ([#1676](https://github.com/runfinch/finch/issues/1676)) ([4e3d3fa](https://github.com/runfinch/finch/commit/4e3d3faeca77a2ee58915617b95520843b3bf28d))
+* remove multiple cp commands that overwrites older installers ([#1681](https://github.com/runfinch/finch/issues/1681)) ([2c26c9b](https://github.com/runfinch/finch/commit/2c26c9ba7ab9349236704db5301017dd0c8ca694))
+
 ## [1.14.1](https://github.com/runfinch/finch/compare/v1.14.0...v1.14.1) (2026-01-14)
 
 
