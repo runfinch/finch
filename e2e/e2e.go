@@ -79,6 +79,12 @@ func CreateOption() (*option.Option, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize a testing option: %w", err)
 	}
+
+	// Explicitly pass GOCOVERDIR for coverage collection
+	if gocoverdir := os.Getenv("GOCOVERDIR"); gocoverdir != "" {
+		o.UpdateEnv("GOCOVERDIR", gocoverdir)
+	}
+
 	return o, nil
 }
 
