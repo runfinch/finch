@@ -5,13 +5,18 @@ on:
   workflow_dispatch:
     inputs:
       ref_name:
-        description: "name of git ref for which to build installer"
+        description: "the ref (tag/branch) to use to extract tag/version"
         required: true
         type: string
   workflow_call:
     inputs:
       ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
         required: true
+        type: string
+      version:
+        description: "override for version, will be used instead of ref if set, used for testing"
+        required: false
         type: string
   schedule:
     - cron: '0 9 * * *'
@@ -28,36 +33,10 @@ permissions:
 jobs:
   get-tag-name:
     name: Get tag name
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    timeout-minutes: 2
-    outputs:
-      tag: ${{ steps.check-tag.outputs.tag }}
-      commit: ${{ steps.export-commit.outputs.commit }}
-    steps:
-      - name: Check tag from workflow input and github ref
-        id: check-tag
-        run: |
-          if [ -n "${{ inputs.ref_name }}" ]; then
-            tag=${{ inputs.ref_name }}
-          else
-            tag=${{ github.ref_name }}
-          fi
-          echo "using tag=${tag}"
-          echo "tag=$tag" >> ${GITHUB_OUTPUT}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          ref: ${{ steps.check-tag.outputs.tag }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - name: Export commit hash
-        id: export-commit
-        run: |
-          commit=$(git rev-parse HEAD)
-          echo "using commit=${commit}"
-          echo "commit=$commit" >> ${GITHUB_OUTPUT}
+    uses: ./.github/workflows/get-version-and-tag-for-ref.yaml
+    with:
+      ref_name: ${{ inputs.ref_name }}
+      version: ${{ inputs.version }}
 
   macos-aarch64-pkg-build:
     needs: get-tag-name
@@ -75,7 +54,7 @@ jobs:
       output_arch: aarch64
       version: 14
       tag: ${{ needs.get-tag-name.outputs.tag }}
-      commit: ${{ needs.get-tag-name.outputs.commit }}
+      finch_version: ${{ needs.get-tag-name.outputs.version }}
 
   macos-x86-64-pkg-build:
     needs: get-tag-name
@@ -93,7 +72,7 @@ jobs:
       output_arch: x86_64
       version: 14
       tag: ${{ needs.get-tag-name.outputs.tag }}
-      commit: ${{ needs.get-tag-name.outputs.commit }}
+      finch_version: ${{ needs.get-tag-name.outputs.version }}
 
   macos-aarch64-pkg-test:
     strategy:
@@ -117,7 +96,7 @@ jobs:
       output_arch: aarch64
       version: ${{ matrix.version }}
       tag: ${{ needs.get-tag-name.outputs.tag }}
-      commit: ${{ needs.get-tag-name.outputs.commit }}
+      finch_version: ${{ needs.get-tag-name.outputs.version }}
 
   macos-x86-64-pkg-test:
     strategy:
@@ -141,4 +120,4 @@ jobs:
       output_arch: x86_64
       version: ${{ matrix.version }}
       tag: ${{ needs.get-tag-name.outputs.tag }}
-      commit: ${{ needs.get-tag-name.outputs.commit }}
+      finch_version: ${{ needs.get-tag-name.outputs.version }}

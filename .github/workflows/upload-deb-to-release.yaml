@@ -15,34 +15,15 @@ permissions:
   id-token: write   # This is required for requesting the JWT
   contents: write   # This is required for uploading the release assets
 jobs:
-  get-tag-and-version:
+  get-tag-name:
     name: Get tag name
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    outputs:
-      tag: ${{ steps.check-tag.outputs.tag }}
-      version: ${{ steps.check-tag.outputs.version }}
-    steps:
-      - name: Check tag from workflow input and github ref
-        id: check-tag
-        run: |
-          if [ -n "${{ inputs.ref_name }}" ]; then
-            tag=${{ inputs.ref_name }}
-          else
-            tag=${{ github.ref_name }}
-          fi
-          echo "tag=$tag" >> ${GITHUB_OUTPUT}
-
-          version=${tag#v}
-          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Version matches format: $version"
-          else
-            echo "Error: Version $version doesn't match format."
-            exit 1
-          fi
-          echo "version=$version" >> ${GITHUB_OUTPUT}
+    uses: ./.github/workflows/get-version-and-tag-for-ref.yaml
+    with:
+      ref_name: ${{ inputs.ref_name }}
+      version: ${{ inputs.version }}
+  
   upload-deb:
-    needs: get-tag-and-version
+    needs: get-tag-name
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -59,10 +40,10 @@ jobs:
           RETRY_SLEEP_SECONDS=15
           
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            if aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig && \
-              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig && \
-              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb && \
-              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb && \
+            if aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_amd64.deb.sig runfinch-finch_${{ needs.get-tag-name.outputs.version }}_amd64.deb.sig && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_arm64.deb.sig runfinch-finch_${{ needs.get-tag-name.outputs.version }}_arm64.deb.sig && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_amd64.deb runfinch-finch_${{ needs.get-tag-name.outputs.version }}_amd64.deb && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_arm64.deb runfinch-finch_${{ needs.get-tag-name.outputs.version }}_arm64.deb && \
               aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/publickey.pem publickey.pem && \
               aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/Release Release; then
               echo "Downloaded deb and signature files successfully."
@@ -155,14 +136,14 @@ jobs:
           aws-region: us-west-2
       - name: Get signed Release 
         run: |
-          aws s3 cp dists/noble/Release s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/Release_${{ needs.get-tag-and-version.outputs.version }}
+          aws s3 cp dists/noble/Release s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_UNSIGNED_PROD }}/Release_${{ needs.get-tag-name.outputs.version }}
           MAX_RETRIES=10
           RETRY_COUNT=0
           RETRY_SLEEP_SECONDS=5
 
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            if aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/Release_${{ needs.get-tag-and-version.outputs.version }}.sig Release.gpg && \
-              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/Release_${{ needs.get-tag-and-version.outputs.version }} Release; then
+            if aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/Release_${{ needs.get-tag-name.outputs.version }}.sig Release.gpg && \
+              aws s3 cp s3://${{ secrets.DEB_PRIVATE_BUCKET_NAME_SIGNED_PROD }}/Release_${{ needs.get-tag-name.outputs.version }} Release; then
               echo "Downloaded Release and signed Release files successfully."
               break
             else
@@ -187,10 +168,10 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - name: Upload repository files to repository bucket
         run: |
-          aws s3 cp pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/pool/main/f/runfinch-finch/
-          aws s3 cp pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/pool/main/f/runfinch-finch/
-          aws s3 cp pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/pool/main/f/runfinch-finch/
-          aws s3 cp pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/pool/main/f/runfinch-finch/
+          aws s3 cp pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_amd64.deb s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/pool/main/f/runfinch-finch/
+          aws s3 cp pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_amd64.deb.sig s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/pool/main/f/runfinch-finch/
+          aws s3 cp pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_arm64.deb s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/pool/main/f/runfinch-finch/
+          aws s3 cp pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_arm64.deb.sig s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/pool/main/f/runfinch-finch/
           aws s3 cp pool/main/f/runfinch-finch/publickey.pem s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/pool/main/f/runfinch-finch/
 
           aws s3 cp dists/noble/Release s3://${{ secrets.ARTIFACT_BUCKET_NAME }}/deb/dists/noble/
@@ -207,12 +188,12 @@ jobs:
       - name: Upload deb archives and signatures to release
         uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v0.1.15
         with:
-          tag_name: ${{ needs.get-tag-and-version.outputs.tag }}
+          tag_name: ${{ needs.get-tag-name.outputs.tag }}
           files: |
-            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb
-            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_amd64.deb.sig
-            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb
-            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-and-version.outputs.version }}_arm64.deb.sig
+            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_amd64.deb
+            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_amd64.deb.sig
+            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_arm64.deb
+            pool/main/f/runfinch-finch/runfinch-finch_${{ needs.get-tag-name.outputs.version }}_arm64.deb.sig
             pool/main/f/runfinch-finch/publickey.pem
       - name: Delete deb and signature files
         run: |
