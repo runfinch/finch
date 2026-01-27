@@ -12,10 +12,12 @@ provision:
     script: |
       sudo cp <finch_daemon_location> /usr/local/bin/finch-daemon
       sudo cp <finch_daemon_credhelper_location> /usr/bin/docker-credential-finch
+      sudo cp <finchhost_credhelper_location> /usr/bin/docker-credential-finchhost
       sudo cp <finch_daemon_root>/finch@.service /usr/local/lib/systemd/system/finch@.service
 
       sudo systemctl daemon-reload
       sudo systemctl enable --now finch@${UID}
+
 mounts:
   - location: "~"
     mountPoint: null
@@ -57,3 +59,6 @@ hostResolver:
 portForwards:
 - guestSocket: "/run/finch.sock"
   hostSocket: "{{.Dir}}/sock/finch.sock"
+- guestSocket: "/run/user/{{.UID}}/finch-creds.sock"
+  hostSocket: "{{.Dir}}/sock/creds.sock"
+  reverse: true
