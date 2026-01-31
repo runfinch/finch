@@ -241,6 +241,10 @@ jobs:
         run: |
           Start-Process 'Finch.msi' -ArgumentList '/quiet' -Wait
           echo "C:\Program Files\Finch\bin" >> $env:GITHUB_PATH
+      - name: Configure WSL networking
+        run: |
+          # set networking config option to allow for VM/container -> host communication
+          echo "networkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
       - name: Run VM e2e tests
         uses: nick-fields/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v3.0.2
         with:
