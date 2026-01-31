@@ -73,6 +73,11 @@ jobs:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: dependency-upload-session
           aws-region: ${{ secrets.REGION }}
+          # The default OIDC token duration is 1 hour (3600s). The "generate pkg" step
+          # can take over 1 hour when the external code signing service is slow,
+          # causing AWS CLI calls to fail with expired credentials.
+          # Setting to 2 hours (7200s) to provide sufficient buffer.
+          role-duration-seconds: 7200
 
       - id: final
         name: generate pkg
