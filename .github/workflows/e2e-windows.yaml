@@ -92,7 +92,7 @@ jobs:
           $env:Path = $newPath
 
           # set networking config option to allow for VM/container -> host communication
-          echo "[experimental]`nnetworkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
+          echo "networkingMode=mirrored`nhostAddressLoopback=true" > C:\Users\Administrator\.wslconfig
 
           git status
           git clean -f -d
