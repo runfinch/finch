@@ -11,6 +11,7 @@ OS_OUTDIR ?= $(OUTDIR)/os
 REPORT_DIR ?= $(CURDIR)/reports
 RUN_ID ?= $(GITHUB_RUN_ID)
 RUN_ATTEMPT ?= $(GITHUB_RUN_ATTEMPT)
+FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
 
 OUTPUT_DIRECTORIES := $(OUTDIR) $(OS_OUTDIR)
 $(OUTPUT_DIRECTORIES):
@@ -33,8 +34,20 @@ GITCOMMIT ?= $(shell git rev-parse HEAD)$(shell test -z "$(git status --porcelai
 VERSION_INJECTION := -X $(PACKAGE)/pkg/version.Version=$(VERSION)
 VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
 VERSION_INJECTION += -X $(PACKAGE)/pkg/version.GitCommit=$(GITCOMMIT)
-LDFLAGS = "-w $(VERSION_INJECTION)"
 MIN_MACOS_VERSION ?= 11.0
+
+# Inject soci version
+-include $(FINCH_CORE_DIR)/deps/soci.conf
+VERSION_INJECTION += -X $(PACKAGE)/pkg/config.SociVersion=$(SOCI_VERSION)
+VERSION_INJECTION += -X $(PACKAGE)/pkg/config.SociAMD64Sha256Sum=$(SOCI_AMD64_SHA256_DIGEST)
+VERSION_INJECTION += -X $(PACKAGE)/pkg/config.SociARM64Sha256Sum=$(SOCI_ARM64_SHA256_DIGEST)
+
+# Inject ecr-cred-helper version
+-include $(FINCH_CORE_DIR)/deps/ecr-cred-helper.conf
+VERSION_INJECTION += -X $(PACKAGE)/pkg/dependency/credhelper.EcrVersion=$(ECR_CRED_HELPER_VERSION)
+VERSION_INJECTION += -X $(PACKAGE)/pkg/dependency/credhelper.EcrAMD64Hash=$(ECR_CRED_HELPER_AMD64_DIGEST)
+VERSION_INJECTION += -X $(PACKAGE)/pkg/dependency/credhelper.EcrARM64Hash=$(ECR_CRED_HELPER_ARM64_DIGEST)
+LDFLAGS = "-w $(VERSION_INJECTION)"
 
 FINCH_DAEMON_LOCATION_ROOT ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/finch-daemon
 FINCH_DAEMON_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/finch-daemon
@@ -77,8 +90,6 @@ ifeq ($(BUILD_OS),)
 BUILD_OS = $(shell uname -s)
 endif
 
-FINCH_CORE_DIR := $(CURDIR)/deps/finch-core
-
 remote-all: arch-test finch install.finch-core-dependencies finch.yaml networks.yaml config.yaml $(OUTDIR)/finch-daemon/finch@.service
 
 ifeq ($(BUILD_OS), Windows_NT)
@@ -104,13 +115,13 @@ CONTAINER_RUNTIME_ARCHIVE_AARCH64_DIGEST ?= "sha256:$(AARCH64_256_DIGEST)"
 CONTAINER_RUNTIME_ARCHIVE_X86_64_LOCATION ?= "$(ARTIFACT_BASE_URL)/$(X86_64_ARTIFACT)"
 CONTAINER_RUNTIME_ARCHIVE_X86_64_DIGEST ?= "sha256:$(X86_64_256_DIGEST)"
 
-# For Finch on macOS and Windows, the runc override locations and digests are set
-# based on the values set in deps/finch-core/deps/runc-override.conf
--include $(FINCH_CORE_DIR)/deps/runc-override.conf
-RUNC_OVERRIDE_AARCH64_LOCATION ?= "$(RUNC_ARTIFACT_BASE_URL)/$(RUNC_AARCH64_ARTIFACT)"
-RUNC_OVERRIDE_AARCH64_DIGEST ?= "sha256:$(RUNC_AARCH64_256_DIGEST)"
-RUNC_OVERRIDE_X86_64_LOCATION ?= "$(RUNC_ARTIFACT_BASE_URL)/$(RUNC_X86_64_ARTIFACT)"
-RUNC_OVERRIDE_X86_64_DIGEST ?= "sha256:$(RUNC_X86_64_256_DIGEST)"
+# Inject dependency versions for E2E VM serial tests
+E2E_VM_VERSION_INJECTION := $(VERSION_INJECTION)
+E2E_VM_VERSION_INJECTION += -X $(PACKAGE)/e2e/vm.NerdctlVersion=v$(NERDCTL_VERSION)
+E2E_VM_VERSION_INJECTION += -X $(PACKAGE)/e2e/vm.ContainerdVersion=v$(CONTAINERD_VERSION)
+E2E_VM_VERSION_INJECTION += -X $(PACKAGE)/e2e/vm.BuildKitVersion=v$(BUILDKIT_VERSION)
+E2E_VM_VERSION_INJECTION += -X $(PACKAGE)/e2e/vm.RuncVersion=$(RUNC_VERSION)
+E2E_VM_LDFLAGS := -w $(E2E_VM_VERSION_INJECTION)
 
 .PHONY: finch.yaml
 finch.yaml: $(OS_OUTDIR)/finch.yaml
@@ -308,7 +319,7 @@ test-e2e: test-e2e-vm-serial test-e2e-container
 
 .PHONY: test-e2e-vm-serial
 test-e2e-vm-serial: create-report-dir
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
+	go test -ldflags "$(E2E_VM_LDFLAGS)" -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
 test-e2e-container: create-report-dir
@@ -316,7 +327,7 @@ test-e2e-container: create-report-dir
 
 .PHONY: test-e2e-vm
 test-e2e-vm: create-report-dir
-	go test -ldflags $(LDFLAGS) -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+	go test -ldflags "$(E2E_VM_LDFLAGS)" -timeout 2h ./e2e/vm -test.v -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
 GINKGO = go run github.com/onsi/ginkgo/v2/ginkgo
 # Common ginkgo options: -v for verbose mode, --focus="test name" for running single tests
@@ -340,7 +351,9 @@ test-e2e-daemon:
 	DOCKER_HOST=$(DAEMON_DOCKER_HOST) \
 	DOCKER_API_VERSION="v1.41" \
 	TEST_E2E=1 \
-	go test ./e2e -test.v -ginkgo.v -ginkgo.randomize-all -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
+	go test ./e2e -test.v -ginkgo.v -ginkgo.randomize-all \
+	  -ginkgo.timeout=2h -ginkgo.flake-attempts=3 \
+	  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
 	  --subject="$(OUTDIR)/bin/$(BINARYNAME)" \
 	  --daemon-context-subject-prefix="$(OUTDIR)/lima/bin/limactl shell finch sudo" \
 	  --daemon-context-subject-env="LIMA_HOME=$(OUTDIR)/lima/data"

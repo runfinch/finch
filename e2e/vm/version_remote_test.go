@@ -18,12 +18,15 @@ import (
 	"github.com/runfinch/finch/pkg/version"
 )
 
-// TODO: read this from finch-core/deps.
-const (
-	nerdctlVersion    = "v2.2.1"
-	buildKitVersion   = "v0.26.3"
-	containerdVersion = "v2.2.1"
-	runcVersion       = "1.3.3"
+var (
+	// NerdctlVersion is filled via Makefile.
+	NerdctlVersion string
+	// ContainerdVersion is filled via Makefile.
+	ContainerdVersion string
+	// BuildKitVersion is filled via Makefile.
+	BuildKitVersion string
+	// RuncVersion is filled via Makefile.
+	RuncVersion string
 )
 
 type Versions struct {
@@ -38,10 +41,10 @@ type Versions struct {
 var versions = Versions{
 	FinchVersion:      strings.ReplaceAll(version.Version, ".", "\\."),
 	FinchCommit:       strings.ReplaceAll(version.GitCommit, ".", "\\."),
-	NerdctlVersion:    strings.ReplaceAll(nerdctlVersion, ".", "\\."),
-	BuildKitVersion:   strings.ReplaceAll(buildKitVersion, ".", "\\."),
-	ContainerdVersion: strings.ReplaceAll(containerdVersion, ".", "\\."),
-	RuncVersion:       strings.ReplaceAll(runcVersion, ".", "\\."),
+	NerdctlVersion:    strings.ReplaceAll(NerdctlVersion, ".", "\\."),
+	BuildKitVersion:   strings.ReplaceAll(BuildKitVersion, ".", "\\."),
+	ContainerdVersion: strings.ReplaceAll(ContainerdVersion, ".", "\\."),
+	RuncVersion:       strings.ReplaceAll(RuncVersion, ".", "\\."),
 }
 
 // Checks finch version.
