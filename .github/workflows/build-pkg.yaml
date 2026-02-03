@@ -17,7 +17,7 @@ on:
       tag:
         type: string
         required: true
-      commit:
+      finch_version:
         type: string
         required: true
 
@@ -49,7 +49,7 @@ jobs:
         shell: zsh {0}
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          ref: ${{ inputs.commit }}
+          ref: ${{ inputs.tag }}
           fetch-depth: 0
           persist-credentials: false
           submodules: true
@@ -84,7 +84,7 @@ jobs:
         run: |
           ./installer-builder/tools/release-installer.sh \
             ${{ inputs.output_arch }} \
-            ${{ inputs.tag }} \
+            ${{ inputs.finch_version }} \
             ${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }} \
             ${{ secrets.EXECUTABLE_BUCKET }} \
             ${{ secrets.PKG_BUCKET }} \

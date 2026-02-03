@@ -1,0 +1,144 @@
+name: Build Static Linux Binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      ref_name:
+        description: "the ref (tag/branch) to use to extract tag/version"
+        required: true
+        type: string
+      version:
+        description: "override for version, will be used instead of ref if set, used for testing"
+        required: false
+        type: string
+  schedule:
+    - cron: '0 9 * * *'
+
+permissions:
+    # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+    # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+    id-token: write
+    contents: read # this is required for actions/checkout
+
+jobs:
+  get-tag-name:
+    name: Get tag name
+    uses: ./.github/workflows/get-version-and-tag-for-ref.yaml
+    with:
+      ref_name: ${{ inputs.ref_name }}
+      version: ${{ inputs.version }}
+  
+  generate-static-linux-binaries:
+    needs: get-tag-name
+    runs-on: ubuntu-latest
+    env:
+      # Set during setup.
+      RELEASE_VERSION: ${{ needs.get-tag-name.outputs.version }}
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: "Echo RELEASE_VERSION ENV"
+        run: echo ${{ env.RELEASE_VERSION }}
+      - name: Build
+        id: build
+        run: |
+          RELEASE_VERSION="${{ env.RELEASE_VERSION }}"
+          sudo make check-licenses download-licenses
+          
+          # static amd64
+          export STATIC_AMD64_BINARY_NAME="finch-${RELEASE_VERSION}-linux-amd64-static.tar.gz"
+          sudo GOARCH=amd64 STATIC=1 make
+          pushd _output/
+          sudo touch "${STATIC_AMD64_BINARY_NAME}"
+          sudo tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_AMD64_BINARY_NAME}" .
+          echo "STATIC_AMD64_BINARY_NAME=${STATIC_AMD64_BINARY_NAME}" >> ${GITHUB_OUTPUT}
+          popd
+          sudo rm -rf ./_output/bin/
+          
+          # static arm64
+          export STATIC_ARM64_BINARY_NAME="finch-${RELEASE_VERSION}-linux-arm64-static.tar.gz"
+          sudo GOARCH=arm64 STATIC=1 make
+          pushd _output/
+          sudo touch "${STATIC_ARM64_BINARY_NAME}"
+          sudo tar --exclude "*.tar.gz" --exclude "*.tar.gz.sha256sum" -cvzf "${STATIC_ARM64_BINARY_NAME}" .
+          echo "STATIC_ARM64_BINARY_NAME=${STATIC_ARM64_BINARY_NAME}" >> ${GITHUB_OUTPUT}
+          popd
+          sudo rm -rf ./_output/bin/
+          
+          pushd _output/
+          sudo sh -c "sha256sum '${STATIC_AMD64_BINARY_NAME}' > '${STATIC_AMD64_BINARY_NAME}.sha256sum'"
+          sudo sh -c "sha256sum '${STATIC_ARM64_BINARY_NAME}' > '${STATIC_ARM64_BINARY_NAME}.sha256sum'"
+          popd
+      - name: Verify release versions
+        run: |
+          ARCH=$(uname -m)
+          if [ "$ARCH" = "x86_64" ]; then
+            GOARCH="amd64"
+            BINARY_NAME="${{ steps.build.outputs.STATIC_AMD64_BINARY_NAME }}"
+          elif [ "$ARCH" = "aarch64" ]; then
+            GOARCH="arm64"
+            BINARY_NAME="${{ steps.build.outputs.STATIC_ARM64_BINARY_NAME }}"
+          else
+            echo "Unsupported architecture: $ARCH"
+            exit 1
+          fi
+          
+          sudo mkdir -p ./_output/${{ env.RELEASE_VERSION }}/static/$GOARCH
+          sudo tar -xzf ./_output/$BINARY_NAME -C ./_output/${{ env.RELEASE_VERSION }}/static/$GOARCH
+          finch_version=$(sudo ./_output/${{ env.RELEASE_VERSION }}/static/$GOARCH/bin/finch --version)
+          BINARY_VERSION=$(echo $finch_version | sed -n 's/finch version //p')
+          export RELEASE_VERSION=${{ env.RELEASE_VERSION }}
+          if [ "$BINARY_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "Version mismatch for $GOARCH binary"
+            echo "RELEASE_VERSION = ${RELEASE_VERSION}"
+            echo "finch_version = ${finch_version}"
+            exit 1
+          fi
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: linux-static-builds
+          path: |
+            _output/${{ steps.build.outputs.STATIC_AMD64_BINARY_NAME }}
+            _output/${{ steps.build.outputs.STATIC_AMD64_BINARY_NAME }}.sha256sum
+            _output/${{ steps.build.outputs.STATIC_ARM64_BINARY_NAME }}
+            _output/${{ steps.build.outputs.STATIC_ARM64_BINARY_NAME }}.sha256sum
+          if-no-files-found: error
+    outputs:
+      static_amd64_binary_name: ${{ steps.build.outputs.STATIC_AMD64_BINARY_NAME }}
+      static_arm64_binary_name: ${{ steps.build.outputs.STATIC_ARM64_BINARY_NAME }}
+  
+  # TODO: test & sign these artifacts
+  upload-static-linux-binaries:
+    needs:
+    - generate-static-linux-binaries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: linux-static-builds
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: linux-build
+          aws-region: ${{ secrets.REGION }}
+      - name: upload to S3
+        run: |
+          aws s3 cp --no-progress ${{ needs.generate-static-linux-binaries.outputs.static_amd64_binary_name }} s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/
+          aws s3 cp --no-progress ${{ needs.generate-static-linux-binaries.outputs.static_amd64_binary_name }}.sha256sum s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/
+          aws s3 cp --no-progress ${{ needs.generate-static-linux-binaries.outputs.static_arm64_binary_name }} s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/
+          aws s3 cp --no-progress ${{ needs.generate-static-linux-binaries.outputs.static_arm64_binary_name }}.sha256sum s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/

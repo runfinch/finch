@@ -1,0 +1,111 @@
+name: Detect Changes
+on:
+  workflow_call:
+    inputs:
+      ref_name:
+        description: "The ref name. Defaults to github.head_ref if present, otherwise github.ref_name"
+        required: false
+        type: string
+    outputs:
+      code:
+        value: ${{ jobs.changes.outputs.code }}
+      docs:
+        value: ${{ jobs.changes.outputs.docs }}
+      deps:
+        value: ${{ jobs.changes.outputs.deps }}
+      mac-build:
+        value: ${{ jobs.changes.outputs.mac-build }}
+      mac-e2e:
+        value: ${{ jobs.changes.outputs.mac-e2e }}
+      win-build:
+        value: ${{ jobs.changes.outputs.win-build }}
+      win-e2e:
+        value: ${{ jobs.changes.outputs.win-e2e }}
+      ubuntu-build:
+        value: ${{ jobs.changes.outputs.ubuntu-build }}
+      ubuntu-e2e:
+        value: ${{ jobs.changes.outputs.ubuntu-e2e }}
+      linux-build:
+        value: ${{ jobs.changes.outputs.linux-build }}
+      linux-e2e:
+        value: ${{ jobs.changes.outputs.linux-e2e }}
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      docs: ${{ steps.filter.outputs.docs }}
+      deps: ${{ steps.filter.outputs.deps }}
+      mac-build: ${{ steps.filter.outputs.mac-build }}
+      mac-e2e: ${{ steps.filter.outputs.mac-e2e }}
+      win-build: ${{ steps.filter.outputs.win-build }}
+      win-e2e: ${{ steps.filter.outputs.win-e2e }}
+      ubuntu-build: ${{ steps.filter.outputs.ubuntu-build }}
+      ubuntu-e2e: ${{ steps.filter.outputs.ubuntu-e2e }}
+      linux-build: ${{ steps.filter.outputs.linux-build }}
+      linux-e2e: ${{ steps.filter.outputs.linux-e2e }}
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.ref_name || github.head_ref || github.ref_name }}
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          # predicate-quantifier: 'every'
+          list-files: 'csv'
+          filters: |
+            code: &code
+              - '**.go'
+              - 'go.mod'
+              - 'go.sum'
+              - 'Makefile*'
+              - 'finch.yaml.d/**'
+            docs:
+              - '**/*.md'
+            deps: &deps
+              - 'deps/**'
+            mac-build:
+              - *code
+              - *deps
+              - 'installer-builder/**'
+              - '.github/workflows/build-and-test-pkg.yaml'
+              - '.github/workflows/build-pkg.yaml'
+              - '.github/workflows/test-pkg.yaml'
+              - '.github/workflows/upload-installer-to-release.yaml'
+            mac-e2e:
+              - *code
+              - *deps
+              - '.github/workflows/e2e-macos.yaml'
+            win-build:
+              - *code
+              - *deps
+              - '.github/workflows/build-and-test-msi.yaml'
+              - '.github/workflows/upload-msi-to-release.yaml'
+              - 'winres/**'
+            win-e2e:
+              - *code
+              - *deps
+              - '.github/workflows/e2e-windows.yaml'
+            ubuntu-build:
+              - *code
+              - *deps
+              - 'contrib/packaging/deb/**'
+              - '.github/workflows/build-and-test-deb.yaml'
+              - '.github/workflows/upload-deb-to-release.yaml'
+            ubuntu-e2e:
+              - *code
+              - *deps
+              - 'contrib/packaging/deb/**'
+              - '.github/workflows/e2e-ubuntu.yaml'
+            linux-build: &linux-build
+              - *code
+              - *deps
+              - 'contrib/packaging/rpm/**'
+            linux-e2e:
+              - *linux-build
+              - '.github/workflows/e2e-linux.yaml'
