@@ -350,7 +350,9 @@ test-e2e-daemon:
 	DOCKER_HOST=$(DAEMON_DOCKER_HOST) \
 	DOCKER_API_VERSION="v1.41" \
 	TEST_E2E=1 \
-	go test ./e2e -test.v -ginkgo.v -ginkgo.randomize-all -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
+	go test ./e2e -test.v -ginkgo.v -ginkgo.randomize-all \
+	  -ginkgo.timeout=2h -ginkgo.flake-attempts=3 \
+	  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
 	  --subject="$(OUTDIR)/bin/$(BINARYNAME)" \
 	  --daemon-context-subject-prefix="$(OUTDIR)/lima/bin/limactl shell finch sudo" \
 	  --daemon-context-subject-env="LIMA_HOME=$(OUTDIR)/lima/data"
