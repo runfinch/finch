@@ -75,6 +75,7 @@ jobs:
         run: |
           Remove-Item C:\Users\Administrator\.finch -Recurse -ErrorAction Ignore
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
+          Remove-Item ${{ github.workspace }}\cov -Recurse -ErrorAction Ignore
           make clean
           cd deps/finch-core && make clean
       - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
@@ -84,6 +85,7 @@ jobs:
       - name: Build project
         run: |
           git status
+          $env:E2E_COVERAGE="1"
           make
       - name: Run e2e tests
         run: |

@@ -79,7 +79,7 @@ jobs:
     steps:
       - name: Clean Ubuntu workspace
         run: |
-          rm -rf ${{ github.workspace }}/*
+          sudo rm -rf ${{ github.workspace }}/*
       - name: Clean existing Finch environment
         run: |
           # Stop services
@@ -115,6 +115,7 @@ jobs:
 
           # Clean up root cache
           sudo rm -rf /root/.cache || true
+          sudo rm -rf ${{ github.workspace }}/cov || true
           
           # Reload systemd after cleanup
           sudo systemctl daemon-reload
@@ -150,7 +151,7 @@ jobs:
           sudo apt install iptables -y
       - name: Build for Ubuntu ${{ inputs.output-arch }}
         run: |
-          make
+          E2E_COVERAGE=1 make
       - name: Generate deb
         run: |
           ./contrib/packaging/deb/package.sh --${{ inputs.output-arch }} --version ${{ needs.get-tag-and-version.outputs.version }}
@@ -173,8 +174,8 @@ jobs:
           git status
           git clean -f -d
           eval $(ssh-agent)
-          sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-container
-          sudo -E env "PATH=$PATH" INSTALLED=true make test-e2e-vm
+          sudo -E env "PATH=$PATH" INSTALLED=false make test-e2e-container
+          sudo -E env "PATH=$PATH" INSTALLED=false make test-e2e-vm
       - name: Show test coverage
         run: make test-e2e-cov
       - name: Change ownership of reports

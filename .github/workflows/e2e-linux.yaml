@@ -46,7 +46,7 @@ jobs:
     steps:
       - name: Clean macOS runner workspace
         run: |
-          rm -rf ${{ github.workspace }}/*
+          sudo rm -rf ${{ github.workspace }}/*
       - name: Allow Node16 on AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
@@ -90,10 +90,11 @@ jobs:
           sudo rm -rf /var/lib/containerd
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
+          sudo rm -rf ./cov
           sudo rm -rf /run/containerd || true
       - name: Build project
         run: |
-          ./contrib/packaging/rpm/build.sh --local
+          E2E_COVERAGE=1 ./contrib/packaging/rpm/build.sh --local
       - name: Install Dependencies
         run: |
           sudo yum install iptables -y
