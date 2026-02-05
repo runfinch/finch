@@ -52,7 +52,7 @@ jobs:
             version="0.0.1+${{ github.sha }}"
           fi
           echo "version=$version" >> ${GITHUB_OUTPUT}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ steps.check-tag.outputs.tag }}
           fetch-depth: 0
@@ -79,7 +79,7 @@ jobs:
     timeout-minutes: 60
     steps:
         - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+          uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
           with:
             role-to-assume: ${{ secrets.DEB_ROLE_PROD }}
             role-session-name: ubuntu-deb
@@ -87,13 +87,13 @@ jobs:
         - name: Clean ubuntu runner workspace
           run: |
             rm -rf ${{ github.workspace }}/*
-        - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
           with:
             ref: ${{ needs.get-tag-and-version.outputs.commit }}
             fetch-depth: 0
             persist-credentials: false
             submodules: true
-        - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        - uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
           with:
             go-version: ${{ env.GO_VERSION }}
             cache: false

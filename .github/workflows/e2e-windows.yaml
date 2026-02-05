@@ -49,7 +49,7 @@ jobs:
         run: |
           takeown /F C:\actions-runner\_work\finch /R
           Remove-Item C:\actions-runner\_work\finch\finch -Recurse -Force -ErrorAction Ignore
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0
@@ -62,7 +62,7 @@ jobs:
           echo "has_creds=$has_creds" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           exit 0 # if $has_creds is false, powershell will exit with code 1 and this step will fail
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         if: env.has_creds == 'true'
         with:
           role-to-assume: ${{ secrets.ROLE }}
@@ -77,7 +77,7 @@ jobs:
           Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -ErrorAction Ignore
           make clean
           cd deps/finch-core && make clean
-      - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+      - uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
