@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/dependency"
 )
 
@@ -26,4 +27,16 @@ func Test_newDeps(t *testing.T) {
 	got := newDeps(nil, nil, "", nil, nil, "", "")
 	require.Equal(t, 1, len(got))
 	assert.IsType(t, nil, got[0])
+}
+
+func Test_RefreshConfigFile(t *testing.T) {
+	t.Parallel()
+
+	finchCfg := &config.Finch{
+		SharedSettings: config.SharedSettings{
+			CredsHelpers: []string{"ecr-login"},
+		},
+	}
+	err := RefreshConfigFile(nil, finchCfg, "")
+	require.Nil(t, err)
 }

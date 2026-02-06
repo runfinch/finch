@@ -7,7 +7,9 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 
+	"github.com/runfinch/finch/pkg/dependency/credhelper"
 	"github.com/runfinch/finch/pkg/disk"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -29,11 +31,13 @@ func newStartVMCommand(
 	fs afero.Fs,
 	privateKeyPath string,
 	dm disk.UserDataDiskManager,
+	finchDir string,
+	finchCfg *config.Finch,
 ) *cobra.Command {
 	return &cobra.Command{
 		Use:      "start",
 		Short:    "Start the virtual machine",
-		RunE:     newStartVMAction(ncc, logger, optionalDepGroups, lca, dm).runAdapter,
+		RunE:     newStartVMAction(ncc, logger, optionalDepGroups, lca, fs, dm, finchDir, finchCfg).runAdapter,
 		PostRunE: newPostVMStartInitAction(logger, ncc, fs, privateKeyPath, nca).runAdapter,
 	}
 }
@@ -43,7 +47,10 @@ type startVMAction struct {
 	logger              flog.Logger
 	optionalDepGroups   []*dependency.Group
 	limaConfigApplier   config.LimaConfigApplier
+	fs                  afero.Fs
 	userDataDiskManager disk.UserDataDiskManager
+	finchDir            string
+	finchCfg            *config.Finch
 }
 
 func newStartVMAction(
@@ -51,14 +58,20 @@ func newStartVMAction(
 	logger flog.Logger,
 	optionalDepGroups []*dependency.Group,
 	lca config.LimaConfigApplier,
+	fs afero.Fs,
 	dm disk.UserDataDiskManager,
+	finchDir string,
+	finchCfg *config.Finch,
 ) *startVMAction {
 	return &startVMAction{
 		creator:             creator,
 		logger:              logger,
 		optionalDepGroups:   optionalDepGroups,
 		limaConfigApplier:   lca,
+		fs:                  fs,
 		userDataDiskManager: dm,
+		finchDir:            finchDir,
+		finchCfg:            finchCfg,
 	}
 }
 
@@ -71,6 +84,13 @@ func (sva *startVMAction) run() error {
 	if err != nil {
 		return err
 	}
+
+	configJSONPath := filepath.Join(sva.finchDir, "config.json")
+	err = credhelper.RefreshConfigFile(sva.fs, sva.finchCfg, configJSONPath)
+	if err != nil {
+		return err
+	}
+
 	err = dependency.InstallOptionalDeps(sva.optionalDepGroups, sva.logger)
 	if err != nil {
 		sva.logger.Errorf("Dependency error: %v", err)
