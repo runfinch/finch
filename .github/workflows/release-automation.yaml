@@ -13,12 +13,12 @@ jobs:
     outputs:
       tag: ${{ steps.latest-tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
             fetch-depth: 0
       - name: 'Get the latest tag'
         id: latest-tag
-        uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
+        uses: "WyriHaximus/github-action-get-previous-tag@61819f33034117e6c686e6a31dba995a85afc9de" # v2.0.0
     
   build-and-test-finch-pkg:
     needs: get-latest-tag
@@ -109,7 +109,7 @@ jobs:
       contents: read
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: update-latest-version-in-s3
@@ -138,7 +138,7 @@ jobs:
       contents: read
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           role-to-assume: ${{ vars.AWS_RELEASE_TRIGGER_ROLE }}
           role-session-name: upload-release-definition-to-s3
