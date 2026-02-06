@@ -85,7 +85,7 @@ jobs:
       - name: Build project
         run: |
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          make
+          E2E_COVERAGE=1 make
         shell: zsh {0}
       - name: Run e2e tests
         run: |
@@ -93,6 +93,9 @@ jobs:
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
         shell: zsh {0}
+      - name: Show test coverage
+        if: ${{ inputs.test-command != 'test-e2e-daemon' }}
+        run: make test-e2e-cov
       - name: Set artifacts name outputs
         if: always()
         id: set-multiple-vars

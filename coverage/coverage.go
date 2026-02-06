@@ -26,6 +26,7 @@ func main() {
 	}
 
 	cmd := exec.Command("go", "tool", "cover", "-func=coverage.out")
+
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error executing coverage command:", err)

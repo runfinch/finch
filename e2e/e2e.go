@@ -79,6 +79,13 @@ func CreateOption() (*option.Option, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize a testing option: %w", err)
 	}
+
+	// Explicitly pass GOCOVERDIR for coverage collection
+	// Use FINCH_GOCOVERDIR to avoid conflict with test process's GOCOVERDIR
+	if gocoverdir := os.Getenv("FINCH_GOCOVERDIR"); gocoverdir != "" {
+		o.UpdateEnv("GOCOVERDIR", gocoverdir)
+	}
+
 	return o, nil
 }
 
