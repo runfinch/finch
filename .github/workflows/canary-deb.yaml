@@ -13,9 +13,9 @@ on:
         required: true
         type: string
 
-  # This workflow will run every 5 min
+  # This workflow runs hourly and performs 6 checks (every 10 min) within each run
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '0 * * * *'
   
   # This workflow will run when the workflow file is updated
   pull_request:
@@ -27,17 +27,12 @@ jobs:
   canary-deb:
     name: Test Finch APT repo health
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 60
     steps:
       - name: Checkout canary script
         uses: actions/checkout@v6.0.1
         with:
           sparse-checkout: |
             scripts/canary-deb.sh
-      - name: Run canary script with retry
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 2
-          max_attempts: 3
-          retry_wait_seconds: 30
-          command: ./scripts/canary-deb.sh
+      - name: Run canary script (6 checks over ~55 minutes)
+        run: ./scripts/canary-deb.sh

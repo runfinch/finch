@@ -1,6 +1,6 @@
 name: Build, test and upload .msi to S3
 
-# TODO: add scheduler and tests
+# The scheduler runs at 6 AM PST (14:00 UTC) every day.
 on:
   workflow_dispatch:
     inputs:
@@ -14,7 +14,7 @@ on:
         required: true
         type: string
   schedule:
-    - cron: '0 9 * * *'
+    - cron: '0 14 * * *'
 env:
   GO111MODULE: on
   GO_VERSION: '1.24.11'
