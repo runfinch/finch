@@ -25,6 +25,9 @@ sudo rm -rf "/Applications/Finch/lima/data/_disks/"
 sudo rm -rf "/opt/finch/"
 sudo rm -rf "/private/var/run/finch-lima"
 sudo rm -rf "/private/etc/sudoers.d/finch-lima"
+if [ ! -e /usr/local/bin/docker-credential-osxkeychain ] || [ "$(readlink "/usr/local/bin/docker-credential-osxkeychain")" = "/Applications/Finch/cred-helpers/docker-credential-osxkeychain" ]; then
+    sudo ln -sf /Applications/Finch/cred-helpers/docker-credential-osxkeychain /usr/local/bin/docker-credential-osxkeychain
+fi
 
 # Forget previous pkgutil packages starting with org.Finch except for the current version
 echo "Remove historical pkgutil packages..."

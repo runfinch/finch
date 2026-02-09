@@ -53,6 +53,7 @@ if [ ! -f /usr/local/bin/soci ]; then
 	systemctl daemon-reload
 	sudo mkdir -p /usr/local/lib/systemd/system/soci-snapshotter.service.d/
 	printf '[Unit]\nPartOf=containerd.service\n\n[Service]\nKillSignal=SIGTERM\n' | sudo tee /usr/local/lib/systemd/system/soci-snapshotter.service.d/finch.conf
+%s
 	systemctl enable --now soci-snapshotter
 fi
 
@@ -253,8 +254,22 @@ func (lca *limaConfigApplier) provisionSociSnapshotter(limaCfg *limayaml.LimaYAM
 		sociSha256Sum = sociARM64Sha256Sum
 	}
 	sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+
+	// Platform-specific DOCKER_CONFIG for SOCI service (macOS only)
+	// This is needed as DOCKER_CONFIG for SOCI defaults to ~/.finch/config,
+	// following similar behavior to nerdctl. However, since DOCKER_CONFIG for nerdctl
+	// now points to ~/.finch-vm-config to support a custom credential helper in Lima on macOS,
+	// SOCI must be updated to point to this new config to retain it's behavior.
+	// TODO: Update logic for "wsl2" case once wincred credential helper support is added.
+	dockerConfigSetup := ""
+	if *lca.cfg.VMType != "wsl2" {
+		dockerConfigSetup = `	sudo mkdir -p /etc/systemd/system/soci-snapshotter.service.d/
+	printf '[Service]\nEnvironment="DOCKER_CONFIG=$HOME/.finch-vm-config"\n' | ` +
+			`sudo tee /etc/systemd/system/soci-snapshotter.service.d/override.conf`
+	}
+
 	sociInstallationScript := fmt.Sprintf(sociInstallationScriptFormat, sociInstallationProvisioningScriptHeader,
-		sociFileName, sociDownloadURL, sociSha256Sum, sociServiceDownloadURL)
+		sociFileName, sociDownloadURL, sociSha256Sum, sociServiceDownloadURL, dockerConfigSetup)
 	limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
 		Mode:   "system",
 		Script: sociInstallationScript,

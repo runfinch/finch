@@ -1,0 +1,3 @@
+mounts:
+  - location: "<finchhost_location_root>"
+    writable: true

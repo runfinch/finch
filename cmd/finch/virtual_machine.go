@@ -7,6 +7,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/runfinch/finch/pkg/disk"
@@ -15,6 +17,7 @@ import (
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"
+	credserver "github.com/runfinch/finch/pkg/credserver"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/path"
 
@@ -65,6 +68,22 @@ func (p *postVMStartInitAction) run() error {
 		p.logger.Warnln("SSH port = 0, is the instance running? Not able to apply VM configuration options")
 		return nil
 	}
+
+	// Start credential server after VM is running (macOS only)
+	// macOS: Credential server runs on host and communicates with VM via Unix socket using finchhost credential helper
+	// Windows: No credential server needed - WSL can access credentials and credhelpers via mounted ~/.finch/config.json
+	execPath, err := os.Executable()
+	if err == nil {
+		finchRootPath := filepath.Dir(filepath.Dir(execPath))
+
+		// Check if daemon is already running before attempting to start
+		if !credserver.IsDaemonRunning(finchRootPath) {
+			if err := credserver.StartCredentialServer(finchRootPath); err != nil {
+				p.logger.Warnf("Failed to start credential server: %v", err)
+			}
+		}
+	}
+
 	return p.nca.Apply(fmt.Sprintf("127.0.0.1:%v", portString))
 }
 
