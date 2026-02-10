@@ -19,10 +19,16 @@ import (
 	"github.com/runfinch/finch/pkg/system"
 )
 
+var (
+	// SociVersion will be injected via Makefile.
+	SociVersion string
+	// SociAMD64Sha256Sum will be injected via Makefile.
+	SociAMD64Sha256Sum string
+	// SociARM64Sha256Sum will be injected via Makefile.
+	SociARM64Sha256Sum string
+)
+
 const (
-	sociVersion                              = "0.11.1"
-	sociAMD64Sha256Sum                       = "52d72692880150f974a48dbfa44bff01f1a3ba97815658cc16f835e5e7f96d49"
-	sociARM64Sha256Sum                       = "da055b182000dbac3e916a8c731cbc0d7a204791311260c94d960a1160d25b3e"
 	snapshotterProvisioningScriptHeader      = "# snapshotter provisioning script"
 	sociInstallationProvisioningScriptHeader = snapshotterProvisioningScriptHeader + ": soci"
 	sociFileNameFormat                       = "soci-snapshotter-%s-linux-%s.tar.gz"
@@ -247,13 +253,13 @@ func (lca *limaConfigApplier) provisionSnapshotters(limaCfg *limayaml.LimaYAML) 
 
 func (lca *limaConfigApplier) provisionSociSnapshotter(limaCfg *limayaml.LimaYAML) {
 	arch := lca.systemDeps.Arch()
-	sociFileName := fmt.Sprintf(sociFileNameFormat, sociVersion, arch)
-	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, sociVersion, sociFileName)
-	sociSha256Sum := sociAMD64Sha256Sum
+	sociFileName := fmt.Sprintf(sociFileNameFormat, SociVersion, arch)
+	sociDownloadURL := fmt.Sprintf(sociDownloadURLFormat, SociVersion, sociFileName)
+	sociSha256Sum := SociAMD64Sha256Sum
 	if arch == "arm64" {
-		sociSha256Sum = sociARM64Sha256Sum
+		sociSha256Sum = SociARM64Sha256Sum
 	}
-	sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, sociVersion)
+	sociServiceDownloadURL := fmt.Sprintf(sociServiceDownloadURLFormat, SociVersion)
 
 	// Platform-specific DOCKER_CONFIG for SOCI service (macOS only)
 	// This is needed as DOCKER_CONFIG for SOCI defaults to ~/.finch/config,
