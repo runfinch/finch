@@ -1,6 +1,6 @@
 name: Build, test and upload .pkg to S3
 
-# The scheduler runs at 9 am UTC every day.
+# The scheduler runs at 6 AM PST (14:00 UTC) every day.
 on:
   workflow_dispatch:
     inputs:
@@ -14,7 +14,7 @@ on:
         required: true
         type: string
   schedule:
-    - cron: '0 9 * * *'
+    - cron: '0 14 * * *'
 env:
   GO111MODULE: on
 
