@@ -2,4 +2,4 @@
 /CHANGELOG.md @runfinch/release-approvers
 
 # Any changes to github workflows requires dev-team approval
-/.github/ @runfinch/dev-team
+/.github/ @runfinch/dev-team-2
