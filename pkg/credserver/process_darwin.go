@@ -38,7 +38,13 @@ func StartCredentialServer(finchRootPath string) error {
 	socketPath := filepath.Join(finchRootPath, credSocketRelPath)
 	daemonPath := filepath.Join(finchRootPath, credDaemonRelPath)
 	pidFile := filepath.Join(finchRootPath, credPIDFileRelPath)
-	logPath := filepath.Join(finchRootPath, credLogRelPath)
+
+	// Use user home directory for logs (consistent with other user data like config and Lima data)
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get user home directory: %w", err)
+	}
+	logPath := filepath.Join(homeDir, ".finch", credLogRelPath)
 
 	// Clean up stale PID file if daemon is not running
 	// #nosec G304 -- pidFile path is constructed from finchRootPath, not user input

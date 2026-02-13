@@ -20,7 +20,6 @@ import (
 	"github.com/runfinch/common-tests/fnet"
 	"github.com/runfinch/common-tests/option"
 
-	"github.com/runfinch/finch/e2e"
 	"github.com/runfinch/finch/pkg/credserver"
 )
 
@@ -286,18 +285,10 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 
 			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(300).Run()
 
-			// Get finch root path same way as limaDataDirPath
-			var finchRootPath string
-			if installed {
-				path, err := exec.LookPath(e2e.InstalledTestSubject)
-				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-				realFinchPath, err := filepath.EvalSymlinks(path)
-				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-				finchRootPath = filepath.Join(realFinchPath, "..", "..")
-			} else {
-				finchRootPath = filepath.Join("..", "..", "_output")
-			}
-			logPath := filepath.Join(finchRootPath, "logs", "credserver.log")
+			// Credential server logs go to ~/.finch/logs/ regardless of installation location
+			homeDir, err := os.UserHomeDir()
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			logPath := filepath.Join(homeDir, ".finch", "logs", "credserver.log")
 
 			gomega.Eventually(func() bool {
 				_, err := os.Stat(logPath)
@@ -305,7 +296,7 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 			}, 5*time.Second, 100*time.Millisecond).Should(gomega.BeTrue(), "Log file should exist")
 
 			// Verify log file contains expected entries
-			// #nosec G304 -- logPath is constructed from finchRootPath, not user input
+			// #nosec G304 -- logPath is constructed from homeDir, not user input
 			logContent, err := os.ReadFile(logPath)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(string(logContent)).To(gomega.ContainSubstring("Starting credential server"))
