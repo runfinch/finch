@@ -74,7 +74,12 @@ func (p *postVMStartInitAction) run() error {
 	// Windows: No credential server needed - WSL can access credentials and credhelpers via mounted ~/.finch/config.json
 	execPath, err := os.Executable()
 	if err == nil {
-		finchRootPath := filepath.Dir(filepath.Dir(execPath))
+		// Resolve symlink to get actual installation path
+		realPath, err := filepath.EvalSymlinks(execPath)
+		if err != nil {
+			realPath = execPath
+		}
+		finchRootPath := filepath.Dir(filepath.Dir(realPath))
 
 		// Check if daemon is already running before attempting to start
 		if !credserver.IsDaemonRunning(finchRootPath) {
