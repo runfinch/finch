@@ -48,7 +48,6 @@ VERSION_INJECTION += -X $(PACKAGE)/pkg/config.SociARM64Sha256Sum=$(SOCI_ARM64_SH
 VERSION_INJECTION += -X $(PACKAGE)/pkg/dependency/credhelper.EcrVersion=$(ECR_CRED_HELPER_VERSION)
 VERSION_INJECTION += -X $(PACKAGE)/pkg/dependency/credhelper.EcrAMD64Hash=$(ECR_CRED_HELPER_AMD64_DIGEST)
 VERSION_INJECTION += -X $(PACKAGE)/pkg/dependency/credhelper.EcrARM64Hash=$(ECR_CRED_HELPER_ARM64_DIGEST)
-LDFLAGS = "-w $(VERSION_INJECTION)"
 
 FINCH_DAEMON_LOCATION_ROOT ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/finch-daemon
 FINCH_DAEMON_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/finch-daemon
@@ -76,11 +75,11 @@ endif
 
 # This variable is used to inject the version of Lima (via ldflags) to be used with Lima's
 # osutil.LimaUser function.
-LIMA_TAG=$(shell cd deps/finch-core/src/lima && git describe --match 'v[0-9]*' --dirty='.modified'  --abbrev=0 --always --tags)
-LIMA_VERSION := $(patsubst v%,%,$(LIMA_TAG))
+-include $(FINCH_CORE_DIR)/deps/lima-bundles.conf
 # This value isn't used on Linux, but the symbol is currently defined on all platforms, so
 # it doesn't hurt to always inject it right now.
 VERSION_INJECTION += -X $(PACKAGE)/pkg/lima.LimaVersion=$(LIMA_VERSION)
+LDFLAGS = "-w $(VERSION_INJECTION)"
 
 .PHONY: arch-test
 arch-test:
