@@ -22,10 +22,8 @@
 * improve logging for Finch pkg ([#1697](https://github.com/runfinch/finch/issues/1697)) ([af2d97e](https://github.com/runfinch/finch/commit/af2d97efaa0519e921bd4bb345a53dfc531b102a))
 * increase timeout for aws creds for signing ([#1689](https://github.com/runfinch/finch/issues/1689)) ([e8c54b9](https://github.com/runfinch/finch/commit/e8c54b9aef876700ce5214ba1ec4b91dba63b15a))
 * remove multiple cp commands that overwrites older installers ([#1681](https://github.com/runfinch/finch/issues/1681)) ([2c26c9b](https://github.com/runfinch/finch/commit/2c26c9ba7ab9349236704db5301017dd0c8ca694))
-* reschedule nightly ([8346549](https://github.com/runfinch/finch/commit/834654935282499c9e6e5aa7b5b0be70b3f369e9))
 * reschedule nightly  ([#1691](https://github.com/runfinch/finch/issues/1691)) ([8346549](https://github.com/runfinch/finch/commit/834654935282499c9e6e5aa7b5b0be70b3f369e9))
 * Set mirrored network mode for wsl host to vm networking test in … ([#1688](https://github.com/runfinch/finch/issues/1688)) ([b8fefdb](https://github.com/runfinch/finch/commit/b8fefdb6b54d6add7e0695cd286f1860e3ced1bf))
-* Set mirrored network mode for wsl host to vm networking test in runners ([b8fefdb](https://github.com/runfinch/finch/commit/b8fefdb6b54d6add7e0695cd286f1860e3ced1bf))
 
 ## [1.14.1](https://github.com/runfinch/finch/compare/v1.14.0...v1.14.1) (2026-01-14)
 
