@@ -11,7 +11,6 @@
 
 ### Features
 
-* improve credential architecture on macOS ([df487c0](https://github.com/runfinch/finch/commit/df487c0d5db1e199082f78a43aa553d5957e0227))
 * inject deps from finch-core ([#1679](https://github.com/runfinch/finch/issues/1679)) ([a94c922](https://github.com/runfinch/finch/commit/a94c922307fa7e9e611af24aeb4eed1c92cc0b8f))
 * support native credstore in macOS ([#1680](https://github.com/runfinch/finch/issues/1680)) ([df487c0](https://github.com/runfinch/finch/commit/df487c0d5db1e199082f78a43aa553d5957e0227))
 
