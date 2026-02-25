@@ -122,7 +122,7 @@ func TestCredentialEnvs(t *testing.T) {
 
 	t.Run("has correct number of environment variables", func(t *testing.T) {
 		t.Parallel()
-		assert.Len(t, credentialEnvs, 8)
+		assert.Len(t, credentialEnvs, 9)
 	})
 }
 

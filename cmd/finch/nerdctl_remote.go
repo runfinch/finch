@@ -339,6 +339,12 @@ func (nc *nerdctlCommand) run(cmdName string, args []string) error {
 		passedEnvArgs = append(passedEnvArgs, fmt.Sprintf("%s=%s", e, v))
 	}
 
+	// Proxy host's DOCKER_CONFIG as HOST_DOCKER_CONFIG to avoid overriding VM's DOCKER_CONFIG
+	// The credential helper will forward this to the host credential server
+	if dockerConfig, exists := nc.systemDeps.LookupEnv("DOCKER_CONFIG"); exists {
+		passedEnvArgs = append(passedEnvArgs, fmt.Sprintf("HOST_DOCKER_CONFIG=%s", dockerConfig))
+	}
+
 	var additionalEnv []string
 	switch cmdName {
 	case "image":

@@ -86,10 +86,17 @@ func TestLoadConfig(t *testing.T) {
 		err = os.WriteFile(configPath, []byte(configData), 0o644)
 		require.NoError(t, err)
 
-		// Mock home dir
+		// Mock home dir and clear DOCKER_CONFIG for test isolation
 		originalHome := os.Getenv("HOME")
+		originalDockerConfig := os.Getenv("DOCKER_CONFIG")
 		_ = os.Setenv("HOME", tmpDir)
-		defer func() { _ = os.Setenv("HOME", originalHome) }()
+		_ = os.Unsetenv("DOCKER_CONFIG")
+		defer func() {
+			_ = os.Setenv("HOME", originalHome)
+			if originalDockerConfig != "" {
+				_ = os.Setenv("DOCKER_CONFIG", originalDockerConfig)
+			}
+		}()
 
 		cfg, err := loadConfig()
 		require.NoError(t, err)
@@ -121,11 +128,65 @@ func TestLoadConfig(t *testing.T) {
 		require.NoError(t, err)
 
 		originalHome := os.Getenv("HOME")
+		originalDockerConfig := os.Getenv("DOCKER_CONFIG")
 		_ = os.Setenv("HOME", tmpDir)
-		defer func() { _ = os.Setenv("HOME", originalHome) }()
+		_ = os.Unsetenv("DOCKER_CONFIG")
+		defer func() {
+			_ = os.Setenv("HOME", originalHome)
+			if originalDockerConfig != "" {
+				_ = os.Setenv("DOCKER_CONFIG", originalDockerConfig)
+			}
+		}()
 
 		_, err = loadConfig()
 		assert.Error(t, err)
+	})
+}
+
+func TestLoadConfigWithOverride(t *testing.T) {
+	t.Parallel()
+	t.Run("uses override path when provided", func(t *testing.T) {
+		t.Parallel()
+		tmpDir := t.TempDir()
+		customDir := filepath.Join(tmpDir, "custom")
+		configPath := filepath.Join(customDir, "config.json")
+		err := os.MkdirAll(filepath.Dir(configPath), 0o750)
+		require.NoError(t, err)
+
+		configData := `{"credsStore":"custom-helper"}`
+		err = os.WriteFile(configPath, []byte(configData), 0o644)
+		require.NoError(t, err)
+
+		cfg, err := loadConfigWithOverride(customDir)
+		require.NoError(t, err)
+		assert.Equal(t, "custom-helper", cfg.CredentialsStore)
+	})
+
+	t.Run("falls back to ~/.finch when override and env empty", func(t *testing.T) {
+		t.Parallel()
+		tmpDir := t.TempDir()
+		configPath := filepath.Join(tmpDir, ".finch", "config.json")
+		err := os.MkdirAll(filepath.Dir(configPath), 0o750)
+		require.NoError(t, err)
+
+		configData := `{"credsStore":"default-helper"}`
+		err = os.WriteFile(configPath, []byte(configData), 0o644)
+		require.NoError(t, err)
+
+		originalHome := os.Getenv("HOME")
+		originalDockerConfig := os.Getenv("DOCKER_CONFIG")
+		_ = os.Setenv("HOME", tmpDir)
+		_ = os.Unsetenv("DOCKER_CONFIG")
+		defer func() {
+			_ = os.Setenv("HOME", originalHome)
+			if originalDockerConfig != "" {
+				_ = os.Setenv("DOCKER_CONFIG", originalDockerConfig)
+			}
+		}()
+
+		cfg, err := loadConfigWithOverride("")
+		require.NoError(t, err)
+		assert.Equal(t, "default-helper", cfg.CredentialsStore)
 	})
 }
 
@@ -254,8 +315,15 @@ func TestGetCredentials_Plaintext(t *testing.T) {
 		require.NoError(t, err)
 
 		originalHome := os.Getenv("HOME")
+		originalDockerConfig := os.Getenv("DOCKER_CONFIG")
 		_ = os.Setenv("HOME", tmpDir)
-		defer func() { _ = os.Setenv("HOME", originalHome) }()
+		_ = os.Unsetenv("DOCKER_CONFIG")
+		defer func() {
+			_ = os.Setenv("HOME", originalHome)
+			if originalDockerConfig != "" {
+				_ = os.Setenv("DOCKER_CONFIG", originalDockerConfig)
+			}
+		}()
 
 		creds, err := GetCredentials("registry.example.com")
 		require.NoError(t, err)

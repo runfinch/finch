@@ -118,6 +118,14 @@ func loginAction(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	// Set DOCKER_CONFIG to ~/.finch unless already set externally
+	// This ensures nerdctl's login uses the same config.json that credserver expects
+	if os.Getenv("DOCKER_CONFIG") == "" {
+		if err := os.Setenv("DOCKER_CONFIG", finchDir); err != nil {
+			return fmt.Errorf("failed to set DOCKER_CONFIG: %w", err)
+		}
+	}
+
 	options, err := loginOptions(cmd)
 	if err != nil {
 		return err

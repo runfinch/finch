@@ -192,6 +192,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				ncsd.EXPECT().LookupEnv("DOCKER_CONFIG").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
 					"push", "--sign=cosign", "test:tag").Return(c)
@@ -227,6 +228,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				ncsd.EXPECT().LookupEnv("DOCKER_CONFIG").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
 					"pull", "--verify=cosign", "test:tag").Return(c)
@@ -262,6 +264,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				ncsd.EXPECT().LookupEnv("DOCKER_CONFIG").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				ncc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test",
 					nerdctlCmdName, "pull", "test:tag").Return(c)
@@ -1369,6 +1372,7 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 				ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 				ncsd.EXPECT().LookupEnv("COSIGN_PASSWORD").Return("test", true)
 				ncsd.EXPECT().LookupEnv("COMPOSE_FILE").Return("", false)
+				ncsd.EXPECT().LookupEnv("DOCKER_CONFIG").Return("", false)
 				c := mocks.NewCommand(ctrl)
 				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", "COSIGN_PASSWORD=test", nerdctlCmdName,
 					"push", "--sign=cosign", "test:tag").Return(c)
@@ -1432,6 +1436,7 @@ func AddEmptyEnvLookUps(ncsd *mocks.NerdctlCommandSystemDeps) {
 	ncsd.EXPECT().LookupEnv("AWS_ECR_CACHE_DIR").Return("", false)
 	ncsd.EXPECT().LookupEnv("AWS_ECR_IGNORE_CREDS_STORAGE").Return("", false)
 	ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
+	ncsd.EXPECT().LookupEnv("DOCKER_CONFIG").Return("", false)
 }
 
 type ContainsSubstring struct {

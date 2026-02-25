@@ -19,8 +19,18 @@ import (
 
 // GetCredentials retrieves credentials from configured helper or auths in config. Returns empty credentials if not found.
 func GetCredentials(registryHostname string, envVars ...map[string]string) (*credentials.Credentials, error) {
-	// Load snapshot of config file.
-	cfg, err := loadConfig()
+	// Check if HOST_DOCKER_CONFIG is provided in envVars from VM
+	// This is proxied from the host's DOCKER_CONFIG to avoid overriding the VM's DOCKER_CONFIG
+	var dockerConfigOverride string
+	for _, env := range envVars {
+		if val, ok := env["HOST_DOCKER_CONFIG"]; ok && val != "" {
+			dockerConfigOverride = val
+			break
+		}
+	}
+
+	// Load snapshot of config file (respects HOST_DOCKER_CONFIG from envVars or host's DOCKER_CONFIG environment)
+	cfg, err := loadConfigWithOverride(dockerConfigOverride)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
@@ -89,13 +99,27 @@ func EnsureConfigExists(finchPath string) error {
 }
 
 // loadConfig loads the config file if it exists, returns empty config if not found.
+// Respects DOCKER_CONFIG environment variable, defaults to ~/.finch if not set.
 func loadConfig() (*configfile.ConfigFile, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get home directory: %w", err)
+	return loadConfigWithOverride("")
+}
+
+// loadConfigWithOverride loads config with optional override path from VM request.
+func loadConfigWithOverride(dockerConfigOverride string) (*configfile.ConfigFile, error) {
+	var cfgPath string
+
+	// Priority: 1. Override from HOST_DOCKER_CONFIG (proxied from host's DOCKER_CONFIG) 2. Default ~/.finch
+	if dockerConfigOverride != "" {
+		cfgPath = filepath.Join(dockerConfigOverride, "config.json")
+	} else {
+		// Default to ~/.finch
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get home directory: %w", err)
+		}
+		finchPath := filepath.Join(homeDir, ".finch")
+		cfgPath = filepath.Join(finchPath, "config.json")
 	}
-	finchPath := filepath.Join(homeDir, ".finch")
-	cfgPath := filepath.Join(finchPath, "config.json")
 
 	cfg := configfile.New(cfgPath)
 	file, err := os.Open(cfg.Filename)
