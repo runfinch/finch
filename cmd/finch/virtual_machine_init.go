@@ -7,8 +7,10 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 	"runtime"
 
+	"github.com/runfinch/finch/pkg/dependency/credhelper"
 	"github.com/runfinch/finch/pkg/disk"
 
 	"github.com/runfinch/finch/pkg/command"
@@ -31,11 +33,13 @@ func newInitVMCommand(
 	fs afero.Fs,
 	privateKeyPath string,
 	diskManager disk.UserDataDiskManager,
+	finchDir string,
+	finchCfg *config.Finch,
 ) *cobra.Command {
 	initVMCommand := &cobra.Command{
 		Use:      "init",
 		Short:    "Initialize the virtual machine",
-		RunE:     newInitVMAction(ncc, logger, optionalDepGroups, lca, baseYamlFilePath, diskManager).runAdapter,
+		RunE:     newInitVMAction(ncc, logger, optionalDepGroups, lca, baseYamlFilePath, fs, diskManager, finchDir, finchCfg).runAdapter,
 		PostRunE: newPostVMStartInitAction(logger, ncc, fs, privateKeyPath, nca).runAdapter,
 	}
 
@@ -48,7 +52,10 @@ type initVMAction struct {
 	logger            flog.Logger
 	optionalDepGroups []*dependency.Group
 	limaConfigApplier config.LimaConfigApplier
+	fs                afero.Fs
 	diskManager       disk.UserDataDiskManager
+	finchDir          string
+	finchCfg          *config.Finch
 }
 
 func newInitVMAction(
@@ -57,7 +64,10 @@ func newInitVMAction(
 	optionalDepGroups []*dependency.Group,
 	lca config.LimaConfigApplier,
 	baseYamlFilePath string,
+	fs afero.Fs,
 	diskManager disk.UserDataDiskManager,
+	finchDir string,
+	finchCfg *config.Finch,
 ) *initVMAction {
 	return &initVMAction{
 		creator:           creator,
@@ -65,7 +75,10 @@ func newInitVMAction(
 		optionalDepGroups: optionalDepGroups,
 		limaConfigApplier: lca,
 		baseYamlFilePath:  baseYamlFilePath,
+		fs:                fs,
 		diskManager:       diskManager,
+		finchDir:          finchDir,
+		finchCfg:          finchCfg,
 	}
 }
 
@@ -85,6 +98,12 @@ func (iva *initVMAction) run() error {
 	}
 
 	err = iva.limaConfigApplier.ConfigureOverrideLimaYaml()
+	if err != nil {
+		return err
+	}
+
+	configJSONPath := filepath.Join(iva.finchDir, "config.json")
+	err = credhelper.RefreshConfigFile(iva.fs, iva.finchCfg, configJSONPath)
 	if err != nil {
 		return err
 	}

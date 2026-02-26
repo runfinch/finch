@@ -11,13 +11,15 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/runfinch/finch/pkg/dependency"
-	"github.com/runfinch/finch/pkg/flog"
-	"github.com/runfinch/finch/pkg/mocks"
-
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
+
+	"github.com/runfinch/finch/pkg/config"
+	"github.com/runfinch/finch/pkg/dependency"
+	"github.com/runfinch/finch/pkg/flog"
+	"github.com/runfinch/finch/pkg/mocks"
 )
 
 const mockBaseYamlFilePath = "/os/os.yaml"
@@ -25,7 +27,7 @@ const mockBaseYamlFilePath = "/os/os.yaml"
 func TestNewInitVMCommand(t *testing.T) {
 	t.Parallel()
 
-	cmd := newInitVMCommand(nil, nil, nil, nil, nil, "", nil, "", nil)
+	cmd := newInitVMCommand(nil, nil, nil, nil, nil, "", nil, "", nil, "", nil)
 	assert.Equal(t, cmd.Name(), "init")
 }
 
@@ -33,11 +35,13 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name    string
-		command *cobra.Command
-		args    []string
-		groups  func(*gomock.Controller) []*dependency.Group
-		mockSvc func(
+		name     string
+		command  *cobra.Command
+		fc       *config.Finch
+		args     []string
+		groups   func(*gomock.Controller) []*dependency.Group
+		finchDir string
+		mockSvc  func(
 			*mocks.NerdctlCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
@@ -50,6 +54,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 			command: &cobra.Command{
 				Use: "init",
 			},
+			fc:   &config.Finch{},
 			args: []string{},
 			groups: func(ctrl *gomock.Controller) []*dependency.Group {
 				dep := mocks.NewDependency(ctrl)
@@ -62,6 +67,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 
 				return groups
 			},
+			finchDir: "/.finch",
 			mockSvc: func(
 				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
@@ -102,12 +108,16 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
+			fs := afero.NewMemMapFs()
 			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
 			tc.mockSvc(ncc, logger, lca, dm, ctrl)
 
-			assert.NoError(t, newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, dm).runAdapter(tc.command, tc.args))
+			assert.NoError(
+				t,
+				newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, fs, dm, tc.finchDir, tc.fc).runAdapter(tc.command, tc.args),
+			)
 		})
 	}
 }
@@ -116,10 +126,12 @@ func TestInitVMAction_run(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name    string
-		wantErr error
-		groups  func(*gomock.Controller) []*dependency.Group
-		mockSvc func(
+		name     string
+		wantErr  error
+		groups   func(*gomock.Controller) []*dependency.Group
+		finchDir string
+		fc       *config.Finch
+		mockSvc  func(
 			*mocks.NerdctlCmdCreator,
 			*mocks.Logger,
 			*mocks.LimaConfigApplier,
@@ -133,6 +145,8 @@ func TestInitVMAction_run(t *testing.T) {
 			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
+			finchDir: "/.finch",
+			fc:       &config.Finch{},
 			mockSvc: func(
 				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
@@ -170,6 +184,8 @@ func TestInitVMAction_run(t *testing.T) {
 			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
+			finchDir: "/.finch",
+			fc:       &config.Finch{},
 			mockSvc: func(
 				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
@@ -191,6 +207,8 @@ func TestInitVMAction_run(t *testing.T) {
 			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
+			finchDir: "/.finch",
+			fc:       &config.Finch{},
 			mockSvc: func(
 				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
@@ -210,6 +228,8 @@ func TestInitVMAction_run(t *testing.T) {
 			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
+			finchDir: "/.finch",
+			fc:       &config.Finch{},
 			mockSvc: func(
 				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
@@ -229,6 +249,8 @@ func TestInitVMAction_run(t *testing.T) {
 			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
+			finchDir: "/.finch",
+			fc:       &config.Finch{},
 			mockSvc: func(
 				ncc *mocks.NerdctlCmdCreator,
 				_ *mocks.Logger,
@@ -257,6 +279,8 @@ func TestInitVMAction_run(t *testing.T) {
 
 				return groups
 			},
+			finchDir: "/.finch",
+			fc:       &config.Finch{},
 			mockSvc: func(
 				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
@@ -302,6 +326,8 @@ func TestInitVMAction_run(t *testing.T) {
 			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
+			finchDir: "/.finch",
+			fc:       &config.Finch{},
 			mockSvc: func(
 				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
@@ -324,6 +350,8 @@ func TestInitVMAction_run(t *testing.T) {
 			groups: func(_ *gomock.Controller) []*dependency.Group {
 				return nil
 			},
+			finchDir: "/.finch",
+			fc:       &config.Finch{},
 			mockSvc: func(
 				ncc *mocks.NerdctlCmdCreator,
 				logger *mocks.Logger,
@@ -364,12 +392,13 @@ func TestInitVMAction_run(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			ncc := mocks.NewNerdctlCmdCreator(ctrl)
 			lca := mocks.NewLimaConfigApplier(ctrl)
+			fs := afero.NewMemMapFs()
 			dm := mocks.NewUserDataDiskManager(ctrl)
 
 			groups := tc.groups(ctrl)
 			tc.mockSvc(ncc, logger, lca, dm, ctrl)
 
-			err := newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, dm).run()
+			err := newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, fs, dm, tc.finchDir, tc.fc).run()
 			assert.Equal(t, err, tc.wantErr)
 		})
 	}
