@@ -242,6 +242,73 @@ var testNativeCredHelper = func(o *option.Option, installed bool) {
 			unauthPullResult := command.New(o, "pull", testImageTag).WithoutCheckingExitCode().Run()
 			gomega.Expect(unauthPullResult.ExitCode()).ToNot(gomega.Equal(0), "Registry should block unauthenticated pull")
 		})
+		ginkgo.It("should respect DOCKER_CONFIG environment variable override", func() {
+			resetVM(o)
+			resetDisks(o, installed)
+			command.New(o, virtualMachineRootCmd, "init").WithTimeoutInSeconds(300).Run()
+
+			homeDir, err := os.UserHomeDir()
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			// Create custom config directory
+			customConfigDir := filepath.Join(homeDir, ".finch-test-custom")
+			err = os.MkdirAll(customConfigDir, 0o750)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			ginkgo.DeferCleanup(os.RemoveAll, customConfigDir)
+
+			customConfigPath := filepath.Join(customConfigDir, "config.json")
+			err = os.WriteFile(customConfigPath, []byte("{}"), 0o600)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			// Ensure default config exists and is empty
+			defaultConfigPath := filepath.Join(homeDir, ".finch", "config.json")
+			_ = os.Remove(defaultConfigPath)
+			err = os.MkdirAll(filepath.Dir(defaultConfigPath), 0o750)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			err = os.WriteFile(defaultConfigPath, []byte("{}"), 0o600)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			ginkgo.DeferCleanup(os.Remove, defaultConfigPath)
+
+			registry, testImageTag := setupRegistry(o)
+
+			ginkgo.By("Setting DOCKER_CONFIG to custom location")
+			// Note: DOCKER_CONFIG is proxied as HOST_DOCKER_CONFIG to the VM
+			// This ensures nerdctl uses VM's config while credserver uses host's config
+			o.UpdateEnv("DOCKER_CONFIG", customConfigDir)
+			ginkgo.DeferCleanup(func() {
+				o.UpdateEnv("DOCKER_CONFIG", "")
+			})
+
+			ginkgo.By("Login with custom DOCKER_CONFIG")
+			loginResult := command.New(o, "login", registry, "-u", "testUser", "-p", "testPassword").
+				WithoutCheckingExitCode().Run()
+			gomega.Expect(loginResult.ExitCode()).To(gomega.Equal(0))
+
+			ginkgo.By("Verifying credentials stored in custom location")
+			customConfigContent, err := os.ReadFile(filepath.Clean(customConfigPath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(string(customConfigContent)).Should(gomega.ContainSubstring(registry))
+
+			ginkgo.By("Verifying default location NOT modified")
+			defaultConfigContent, err := os.ReadFile(filepath.Clean(defaultConfigPath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(string(defaultConfigContent)).ShouldNot(gomega.ContainSubstring(registry))
+
+			ginkgo.By("Testing push with custom DOCKER_CONFIG")
+			pushResult := command.New(o, "push", testImageTag).WithoutCheckingExitCode().Run()
+			gomega.Expect(pushResult.ExitCode()).To(gomega.Equal(0), "Push should succeed")
+
+			ginkgo.By("Testing pull with custom DOCKER_CONFIG")
+			command.Run(o, "system", "prune", "-f", "-a")
+			pullResult := command.New(o, "pull", testImageTag).WithoutCheckingExitCode().Run()
+			gomega.Expect(pullResult.ExitCode()).To(gomega.Equal(0), "Pull should succeed")
+
+			ginkgo.By("Logout removes credentials from custom location")
+			command.Run(o, "logout", registry)
+			customConfigContent, err = os.ReadFile(filepath.Clean(customConfigPath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(string(customConfigContent)).ShouldNot(gomega.ContainSubstring(registry))
+		})
 		ginkgo.It("should manage daemon lifecycle and prevent duplicate starts", func() {
 			cleanupKeychain := setupKeychain()
 			ginkgo.DeferCleanup(cleanupKeychain)

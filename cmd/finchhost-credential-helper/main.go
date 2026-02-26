@@ -32,7 +32,7 @@ type FinchHostCredentialHelper struct{}
 var credentialEnvs = []string{
 	"COSIGN_PASSWORD", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY",
 	"AWS_SESSION_TOKEN", "AWS_ECR_DISABLE_CACHE", "AWS_ECR_CACHE_DIR",
-	"AWS_ECR_IGNORE_CREDS_STORAGE", "AWS_PROFILE",
+	"AWS_ECR_IGNORE_CREDS_STORAGE", "AWS_PROFILE", "HOST_DOCKER_CONFIG",
 }
 
 // Add is not implemented for FinchHost credential helper.
