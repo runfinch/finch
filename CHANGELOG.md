@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1](https://github.com/runfinch/finch/compare/v1.15.0...v1.15.1) (2026-02-26)
+
+
+### Bug Fixes
+
+* DOCKER_CONFIG mismatch between login/logout and registry operations ([#1703](https://github.com/runfinch/finch/issues/1703)) ([eb331f1](https://github.com/runfinch/finch/commit/eb331f1fc8cbb11396de3cc3081f223684bed4a3))
+
 ## [1.15.0](https://github.com/runfinch/finch/compare/v1.14.1...v1.15.0) (2026-02-19)
 
 
