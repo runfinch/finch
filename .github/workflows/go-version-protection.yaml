@@ -35,7 +35,7 @@ jobs:
           echo "Current Go version: $CURRENT_VERSION"
           
           # Hard-coded allowed major.minor version
-          ALLOWED_MAJOR_MINOR="1.24"
+          ALLOWED_MAJOR_MINOR="1.25"
           echo "Allowed major.minor version: $ALLOWED_MAJOR_MINOR"
           
           # Extract major.minor from current version

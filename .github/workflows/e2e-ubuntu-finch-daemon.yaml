@@ -11,7 +11,7 @@ on:
 
 env:
   GO111MODULE: on
-  GO_VERSION: '1.24.11'
+  GO_VERSION: '1.25.7'
 
 permissions:
   id-token: write # used when getting AWS credentials
