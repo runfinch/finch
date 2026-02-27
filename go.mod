@@ -7,7 +7,7 @@ require (
 	github.com/containerd/cgroups/v3 v3.1.2
 	github.com/containerd/log v0.1.0
 	github.com/containerd/nerdctl/v2 v2.2.1
-	github.com/docker/cli v29.1.3+incompatible
+	github.com/docker/cli v29.2.1+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/docker/docker-credential-helpers v0.8.2
 	github.com/docker/go-connections v0.6.0
