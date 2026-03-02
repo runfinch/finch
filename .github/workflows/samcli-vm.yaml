@@ -1,0 +1,217 @@
+name: samcli-vm
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'scripts/samcli-vm/**'
+      - 'scripts/cleanup-aws-resources.sh'
+      - 'scripts/validate-test-results.sh'
+      - '.github/workflows/samcli-vm.yaml'
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+env:
+  GO_VERSION: '1.24.11'
+  # Python 3.13 is fine, but need to pin chardet for requests compatibility
+  PYTHON_VERSION: '3.13'
+  PYTHON_BINARY: 'python3.13'
+  AWS_DEFAULT_REGION: ${{ secrets.SAMCLI_REGION }}
+  BY_CANARY: true # allows full testing
+  SAM_CLI_DEV: 1
+  SAM_CLI_TELEMETRY: 0
+  DOCKER_HOST: unix:///Applications/Finch/lima/data/finch/sock/finch.sock
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  samcli-vm-test:
+    runs-on: codebuild-finch-macos-arm64-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        test_type: [invoke, start-api, sync, package, start-lambda]
+    steps:
+      - name: Check runner OS
+        run: |
+          echo "OS: $(uname -s)"
+          echo "Kernel: $(uname -r)"
+          echo "Architecture: $(uname -m)"
+          echo "Full uname: $(uname -a)"
+
+      - name: Detect runner user
+        id: user
+        run: |
+          if id ec2-user &>/dev/null; then
+            echo "user=ec2-user" >> $GITHUB_OUTPUT
+            echo "home=/Users/ec2-user" >> $GITHUB_OUTPUT
+            echo "✓ Using ec2-user"
+          else
+            CURRENT_USER=$(whoami)
+            echo "user=$CURRENT_USER" >> $GITHUB_OUTPUT
+            echo "home=$HOME" >> $GITHUB_OUTPUT
+            echo "✓ Using current user: $CURRENT_USER (home: $HOME)"
+          fi
+
+      - name: Set Docker config
+        run: echo "DOCKER_CONFIG=${{ steps.user.outputs.home }}/.finch" >> $GITHUB_ENV
+
+      - name: Clean macOS runner workspace
+        run: |
+          sudo rm -rf /Applications/Finch
+          sudo rm -rf /opt/finch
+          rm -rf ${{ steps.user.outputs.home }}/.finch || true
+          rm -rf ${{ steps.user.outputs.home }}/Library/Python || true
+          sudo rm -rf ./_output
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+
+      - name: Configure Git for ec2-user
+        run: |
+          git config --global --add safe.directory "*"
+        shell: bash
+
+      - name: Set up Go
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Configure Go for runner
+        run: |
+          chown -R ${{ steps.user.outputs.user }}:staff $GOPATH || true
+          chown -R ${{ steps.user.outputs.user }}:staff $RUNNER_TOOL_CACHE/go || true
+
+      - name: Install Rosetta 2
+        run: echo "A" | /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Configure Python for runner
+        run: |
+          chown -R ${{ steps.user.outputs.user }}:staff $(${{ env.PYTHON_BINARY }} -c "import site; print(site.USER_BASE)") || true
+          ln -sf $(which ${{ env.PYTHON_BINARY }}) /usr/local/bin/${{ env.PYTHON_BINARY }} || true
+
+      - name: Install dependencies
+        run: |
+          echo "Skipping dependency installation - will fail during build if truly required"
+        shell: bash
+
+      - name: Checkout finch
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          submodules: recursive
+
+      - name: Make & install Finch
+        run: |
+          chown -R ${{ steps.user.outputs.user }}:staff "$GITHUB_WORKSPACE"
+          su ec2-user -c "cd $GITHUB_WORKSPACE && make clean && GOOS=darwin make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch && make install PREFIX=Applications/Finch"
+          su ec2-user -c "ls -lah /Applications/Finch"
+
+      - name: Initializing Finch VM
+        run: |
+          su ec2-user -c 'finch vm init'
+          su ec2-user -c 'while ! finch vm status | grep -q "Running"; do echo "Waiting for VM..."; sleep 5; done'
+
+      - name: Verify Finch socket
+        run: |
+          if su ec2-user -c 'curl -s --unix-socket /Applications/Finch/lima/data/finch/sock/finch.sock http://localhost/version' > /dev/null; then
+            echo "✓ Finch daemon is accessible"
+          else
+            echo "✗ Finch daemon connection failed"
+            ls -la /Applications/Finch/lima/data/finch/sock/ || echo "Socket directory not found"
+            exit 1
+          fi
+
+      - name: Ensure Docker is not available
+        run: |
+          sudo rm -f /usr/local/bin/docker /opt/homebrew/bin/docker || true
+          if su ec2-user -c 'which docker' > /dev/null 2>&1; then
+            echo "WARNING: Docker is still accessible"
+          else
+            echo "SUCCESS: Docker is not accessible - SAM CLI will use Finch"
+          fi
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        with:
+          role-to-assume: ${{ secrets.SAMCLI_VM_ROLE }}
+          role-session-name: samcli-${{ matrix.test_type }}-tests
+          aws-region: ${{ secrets.SAMCLI_REGION }}
+          role-duration-seconds: 14400
+
+      - name: Pre-test AWS resource cleanup
+        timeout-minutes: 10
+        run: ./scripts/cleanup-aws-resources.sh
+
+      - name: Get latest SAM CLI tag
+        id: sam-tag
+        run: |
+          TAG=$(curl -s https://api.github.com/repos/aws/aws-sam-cli/releases/latest | jq -r .tag_name)
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Checkout SAM CLI
+        uses: actions/checkout@v4
+        with:
+          repository: aws/aws-sam-cli
+          submodules: recursive
+          path: aws-sam-cli
+          ref: ${{ steps.sam-tag.outputs.tag }}
+
+      - name: Set up SAM CLI from source
+        run: |
+          sudo rm -rf /Users/ec2-user/aws-sam-cli || true
+          sudo mv aws-sam-cli /Users/ec2-user/aws-sam-cli
+          sudo chown -R ec2-user:staff /Users/ec2-user/aws-sam-cli
+
+          su ec2-user -c 'cd /Users/ec2-user/aws-sam-cli && ${{ env.PYTHON_BINARY }} -m pip install --upgrade pip --user'
+          su ec2-user -c 'cd /Users/ec2-user/aws-sam-cli && SAM_CLI_DEV=1 ${{ env.PYTHON_BINARY }} -m pip install -e ".[dev]" --user'
+          # Pin chardet to avoid 6.0.0 which breaks requests compatibility (released Feb 22, 2026)
+          su ec2-user -c '${{ env.PYTHON_BINARY }} -m pip install "chardet<6.0.0" --user'
+          su ec2-user -c "/Users/ec2-user/Library/Python/${{ env.PYTHON_VERSION }}/bin/samdev --version"
+        shell: bash
+
+      - name: Run ${{ matrix.test_type }} tests
+        run: ./scripts/samcli-vm/run-${{ matrix.test_type }}-tests.sh
+
+  cleanup:
+    runs-on: codebuild-finch-macos-arm64-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    needs: samcli-vm-test
+    if: always()
+    steps:
+      - name: Final cleanup
+        run: |
+          su ec2-user -c 'finch vm stop' || true
+          su ec2-user -c 'finch vm remove -f' || true
+          sudo pkill -f socket_vmnet || true
+          sudo pkill -f finch-daemon || true
+          sudo rm -rf /private/var/run/finch-lima/*.sock || true
+          sudo rm -rf /Applications/Finch/lima/data/finch/_cache || true
+          sudo rm -rf /tmp/finch-* || true
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
+        with:
+          role-to-assume: ${{ secrets.SAMCLI_VM_ROLE }}
+          role-session-name: cleanup
+          aws-region: ${{ secrets.SAMCLI_REGION }}
+
+      - name: Comprehensive AWS resource cleanup
+        timeout-minutes: 10
+        run: ./scripts/cleanup-aws-resources.sh
