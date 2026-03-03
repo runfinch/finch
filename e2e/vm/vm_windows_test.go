@@ -58,6 +58,13 @@ func TestVM(t *testing.T) {
 	}, func(_ []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
+		srcDir := filepath.Join("C:", "actions-runner", "_work", "finch", "finch", "_output", "lima", "data", "finch")
+		for _, log := range []string{"ha.stderr.log", "ha.stdout.log", "serial.log", "serialp.log", "serialv.log"} {
+			if data, err := os.ReadFile(filepath.Join(srcDir, log)); err == nil {
+				fmt.Fprintf(ginkgo.GinkgoWriter, "\n=== %s ===\n%s\n", log, string(data))
+			}
+		}
+
 		command.New(o, "vm", "stop", "-f").WithTimeoutInSeconds(90).Run()
 		command.New(o, "vm", "remove", "-f").WithTimeoutInSeconds(60).Run()
 		resetDisks(o, *e2e.Installed)

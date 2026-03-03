@@ -60,6 +60,14 @@ func TestContainer(t *testing.T) {
 
 	ginkgo.SynchronizedAfterSuite(func() {
 		if runtime.GOOS != "linux" {
+			if runtime.GOOS == "windows" {
+				srcDir := filepath.Join("C:", "actions-runner", "_work", "finch", "finch", "_output", "lima", "data", "finch")
+				for _, log := range []string{"ha.stderr.log", "ha.stdout.log", "serial.log", "serialp.log", "serialv.log"} {
+					if data, err := os.ReadFile(filepath.Join(srcDir, log)); err == nil {
+						fmt.Fprintf(ginkgo.GinkgoWriter, "\n=== %s ===\n%s\n", log, string(data))
+					}
+				}
+			}
 			command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
 			time.Sleep(1 * time.Second)
 			command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()

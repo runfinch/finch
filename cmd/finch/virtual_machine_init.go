@@ -113,7 +113,6 @@ func (iva *initVMAction) run() error {
 		// which is causing a ssh "permission denied" issue with VZ driver.
 		// So, disabling this feature for VZ driver for now.
 		// This still works with QEMU driver.
-		iva.logger.Debugf("disabling ssh over vsock")
 		startOpts = append(startOpts, "--set", ".ssh.overVsock=false")
 	}
 	limaCmd := iva.creator.CreateWithoutStdio(startOpts...)
