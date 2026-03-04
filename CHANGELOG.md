@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.2](https://github.com/runfinch/finch/compare/v1.15.1...v1.15.2) (2026-03-04)
+
+
+### Bug Fixes
+
+* move samcli-vm tests to finch ([#1710](https://github.com/runfinch/finch/issues/1710)) ([a610930](https://github.com/runfinch/finch/commit/a6109308206186a53a8a4699a4228c1e7310e117))
+
 ## [1.15.1](https://github.com/runfinch/finch/compare/v1.15.0...v1.15.1) (2026-02-26)
 
 
