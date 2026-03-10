@@ -459,8 +459,19 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 
 				require.Equal(t, "vz", *limaCfg.VMType)
 				require.Equal(t, "virtiofs", *limaCfg.MountType)
-				require.Equal(t, true, *limaCfg.Rosetta.BinFmt)
-				require.Equal(t, true, *limaCfg.Rosetta.Enabled)
+
+				// Verify Rosetta config in vmOpts.vz.rosetta (new structure)
+				require.NotNil(t, limaCfg.VMOpts)
+				require.NotNil(t, limaCfg.VMOpts[limayaml.VZ])
+
+				var vzOpts limayaml.VZOpts
+				err = limayaml.Convert(limaCfg.VMOpts[limayaml.VZ], &vzOpts, "vmOpts.vz")
+				require.NoError(t, err)
+				require.NotNil(t, vzOpts.Rosetta.BinFmt)
+				require.Equal(t, true, *vzOpts.Rosetta.BinFmt)
+				require.NotNil(t, vzOpts.Rosetta.Enabled)
+				require.Equal(t, true, *vzOpts.Rosetta.Enabled)
+
 				require.Len(t, limaCfg.Provision, 0)
 			},
 			want: nil,
@@ -503,8 +514,19 @@ rosetta:
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, "qemu", *limaCfg.VMType)
-				require.Equal(t, false, *limaCfg.Rosetta.Enabled)
-				require.Equal(t, false, *limaCfg.Rosetta.BinFmt)
+
+				// Verify Rosetta config in vmOpts.vz.rosetta is disabled (new structure)
+				require.NotNil(t, limaCfg.VMOpts)
+				require.NotNil(t, limaCfg.VMOpts[limayaml.VZ])
+
+				var vzOpts limayaml.VZOpts
+				err = limayaml.Convert(limaCfg.VMOpts[limayaml.VZ], &vzOpts, "vmOpts.vz")
+				require.NoError(t, err)
+				require.NotNil(t, vzOpts.Rosetta.BinFmt)
+				require.Equal(t, false, *vzOpts.Rosetta.BinFmt)
+				require.NotNil(t, vzOpts.Rosetta.Enabled)
+				require.Equal(t, false, *vzOpts.Rosetta.Enabled)
+
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)

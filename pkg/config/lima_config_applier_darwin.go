@@ -25,8 +25,19 @@ func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limayaml
 			return nil, errors.New(`system does not have virtualization framework support, change vmType to "qemu"`)
 		}
 
-		limaCfg.Rosetta.Enabled = pointer.Bool(true)
-		limaCfg.Rosetta.BinFmt = pointer.Bool(true)
+		// Use new vmOpts.vz.rosetta structure instead of deprecated top-level rosetta
+		if limaCfg.VMOpts == nil {
+			limaCfg.VMOpts = limayaml.VMOpts{}
+		}
+
+		vzOpts := limayaml.VZOpts{
+			Rosetta: limayaml.Rosetta{
+				Enabled: pointer.Bool(true),
+				BinFmt:  pointer.Bool(true),
+			},
+		}
+
+		limaCfg.VMOpts[limayaml.VZ] = vzOpts
 		limaCfg.VMType = pointer.String("vz")
 		limaCfg.MountType = pointer.String("virtiofs")
 	} else {
@@ -49,8 +60,19 @@ func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limayaml
 			return nil, fmt.Errorf("unsupported vm type \"%s\" for macOS", *lca.cfg.VMType)
 		}
 
-		limaCfg.Rosetta.Enabled = pointer.Bool(false)
-		limaCfg.Rosetta.BinFmt = pointer.Bool(false)
+		// Set Rosetta to false using new vmOpts.vz.rosetta structure
+		if limaCfg.VMOpts == nil {
+			limaCfg.VMOpts = limayaml.VMOpts{}
+		}
+
+		vzOpts := limayaml.VZOpts{
+			Rosetta: limayaml.Rosetta{
+				Enabled: pointer.Bool(false),
+				BinFmt:  pointer.Bool(false),
+			},
+		}
+
+		limaCfg.VMOpts[limayaml.VZ] = vzOpts
 		limaCfg.VMType = lca.cfg.VMType
 		userModeEmulationInstallationScript(limaCfg)
 	}
