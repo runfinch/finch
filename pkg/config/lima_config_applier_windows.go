@@ -8,11 +8,11 @@ package config
 import (
 	"fmt"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/xorcare/pointer"
 )
 
-func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
+func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limatype.LimaYAML) (*limatype.LimaYAML, error) {
 	// Check if system supports wsl2
 
 	if err := SupportsWSL2(lca.cmdCreator); err != nil {
@@ -27,14 +27,14 @@ func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limayaml
 	return limaCfg, nil
 }
 
-func (lca *limaConfigApplier) configureCPUs(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+func (lca *limaConfigApplier) configureCPUs(limaCfg *limatype.LimaYAML) *limatype.LimaYAML {
 	return limaCfg
 }
 
-func (lca *limaConfigApplier) configureMemory(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+func (lca *limaConfigApplier) configureMemory(limaCfg *limatype.LimaYAML) *limatype.LimaYAML {
 	return limaCfg
 }
 
-func (lca *limaConfigApplier) configureMounts(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
+func (lca *limaConfigApplier) configureMounts(limaCfg *limatype.LimaYAML) *limatype.LimaYAML {
 	return limaCfg
 }
