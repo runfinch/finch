@@ -11,7 +11,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
+	"github.com/lima-vm/lima/v2/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 	"github.com/xorcare/pointer"
@@ -62,7 +63,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -74,7 +75,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -131,14 +132,14 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, "soci", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
-				require.Equal(t, sociInstallationScript, limaCfg.Provision[0].Script)
+				require.Equal(t, sociInstallationScript, *limaCfg.Provision[0].Script)
 
 				buf, err = afero.ReadFile(fs, "/default.yaml")
 				require.NoError(t, err)
@@ -147,7 +148,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -185,7 +186,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -201,7 +202,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -239,7 +240,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -253,7 +254,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -310,14 +311,14 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, "overlayfs", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
-				require.Equal(t, sociInstallationScript, limaCfg.Provision[0].Script)
+				require.Equal(t, sociInstallationScript, *limaCfg.Provision[0].Script)
 
 				buf, err = afero.ReadFile(fs, "/default.yaml")
 				require.NoError(t, err)
@@ -327,7 +328,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -384,13 +385,13 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
 				require.Equal(t, "2GiB", *limaCfg.Memory)
 				require.Equal(t, "soci", limaCfg.Env["CONTAINERD_SNAPSHOTTER"])
-				require.Equal(t, sociInstallationScript, limaCfg.Provision[0].Script)
+				require.Equal(t, sociInstallationScript, *limaCfg.Provision[0].Script)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
 
 				buf, err = afero.ReadFile(fs, "/default.yaml")
@@ -400,7 +401,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -446,7 +447,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -459,9 +460,13 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 
 				require.Equal(t, "vz", *limaCfg.VMType)
 				require.Equal(t, "virtiofs", *limaCfg.MountType)
-				require.Equal(t, true, *limaCfg.Rosetta.BinFmt)
-				require.Equal(t, true, *limaCfg.Rosetta.Enabled)
 				require.Len(t, limaCfg.Provision, 0)
+
+				var vzOpts limatype.VZOpts
+				err = limayaml.Convert(limaCfg.VMOpts[limatype.VZ], &vzOpts, "vmOpts.vz")
+				require.Nil(t, err)
+				require.Equal(t, true, *vzOpts.Rosetta.BinFmt)
+				require.Equal(t, true, *vzOpts.Rosetta.Enabled)
 			},
 			want: nil,
 		},
@@ -492,7 +497,7 @@ rosetta:
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -503,11 +508,15 @@ rosetta:
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, "qemu", *limaCfg.VMType)
-				require.Equal(t, false, *limaCfg.Rosetta.Enabled)
-				require.Equal(t, false, *limaCfg.Rosetta.BinFmt)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
+
+				var vzOpts limatype.VZOpts
+				err = limayaml.Convert(limaCfg.VMOpts[limatype.VZ], &vzOpts, "vmOpts.vz")
+				require.Nil(t, err)
+				require.Equal(t, false, *vzOpts.Rosetta.BinFmt)
+				require.Equal(t, false, *vzOpts.Rosetta.Enabled)
 			},
 			want: nil,
 		},
@@ -531,7 +540,7 @@ mountType: "reverse-sshfs"`), 0o600)
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				buf, err := afero.ReadFile(fs, "/default.yaml")
 				require.NoError(t, err)
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, "qemu", *limaCfg.VMType)
@@ -562,7 +571,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -574,7 +583,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				require.NoError(t, err)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -600,7 +609,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -612,7 +621,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				require.NoError(t, err)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -652,7 +661,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -667,7 +676,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				require.NoError(t, err)
 				require.Equal(t, "reverse-sshfs", *limaCfg.MountType)
 				require.Equal(t, "system", limaCfg.Provision[0].Mode)
-				require.Equal(t, qemuPkgScriptWithHeader, limaCfg.Provision[0].Script)
+				require.Equal(t, qemuPkgScriptWithHeader, *limaCfg.Provision[0].Script)
 			},
 			want: nil,
 		},
@@ -691,7 +700,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)

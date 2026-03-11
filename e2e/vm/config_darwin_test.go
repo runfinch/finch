@@ -11,7 +11,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
+	"github.com/lima-vm/lima/v2/pkg/limayaml"
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
@@ -57,7 +58,7 @@ var testConfig = func(o *option.Option, installed bool) {
 			cfgBuf, err := os.ReadFile(filepath.Clean(overrideConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
-			var limaCfg limayaml.LimaYAML
+			var limaCfg limatype.LimaYAML
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
@@ -70,8 +71,12 @@ var testConfig = func(o *option.Option, installed bool) {
 			err = yaml.Unmarshal(cfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.VMType).Should(gomega.Equal("vz"))
-			gomega.Expect(*limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
-			gomega.Expect(*limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))
+
+			var vzOpts limatype.VZOpts
+			err = limayaml.Convert(limaCfg.VMOpts[limatype.VZ], &vzOpts, "vmOpts.vz")
+			gomega.Expect(err).Should(gomega.BeNil())
+			gomega.Expect(*vzOpts.Rosetta.Enabled).Should(gomega.Equal(false))
+			gomega.Expect(*vzOpts.Rosetta.BinFmt).Should(gomega.Equal(false))
 		})
 	})
 }

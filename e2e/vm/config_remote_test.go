@@ -12,7 +12,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
+	"github.com/lima-vm/lima/v2/pkg/limayaml"
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
@@ -88,7 +89,7 @@ var _ = func(o *option.Option) {
 			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
-			var limaCfg limayaml.LimaYAML
+			var limaCfg limatype.LimaYAML
 			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
@@ -107,7 +108,7 @@ var _ = func(o *option.Option) {
 			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
-			var limaCfg limayaml.LimaYAML
+			var limaCfg limatype.LimaYAML
 			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
@@ -126,7 +127,7 @@ var _ = func(o *option.Option) {
 			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
-			var limaCfg limayaml.LimaYAML
+			var limaCfg limatype.LimaYAML
 			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(limaCfg.CPUs).ShouldNot(gomega.BeNil())
@@ -164,7 +165,7 @@ additional_directories:
 			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
-			var limaCfg limayaml.LimaYAML
+			var limaCfg limatype.LimaYAML
 			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
@@ -188,7 +189,7 @@ additional_directories:
 			overrideCfgBuf, err := os.ReadFile(filepath.Clean(overrideLimaConfigFilePath))
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
-			var limaCfg limayaml.LimaYAML
+			var limaCfg limatype.LimaYAML
 			err = yaml.Unmarshal(overrideCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.CPUs).Should(gomega.Equal(6))
@@ -197,8 +198,12 @@ additional_directories:
 			err = yaml.Unmarshal(defaultCfgBuf, &limaCfg)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			gomega.Expect(*limaCfg.VMType).Should(gomega.Equal("qemu"))
-			gomega.Expect(*limaCfg.Rosetta.Enabled).Should(gomega.Equal(false))
-			gomega.Expect(*limaCfg.Rosetta.BinFmt).Should(gomega.Equal(false))
+
+			var vzOpts limatype.VZOpts
+			err = limayaml.Convert(limaCfg.VMOpts[limatype.VZ], &vzOpts, "vmOpts.vz")
+			gomega.Expect(err).Should(gomega.BeNil())
+			gomega.Expect(*vzOpts.Rosetta.Enabled).Should(gomega.Equal(false))
+			gomega.Expect(*vzOpts.Rosetta.BinFmt).Should(gomega.Equal(false))
 		})
 	})
 }
