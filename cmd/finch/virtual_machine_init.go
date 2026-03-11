@@ -83,7 +83,7 @@ func (iva *initVMAction) run() error {
 		return err
 	}
 
-	err = iva.limaConfigApplier.ConfigureDefaultLimaYaml()
+	err = iva.limaConfigApplier.ConfigureDefaultLimaYaml(iva.logger)
 	if err != nil {
 		return err
 	}

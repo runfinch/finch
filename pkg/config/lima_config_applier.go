@@ -16,6 +16,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/system"
 )
 
@@ -134,7 +135,7 @@ func NewLimaApplier(
 
 // ConfigureDefaultLimaYaml writes Lima-specific config values from Finch's config to default.yaml at lima config file path.
 // ConfigureDefaultLimaYaml will create a default.yaml at the path if it does not exist.
-func (lca *limaConfigApplier) ConfigureDefaultLimaYaml() error {
+func (lca *limaConfigApplier) ConfigureDefaultLimaYaml(logger flog.Logger) error {
 	if err := afero.WriteFile(lca.fs, lca.limaDefaultConfigPath, []byte(""), 0o600); err != nil {
 		return fmt.Errorf("failed to create the an empty lima config file: %w", err)
 	}
@@ -152,7 +153,7 @@ func (lca *limaConfigApplier) ConfigureDefaultLimaYaml() error {
 		limaCfg.MountInotify = pointer.Bool(lca.cfg.Experimental.MountInotify)
 	}
 
-	cfgAfterInit, err := lca.configureVirtualizationFramework(&limaCfg)
+	cfgAfterInit, err := lca.configureVirtualizationFramework(&limaCfg, logger)
 	if err != nil {
 		return fmt.Errorf("failed to apply init-only config values: %w", err)
 	}

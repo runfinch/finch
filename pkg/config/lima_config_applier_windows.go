@@ -10,9 +10,11 @@ import (
 
 	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/xorcare/pointer"
+
+	"github.com/runfinch/finch/pkg/flog"
 )
 
-func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limatype.LimaYAML) (*limatype.LimaYAML, error) {
+func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limatype.LimaYAML, _ flog.Logger) (*limatype.LimaYAML, error) {
 	// Check if system supports wsl2
 
 	if err := SupportsWSL2(lca.cmdCreator); err != nil {

@@ -11,20 +11,33 @@ import (
 
 	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/xorcare/pointer"
+
+	"github.com/runfinch/finch/pkg/flog"
 )
 
 // configureVirtualizationFramework changes settings that will only apply to the VM after a new init.
-func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limatype.LimaYAML) (*limatype.LimaYAML, error) {
-	hasSupport, hasSupportErr := SupportsVirtualizationFramework(lca.cmdCreator)
+func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limatype.LimaYAML, logger flog.Logger) (*limatype.LimaYAML, error) {
+	hasVZSupport, hasVZSupportErr := SupportsVirtualizationFramework(lca.cmdCreator)
 	// rosetta option takes priority over vmType.
 	// is rosetta:true is set, vmType: qemu is ignored.
-	if *lca.cfg.Rosetta &&
-		lca.systemDeps.Arch() == "arm64" {
-		if hasSupportErr != nil {
-			return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasSupportErr)
+	if *lca.cfg.Rosetta && lca.systemDeps.Arch() == "arm64" {
+		if hasVZSupportErr != nil {
+			return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasVZSupportErr)
 		}
-		if !hasSupport {
+		if !hasVZSupport {
 			return nil, errors.New(`system does not have virtualization framework support, change vmType to "qemu"`)
+		}
+
+		hasRosettaSupportKernel6_18, hasRosettaSupportKernel6_18Err := SupportsRosettaWithLinuxKernel6_18(lca.cmdCreator)
+		if hasRosettaSupportKernel6_18Err != nil {
+			return nil, fmt.Errorf("failed to check rosetta support for Linux kernel 6.18: %w", hasRosettaSupportKernel6_18Err)
+		}
+		if !hasRosettaSupportKernel6_18 {
+			logger.Warnf(
+				"Rosetta does not support Linux kernel 6.18 on macOS < 26. " +
+					"Please update your mac or use \"qemu\" emulator by setting " +
+					"\"rosetta: false\" in your finch.yaml",
+			)
 		}
 
 		var vzOpts limatype.VZOpts
@@ -40,10 +53,10 @@ func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limatype
 		switch *lca.cfg.VMType {
 		case "vz":
 			{
-				if hasSupportErr != nil {
-					return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasSupportErr)
+				if hasVZSupportErr != nil {
+					return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasVZSupportErr)
 				}
-				if !hasSupport {
+				if !hasVZSupport {
 					return nil, errors.New(`system does not have virtualization framework support, change vmType to "qemu"`)
 				}
 				limaCfg.MountType = pointer.String("virtiofs")

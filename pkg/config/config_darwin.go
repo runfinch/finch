@@ -34,7 +34,7 @@ type Finch struct {
 	SharedSettings `yaml:",inline"`
 }
 
-// SupportsRosettaWithLinuxKernel6_18 checks if macOS >= 26 or not
+// SupportsRosettaWithLinuxKernel6_18 checks if macOS >= 26 or not.
 func SupportsRosettaWithLinuxKernel6_18(cmdCreator command.Creator) (bool, error) {
 	majorVersionInt, err := getMacOSMajorVersion(cmdCreator)
 	if err != nil {

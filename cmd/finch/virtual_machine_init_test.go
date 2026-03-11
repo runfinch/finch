@@ -75,7 +75,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
 				command := mocks.NewCommand(ctrl)
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(nil)
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(nil)
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
@@ -145,7 +145,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(nil)
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(nil)
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
@@ -269,7 +269,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(nil)
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(nil)
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 
 				logger.EXPECT().Errorf("Dependency error: %v",
@@ -314,7 +314,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(errors.New("load config fails"))
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(errors.New("load config fails"))
 			},
 		},
 
@@ -336,7 +336,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(nil)
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(nil)
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
