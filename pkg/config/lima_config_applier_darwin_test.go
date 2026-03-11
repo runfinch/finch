@@ -11,7 +11,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
+	"github.com/lima-vm/lima/v2/pkg/limayaml"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 	"github.com/xorcare/pointer"
@@ -62,7 +63,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -131,7 +132,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -185,7 +186,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -239,7 +240,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -310,7 +311,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -384,7 +385,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -446,7 +447,7 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -464,8 +465,8 @@ func TestDiskLimaConfigApplier_Apply(t *testing.T) {
 				require.NotNil(t, limaCfg.VMOpts)
 				require.NotNil(t, limaCfg.VMOpts[limayaml.VZ])
 
-				var vzOpts limayaml.VZOpts
-				err = limayaml.Convert(limaCfg.VMOpts[limayaml.VZ], &vzOpts, "vmOpts.vz")
+				var vzOpts limatype.VZOpts
+				err = limayaml.Convert(limaCfg.VMOpts[limatype.VZ], &vzOpts, "vmOpts.vz")
 				require.NoError(t, err)
 				require.NotNil(t, vzOpts.Rosetta.BinFmt)
 				require.Equal(t, true, *vzOpts.Rosetta.BinFmt)
@@ -503,7 +504,7 @@ rosetta:
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -517,10 +518,10 @@ rosetta:
 
 				// Verify Rosetta config in vmOpts.vz.rosetta is disabled (new structure)
 				require.NotNil(t, limaCfg.VMOpts)
-				require.NotNil(t, limaCfg.VMOpts[limayaml.VZ])
+				require.NotNil(t, limaCfg.VMOpts[limatype.VZ])
 
-				var vzOpts limayaml.VZOpts
-				err = limayaml.Convert(limaCfg.VMOpts[limayaml.VZ], &vzOpts, "vmOpts.vz")
+				var vzOpts limatype.VZOpts
+				err = limayaml.Convert(limaCfg.VMOpts[limatype.VZ], &vzOpts, "vmOpts.vz")
 				require.NoError(t, err)
 				require.NotNil(t, vzOpts.Rosetta.BinFmt)
 				require.Equal(t, false, *vzOpts.Rosetta.BinFmt)
@@ -553,7 +554,7 @@ mountType: "reverse-sshfs"`), 0o600)
 			postRunCheck: func(t *testing.T, fs afero.Fs) {
 				buf, err := afero.ReadFile(fs, "/default.yaml")
 				require.NoError(t, err)
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, "qemu", *limaCfg.VMType)
@@ -584,7 +585,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -622,7 +623,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -674,7 +675,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)
@@ -713,7 +714,7 @@ mountType: "reverse-sshfs"`), 0o600)
 				buf, err := afero.ReadFile(fs, "/override.yaml")
 				require.NoError(t, err)
 
-				var limaCfg limayaml.LimaYAML
+				var limaCfg limatype.LimaYAML
 				err = yaml.Unmarshal(buf, &limaCfg)
 				require.NoError(t, err)
 				require.Equal(t, 4, *limaCfg.CPUs)

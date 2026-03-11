@@ -5,9 +5,10 @@
 package wrapper
 
 import (
+	"context"
 	"os/user"
 
-	"github.com/lima-vm/lima/pkg/osutil"
+	"github.com/lima-vm/lima/v2/pkg/osutil"
 
 	"github.com/runfinch/finch/pkg/lima"
 )
@@ -28,5 +29,5 @@ func NewLimaWrapper() LimaWrapper {
 
 // LimaUser returns the user that will be used inside the Lima VM.
 func (*limaWrapper) LimaUser(warn bool) *user.User {
-	return osutil.LimaUser(lima.LimaVersion, warn)
+	return osutil.LimaUser(context.Background(), lima.LimaVersion, warn)
 }

@@ -8,7 +8,7 @@ package config
 import (
 	"testing"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 	"github.com/xorcare/pointer"
@@ -17,7 +17,7 @@ import (
 	"github.com/runfinch/finch/pkg/mocks"
 )
 
-func makeConfig(vmType limayaml.VMType, memory string, cpus int, rosetta bool) *Finch {
+func makeConfig(vmType limatype.VMType, memory string, cpus int, rosetta bool) *Finch {
 	fc := Finch{}
 	fc.VMType = pointer.String(vmType)
 	fc.Memory = pointer.String(memory)
@@ -28,7 +28,7 @@ func makeConfig(vmType limayaml.VMType, memory string, cpus int, rosetta bool) *
 }
 
 func makeExperimentalConfig(
-	vmType limayaml.VMType,
+	vmType limatype.VMType,
 	memory string, cpus int,
 	rosetta bool,
 	experimentalSettings SharedExperimentalSettings,

@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
@@ -31,7 +31,7 @@ type AdditionalDirectory struct {
 
 // SharedSystemSettings represents all settings shared by virtualized Finch configurations.
 type SharedSystemSettings struct {
-	VMType *limayaml.VMType `yaml:"vmType,omitempty"`
+	VMType *limatype.VMType `yaml:"vmType,omitempty"`
 }
 
 // SharedSettings represents settings shared by all Finch configurations.
