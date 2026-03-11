@@ -23,6 +23,9 @@ var testNonDefaultOptions = func(o *option.Option, installed bool) {
 		supportsVz, supportsVzErr := config.SupportsVirtualizationFramework(finch_cmd.NewExecCmdCreator())
 		gomega.Expect(supportsVzErr).ShouldNot(gomega.HaveOccurred())
 
+		supportsRosettaWithKernel6_18, supportsRosettaErr := config.SupportsRosettaWithLinuxKernel6_18(finch_cmd.NewExecCmdCreator())
+		gomega.Expect(supportsRosettaErr).ShouldNot(gomega.HaveOccurred())
+
 		ginkgo.Describe("QEMU", ginkgo.Ordered, func() {
 			ginkgo.BeforeAll(func() {
 				if !supportsVz {
@@ -75,6 +78,9 @@ var testNonDefaultOptions = func(o *option.Option, installed bool) {
 			ginkgo.BeforeAll(func() {
 				if !supportsVz || runtime.GOOS != "darwin" || runtime.GOARCH != "arm64" {
 					ginkgo.Skip("Skipping because system does not support Rosetta")
+				}
+				if !supportsRosettaWithKernel6_18 {
+					ginkgo.Skip("Skipping because system does not support rosetta with kernel 6.18")
 				}
 
 				var err error
