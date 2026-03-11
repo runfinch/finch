@@ -7,6 +7,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -106,7 +107,7 @@ func TestHandleCredentials(t *testing.T) {
 		t.Parallel()
 		req := httptest.NewRequest(http.MethodGet, "/credentials?server=registry.example.com", nil)
 		for i := 0; i < 100; i++ {
-			req.Header.Set("X-Finch-Env-"+string(rune('A'+i)), "value")
+			req.Header.Set(fmt.Sprintf("X-Finch-Env-%c", 'A'+i), "value")
 		}
 		w := httptest.NewRecorder()
 
@@ -163,7 +164,7 @@ func TestHandleCredentials(t *testing.T) {
 		for i := 0; i < numRequests; i++ {
 			go func(id int) {
 				req := httptest.NewRequest(http.MethodGet, "/credentials?server=registry.example.com", nil)
-				req.Header.Set("X-Finch-Env-ID", string(rune('0'+id)))
+				req.Header.Set("X-Finch-Env-ID", fmt.Sprintf("%d", id))
 				w := httptest.NewRecorder()
 
 				handleCredentials(w, req)

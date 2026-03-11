@@ -33,7 +33,8 @@ func testMSIInstallPermission(_ *option.Option, installed bool) {
 				_, err := os.Stat(path)
 				gomega.Expect(err).Should(gomega.BeNil())
 				path = fmt.Sprintf(`"%s"`, path)
-				cmd := exec.Command("powershell", "-NoProfile", `.\install_windows_permission_check.ps1`, path)
+				args := []string{"-NoProfile", `.\install_windows_permission_check.ps1`, path}
+				cmd := exec.Command("powershell", args...) //nolint:gosec // G204: path is from hardcoded test entries
 				out, err := cmd.CombinedOutput()
 				// Verify that there are no explicit permissions meaning we rely on inherited permissions.
 				// Note: this checks the output before checking the error because if there is a failure, the

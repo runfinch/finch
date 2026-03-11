@@ -36,10 +36,10 @@ func TestContainer(t *testing.T) {
 		// Set DOCKER_CONFIG to /.finch
 		var finchConfigDir string
 		if runtime.GOOS == "windows" {
-			finchConfigDir = filepath.Join(os.Getenv("LOCALAPPDATA"), ".finch")
+			finchConfigDir = filepath.Clean(filepath.Join(os.Getenv("LOCALAPPDATA"), ".finch"))
 		} else {
 			homeDir, _ := os.UserHomeDir()
-			finchConfigDir = filepath.Join(homeDir, ".finch")
+			finchConfigDir = filepath.Clean(filepath.Join(homeDir, ".finch"))
 		}
 		_ = os.MkdirAll(finchConfigDir, 0o700)
 		o.UpdateEnv("DOCKER_CONFIG", finchConfigDir)

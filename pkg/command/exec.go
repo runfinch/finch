@@ -25,7 +25,7 @@ func (ecc *ExecCmdCreator) Create(name string, args ...string) Command {
 
 func newExecCmd(name string, args ...string) *execCmd {
 	return &execCmd{
-		exec.Command(name, args...),
+		exec.Command(name, args...), //nolint:gosec // G204: command args are controlled by internal callers
 	}
 }
 

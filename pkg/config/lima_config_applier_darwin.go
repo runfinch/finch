@@ -16,6 +16,8 @@ import (
 // configureVirtualizationFramework changes settings that will only apply to the VM after a new init.
 func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limatype.LimaYAML) (*limatype.LimaYAML, error) {
 	hasSupport, hasSupportErr := SupportsVirtualizationFramework(lca.cmdCreator)
+	// rosetta option takes priority over vmType.
+	// is rosetta:true is set, vmType: qemu is ignored.
 	if *lca.cfg.Rosetta &&
 		lca.systemDeps.Arch() == "arm64" {
 		if hasSupportErr != nil {
