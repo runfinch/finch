@@ -31,11 +31,12 @@ func newInitVMCommand(
 	fs afero.Fs,
 	privateKeyPath string,
 	diskManager disk.UserDataDiskManager,
+	finchConfig *config.Finch,
 ) *cobra.Command {
 	initVMCommand := &cobra.Command{
 		Use:      "init",
 		Short:    "Initialize the virtual machine",
-		RunE:     newInitVMAction(ncc, logger, optionalDepGroups, lca, baseYamlFilePath, diskManager).runAdapter,
+		RunE:     newInitVMAction(ncc, logger, optionalDepGroups, lca, baseYamlFilePath, diskManager, finchConfig).runAdapter,
 		PostRunE: newPostVMStartInitAction(logger, ncc, fs, privateKeyPath, nca).runAdapter,
 	}
 
@@ -49,6 +50,7 @@ type initVMAction struct {
 	optionalDepGroups []*dependency.Group
 	limaConfigApplier config.LimaConfigApplier
 	diskManager       disk.UserDataDiskManager
+	finchConfig       *config.Finch
 }
 
 func newInitVMAction(
@@ -58,6 +60,7 @@ func newInitVMAction(
 	lca config.LimaConfigApplier,
 	baseYamlFilePath string,
 	diskManager disk.UserDataDiskManager,
+	finchConfig *config.Finch,
 ) *initVMAction {
 	return &initVMAction{
 		creator:           creator,
@@ -66,6 +69,7 @@ func newInitVMAction(
 		limaConfigApplier: lca,
 		baseYamlFilePath:  baseYamlFilePath,
 		diskManager:       diskManager,
+		finchConfig:       finchConfig,
 	}
 }
 
@@ -79,7 +83,7 @@ func (iva *initVMAction) run() error {
 		return err
 	}
 
-	err = iva.limaConfigApplier.ConfigureDefaultLimaYaml()
+	err = iva.limaConfigApplier.ConfigureDefaultLimaYaml(iva.logger)
 	if err != nil {
 		return err
 	}
@@ -103,7 +107,15 @@ func (iva *initVMAction) run() error {
 	}
 
 	instanceName := fmt.Sprintf("--name=%v", limaInstanceName)
-	limaCmd := iva.creator.CreateWithoutStdio("start", instanceName, iva.baseYamlFilePath, "--tty=false")
+	startOpts := []string{"start", instanceName, iva.baseYamlFilePath, "--tty=false"}
+	if iva.finchConfig == nil || *iva.finchConfig.VMType == "vz" {
+		// Starting with 2.0, Lima uses ssh over vsock by default on systemd >= 256 (https://github.com/lima-vm/lima/pull/3979)
+		// which is causing a ssh "permission denied" issue with VZ driver.
+		// So, disabling this feature for VZ driver for now.
+		// This still works with QEMU driver.
+		startOpts = append(startOpts, "--set", ".ssh.overVsock=false")
+	}
+	limaCmd := iva.creator.CreateWithoutStdio(startOpts...)
 
 	iva.logger.Info("Initializing and starting Finch virtual machine...")
 	logs, err := limaCmd.CombinedOutput()

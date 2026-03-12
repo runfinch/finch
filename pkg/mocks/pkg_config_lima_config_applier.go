@@ -15,6 +15,7 @@ package mocks
 import (
 	reflect "reflect"
 
+	flog "github.com/runfinch/finch/pkg/flog"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -43,17 +44,17 @@ func (m *LimaConfigApplier) EXPECT() *LimaConfigApplierMockRecorder {
 }
 
 // ConfigureDefaultLimaYaml mocks base method.
-func (m *LimaConfigApplier) ConfigureDefaultLimaYaml() error {
+func (m *LimaConfigApplier) ConfigureDefaultLimaYaml(logger flog.Logger) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConfigureDefaultLimaYaml")
+	ret := m.ctrl.Call(m, "ConfigureDefaultLimaYaml", logger)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ConfigureDefaultLimaYaml indicates an expected call of ConfigureDefaultLimaYaml.
-func (mr *LimaConfigApplierMockRecorder) ConfigureDefaultLimaYaml() *gomock.Call {
+func (mr *LimaConfigApplierMockRecorder) ConfigureDefaultLimaYaml(logger any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfigureDefaultLimaYaml", reflect.TypeOf((*LimaConfigApplier)(nil).ConfigureDefaultLimaYaml))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfigureDefaultLimaYaml", reflect.TypeOf((*LimaConfigApplier)(nil).ConfigureDefaultLimaYaml), logger)
 }
 
 // ConfigureOverrideLimaYaml mocks base method.

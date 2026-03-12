@@ -39,7 +39,7 @@ func TestVM(t *testing.T) {
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
 		// Ensure DOCKER_CONFIG is set to %LOCALAPPDATA%\.finch
 		finchRootDir := os.Getenv("LOCALAPPDATA")
-		finchConfigDir := filepath.Join(finchRootDir, ".finch")
+		finchConfigDir := filepath.Clean(filepath.Join(finchRootDir, ".finch"))
 		_ = os.MkdirAll(finchConfigDir, 0o700)
 		o.UpdateEnv("DOCKER_CONFIG", finchConfigDir)
 		// Ensure empty /.finch/config.json

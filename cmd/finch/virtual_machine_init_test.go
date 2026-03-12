@@ -25,7 +25,7 @@ const mockBaseYamlFilePath = "/os/os.yaml"
 func TestNewInitVMCommand(t *testing.T) {
 	t.Parallel()
 
-	cmd := newInitVMCommand(nil, nil, nil, nil, nil, "", nil, "", nil)
+	cmd := newInitVMCommand(nil, nil, nil, nil, nil, "", nil, "", nil, nil)
 	assert.Equal(t, cmd.Name(), "init")
 }
 
@@ -75,12 +75,12 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
 				command := mocks.NewCommand(ctrl)
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(nil)
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(nil)
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 				ncc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
-					mockBaseYamlFilePath, "--tty=false").Return(command)
+					mockBaseYamlFilePath, "--tty=false", "--set", ".ssh.overVsock=false").Return(command)
 				command.EXPECT().CombinedOutput()
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
@@ -107,7 +107,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 			groups := tc.groups(ctrl)
 			tc.mockSvc(ncc, logger, lca, dm, ctrl)
 
-			assert.NoError(t, newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, dm).runAdapter(tc.command, tc.args))
+			assert.NoError(t, newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, dm, nil).runAdapter(tc.command, tc.args))
 		})
 	}
 }
@@ -145,14 +145,14 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(nil)
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(nil)
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
-					mockBaseYamlFilePath, "--tty=false").Return(command)
+					mockBaseYamlFilePath, "--tty=false", "--set", ".ssh.overVsock=false").Return(command)
 				command.EXPECT().CombinedOutput()
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
@@ -269,7 +269,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(nil)
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(nil)
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 
 				logger.EXPECT().Errorf("Dependency error: %v",
@@ -282,7 +282,7 @@ func TestInitVMAction_run(t *testing.T) {
 
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
-					mockBaseYamlFilePath, "--tty=false").Return(command)
+					mockBaseYamlFilePath, "--tty=false", "--set", ".ssh.overVsock=false").Return(command)
 				command.EXPECT().CombinedOutput()
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
@@ -314,7 +314,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(errors.New("load config fails"))
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(errors.New("load config fails"))
 			},
 		},
 
@@ -336,7 +336,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().ConfigureDefaultLimaYaml().Return(nil)
+				lca.EXPECT().ConfigureDefaultLimaYaml(logger).Return(nil)
 				lca.EXPECT().ConfigureOverrideLimaYaml().Return(nil)
 				dm.EXPECT().DetachUserDataDisk().Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
@@ -345,7 +345,7 @@ func TestInitVMAction_run(t *testing.T) {
 				command := mocks.NewCommand(ctrl)
 				command.EXPECT().CombinedOutput().Return(logs, errors.New("failed to init instance"))
 				ncc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
-					mockBaseYamlFilePath, "--tty=false").Return(command)
+					mockBaseYamlFilePath, "--tty=false", "--set", ".ssh.overVsock=false").Return(command)
 
 				logger.EXPECT().Info("Initializing and starting Finch virtual machine...")
 				logger.EXPECT().SetFormatter(flog.TextWithoutTruncation)
@@ -369,7 +369,7 @@ func TestInitVMAction_run(t *testing.T) {
 			groups := tc.groups(ctrl)
 			tc.mockSvc(ncc, logger, lca, dm, ctrl)
 
-			err := newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, dm).run()
+			err := newInitVMAction(ncc, logger, groups, lca, mockBaseYamlFilePath, dm, nil).run()
 			assert.Equal(t, err, tc.wantErr)
 		})
 	}

@@ -81,7 +81,7 @@ const (
 //go:generate mockgen -copyright_file=../../copyright_header -destination=../mocks/pkg_config_lima_config_applier.go -package=mocks -mock_names LimaConfigApplier=LimaConfigApplier . LimaConfigApplier
 type LimaConfigApplier interface {
 	ConfigureOverrideLimaYaml() error
-	ConfigureDefaultLimaYaml() error
+	ConfigureDefaultLimaYaml(logger flog.Logger) error
 	GetFinchConfigPath() string
 }
 

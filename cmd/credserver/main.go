@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
@@ -31,9 +32,9 @@ func main() {
 	if len(os.Args) < 4 {
 		logrus.Fatal("Usage: credserver <socket-path> <pid-file> <log-file>")
 	}
-	socketPath := os.Args[1]
-	pidFile := os.Args[2]
-	logPath := os.Args[3]
+	socketPath := filepath.Clean(os.Args[1])
+	pidFile := filepath.Clean(os.Args[2])
+	logPath := filepath.Clean(os.Args[3])
 
 	// Setup file logging with rotation
 	// #nosec G302 -- Log file needs to be readable for debugging
@@ -162,7 +163,7 @@ func handleCredentials(w http.ResponseWriter, r *http.Request) {
 
 	// Encode credentials to JSON
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(creds); err != nil {
+	if err := json.NewEncoder(&buf).Encode(creds); err != nil { //nolint:gosec // G117: intentional
 		logrus.Errorf("Failed to encode credentials to JSON: %v", err)
 		http.Error(w, "Failed to encode credentials", http.StatusInternalServerError)
 		return
