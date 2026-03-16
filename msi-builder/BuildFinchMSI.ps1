@@ -93,10 +93,23 @@ $candleArgs = "$wxsFilePath -out $wixobjPath"
 $lightPath = Join-Path -Path $wixToolPath -ChildPath "light.exe"
 $lightArgs = "$wixobjPath -ext WixUIExtension -out $msiPath"
 
-Start-Process -FilePath $candlePath -ArgumentList $candleArgs -Wait
+$candleStdout = Join-Path $buildFolderPath "candle-stdout.log"
+$candleStderr = Join-Path $buildFolderPath "candle-stderr.log"
+Start-Process -FilePath $candlePath -ArgumentList $candleArgs -Wait -RedirectStandardOutput $candleStdout -RedirectStandardError $candleStderr
+Write-Host "Candle stdout:"
+Get-Content $candleStdout | Write-Host
+Write-Host "Candle stderr:"
+Get-Content $candleStderr | Write-Host
 Write-Host "Candle finished."
+
 Write-Host "Light started, it may take some time..."
-Start-Process -FilePath $lightPath -ArgumentList $lightArgs -Wait
+$lightStdout = Join-Path $buildFolderPath "light-stdout.log"
+$lightStderr = Join-Path $buildFolderPath "light-stderr.log"
+Start-Process -FilePath $lightPath -ArgumentList $lightArgs -Wait -RedirectStandardOutput $lightStdout -RedirectStandardError $lightStderr
+Write-Host "Light stdout:"
+Get-Content $lightStdout | Write-Host
+Write-Host "Light stderr:"
+Get-Content $lightStderr | Write-Host
 Write-Host "Light finished."
 
 Write-Host "Finch-$Version.msi is generated. Location: $msiPath"
