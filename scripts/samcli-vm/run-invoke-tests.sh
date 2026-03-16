@@ -26,6 +26,9 @@ su ec2-user -c "
 #         test runs within invoke. Work when run in isolation and locally.
 # test_successful_invoke: Related to symlink mount errors due to permissions. Works locally.
 # test_invoke_returns_execpted_results_2_HelloWorldServerlessWithFunctionNameRefFunction: Module import error.
+# test_invoke_returns_expected_results_from_git_function: Layer download message leaks into stdout.
+#         Output is 'Downloading arn:aws:lambda:...:layer:git-lambda2\n"git init passed"'
+#         instead of just '"git init passed"'.
 cat > expected_invoke_failures.txt << 'EOF'
 test_invoke_with_error_during_image_build
 test_invoke_with_timeout_set_0_TimeoutFunction
@@ -36,6 +39,7 @@ test_caching_two_layers
 test_caching_two_layers_with_layer_cache_env_set
 test_successful_invoke
 test_invoke_returns_execpted_results_2_HelloWorldServerlessWithFunctionNameRefFunction
+test_invoke_returns_expected_results_from_git_function
 EOF
 
 # Validate test results
