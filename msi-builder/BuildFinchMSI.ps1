@@ -72,7 +72,7 @@ $wxsFilePath = Join-Path -Path $scriptDirectory -ChildPath "build\FinchMSITempla
 
 # Search finch-roofs-production-amd64-*.tar.gz and get its name
 $roofsPath = Join-Path $PSScriptRoot "build\Finch\os"
-$roofsFile = Get-ChildItem -Path $roofsPath -Filter "finch-rootfs-production-amd64-*.tar.gz" | Select-Object -First 1
+$roofsFile = Get-ChildItem -Path $roofsPath -Filter "finch-al2023-rootfs-x86-64-*.tar.gz" | Select-Object -First 1
 $roofsFileName = $roofsFile.Name
 
 # Replace __ROOTFS__, __SOURCE__ and __VERSION__
