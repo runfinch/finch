@@ -8,7 +8,7 @@ AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
 safe_aws_command() {
   local max_attempts=3
   local attempt=1
-  local command="$@"
+  local command="$*"
   while [ $attempt -le $max_attempts ]; do
     if eval "$command"; then
       return 0
@@ -26,14 +26,14 @@ echo "=== Cleaning S3 buckets ==="
 TEST_PATTERNS=("sam-app" "test-" "integration-test" "samcli" "aws-sam-cli-managed")
 
 for pattern in "${TEST_PATTERNS[@]}"; do
-  STACKS=$(aws cloudformation list-stacks --region $AWS_DEFAULT_REGION --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE ROLLBACK_COMPLETE UPDATE_ROLLBACK_COMPLETE --query "StackSummaries[?contains(StackName, '$pattern')].[StackName]" --output text 2>/dev/null || true)
+  STACKS=$(aws cloudformation list-stacks --region "$AWS_DEFAULT_REGION" --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE ROLLBACK_COMPLETE UPDATE_ROLLBACK_COMPLETE --query "StackSummaries[?contains(StackName, '$pattern')].[StackName]" --output text 2>/dev/null || true)
 
   for stack in $STACKS; do
     echo "Processing stack: $stack"
     
     # Get S3 buckets from stack
-    BUCKET_NAMES=$(aws cloudformation describe-stacks --stack-name "$stack" --region $AWS_DEFAULT_REGION --query 'Stacks[0].Outputs[?contains(OutputKey, `Bucket`) || contains(OutputKey, `bucket`)].OutputValue' --output text 2>/dev/null || true)
-    RESOURCE_BUCKETS=$(aws cloudformation describe-stack-resources --stack-name "$stack" --region $AWS_DEFAULT_REGION --query 'StackResources[?ResourceType==`AWS::S3::Bucket`].PhysicalResourceId' --output text 2>/dev/null || true)
+    BUCKET_NAMES=$(aws cloudformation describe-stacks --stack-name "$stack" --region "$AWS_DEFAULT_REGION" --query 'Stacks[0].Outputs[?contains(OutputKey, `Bucket`) || contains(OutputKey, `bucket`)].OutputValue' --output text 2>/dev/null || true)
+    RESOURCE_BUCKETS=$(aws cloudformation describe-stack-resources --stack-name "$stack" --region "$AWS_DEFAULT_REGION" --query 'StackResources[?ResourceType==`AWS::S3::Bucket`].PhysicalResourceId' --output text 2>/dev/null || true)
 
     # Empty buckets (don't delete them)
     for bucket in $BUCKET_NAMES $RESOURCE_BUCKETS; do
@@ -52,7 +52,7 @@ done
 echo "=== Cleaning ECR repositories ==="
 ECR_PATTERNS=("sam-app" "test-" "integration-test")
 for pattern in "${ECR_PATTERNS[@]}"; do
-  REPOS=$(aws ecr describe-repositories --region $AWS_DEFAULT_REGION --query "repositories[?contains(repositoryName, '$pattern')].repositoryName" --output text 2>/dev/null || true)
+  REPOS=$(aws ecr describe-repositories --region "$AWS_DEFAULT_REGION" --query "repositories[?contains(repositoryName, '$pattern')].repositoryName" --output text 2>/dev/null || true)
   for repo in $REPOS; do
     echo "Deleting ECR repository: $repo"
     safe_aws_command "aws ecr delete-repository --repository-name '$repo' --force --region $AWS_DEFAULT_REGION" || true
