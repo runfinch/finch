@@ -141,6 +141,8 @@ jobs:
           sudo ./scripts/clean-iptables.sh
       - name: Install dependencies
         run: |
+          # fix corrupted dpkg
+          sudo dpkg --configure -a
           sudo apt install build-essential -y
           sudo apt install libseccomp-dev -y
           sudo apt install pkg-config -y

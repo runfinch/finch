@@ -84,10 +84,14 @@ var testCosign = func(o *option.Option) {
 			command.Run(o, "pull", "--verify=cosign", "--cosign-key=./cosign_data/test-1.pub", tag)
 			command.Run(o, "run", "-d", "--verify=cosign", "--cosign-key=./cosign_data/test-1.pub", tag)
 
+			noMatchErr := gomega.SatisfyAny(
+				gomega.ContainSubstring("no matching signatures"),
+				gomega.ContainSubstring("no matching attestations"),
+			)
 			gomega.Expect(command.RunWithoutSuccessfulExit(o, "pull", "--verify=cosign", "--cosign-key=./cosign_data/test-2.pub",
-				tag).Err.Contents()).Should(gomega.ContainSubstring("no matching signatures"))
+				tag).Err.Contents()).Should(noMatchErr)
 			gomega.Expect(command.RunWithoutSuccessfulExit(o, "run", "-d", "--verify=cosign", "--cosign-key=./cosign_data/test-2.pub",
-				tag).Err.Contents()).Should(gomega.ContainSubstring("no matching signatures"))
+				tag).Err.Contents()).Should(noMatchErr)
 		})
 	})
 }
