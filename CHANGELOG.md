@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.16.0](https://github.com/runfinch/finch/compare/v1.15.1...v1.16.0) (2026-03-19)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump submodules and dependencies ([#1708](https://github.com/runfinch/finch/issues/1708)) ([b6ba659](https://github.com/runfinch/finch/commit/b6ba659ad961f73400e91d366ca0dfaa1ea0ef80))
+
+
+### Features
+
+* add mkosi based AL2023 images ([#1716](https://github.com/runfinch/finch/issues/1716)) ([40e5350](https://github.com/runfinch/finch/commit/40e5350972d3dd8741e42ce18336bbe919771400))
+
+
+### Bug Fixes
+
+* move samcli-vm tests to finch ([#1710](https://github.com/runfinch/finch/issues/1710)) ([a610930](https://github.com/runfinch/finch/commit/a6109308206186a53a8a4699a4228c1e7310e117))
+
 ## [1.15.1](https://github.com/runfinch/finch/compare/v1.15.0...v1.15.1) (2026-02-26)
 
 
