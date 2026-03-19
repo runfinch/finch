@@ -7,6 +7,10 @@ provision:
   - mode: boot
     script: |
       modprobe virtiofs
+  # workaround for host.finch.internl and host.docker.internal not resolving inside the VM
+  - mode: system
+    script: |
+      sed -i 's/host\.lima\.internal/host.lima.internal host.docker.internal host.finch.internal/' /etc/hosts
   # port this to common.yaml after windows socket forwarding is added
   - mode: user
     script: |
