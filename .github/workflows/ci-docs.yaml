@@ -7,7 +7,7 @@
 # However, due to GitHub's logic, even though the one from ci-docs.yaml passes,
 # the one from ci.yaml still has to pass for the PR to be merged,
 # so it functionally works, while it's visually confusing.
-name: CI
+name: CI Docs
 on:
   push:
     branches:

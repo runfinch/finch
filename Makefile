@@ -359,15 +359,15 @@ test-e2e: test-e2e-vm-serial test-e2e-container
 
 .PHONY: test-e2e-vm-serial
 test-e2e-vm-serial: create-report-dir create-coverage-dir add-credhelper-to-path
-	FINCH_GOCOVERDIR=$(COVERAGE_DIR) go test -coverpkg=./... -ldflags "$(E2E_VM_LDFLAGS)" -timeout 2h ./e2e/vm -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
+	FINCH_GOCOVERDIR=$(COVERAGE_DIR) go test -coverpkg=./... -ldflags "$(E2E_VM_LDFLAGS)" -timeout 2h ./e2e/vm -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.vv -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-serial-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-container
 test-e2e-container: create-report-dir create-coverage-dir add-credhelper-to-path
-	FINCH_GOCOVERDIR=$(COVERAGE_DIR) go test -coverpkg=./... -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
+	FINCH_GOCOVERDIR=$(COVERAGE_DIR) go test -coverpkg=./... -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.vv -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
 test-e2e-vm: create-report-dir create-coverage-dir
-	FINCH_GOCOVERDIR=$(COVERAGE_DIR) go test -coverpkg=./... -ldflags "$(E2E_VM_LDFLAGS)" -timeout 2h ./e2e/vm -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.v -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
+	FINCH_GOCOVERDIR=$(COVERAGE_DIR) go test -coverpkg=./... -ldflags "$(E2E_VM_LDFLAGS)" -timeout 2h ./e2e/vm -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.vv -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-vm-report.json --installed="$(INSTALLED)" --registry="$(REGISTRY)"
 
 .PHONY: test-e2e-cov
 test-e2e-cov:
@@ -396,7 +396,7 @@ test-e2e-daemon:
 	DOCKER_HOST=$(DAEMON_DOCKER_HOST) \
 	DOCKER_API_VERSION="v1.41" \
 	TEST_E2E=1 \
-	go test ./e2e -timeout 30m -test.v -ginkgo.v \
+	go test ./e2e -timeout 30m -test.v -ginkgo.vv \
 	  -ginkgo.randomize-all -ginkgo.flake-attempts=3 \
 	  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
 	  --subject="$(OUTDIR)/bin/$(BINARYNAME)" \
@@ -414,7 +414,7 @@ test-e2e-daemon-linux:
 	DOCKER_HOST="unix:///run/finch.sock" \
 	DOCKER_API_VERSION="v1.41" \
 	TEST_E2E=1 \
-	go test ./e2e -p 1 -timeout 2h -test.v -ginkgo.v \
+	go test ./e2e -p 1 -timeout 2h -test.v -ginkgo.vv \
 	-ginkgo.flake-attempts=3 \
 	-ginkgo.skip="should create container with specified blkio settings options" \
 	-ginkgo.randomize-all  -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-daemon-report.json \
