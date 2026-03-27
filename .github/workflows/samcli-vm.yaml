@@ -1,6 +1,14 @@
 name: samcli-vm
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/samcli-vm/**'
+      - 'scripts/cleanup-aws-resources.sh'
+      - 'scripts/validate-test-results.sh'
+      - '.github/workflows/samcli-vm.yaml'
   pull_request:
     branches:
       - main
@@ -29,7 +37,19 @@ permissions:
   contents: read
 
 jobs:
+  set-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set output variables
+        id: vars
+        run: |
+          has_creds=${{ (github.event_name != 'pull_request' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
+          echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
+    outputs:
+      has_creds: ${{ steps.vars.outputs.has_creds }}
   samcli-vm-test:
+    needs: set-vars
+    if: ${{ needs.set-vars.outputs.has_creds == 'true' }}
     runs-on: codebuild-finch-macos-arm64-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
     timeout-minutes: 90
     strategy:
@@ -188,9 +208,9 @@ jobs:
         run: ./scripts/samcli-vm/run-${{ matrix.test_type }}-tests.sh
 
   cleanup:
+    needs: [set-vars, samcli-vm-test]
+    if: ${{ needs.set-vars.outputs.has_creds == 'true' }}
     runs-on: codebuild-finch-macos-arm64-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
-    needs: samcli-vm-test
-    if: always()
     steps:
       - name: Final cleanup
         run: |
