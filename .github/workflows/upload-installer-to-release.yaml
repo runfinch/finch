@@ -34,7 +34,7 @@ jobs:
     timeout-minutes: 2
     steps:
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: download-installer-session
@@ -45,7 +45,7 @@ jobs:
           aws s3 cp s3://${{ secrets.INSTALLER_PRIVATE_BUCKET_NAME }}/Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg Finch-${{ needs.get-tag-name.outputs.tag }}-x86_64.pkg
           aws s3 cp s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/dependency-sources.tar.gz DependenciesSourceCode.tar.gz
       - name: Upload installers and dependency source code to release
-        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v0.1.15
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v0.1.15
         with:
           tag_name: ${{ needs.get-tag-name.outputs.tag }}
           files: |
