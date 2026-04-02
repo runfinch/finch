@@ -15,7 +15,6 @@ on:
     paths:
       - '**.md'
       - 'contrib/**'
-      - '!contrib/packaging/**'
       - 'docs/**'
       - 'installer-builder/**'
       - 'scripts/**'
@@ -23,6 +22,7 @@ on:
       - '.github/**'
       - 'release-please-config.json'
       - '.release-please-manifest.json'
+      - '!contrib/packaging/**'
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
@@ -32,7 +32,6 @@ on:
     paths:
       - '**.md'
       - 'contrib/**'
-      - '!contrib/packaging/**'
       - 'docs/**'
       - 'installer-builder/**'
       - 'scripts/**'
@@ -40,6 +39,7 @@ on:
       - '.github/**'
       - 'release-please-config.json'
       - '.release-please-manifest.json'
+      - '!contrib/packaging/**'
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
