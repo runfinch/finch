@@ -50,7 +50,7 @@ jobs:
   samcli-vm-test:
     needs: set-vars
     if: ${{ needs.set-vars.outputs.has_creds == 'true' }}
-    runs-on: codebuild-finch-macos-arm64-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    runs-on: codebuild-finch-macOS26-samcli-arm64-1-instance-${{ github.run_id }}-${{ github.run_attempt }}
     timeout-minutes: 90
     strategy:
       fail-fast: false
