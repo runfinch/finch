@@ -25,6 +25,8 @@ type SystemSettings struct {
 	Memory                *string               `yaml:"memory,omitempty"`
 	AdditionalDirectories []AdditionalDirectory `yaml:"additional_directories,omitempty"`
 	Rosetta               *bool                 `yaml:"rosetta,omitempty"`
+	BootDisk              *string               `yaml:"bootdisk,omitempty"`
+	DataDisk              *string               `yaml:"datadisk,omitempty"`
 	SharedSystemSettings  `yaml:",inline"`
 }
 
@@ -92,8 +94,9 @@ func ModifyFinchConfig(fs afero.Fs, logger flog.Logger, finchConfigPath string, 
 	}
 
 	cpus, memory := opts.CPUs, opts.Memory
+	bootDisk, dataDisk := opts.BootDisk, opts.DataDisk
 	// This should never happen when called from the CLI, but good to cover just in case
-	if cpus == nil && memory == nil {
+	if cpus == nil && memory == nil && bootDisk == nil && dataDisk == nil {
 		return isConfigUpdated, fmt.Errorf("specify at least one flag")
 	}
 	if cpus != nil && *cpus != *finchCfg.CPUs {
@@ -102,6 +105,14 @@ func ModifyFinchConfig(fs afero.Fs, logger flog.Logger, finchConfigPath string, 
 	}
 	if memory != nil && *memory != *finchCfg.Memory {
 		*finchCfg.Memory = *memory
+		isConfigUpdated = true
+	}
+	if bootDisk != nil && *bootDisk != *finchCfg.BootDisk {
+		*finchCfg.BootDisk = *bootDisk
+		isConfigUpdated = true
+	}
+	if dataDisk != nil && *dataDisk != *finchCfg.DataDisk {
+		*finchCfg.DataDisk = *dataDisk
 		isConfigUpdated = true
 	}
 

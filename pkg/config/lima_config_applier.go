@@ -182,6 +182,8 @@ func (lca *limaConfigApplier) ConfigureOverrideLimaYaml() error {
 	lca.configureCPUs(&limaCfg)
 	lca.configureMemory(&limaCfg)
 	lca.configureMounts(&limaCfg)
+	lca.configureDisk(&limaCfg)
+
 	if *lca.cfg.VMType != "wsl2" && len(limaCfg.AdditionalDisks) == 0 {
 		limaCfg.AdditionalDisks = append(limaCfg.AdditionalDisks, limatype.Disk{
 			Name: "finch",

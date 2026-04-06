@@ -19,6 +19,9 @@ const (
 	// 2,147,483,648 => 2GiB.
 	fallbackMemory float64 = 2_147_483_648
 	fallbackCPUs   int     = 2
+	// 53_687_091_200 => 50GiB
+	fallbackBootDisk float64 = 53_687_091_200
+	fallbackDatadisk float64 = 53_687_091_200
 )
 
 func vmDefault(cfg *Finch, supportsVz bool) {
@@ -65,6 +68,18 @@ func credHelperDefault(cfg *Finch) {
 	}
 }
 
+func bootDiskDefault(cfg *Finch) {
+	if cfg.BootDisk == nil {
+		cfg.BootDisk = pointer.String(units.BytesSize(fallbackBootDisk))
+	}
+}
+
+func dataDiskDefault(cfg *Finch) {
+	if cfg.DataDisk == nil {
+		cfg.DataDisk = pointer.String(units.BytesSize(fallbackDatadisk))
+	}
+}
+
 // applyDefaults sets default configuration options if they are not already set.
 func applyDefaults(
 	cfg *Finch,
@@ -82,6 +97,9 @@ func applyDefaults(
 	vmDefault(cfg, supportsVz)
 	rosettaDefault(cfg)
 	credHelperDefault(cfg)
+
+	bootDiskDefault(cfg)
+	dataDiskDefault(cfg)
 
 	return cfg
 }

@@ -18,8 +18,7 @@ import (
 
 const (
 	// diskName must always be consistent with the value set for AdditionalDisks in lima_config_applier.go.
-	diskName    = "finch"
-	diskSizeStr = "50GB"
+	diskName = "finch"
 )
 
 type qemuDiskInfo struct {
@@ -76,6 +75,10 @@ func (m *userDataDiskManager) EnsureUserDataDisk() error {
 		if err := m.attachPersistentDiskToLimaDisk(); err != nil {
 			return err
 		}
+	}
+
+	if err := m.resizeDiskIfNeeded(); err != nil {
+		return err
 	}
 
 	if m.limaDiskIsLocked() {
@@ -153,7 +156,7 @@ func (m *userDataDiskManager) convertToRaw(diskPath string) error {
 }
 
 func (m *userDataDiskManager) createLimaDisk() error {
-	size, err := sizeString()
+	size, err := sizeString(*m.config.DataDisk)
 	if err != nil {
 		return fmt.Errorf("failed to get disk size: %w", err)
 	}
@@ -214,8 +217,49 @@ func (m *userDataDiskManager) unlockLimaDisk() error {
 	return nil
 }
 
-func sizeString() (string, error) {
-	sizeB, err := units.RAMInBytes(diskSizeStr)
+func (m *userDataDiskManager) resizeDiskIfNeeded() error {
+	if m.config.DataDisk == nil {
+		return nil
+	}
+
+	configuredDataDiskBytes, err := units.RAMInBytes(*m.config.DataDisk)
+	if err != nil {
+		return fmt.Errorf("failed to parse configured disk size: %w", err)
+	}
+
+	diskPath := m.finch.UserDataDiskPath(m.rootDir)
+	info, err := m.getDiskInfo(diskPath)
+	if err != nil {
+		return err
+	}
+
+	actualDataDiskBytes := int64(info.VirtualSize)
+	if configuredDataDiskBytes == actualDataDiskBytes {
+		return nil
+	}
+
+	if configuredDataDiskBytes < actualDataDiskBytes {
+		m.logger.Warnf("Shrinking the data disk is not supported (configured: %s, current: %s), skipping resize",
+			units.BytesSize(float64(configuredDataDiskBytes)), units.BytesSize(float64(actualDataDiskBytes)))
+		return nil
+	}
+
+	size, err := sizeString(*m.config.DataDisk)
+	if err != nil {
+		return fmt.Errorf("failed to get disk size: %w", err)
+	}
+
+	m.logger.Infof("Resizing data disk from %s to %s", units.BytesSize(float64(actualDataDiskBytes)), size)
+	cmd := m.ncc.CreateWithoutStdio("disk", "resize", diskName, "--size", size)
+	if logs, err := cmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("failed to resize disk to %s, debug logs:\n%s", size, logs)
+	}
+
+	return nil
+}
+
+func sizeString(size string) (string, error) {
+	sizeB, err := units.RAMInBytes(size)
 	if err != nil {
 		return "", err
 	}

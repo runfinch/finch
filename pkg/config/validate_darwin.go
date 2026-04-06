@@ -54,5 +54,27 @@ func validate(cfg *Finch, log flog.Logger, systemDeps LoadSystemDeps, mem fmemor
 		)
 	}
 
+	bootDiskInt, err := units.FromHumanSize(*cfg.BootDisk)
+	if err != nil {
+		return fmt.Errorf("failed to parse bootdisk to uint: %w", err)
+	}
+	if bootDiskInt <= 10 {
+		return fmt.Errorf(
+			"specified size of boot disk (%s) must be greater than 10GiB",
+			*cfg.BootDisk,
+		)
+	}
+
+	dataDiskInt, err := units.FromHumanSize(*cfg.DataDisk)
+	if err != nil {
+		return fmt.Errorf("failed to parse datadisk to uint: %w", err)
+	}
+	if dataDiskInt <= 10 {
+		return fmt.Errorf(
+			"specified size of datadisk (%s) must be greater than 10GiB",
+			*cfg.DataDisk,
+		)
+	}
+
 	return nil
 }

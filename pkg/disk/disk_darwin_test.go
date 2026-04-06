@@ -39,7 +39,7 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 	finch := fpath.Finch("mock_finch")
 	homeDir := "mock_home"
 
-	size, err := sizeString()
+	size, err := sizeString("50GiB")
 	assert.NoError(t, err)
 
 	limaPath := path.Join(finch.LimaHomePath(), "_disks", diskName, "datadisk")

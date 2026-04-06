@@ -110,3 +110,8 @@ func (lca *limaConfigApplier) configureMounts(limaCfg *limatype.LimaYAML) *limat
 	}
 	return limaCfg
 }
+
+func (lca *limaConfigApplier) configureDisk(limaCfg *limatype.LimaYAML) *limatype.LimaYAML {
+	limaCfg.Disk = lca.cfg.BootDisk
+	return limaCfg
+}
