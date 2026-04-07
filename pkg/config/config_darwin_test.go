@@ -23,6 +23,8 @@ func makeConfig(vmType limayaml.VMType, memory string, cpus int, rosetta bool) *
 	fc.Memory = pointer.String(memory)
 	fc.CPUs = pointer.Int(cpus)
 	fc.Rosetta = pointer.Bool(rosetta)
+	fc.BootDisk = pointer.String("100GiB")
+	fc.DataDisk = pointer.String("50GiB")
 	fc.CredsHelpers = []string{"osxkeychain"} // default helper
 	return &fc
 }
@@ -38,6 +40,8 @@ func makeExperimentalConfig(
 	fc.Memory = pointer.String(memory)
 	fc.CPUs = pointer.Int(cpus)
 	fc.Rosetta = pointer.Bool(rosetta)
+	fc.BootDisk = pointer.String("100GiB")
+	fc.DataDisk = pointer.String("50GiB")
 	fc.Experimental = experimentalSettings
 	fc.CredsHelpers = []string{"osxkeychain"} // default helper
 	return &fc

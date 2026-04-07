@@ -90,10 +90,11 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 					SharedSystemSettings: config.SharedSystemSettings{
 						VMType: pointer.String("qemu"),
 					},
+					DataDisk: pointer.String("50GiB"),
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
@@ -106,6 +107,11 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 
 				dfs.EXPECT().Stat(limaPath).Return(nil, fs.ErrNotExist)
 				dfs.EXPECT().SymlinkIfPossible(finch.UserDataDiskPath(homeDir), limaPath).Return(nil)
+
+				// resizeDiskIfNeeded: getDiskInfo returns current size == configured size, no resize needed
+				diskInfoOutput := []byte(`{"virtual-size": 53687091200, "filename": "mock", "format": "raw", "actual-size": 0, "dirty-flag": false}`)
+				ecc.EXPECT().Create(mockQemuImgExePath, mockDiskInfoArgs).Return(cmd)
+				cmd.EXPECT().CombinedOutput().Return(diskInfoOutput, nil)
 
 				dfs.EXPECT().Stat(lockPath).Return(nil, fs.ErrNotExist)
 			},
@@ -163,10 +169,11 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 					SharedSystemSettings: config.SharedSystemSettings{
 						VMType: pointer.String("qemu"),
 					},
+					DataDisk: pointer.String("50GiB"),
 				},
 			},
 			wantErr: nil,
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, _ *mocks.CommandCreator) {
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, dfs *mocks.MockdiskFS, cmd *mocks.Command, ecc *mocks.CommandCreator) {
 				ncc.EXPECT().CreateWithoutStdio(mockListArgs).Return(cmd)
 				cmd.EXPECT().Output().Return([]byte(""), nil)
 
@@ -179,6 +186,11 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				dfs.EXPECT().Remove(limaPath).Return(nil)
 
 				dfs.EXPECT().SymlinkIfPossible(finch.UserDataDiskPath(homeDir), limaPath).Return(nil)
+
+				// resizeDiskIfNeeded: getDiskInfo returns current size == configured size, no resize needed
+				diskInfoOutput := []byte(`{"virtual-size": 53687091200, "filename": "mock", "format": "raw", "actual-size": 0, "dirty-flag": false}`)
+				ecc.EXPECT().Create(mockQemuImgExePath, mockDiskInfoArgs).Return(cmd)
+				cmd.EXPECT().CombinedOutput().Return(diskInfoOutput, nil)
 
 				dfs.EXPECT().Stat(lockPath).Return(nil, fs.ErrNotExist)
 			},

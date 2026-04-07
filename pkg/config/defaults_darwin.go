@@ -19,8 +19,11 @@ const (
 	// 2,147,483,648 => 2GiB.
 	fallbackMemory float64 = 2_147_483_648
 	fallbackCPUs   int     = 2
+	// Default disk size is 100GiB for Lima
+	// https://github.com/lima-vm/lima/blob/e78406086b65bea1e143e456c066d34366d6c6f7/templates/default.yaml#L45
+	// 107_374_182_400 => 100GiB
+	fallbackBootDisk float64 = 107_374_182_400
 	// 53_687_091_200 => 50GiB
-	fallbackBootDisk float64 = 53_687_091_200
 	fallbackDatadisk float64 = 53_687_091_200
 )
 

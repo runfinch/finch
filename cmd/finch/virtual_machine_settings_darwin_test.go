@@ -101,6 +101,46 @@ func TestSettingsVMAction_runAdapter(t *testing.T) {
 			},
 		},
 		{
+			name:    "should configure the instance for valid bootdisk value",
+			wantErr: nil,
+			command: &cobra.Command{
+				Use: "settings",
+			},
+			args: []string{
+				"--bootdisk=60GiB",
+			},
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\nbootdisk: 100GiB\ndatadisk: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+		},
+		{
+			name:    "should configure the instance for valid datadisk value",
+			wantErr: nil,
+			command: &cobra.Command{
+				Use: "settings",
+			},
+			args: []string{
+				"--datadisk=60GiB",
+			},
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\nbootdisk: 100GiB\ndatadisk: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+		},
+		{
 			name:    "should show settings --help when no flags are provided",
 			wantErr: nil,
 			command: &cobra.Command{
@@ -155,8 +195,10 @@ func TestSettingsVMAction_run(t *testing.T) {
 			*mocks.LimaConfigApplier,
 			afero.Fs,
 		)
-		cpus   *int
-		memory *string
+		cpus     *int
+		memory   *string
+		bootDisk *string
+		dataDisk *string
 	}{
 		{
 			name:             "should update vm settings",
@@ -231,6 +273,44 @@ func TestSettingsVMAction_run(t *testing.T) {
 			memory: stringPtr("2gi"),
 		},
 		{
+			name:             "should return an error if the configuration of bootdisk is invalid",
+			wantErr:          "failed to validate config file: failed to parse bootdisk to uint: invalid suffix: 'gi'",
+			wantStatusOutput: "",
+			wantWarnOutput:   "",
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\nbootdisk: 100GiB\ndatadisk: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+			cpus:     intPtr(1),
+			memory:   stringPtr("2GiB"),
+			bootDisk: stringPtr("50gi"),
+		},
+		{
+			name:             "should return an error if the configuration of datadisk is invalid",
+			wantErr:          "failed to validate config file: failed to parse datadisk to uint: invalid suffix: 'gi'",
+			wantStatusOutput: "",
+			wantWarnOutput:   "",
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\nbootdisk: 100GiB\ndatadisk: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+			cpus:     intPtr(1),
+			memory:   stringPtr("2GiB"),
+			dataDisk: stringPtr("50gi"),
+		},
+		{
 			name:             "should not return an error if the configuration of CPU and memory matches existing config",
 			wantErr:          "",
 			wantStatusOutput: "",
@@ -240,13 +320,47 @@ func TestSettingsVMAction_run(t *testing.T) {
 				fs afero.Fs,
 			) {
 				finchConfigPath := "/config.yaml"
-				data := "cpus: 2\nmemory: 6GiB"
+				data := "cpus: 2\nmemory: 6GiB\nbootdisk: 100GiB\ndatadisk: 50GiB"
 				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
 
 				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
 			},
 			cpus:   intPtr(2),
 			memory: stringPtr("6GiB"),
+		},
+		{
+			name:             "should not return an error if the configuration of bootdisk matches existing config",
+			wantErr:          "",
+			wantStatusOutput: "",
+			wantWarnOutput:   "Provided flags match existing settings, no changes made.",
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\nbootdisk: 100GiB\ndatadisk: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+			bootDisk: stringPtr("100GiB"),
+		},
+		{
+			name:             "should not return an error if the configuration of datadisk matches existing config",
+			wantErr:          "",
+			wantStatusOutput: "",
+			wantWarnOutput:   "Provided flags match existing settings, no changes made.",
+			mockSvc: func(
+				lca *mocks.LimaConfigApplier,
+				fs afero.Fs,
+			) {
+				finchConfigPath := "/config.yaml"
+				data := "cpus: 2\nmemory: 6GiB\nbootdisk: 100GiB\ndatadisk: 50GiB"
+				require.NoError(t, afero.WriteFile(fs, finchConfigPath, []byte(data), 0o600))
+
+				lca.EXPECT().GetFinchConfigPath().Return(finchConfigPath)
+			},
+			dataDisk: stringPtr("50GiB"),
 		},
 	}
 
@@ -260,8 +374,10 @@ func TestSettingsVMAction_run(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			stdout := bytes.Buffer{}
 			opts := config.VMConfigOpts{
-				CPUs:   tc.cpus,
-				Memory: tc.memory,
+				CPUs:     tc.cpus,
+				Memory:   tc.memory,
+				BootDisk: tc.bootDisk,
+				DataDisk: tc.dataDisk,
 			}
 
 			tc.mockSvc(lca, fs)

@@ -40,3 +40,7 @@ func (lca *limaConfigApplier) configureMemory(limaCfg *limatype.LimaYAML) *limat
 func (lca *limaConfigApplier) configureMounts(limaCfg *limatype.LimaYAML) *limatype.LimaYAML {
 	return limaCfg
 }
+
+func (lca *limaConfigApplier) configureDisk(limaCfg *limatype.LimaYAML) *limatype.LimaYAML {
+	return limaCfg
+}

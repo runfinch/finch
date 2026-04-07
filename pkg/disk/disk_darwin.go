@@ -263,9 +263,6 @@ func sizeString(size string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err != nil {
-		return "", err
-	}
 
 	return units.BytesSize(float64(sizeB)), nil
 }
