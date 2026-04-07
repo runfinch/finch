@@ -80,6 +80,7 @@ func TestVM(t *testing.T) {
 		testVMNetwork(o, *e2e.Installed)
 		testDaemon(o, *e2e.Installed)
 		testVMDisk(o)
+		testDiskConfig(o, *e2e.Installed)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)
