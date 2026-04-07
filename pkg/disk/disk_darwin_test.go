@@ -109,7 +109,9 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				dfs.EXPECT().SymlinkIfPossible(finch.UserDataDiskPath(homeDir), limaPath).Return(nil)
 
 				// resizeDiskIfNeeded: getDiskInfo returns current size == configured size, no resize needed
-				diskInfoOutput := []byte(`{"virtual-size": 53687091200, "filename": "mock", "format": "raw", "actual-size": 0, "dirty-flag": false}`)
+				diskInfoOutput := []byte(
+					`{"virtual-size": 53687091200, "filename": "mock", "format": "raw", "actual-size": 0, "dirty-flag": false}`,
+				)
 				ecc.EXPECT().Create(mockQemuImgExePath, mockDiskInfoArgs).Return(cmd)
 				cmd.EXPECT().CombinedOutput().Return(diskInfoOutput, nil)
 
@@ -188,7 +190,9 @@ func TestUserDataDiskManager_InitializeUserDataDisk(t *testing.T) {
 				dfs.EXPECT().SymlinkIfPossible(finch.UserDataDiskPath(homeDir), limaPath).Return(nil)
 
 				// resizeDiskIfNeeded: getDiskInfo returns current size == configured size, no resize needed
-				diskInfoOutput := []byte(`{"virtual-size": 53687091200, "filename": "mock", "format": "raw", "actual-size": 0, "dirty-flag": false}`)
+				diskInfoOutput := []byte(
+					`{"virtual-size": 53687091200, "filename": "mock", "format": "raw", "actual-size": 0, "dirty-flag": false}`,
+				)
 				ecc.EXPECT().Create(mockQemuImgExePath, mockDiskInfoArgs).Return(cmd)
 				cmd.EXPECT().CombinedOutput().Return(diskInfoOutput, nil)
 

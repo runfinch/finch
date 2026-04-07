@@ -16,7 +16,9 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 )
 
-func newVMDiskResizeCommand(limaCmdCreator command.NerdctlCmdCreator, logger flog.Logger, lca config.LimaConfigApplier, fs afero.Fs) *cobra.Command {
+func newVMDiskResizeCommand(
+	limaCmdCreator command.NerdctlCmdCreator, logger flog.Logger, lca config.LimaConfigApplier, fs afero.Fs,
+) *cobra.Command {
 	var size string
 	cmd := &cobra.Command{
 		Use:   "resize",
@@ -35,7 +37,9 @@ type diskResizeVMAction struct {
 	fs                afero.Fs
 }
 
-func newVMDiskResizeAction(limaCmdCreator command.NerdctlCmdCreator, logger flog.Logger, lca config.LimaConfigApplier, fs afero.Fs) *diskResizeVMAction {
+func newVMDiskResizeAction(
+	limaCmdCreator command.NerdctlCmdCreator, logger flog.Logger, lca config.LimaConfigApplier, fs afero.Fs,
+) *diskResizeVMAction {
 	return &diskResizeVMAction{
 		logger:            logger,
 		creator:           limaCmdCreator,
