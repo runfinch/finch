@@ -39,4 +39,4 @@ test_invoke_returns_execpted_results_2_HelloWorldServerlessWithFunctionNameRefFu
 EOF
 
 # Validate test results
-$GITHUB_WORKSPACE/scripts/validate-test-results.sh /tmp/invoke_test_output.txt expected_invoke_failures.txt "Invoke tests"
+"$GITHUB_WORKSPACE"/scripts/validate-test-results.sh /tmp/invoke_test_output.txt expected_invoke_failures.txt "Invoke tests"

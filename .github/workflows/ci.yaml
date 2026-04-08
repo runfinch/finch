@@ -159,9 +159,14 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
+        env:
+          # SC1090 puts a warning when ShellCheck can't follow a non-constant source,
+          # but we need this as our sources can vary based on variables.
+          SHELLCHECK_OPTS: -e SC1090
         with:
           version: v0.9.0
-        continue-on-error: true
+          severity: warning
+        continue-on-error: false
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     timeout-minutes: 1

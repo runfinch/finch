@@ -19,8 +19,8 @@ sudo pkill '^socket_vmnet'
 sudo pkill '^qemu-system-'
 sudo pkill '^limactl'
 
-if [ "$$(readlink "/usr/local/bin/finch")" = "/Applications/Finch/bin/finch" ]; then sudo rm /usr/local/bin/finch; fi
-if [ "$$(readlink "/usr/local/bin/docker-credential-osxkeychain")" = "/Applications/Finch/cred-helpers/docker-credential-osxkeychain" ]; then sudo rm /usr/local/bin/docker-credential-osxkeychain; fi
+if [ "$(readlink /usr/local/bin/finch)" = "/Applications/Finch/bin/finch" ]; then sudo rm /usr/local/bin/finch; fi
+if [ "$(readlink /usr/local/bin/docker-credential-osxkeychain)" = "/Applications/Finch/cred-helpers/docker-credential-osxkeychain" ]; then sudo rm /usr/local/bin/docker-credential-osxkeychain; fi
 
 echo "[1/4] [DONE] Successfully deleted shortcut links"
 
