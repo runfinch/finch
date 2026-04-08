@@ -9,6 +9,7 @@ on:
       - '**.go'
       - 'go.mod'
       - 'go.sum'
+      - '.github/workflows/ci.yaml'
       - '.github/workflows/e2e-macos.yaml'
       - '.github/workflows/e2e-windows.yaml'
       - '.github/workflows/e2e-linux.yaml'
@@ -26,6 +27,7 @@ on:
       - '**.go'
       - 'go.mod'
       - 'go.sum'
+      - '.github/workflows/ci.yaml'
       - '.github/workflows/e2e-macos.yaml'
       - '.github/workflows/e2e-windows.yaml'
       - '.github/workflows/e2e-linux.yaml'
@@ -99,6 +101,7 @@ jobs:
           cache: false
       - run: make gen-code
       - run: git diff --exit-code
+  
   unit-tests:
     strategy:
       fail-fast: false
@@ -118,6 +121,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
           cache: false
       - run: make test-unit
+  
   # It's recommended to run golangci-lint in a job separate from other jobs (go test, etc) because different jobs run in parallel.
   go-linter:
     name: lint
@@ -151,6 +155,7 @@ jobs:
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
           version: v2.11.3
           args: --fix=false --timeout=5m --skip-dirs="(^|/)deps($|/)"
+  
   shellcheck:
     name: ShellCheck
     runs-on: ubuntu-latest
@@ -162,6 +167,7 @@ jobs:
         with:
           version: v0.9.0
         continue-on-error: true
+  
   go-mod-tidy-check:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -174,6 +180,7 @@ jobs:
       # TODO: Use `go mod tidy --check` after https://github.com/golang/go/issues/27005 is fixed.
       - run: go mod tidy
       - run: git diff --exit-code
+  
   check-licenses:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -184,14 +191,18 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
       - run: make check-licenses
+  
   macos-e2e-tests:
     strategy:
       fail-fast: false
       matrix:
-        version: ['14', '15']
+        version: ['15', '26']
         test-command: ['test-e2e-vm-serial', 'test-e2e-container', 'test-e2e-daemon']
         arch: ['X64', 'arm64']
         runner-type: ['test']
+        exclude:
+          - arch: 'X64'
+            version: '26'
     uses: ./.github/workflows/e2e-macos.yaml
     secrets: inherit
     with:
@@ -199,6 +210,7 @@ jobs:
       version: ${{ matrix.version }}
       runner-type: ${{ matrix.runner-type }}
       test-command: ${{ matrix.test-command }}
+  
   windows-e2e-tests:
     strategy:
       fail-fast: false
@@ -212,6 +224,7 @@ jobs:
       arch: ${{ matrix.arch }}
       runner-type: ${{ matrix.runner-type }}
       test-command: ${{ matrix.test-command }}
+  
   linux-e2e-tests:
     strategy:
       fail-fast: false
@@ -227,6 +240,7 @@ jobs:
       arch: ${{ matrix.arch }}
       version: ${{ matrix.version }}
       runner-type: ${{ matrix.runner-type }}
+  
   ubuntu-e2e-tests:
     strategy:
       fail-fast: false

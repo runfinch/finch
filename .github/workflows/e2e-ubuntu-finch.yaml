@@ -66,7 +66,7 @@ jobs:
   
   e2e-test-finch:
     needs: get-tag-and-version
-    runs-on: codebuild-finch-${{ inputs.arch }}-1-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    runs-on: codebuild-finch-ubuntu-${{ inputs.arch }}-1-instance-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       id-token: write # used when getting AWS credentials
       contents: read

@@ -76,7 +76,7 @@ jobs:
             output-arch: 'amd64'
           - arch: 'arm64'
             output-arch: 'arm64'
-    runs-on: codebuild-finch-${{ matrix.arch }}-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
+    runs-on: codebuild-finch-ubuntu-${{ matrix.arch }}-2-instance-${{ github.run_id }}-${{ github.run_attempt }}
     timeout-minutes: 60
     steps:
         - name: Configure AWS credentials
