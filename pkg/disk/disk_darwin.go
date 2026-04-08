@@ -250,6 +250,7 @@ func (m *userDataDiskManager) resizeDiskIfNeeded() error {
 	}
 
 	m.logger.Infof("Resizing data disk from %s to %s", units.BytesSize(float64(actualDataDiskBytes)), size)
+	m.logger.Warnf("Increasing disk size is irreversible without losing data.")
 	cmd := m.ncc.CreateWithoutStdio("disk", "resize", diskName, "--size", size)
 	if logs, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("failed to resize disk to %s, debug logs:\n%s", size, logs)

@@ -57,25 +57,38 @@ func (dva *diskResizeVMAction) runAdapter(cmd *cobra.Command, _ []string) error 
 }
 
 func (dva *diskResizeVMAction) run(size string) error {
+	dva.logger.Warnf("Increasing disk size is irreversible without losing data.")
 	dva.logger.Infof("Resizing disk to %s...", size)
 
-	limaCmd := dva.creator.CreateWithoutStdio("disk", "resize", limaInstanceName, "--size", size)
-	output, err := limaCmd.CombinedOutput()
+	configPath := dva.limaConfigApplier.GetFinchConfigPath()
+	oldConfig, err := afero.ReadFile(dva.fs, configPath)
 	if err != nil {
-		return fmt.Errorf("failed to resize disk: %w\n%s", err, output)
+		return fmt.Errorf("failed to read finch config: %w", err)
 	}
-
-	dva.logger.Info("Disk resized successfully.")
 
 	isConfigUpdated, err := config.ModifyFinchConfig(
 		dva.fs,
 		dva.logger,
-		dva.limaConfigApplier.GetFinchConfigPath(),
+		configPath,
 		config.VMConfigOpts{DataDisk: &size},
 	)
 	if err != nil {
-		return fmt.Errorf("disk resized but failed to update config: %w", err)
+		return fmt.Errorf("failed to update finch config: %w", err)
 	}
+
+	limaCmd := dva.creator.CreateWithoutStdio("disk", "resize", limaInstanceName, "--size", size)
+	output, err := limaCmd.CombinedOutput()
+	if err != nil {
+		if isConfigUpdated {
+			if writeErr := afero.WriteFile(dva.fs, configPath, oldConfig, 0o644); writeErr != nil {
+				return fmt.Errorf("failed to rollback config (disk resize failed): %w", writeErr)
+			}
+			dva.logger.Info("Configuration changes rolled back.")
+		}
+		return fmt.Errorf("failed to resize disk: %w\n%s", err, output)
+	}
+
+	dva.logger.Info("Disk resized successfully.")
 	if isConfigUpdated {
 		dva.logger.Info("Configuration updated with new disk size.")
 	}

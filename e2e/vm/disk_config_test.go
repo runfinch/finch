@@ -110,6 +110,28 @@ var testDiskConfig = func(o *option.Option, installed bool) {
 			gomega.Expect(result.Out.Contents()).To(gomega.ContainSubstring("60GiB"))
 		})
 
+		ginkgo.It("should handle extra large sparse disk sizes", func() {
+			resetVM(o)
+			resetDisks(o, installed)
+			writeFile(finchConfigFilePath, []byte("memory: 4GiB\ncpus: 2\nbootdisk: 1000GiB\ndatadisk: 1000GiB"))
+			command.New(o, virtualMachineRootCmd, "init").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
+
+			// Verify bootdisk is set in override.yaml
+			overrideConfigFilePath := filepath.Join(limaDataDirPath(installed), "_config", "override.yaml")
+			cfgBuf, err := os.ReadFile(filepath.Clean(overrideConfigFilePath))
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+			var limaCfg limatype.LimaYAML
+			err = yaml.Unmarshal(cfgBuf, &limaCfg)
+			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+			gomega.Expect(limaCfg.Disk).ShouldNot(gomega.BeNil())
+			gomega.Expect(*limaCfg.Disk).Should(gomega.Equal("1000GiB"))
+
+			// Verify datadisk size - disks are sparse so this should succeed
+			result := command.New(o, virtualMachineRootCmd, "disk", "info").Run()
+			gomega.Expect(result.Out.Contents()).To(gomega.ContainSubstring("1000GiB"))
+		})
+
 		ginkgo.It("should validate boot and data disk sizes after vm init", func() {
 			resetVM(o)
 			resetDisks(o, installed)
