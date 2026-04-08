@@ -126,7 +126,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "Skipping dependency installation - will fail during build if truly required"
+          su ec2-user -c 'brew install dotnet || brew link --overwrite dotnet'
+          su ec2-user -c 'dotnet tool install -g Amazon.Lambda.Tools'
+          echo "${{ steps.user.outputs.home }}/.dotnet/tools" >> $GITHUB_PATH
         shell: bash
 
       - name: Checkout finch
@@ -139,6 +141,11 @@ jobs:
           chown -R ${{ steps.user.outputs.user }}:staff "$GITHUB_WORKSPACE"
           su ec2-user -c "cd $GITHUB_WORKSPACE && make clean && GOOS=darwin make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch && make install PREFIX=Applications/Finch"
           su ec2-user -c "ls -lah /Applications/Finch"
+
+      - name: Configure Finch for Rosetta
+        run: |
+          su ec2-user -c 'finch vm status' || true
+          sed -i '' 's/rosetta: false/rosetta: true/' ${{ steps.user.outputs.home }}/.finch/finch.yaml
 
       - name: Initializing Finch VM
         run: |
@@ -203,6 +210,12 @@ jobs:
           su ec2-user -c '${{ env.PYTHON_BINARY }} -m pip install "chardet<6.0.0" --user'
           su ec2-user -c "/Users/ec2-user/Library/Python/${{ env.PYTHON_VERSION }}/bin/samdev --version"
         shell: bash
+
+      - name: Patch SAM CLI test templates for ARM64 emulation
+        run: |
+          # dotnet10 and nodejs22.x need more memory under x86_64 emulation on ARM64
+          sed -i '' 's/Runtime: dotnet10/Runtime: dotnet10\n      MemorySize: 1024/' /Users/ec2-user/aws-sam-cli/tests/integration/testdata/invoke/credential_tests/inprocess/template.yaml
+          sed -i '' 's/Runtime: nodejs22.x/Runtime: nodejs22.x\n      MemorySize: 1024/' /Users/ec2-user/aws-sam-cli/tests/integration/testdata/invoke/credential_tests/incontainer/template.yaml
 
       - name: Run ${{ matrix.test_type }} tests
         run: ./scripts/samcli-vm/run-${{ matrix.test_type }}-tests.sh
