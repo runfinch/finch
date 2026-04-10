@@ -47,7 +47,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Configure Signing AWS credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: ${{ secrets.DEB_ROLE_PROD }}
           role-session-name: ubuntu-deb
@@ -98,7 +98,7 @@ jobs:
           KEY_ID=$(sudo gpg --import pool/main/f/runfinch-finch/publickey.pem 2>&1 | grep "gpg: key" | cut -d' ' -f3 | cut -d':' -f1)
           sudo gpg --import pool/main/f/runfinch-finch/publickey.pem && sudo gpg --export --armor $KEY_ID > GPG_KEY.pub
       - name: Configure Artifacts AWS credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: ubuntu-deb-create-release
@@ -148,7 +148,7 @@ jobs:
           done
           } >> dists/noble/Release
       - name: Configure Signing AWS credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: ${{ secrets.DEB_ROLE_PROD }}
           role-session-name: ubuntu-deb
@@ -180,7 +180,7 @@ jobs:
           mv Release.gpg dists/noble/
           mv Release dists/noble/
       - name: Configure Artifacts AWS credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: ubuntu-deb-create-release
@@ -205,7 +205,7 @@ jobs:
           aws cloudfront create-invalidation --distribution-id ${{ secrets.ARTIFACTS_DISTRO_ID_PROD }} --paths "/deb/dists/noble/Release" "/deb/dists/noble/Release.gpg" "/deb/dists/noble/main/binary-amd64/Packages*" "/deb/dists/noble/main/binary-arm64/Packages*"
 
       - name: Upload deb archives and signatures to release
-        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v0.1.15
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v0.1.15
         with:
           tag_name: ${{ needs.get-tag-and-version.outputs.tag }}
           files: |
