@@ -66,14 +66,18 @@ type Nerdctl struct {
 
 // VMConfigOpts represents the Options for finch vm settings command.
 type VMConfigOpts struct {
-	CPUs   *int
-	Memory *string
+	CPUs     *int
+	Memory   *string
+	BootDisk *string
+	DataDisk *string
 }
 
-// Default values for the command line arguments --cpus and --memory.
+// Default values for the command line arguments --cpus, --memory, --bootdisk and --datadisk.
 const (
-	DefaultCPUs   = 0
-	DefaultMemory = ""
+	DefaultCPUs     = 0
+	DefaultMemory   = ""
+	DefaultBootDisk = ""
+	DefaultDataDisk = ""
 )
 
 // LimaConfigApplier applies lima configuration changes.

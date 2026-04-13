@@ -6,6 +6,8 @@
 package vm
 
 import (
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/onsi/ginkgo/v2"
@@ -63,6 +65,27 @@ func testVMDisk(o *option.Option) {
 
 			ginkgo.It("should fail with invalid size format", func() {
 				command.New(o, virtualMachineRootCmd, "disk", "resize", "--size", "60aib").WithoutSuccessfulExit().Run()
+			})
+
+			ginkgo.It("should update config after successful resize", func() {
+				command.New(o, virtualMachineRootCmd, "disk", "resize", "--size", "60GiB").Run()
+
+				cfgBuf, err := os.ReadFile(filepath.Clean(finchConfigFilePath))
+				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+				gomega.Expect(string(cfgBuf)).Should(gomega.ContainSubstring("datadisk: 60GiB"))
+			})
+
+			ginkgo.It("should rollback config on resize failure", func() {
+				oldConfig, err := os.ReadFile(filepath.Clean(finchConfigFilePath))
+				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+
+				// Start the vm so resize will fail
+				command.New(o, virtualMachineRootCmd, "start").WithTimeoutInSeconds(240).Run()
+				command.New(o, virtualMachineRootCmd, "disk", "resize", "--size", "70GiB").WithoutSuccessfulExit().Run()
+
+				newConfig, err := os.ReadFile(filepath.Clean(finchConfigFilePath))
+				gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+				gomega.Expect(string(newConfig)).Should(gomega.Equal(string(oldConfig)))
 			})
 		})
 	})
