@@ -126,7 +126,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "Skipping dependency installation - will fail during build if truly required"
+          su ${{ steps.user.outputs.user }} -c 'brew install --cask dotnet-sdk'
+          su ${{ steps.user.outputs.user }} -c 'dotnet --version'
         shell: bash
 
       - name: Checkout finch
