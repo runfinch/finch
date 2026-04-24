@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.17.0](https://github.com/runfinch/finch/compare/v1.16.0...v1.17.0) (2026-04-24)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/containerd/nerdctl/v2 from 2.2.1 to 2.2.2 ([#1736](https://github.com/runfinch/finch/issues/1736)) ([d561171](https://github.com/runfinch/finch/commit/d5611716499444008e90e5dad6b59833fe969381))
+* **deps:** bump github.com/docker/cli ([8b0ac64](https://github.com/runfinch/finch/commit/8b0ac6473d8cdc12d8e45eb75c9e28e06cf48819))
+* **deps:** bump github.com/docker/cli from 29.1.3+incompatible to 29.2.0+incompatible ([#1714](https://github.com/runfinch/finch/issues/1714)) ([8b0ac64](https://github.com/runfinch/finch/commit/8b0ac6473d8cdc12d8e45eb75c9e28e06cf48819))
+* **deps:** bump github.com/go-jose/go-jose/v4 from 4.1.3 to 4.1.4 ([#1732](https://github.com/runfinch/finch/issues/1732)) ([802ce82](https://github.com/runfinch/finch/commit/802ce82b241436d6e6639334a0f1b9c391e3f49b))
+* **deps:** bump golang.org/x/image from 0.18.0 to 0.38.0 ([#1731](https://github.com/runfinch/finch/issues/1731)) ([05a28ee](https://github.com/runfinch/finch/commit/05a28eef28264746383ed5148b8980016e7c1c4c))
+* **deps:** bump google.golang.org/grpc from 1.78.0 to 1.79.3 ([#1725](https://github.com/runfinch/finch/issues/1725)) ([2d36408](https://github.com/runfinch/finch/commit/2d36408e4beccbec35874fd587f572a3c4fe553b))
+* **deps:** Bump submodules and dependencies ([#1728](https://github.com/runfinch/finch/issues/1728)) ([80958a6](https://github.com/runfinch/finch/commit/80958a6b3965787a540717bd6e863f3c16ab11ec))
+
+
+### Features
+
+* make disk sizes configurable on macos ([#1733](https://github.com/runfinch/finch/issues/1733)) ([916da69](https://github.com/runfinch/finch/commit/916da699d34d4fe0cc1edca9e87a048a05bf2deb))
+
 ## [1.16.0](https://github.com/runfinch/finch/compare/v1.15.1...v1.16.0) (2026-03-19)
 
 
