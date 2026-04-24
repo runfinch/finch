@@ -15,6 +15,7 @@ on:
     paths:
       - '**.md'
       - 'contrib/**'
+      - '!contrib/packaging/**'
       - 'docs/**'
       - 'installer-builder/**'
       - 'scripts/**'
@@ -22,7 +23,6 @@ on:
       - '.github/**'
       - 'release-please-config.json'
       - '.release-please-manifest.json'
-      - '!contrib/packaging/**'
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
@@ -32,6 +32,7 @@ on:
     paths:
       - '**.md'
       - 'contrib/**'
+      - '!contrib/packaging/**'
       - 'docs/**'
       - 'installer-builder/**'
       - 'scripts/**'
@@ -39,7 +40,6 @@ on:
       - '.github/**'
       - 'release-please-config.json'
       - '.release-please-manifest.json'
-      - '!contrib/packaging/**'
       - '!.github/workflows/e2e-macos.yaml'
       - '!.github/workflows/e2e-windows.yaml'
       - '!.github/workflows/e2e-linux.yaml'
@@ -72,7 +72,27 @@ jobs:
         run: |
           git secrets --register-aws
           git secrets --scan-history
-  
+
+  gen-code-no-diff:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    timeout-minutes: 2
+    steps:
+      - run: echo "Skipping CI for docs & contrib files"
+  unit-tests:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    timeout-minutes: 2
+    steps:
+      - run: echo "Skipping CI for docs & contrib files"
   # It's recommended to run golangci-lint in a job separate from other jobs (go test, etc) because different jobs run in parallel.
   go-linter:
     name: lint
@@ -106,7 +126,49 @@ jobs:
           # so we will just update it manually whenever it makes sense (e.g., a feature that we want is added).
           version: v2.11.3
           args: --fix=false --timeout=5m --skip-dirs="(^|/)deps($|/)"
-
+  go-mod-tidy-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      contents: read
+    steps:
+      - run: echo "Skipping CI for docs & contrib files"
+  check-licenses:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      contents: read
+    steps:
+      - run: echo "Skipping CI for docs & contrib files"
+  macos-e2e-tests:
+    strategy:
+      matrix:
+        version: ['14', '15']
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+        arch: ['X64', 'arm64']
+        runner-type: ['test']
+    uses: ./.github/workflows/e2e-docs.yaml
+    permissions:
+      contents: read
+  windows-e2e-tests:
+    strategy:
+      matrix:
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+        arch: ['amd64']
+        runner-type: ['test']
+    uses: ./.github/workflows/e2e-docs.yaml
+    permissions:
+      contents: read
+  linux-e2e-tests:
+    strategy:
+      matrix:
+        os: ['amazonlinux']
+        arch: ['X64', 'arm64']
+        version: ['2023', '2']
+        runner-type: ['test']
+    uses: ./.github/workflows/e2e-docs.yaml
+    permissions:
+      contents: read
   mdlint:
     runs-on: ubuntu-latest
     permissions:
