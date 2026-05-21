@@ -10,6 +10,7 @@ import (
 
 	"github.com/lima-vm/lima/pkg/limayaml"
 	"github.com/spf13/afero"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/xorcare/pointer"
 	"go.uber.org/mock/gomock"
@@ -307,6 +308,64 @@ type loadFinchConfigTestCase struct {
 	mockSvc func(fs afero.Fs, l *mocks.Logger, deps *mocks.LoadSystemDeps, mem *mocks.Memory)
 	want    *Finch
 	errMsg  string
+}
+
+func TestOSImageSettings(t *testing.T) {
+	t.Parallel()
+
+	t.Run("UpdateNotificationsEnabled defaults to true", func(t *testing.T) {
+		t.Parallel()
+		s := &OSImageSettings{}
+		assert.True(t, s.UpdateNotificationsEnabled())
+	})
+
+	t.Run("UpdateNotificationsEnabled returns false when disabled", func(t *testing.T) {
+		t.Parallel()
+		s := &OSImageSettings{UpdateNotifications: pointer.Bool(false)}
+		assert.False(t, s.UpdateNotificationsEnabled())
+	})
+
+	t.Run("UpdateNotificationsEnabled returns true when explicitly enabled", func(t *testing.T) {
+		t.Parallel()
+		s := &OSImageSettings{UpdateNotifications: pointer.Bool(true)}
+		assert.True(t, s.UpdateNotificationsEnabled())
+	})
+
+	t.Run("BackupEnabled defaults to true", func(t *testing.T) {
+		t.Parallel()
+		s := &OSImageSettings{}
+		assert.True(t, s.BackupEnabled())
+	})
+
+	t.Run("BackupEnabled returns false when disabled", func(t *testing.T) {
+		t.Parallel()
+		s := &OSImageSettings{Backup: pointer.Bool(false)}
+		assert.False(t, s.BackupEnabled())
+	})
+
+	t.Run("GetNumBackups defaults to 3", func(t *testing.T) {
+		t.Parallel()
+		s := &OSImageSettings{}
+		assert.Equal(t, 3, s.GetNumBackups())
+	})
+
+	t.Run("GetNumBackups returns configured value", func(t *testing.T) {
+		t.Parallel()
+		s := &OSImageSettings{NumBackups: pointer.Int(5)}
+		assert.Equal(t, 5, s.GetNumBackups())
+	})
+
+	t.Run("GetNumBackups returns default when value is less than 1", func(t *testing.T) {
+		t.Parallel()
+		s := &OSImageSettings{NumBackups: pointer.Int(0)}
+		assert.Equal(t, 3, s.GetNumBackups())
+	})
+
+	t.Run("GetNumBackups returns default when value is negative", func(t *testing.T) {
+		t.Parallel()
+		s := &OSImageSettings{NumBackups: pointer.Int(-1)}
+		assert.Equal(t, 3, s.GetNumBackups())
+	})
 }
 
 func Test_loadFinchConfig(t *testing.T) {

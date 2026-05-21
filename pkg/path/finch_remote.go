@@ -59,6 +59,11 @@ func (w Finch) BaseYamlFilePath() string {
 	return filepath.Join(string(w), "os", "finch.yaml")
 }
 
+// OSImagePath returns the os image path.
+func (w Finch) OSImageDir() string {
+	return filepath.Join(string(w), "os")
+}
+
 // LimaConfigDirectoryPath returns the lima config directory path.
 func (w Finch) LimaConfigDirectoryPath() string {
 	return filepath.Join(string(w), "lima", "data", "_config")

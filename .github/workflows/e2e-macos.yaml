@@ -82,10 +82,16 @@ jobs:
         run: echo "A" | softwareupdate --install-rosetta || true
       - run: brew install lz4 automake autoconf libtool yq
         shell: zsh {0}
+      - name: Install cosign
+        # Only the os-image e2e suite signs manifests; cosign is unnecessary for other suites.
+        if: ${{ inputs.test-command == 'test-e2e-osimage' }}
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
       - name: Build project
+        # FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES is compiled in only for the os-image e2e suite so it
+        # can redirect the updater at its local test server; other suites build prod-identical binaries.
         run: |
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          E2E_COVERAGE=1 make
+          E2E_COVERAGE=1 make ${{ inputs.test-command == 'test-e2e-osimage' && 'FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES=true' || '' }}
         shell: zsh {0}
       - name: Run e2e tests
         run: |
