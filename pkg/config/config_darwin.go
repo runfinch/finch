@@ -27,6 +27,7 @@ type SystemSettings struct {
 	Rosetta               *bool                 `yaml:"rosetta,omitempty"`
 	BootDisk              *string               `yaml:"bootdisk,omitempty"`
 	DataDisk              *string               `yaml:"datadisk,omitempty"`
+	SocketVMNet           *bool                 `yaml:"socketVMNet,omitempty"`
 	SharedSystemSettings  `yaml:",inline"`
 }
 

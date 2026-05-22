@@ -159,6 +159,13 @@ func (lca *limaConfigApplier) ConfigureDefaultLimaYaml(logger flog.Logger) error
 	}
 	limaCfg = *cfgAfterInit
 
+	// Configure vzNAT networking for vz (no sudo required, always enabled)
+	if lca.cfg.VMType != nil && *lca.cfg.VMType == "vz" {
+		limaCfg.Networks = append(limaCfg.Networks, limatype.Network{
+			VZNAT: pointer.Bool(true),
+		})
+	}
+
 	limaCfgBytes, err := yaml.Marshal(limaCfg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal the lima config file: %w", err)
