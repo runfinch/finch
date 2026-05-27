@@ -35,12 +35,13 @@ type NerdctlCommandSystemDeps interface {
 }
 
 type nerdctlCommandCreator struct {
-	ncc        command.NerdctlCmdCreator
-	ecc        command.Creator
-	systemDeps NerdctlCommandSystemDeps
-	logger     flog.Logger
-	fs         afero.Fs
-	fc         *config.Finch
+	ncc            command.NerdctlCmdCreator
+	ecc            command.Creator
+	systemDeps     NerdctlCommandSystemDeps
+	logger         flog.Logger
+	fs             afero.Fs
+	fc             *config.Finch
+	vmAutoStarter  VMAutoStarter
 }
 
 type (
@@ -55,8 +56,9 @@ func newNerdctlCommandCreator(
 	logger flog.Logger,
 	fs afero.Fs,
 	fc *config.Finch,
+	vmAutoStarter VMAutoStarter,
 ) *nerdctlCommandCreator {
-	return &nerdctlCommandCreator{ncc: ncc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
+	return &nerdctlCommandCreator{ncc: ncc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc, vmAutoStarter: vmAutoStarter}
 }
 
 func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.Command {
@@ -67,19 +69,20 @@ func (ncc *nerdctlCommandCreator) create(cmdName string, cmdDesc string) *cobra.
 		// the args passed to nerdctlCommand.run will be empty because
 		// cobra will try to parse `-d alpine` as if alpine is the value of the `-d` flag.
 		DisableFlagParsing: true,
-		RunE:               newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc).runAdapter,
+		RunE:               newNerdctlCommand(ncc.ncc, ncc.ecc, ncc.systemDeps, ncc.logger, ncc.fs, ncc.fc, ncc.vmAutoStarter).runAdapter,
 	}
 
 	return command
 }
 
 type nerdctlCommand struct {
-	ncc        command.NerdctlCmdCreator
-	ecc        command.Creator
-	systemDeps NerdctlCommandSystemDeps
-	logger     flog.Logger
-	fs         afero.Fs
-	fc         *config.Finch
+	ncc           command.NerdctlCmdCreator
+	ecc           command.Creator
+	systemDeps    NerdctlCommandSystemDeps
+	logger        flog.Logger
+	fs            afero.Fs
+	fc            *config.Finch
+	vmAutoStarter VMAutoStarter
 }
 
 func newNerdctlCommand(
@@ -89,8 +92,9 @@ func newNerdctlCommand(
 	logger flog.Logger,
 	fs afero.Fs,
 	fc *config.Finch,
+	vmAutoStarter VMAutoStarter,
 ) *nerdctlCommand {
-	return &nerdctlCommand{ncc: ncc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc}
+	return &nerdctlCommand{ncc: ncc, ecc: ecc, systemDeps: systemDeps, logger: logger, fs: fs, fc: fc, vmAutoStarter: vmAutoStarter}
 }
 
 func (nc *nerdctlCommand) runAdapter(cmd *cobra.Command, args []string) error {

@@ -74,7 +74,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ecc, ncc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}).runAdapter(tc.cmd, tc.args))
+			assert.NoError(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}, nil).runAdapter(tc.cmd, tc.args))
 		})
 	}
 }
@@ -828,7 +828,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, ecc, ncc, cmd, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -1034,7 +1034,7 @@ func TestNerdctlCommand_Run_withBindMounts(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, ecc, ncc, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, &config.Finch{}).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, &config.Finch{}, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -1143,7 +1143,7 @@ func TestNerdctlCommand_run_CpCommand(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ecc, ncc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}).run(tc.cmdName, tc.args))
+			assert.NoError(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -1259,7 +1259,7 @@ func TestNerdctlCommand_run_BuildCommand(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ecc, ncc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}).run(tc.cmdName, tc.args))
+			assert.NoError(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }

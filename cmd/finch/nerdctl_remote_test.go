@@ -128,7 +128,7 @@ func TestNerdctlCommand_withVMErrors(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, ncc, ecc, ncsd, logger, ctrl, fs)
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -263,7 +263,7 @@ func TestHandleFlagArg(t *testing.T) {
 		ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 		logger := mocks.NewLogger(ctrl)
 		fs := afero.NewMemMapFs()
-		nc := newNerdctlCommand(ncc, ecc, ncsd, logger, fs, nil)
+		nc := newNerdctlCommand(ncc, ecc, ncsd, logger, fs, nil, nil)
 		// the first return value is never used
 		_, flagKey, flagVal := nc.handleFlagArg(tc.inputArgs[0], tc.inputArgs[1])
 		assert.Equal(t, flagKey, tc.expectedArgs[0])

@@ -65,7 +65,7 @@ func TestNerdctlCommand_runAdaptor(t *testing.T) {
 			logger := mocks.NewLogger(ctrl)
 			tc.mockSvc(ncc, logger, ctrl, ncsd)
 
-			assert.NoError(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}).runAdapter(tc.cmd, tc.args))
+			assert.NoError(t, newNerdctlCommand(ncc, ecc, ncsd, logger, nil, &config.Finch{}, nil).runAdapter(tc.cmd, tc.args))
 		})
 	}
 }
@@ -285,7 +285,7 @@ func TestNerdctlCommand_run_pullCommand(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, ncc, ecc, ncsd, logger, ctrl, fs)
 
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -1003,7 +1003,7 @@ func TestNerdctlCommand_run(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, lcc, ecc, ncsd, logger, ctrl, fs)
 
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(lcc, ecc, ncsd, logger, fs, tc.fc, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -1204,7 +1204,7 @@ func TestNerdctlCommand_run_inspectCommand(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, ncc, ecc, ncsd, logger, ctrl, fs)
 
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -1295,7 +1295,7 @@ func TestNerdctlCommand_run_buildxCommand(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, ncc, ecc, ncsd, logger, ctrl, fs)
 
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }
@@ -1420,7 +1420,7 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			tc.mockSvc(t, ncc, ecc, ncsd, logger, ctrl, fs)
 
-			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc).run(tc.cmdName, tc.args))
+			assert.Equal(t, tc.wantErr, newNerdctlCommand(ncc, ecc, ncsd, logger, fs, tc.fc, nil).run(tc.cmdName, tc.args))
 		})
 	}
 }

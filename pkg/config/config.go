@@ -40,6 +40,16 @@ type SharedSettings struct {
 	CredsHelpers []string                   `yaml:"creds_helpers,omitempty"`
 	Experimental SharedExperimentalSettings `yaml:"experimental,omitempty"`
 	DockerCompat bool                       `yaml:"dockercompat,omitempty"`
+	AutoVMStart  *bool                      `yaml:"auto_vm_start,omitempty"`
+}
+
+// AutoVMStartEnabled returns whether automatic VM start is enabled.
+// Defaults to true if not explicitly set.
+func (s *SharedSettings) AutoVMStartEnabled() bool {
+	if s.AutoVMStart == nil {
+		return true
+	}
+	return *s.AutoVMStart
 }
 
 // SharedExperimentalSettings represents available experimental settings shared
