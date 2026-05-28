@@ -355,8 +355,10 @@ func TestNerdctlCommand_assertVMIsRunning(t *testing.T) {
 					},
 				},
 			},
-			vmStatus:      "Stopped",
-			wantErr:       fmt.Errorf("instance %q is stopped, run `finch %s start` to start the instance", limaInstanceName, virtualMachineRootCmd),
+			vmStatus: "Stopped",
+			wantErr: fmt.Errorf(
+				"instance %q is stopped, run `finch %s start` to start the instance",
+				limaInstanceName, virtualMachineRootCmd),
 			wantStartCall: false,
 		},
 		{
@@ -368,8 +370,10 @@ func TestNerdctlCommand_assertVMIsRunning(t *testing.T) {
 					},
 				},
 			},
-			vmStatus:      "",
-			wantErr:       fmt.Errorf("instance %q does not exist, run `finch %s init` to create a new instance", limaInstanceName, virtualMachineRootCmd),
+			vmStatus: "",
+			wantErr: fmt.Errorf(
+				"instance %q does not exist, run `finch %s init` to create a new instance",
+				limaInstanceName, virtualMachineRootCmd),
 			wantStartCall: false,
 		},
 		{
