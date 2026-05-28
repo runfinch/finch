@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/templates"
 	"github.com/runfinch/finch/pkg/version"
@@ -44,12 +45,12 @@ Server:
 {{- end}}
 {{- end}}`
 
-func newVersionCommand(limaCmdCreator command.NerdctlCmdCreator, logger flog.Logger, stdOut io.Writer) *cobra.Command {
+func newVersionCommand(limaCmdCreator command.NerdctlCmdCreator, logger flog.Logger, stdOut io.Writer, vmAutoStarter VMAutoStarter, fc *config.Finch) *cobra.Command {
 	versionCommand := &cobra.Command{
 		Use:   "version",
 		Args:  cobra.NoArgs,
 		Short: "Shows Finch version information",
-		RunE:  newVersionAction(limaCmdCreator, logger, stdOut).runAdapter,
+		RunE:  newVersionAction(limaCmdCreator, logger, stdOut, vmAutoStarter, fc).runAdapter,
 	}
 
 	versionCommand.Flags().StringP("format", "f", "", "Format the output using the given Go template, e.g, '{{json .}}'")
@@ -58,9 +59,11 @@ func newVersionCommand(limaCmdCreator command.NerdctlCmdCreator, logger flog.Log
 }
 
 type versionAction struct {
-	creator command.NerdctlCmdCreator
-	logger  flog.Logger
-	stdOut  io.Writer
+	creator       command.NerdctlCmdCreator
+	logger        flog.Logger
+	stdOut        io.Writer
+	vmAutoStarter VMAutoStarter
+	fc            *config.Finch
 }
 
 // NerdctlVersionOutput captures the nerdctl version.
@@ -106,8 +109,8 @@ type NerdctlServerOutput struct {
 	Components []NerdctlComponentsOutput `json:"Components"`
 }
 
-func newVersionAction(creator command.NerdctlCmdCreator, logger flog.Logger, stdOut io.Writer) *versionAction {
-	return &versionAction{creator: creator, logger: logger, stdOut: stdOut}
+func newVersionAction(creator command.NerdctlCmdCreator, logger flog.Logger, stdOut io.Writer, vmAutoStarter VMAutoStarter, fc *config.Finch) *versionAction {
+	return &versionAction{creator: creator, logger: logger, stdOut: stdOut, vmAutoStarter: vmAutoStarter, fc: fc}
 }
 
 func (va *versionAction) runAdapter(cmd *cobra.Command, _ []string) error {

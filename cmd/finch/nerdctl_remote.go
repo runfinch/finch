@@ -405,14 +405,12 @@ func (nc *nerdctlCommand) assertVMIsRunning(creator command.NerdctlCmdCreator, l
 			return fmt.Errorf("instance %q does not exist, run `finch %s init` to create a new instance",
 				limaInstanceName, virtualMachineRootCmd)
 		}
-		logger.Info("VM instance does not exist. Automatically running 'finch vm init'...")
 		return nc.vmAutoStarter.EnsureVMRunning()
 	case lima.Stopped:
 		if nc.fc == nil || !nc.fc.AutoVMStartEnabled() || nc.vmAutoStarter == nil {
 			return fmt.Errorf("instance %q is stopped, run `finch %s start` to start the instance",
 				limaInstanceName, virtualMachineRootCmd)
 		}
-		logger.Info("VM is stopped. Automatically running 'finch vm start'...")
 		return nc.vmAutoStarter.EnsureVMRunning()
 	default:
 		return nil
