@@ -412,10 +412,6 @@ func TestNerdctlCommand_assertVMIsRunning(t *testing.T) {
 			getVMStatusC.EXPECT().Output().Return([]byte(tc.vmStatus), nil)
 			logger.EXPECT().Debugf("Status of virtual machine: %s", tc.vmStatus)
 
-			if tc.wantStartCall {
-				logger.EXPECT().Info(gomock.Any())
-			}
-
 			starter := mocks.NewVMAutoStarter(ctrl)
 			if tc.wantStartCall {
 				starter.EXPECT().EnsureVMRunning().Return(tc.starterErr)

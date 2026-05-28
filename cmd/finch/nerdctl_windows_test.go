@@ -1312,7 +1312,6 @@ func TestNerdctlCommand_run_autoStartThenProceed(t *testing.T) {
 			ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 			getVMStatusC.EXPECT().Output().Return([]byte(tc.vmStatus), nil)
 			logger.EXPECT().Debugf("Status of virtual machine: %s", tc.vmStatus)
-			logger.EXPECT().Info(gomock.Any())
 
 			AddEmptyEnvLookUps(ncsd)
 			ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)

@@ -45,7 +45,13 @@ Server:
 {{- end}}
 {{- end}}`
 
-func newVersionCommand(limaCmdCreator command.NerdctlCmdCreator, logger flog.Logger, stdOut io.Writer, vmAutoStarter VMAutoStarter, fc *config.Finch) *cobra.Command {
+func newVersionCommand(
+	limaCmdCreator command.NerdctlCmdCreator,
+	logger flog.Logger,
+	stdOut io.Writer,
+	vmAutoStarter VMAutoStarter,
+	fc *config.Finch,
+) *cobra.Command {
 	versionCommand := &cobra.Command{
 		Use:   "version",
 		Args:  cobra.NoArgs,
@@ -109,7 +115,13 @@ type NerdctlServerOutput struct {
 	Components []NerdctlComponentsOutput `json:"Components"`
 }
 
-func newVersionAction(creator command.NerdctlCmdCreator, logger flog.Logger, stdOut io.Writer, vmAutoStarter VMAutoStarter, fc *config.Finch) *versionAction {
+func newVersionAction(
+	creator command.NerdctlCmdCreator,
+	logger flog.Logger,
+	stdOut io.Writer,
+	vmAutoStarter VMAutoStarter,
+	fc *config.Finch,
+) *versionAction {
 	return &versionAction{creator: creator, logger: logger, stdOut: stdOut, vmAutoStarter: vmAutoStarter, fc: fc}
 }
 
