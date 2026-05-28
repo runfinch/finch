@@ -1277,3 +1277,64 @@ func AddEmptyEnvLookUps(ncsd *mocks.NerdctlCommandSystemDeps) {
 	ncsd.EXPECT().LookupEnv("AWS_PROFILE").Return("", false)
 	ncsd.EXPECT().LookupEnv("DOCKER_CONFIG").Return("", false)
 }
+
+func TestNerdctlCommand_run_autoStartThenProceed(t *testing.T) {
+	t.Parallel()
+
+	autoStartEnabled := true
+
+	testCases := []struct {
+		name     string
+		vmStatus string
+	}{
+		{
+			name:     "stopped VM auto-starts then command executes",
+			vmStatus: "Stopped",
+		},
+		{
+			name:     "nonexistent VM auto-inits then command executes",
+			vmStatus: "",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			ncc := mocks.NewNerdctlCmdCreator(ctrl)
+			ecc := mocks.NewCommandCreator(ctrl)
+			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
+			logger := mocks.NewLogger(ctrl)
+			fs := afero.NewMemMapFs()
+
+			getVMStatusC := mocks.NewCommand(ctrl)
+			ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+			getVMStatusC.EXPECT().Output().Return([]byte(tc.vmStatus), nil)
+			logger.EXPECT().Debugf("Status of virtual machine: %s", tc.vmStatus)
+			logger.EXPECT().Info(gomock.Any())
+
+			AddEmptyEnvLookUps(ncsd)
+			ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+			ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+			ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+			ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+			c := mocks.NewCommand(ctrl)
+			ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName, "sudo", "-E", nerdctlCmdName, "info").Return(c)
+			c.EXPECT().Run()
+
+			starter := mocks.NewVMAutoStarter(ctrl)
+			starter.EXPECT().EnsureVMRunning().Return(nil)
+
+			fc := &config.Finch{
+				SystemSettings: config.SystemSettings{
+					SharedSystemSettings: config.SharedSystemSettings{AutoVMStart: &autoStartEnabled},
+				},
+			}
+			nc := newNerdctlCommand(ncc, ecc, ncsd, logger, fs, fc, starter)
+
+			err := nc.run("info", []string{})
+			assert.NoError(t, err)
+		})
+	}
+}

@@ -35,13 +35,13 @@ type NerdctlCommandSystemDeps interface {
 }
 
 type nerdctlCommandCreator struct {
-	ncc            command.NerdctlCmdCreator
-	ecc            command.Creator
-	systemDeps     NerdctlCommandSystemDeps
-	logger         flog.Logger
-	fs             afero.Fs
-	fc             *config.Finch
-	vmAutoStarter  VMAutoStarter
+	ncc           command.NerdctlCmdCreator
+	ecc           command.Creator
+	systemDeps    NerdctlCommandSystemDeps
+	logger        flog.Logger
+	fs            afero.Fs
+	fc            *config.Finch
+	vmAutoStarter VMAutoStarter
 }
 
 type (

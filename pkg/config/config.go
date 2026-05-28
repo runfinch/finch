@@ -31,7 +31,8 @@ type AdditionalDirectory struct {
 
 // SharedSystemSettings represents all settings shared by virtualized Finch configurations.
 type SharedSystemSettings struct {
-	VMType *limayaml.VMType `yaml:"vmType,omitempty"`
+	VMType      *limayaml.VMType `yaml:"vmType,omitempty"`
+	AutoVMStart *bool            `yaml:"auto_vm_start,omitempty"`
 }
 
 // SharedSettings represents settings shared by all Finch configurations.
@@ -40,12 +41,11 @@ type SharedSettings struct {
 	CredsHelpers []string                   `yaml:"creds_helpers,omitempty"`
 	Experimental SharedExperimentalSettings `yaml:"experimental,omitempty"`
 	DockerCompat bool                       `yaml:"dockercompat,omitempty"`
-	AutoVMStart  *bool                      `yaml:"auto_vm_start,omitempty"`
 }
 
 // AutoVMStartEnabled returns whether automatic VM start is enabled.
 // Defaults to true if not explicitly set.
-func (s *SharedSettings) AutoVMStartEnabled() bool {
+func (s *SharedSystemSettings) AutoVMStartEnabled() bool {
 	if s.AutoVMStart == nil {
 		return true
 	}
