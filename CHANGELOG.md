@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.17.1](https://github.com/runfinch/finch/compare/v1.17.0...v1.17.1) (2026-05-29)
+
+
+### Build System or External Dependencies
+
+* **deps:** Bump submodules and dependencies ([#1739](https://github.com/runfinch/finch/issues/1739)) ([57cfee0](https://github.com/runfinch/finch/commit/57cfee009f5db96abd6608dc324170211e75360c))
+* **deps:** Bump submodules and dependencies ([#1747](https://github.com/runfinch/finch/issues/1747)) ([6560f1d](https://github.com/runfinch/finch/commit/6560f1de45954277c45746b98a3b019f9db025ae))
+
+
+### Bug Fixes
+
+* **ci:** Fix samcli-vm invoke tests for ARM64 runners ([9b0ce05](https://github.com/runfinch/finch/commit/9b0ce05e8c4658be71982e4b3746b205d6539869))
+* troubleshoot and patch samcli invoke tests ([#1721](https://github.com/runfinch/finch/issues/1721)) ([9b0ce05](https://github.com/runfinch/finch/commit/9b0ce05e8c4658be71982e4b3746b205d6539869))
+
 ## [1.17.0](https://github.com/runfinch/finch/compare/v1.16.0...v1.17.0) (2026-04-24)
 
 
