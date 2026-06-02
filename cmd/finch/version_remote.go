@@ -19,8 +19,8 @@ func (va *versionAction) printVersion(format string) error {
 			return fmt.Errorf("failed to ensure VM is running: %w", err)
 		}
 	} else {
-		// fallback to old behavior where we should only finch binary version
-		// if the vm instance does not exist.
+		// fallback to old behavior where we only print the
+		// finch binary version if the vm instance does not exist.
 		status, err := lima.GetVMStatus(va.creator, va.logger, limaInstanceName)
 		if err != nil {
 			return fmt.Errorf("failed to get VM status: %w", err)
@@ -30,6 +30,8 @@ func (va *versionAction) printVersion(format string) error {
 		}
 	}
 
+	// Add -E to sudo command in order to preserve existing environment variables, more info:
+	// https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo/8633575#8633575
 	limaArgs := []string{"shell", limaInstanceName, "sudo", "-E", "nerdctl", "version", "--format", "json"}
 	out, err := va.creator.CreateWithoutStdio(limaArgs...).Output()
 	if err != nil {
