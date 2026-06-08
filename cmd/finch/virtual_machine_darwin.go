@@ -28,6 +28,7 @@ func newDiskVMCommand(creator command.NerdctlCmdCreator, logger flog.Logger, lca
 	diskCmd.AddCommand(
 		newVMDiskResizeCommand(creator, logger, lca, fs),
 		newVMDiskInfoCommand(creator, logger),
+		newVMDiskUsageCommand(creator, logger),
 	)
 
 	return diskCmd
