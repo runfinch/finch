@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.17.2](https://github.com/runfinch/finch/compare/v1.17.1...v1.17.2) (2026-06-11)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/containerd/containerd/v2 ([c2025af](https://github.com/runfinch/finch/commit/c2025afde37de960775a6930ef889ca012b8a3af))
+* **deps:** bump github.com/containerd/containerd/v2 from 2.2.1 to 2.2.4 ([#1746](https://github.com/runfinch/finch/issues/1746)) ([c2025af](https://github.com/runfinch/finch/commit/c2025afde37de960775a6930ef889ca012b8a3af))
+* **deps:** golang.org/x/net from v0.54.0 to v0.55.0 ([#1756](https://github.com/runfinch/finch/issues/1756)) ([e2c5d05](https://github.com/runfinch/finch/commit/e2c5d05b31767c13e499d75897c4d917e0ea1679))
+
+
+### Bug Fixes
+
+* **ci:** update codebuild runner ref for samcli cleanup step ([#1753](https://github.com/runfinch/finch/issues/1753)) ([8615eb9](https://github.com/runfinch/finch/commit/8615eb977d76d5ae9e6bfe9b39c5f5e715e4b046))
+
 ## [1.17.1](https://github.com/runfinch/finch/compare/v1.17.0...v1.17.1) (2026-05-29)
 
 
