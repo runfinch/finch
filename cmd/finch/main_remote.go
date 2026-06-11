@@ -117,11 +117,20 @@ var newApp = func(
 		system.NewStdLib(),
 	)
 
+	// Get the vmAutoStarter that will:
+	// 1. automatically launch a finch vm using `finch vm init` command if the vm instance does not exist.
+	// 2. automatically start the vm instance using `finch vm start` command if the vm instace exists but is stopped.
+	// 3. do nothing when the vm instance is running.
+	// This happens before we execute any nerdctl command on macos and windows.
+	// For linux, we pass nil to `initializeNerdctlCommands` in main_native.go.
+	// This behavior can be suppressed by setting vm_auto_start: false in finch.yaml config file.
+	vmAutoStarter := newVMAutoStarter(ncc, ecc, logger, fp, fs, fc, home, finchRootPath)
+
 	// append nerdctl commands
-	allCommands := initializeNerdctlCommands(ncc, ecc, logger, fs, fc)
+	allCommands := initializeNerdctlCommands(ncc, ecc, logger, fs, fc, vmAutoStarter)
 	// append finch specific commands
 	allCommands = append(allCommands,
-		newVersionCommand(ncc, logger, stdOut),
+		newVersionCommand(ncc, logger, stdOut, vmAutoStarter, fc),
 		virtualMachineCommands(logger, fp, ncc, ecc, fs, fc, home, finchRootPath),
 		newSupportBundleCommand(logger, supportBundleBuilder, ncc),
 		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),

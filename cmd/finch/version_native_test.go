@@ -63,7 +63,7 @@ func TestNewVersionCommand(t *testing.T) {
 	logger := mocks.NewLogger(ctrl)
 	ncc := mocks.NewNerdctlCmdCreator(ctrl)
 	var stdOut bytes.Buffer
-	cmd := newVersionCommand(ncc, logger, &stdOut)
+	cmd := newVersionCommand(ncc, logger, &stdOut, nil, nil)
 	assert.Equal(t, cmd.Name(), "version")
 }
 
@@ -124,7 +124,7 @@ func TestVersionAction_runAdaptor(t *testing.T) {
 			var stdOut bytes.Buffer
 			tc.mockSvc(ncc, logger, ctrl)
 
-			assert.NoError(t, newVersionAction(ncc, logger, &stdOut).runAdapter(tc.cmd(t), tc.args))
+			assert.NoError(t, newVersionAction(ncc, logger, &stdOut, nil, nil).runAdapter(tc.cmd(t), tc.args))
 		})
 	}
 }
@@ -304,7 +304,7 @@ func TestVersionAction_run(t *testing.T) {
 			tc.mockSvc(ncc, logger, ctrl)
 			var stdOut bytes.Buffer
 
-			err := newVersionAction(ncc, logger, &stdOut).run(tc.format)
+			err := newVersionAction(ncc, logger, &stdOut, nil, nil).run(tc.format)
 			assert.Equal(t, tc.wantErr, err)
 
 			tc.postRunCheck(t, stdOut.Bytes())

@@ -78,6 +78,7 @@ func TestVM(t *testing.T) {
 		testCredHelper(o, *e2e.Installed, *e2e.Registry)
 		testSoci(o, *e2e.Installed)
 		testMSIInstallPermission(o, *e2e.Installed)
+		testAutoVMStart(o)
 	})
 
 	gomega.RegisterFailHandler(ginkgo.Fail)

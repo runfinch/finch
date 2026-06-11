@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -47,11 +48,9 @@ var versions = Versions{
 	RuncVersion:       strings.ReplaceAll(RuncVersion, ".", "\\."),
 }
 
-// Checks finch version.
-var testVersion = func(o *option.Option) {
-	ginkgo.Describe("Check finch version", func() {
-		ginkgo.It("Should print finch version information", func() {
-			tmpl, err := template.New("versionTemplate").Parse(`Client:
+// versionRegexp returns a compiled regex that matches the expected `finch version` output.
+func versionRegexp() string {
+	tmpl, err := template.New("versionTemplate").Parse(`Client:
  Version:	{{ .FinchVersion }}
  GitCommit:	{{ .FinchCommit }}
  OS\/Arch:	[A-Za-z0-9]+\/[A-Za-z0-9]+
@@ -70,13 +69,54 @@ Server:
   Version:	{{ .RuncVersion }}
   GitCommit:	v[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+-g[a-z0-9]{7,8})?
 `)
-			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			var versionMatcher bytes.Buffer
-			err = tmpl.Execute(&versionMatcher, versions)
-			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
-			// command.StdoutStr is not used because it trims both leading and trailing spaces,
-			// while we want an exact match here.
-			gomega.Expect(string(command.Stdout(o, "version"))).Should(gomega.MatchRegexp(versionMatcher.String()))
+	gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, versions)
+	gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
+	return buf.String()
+}
+
+// Checks finch version.
+var testVersion = func(o *option.Option) {
+	ginkgo.Describe("Check finch version", func() {
+		ginkgo.It("Should print finch version information", func() {
+			gomega.Expect(string(command.Stdout(o, "version"))).Should(gomega.MatchRegexp(versionRegexp()))
+		})
+
+		ginkgo.It("should auto-start a stopped VM when running finch version", ginkgo.Serial, func() {
+			command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
+			gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Stopped"))
+
+			gomega.Expect(string(command.New(o, "version").WithTimeoutInSeconds(240).Run().Out.Contents())).
+				Should(gomega.MatchRegexp(versionRegexp()))
+			gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Running"))
+		})
+
+		ginkgo.It("should auto-init a nonexistent VM when running finch version", ginkgo.Serial, func() {
+			command.New(o, virtualMachineRootCmd, "stop", "-f").WithTimeoutInSeconds(90).Run()
+			time.Sleep(1 * time.Second)
+			command.New(o, virtualMachineRootCmd, "remove", "-f").WithTimeoutInSeconds(60).Run()
+			gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Nonexistent"))
+
+			gomega.Expect(string(command.New(o, "version").WithTimeoutInSeconds(240).Run().Out.Contents())).
+				Should(gomega.MatchRegexp(versionRegexp()))
+			gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Running"))
+		})
+
+		ginkgo.It("should not auto-start version when auto_vm_start is disabled", ginkgo.Serial, func() {
+			origCfg := readFile(finchConfigFilePath)
+			ginkgo.DeferCleanup(func() {
+				writeFile(finchConfigFilePath, origCfg)
+				command.New(o, virtualMachineRootCmd, "start").WithoutCheckingExitCode().WithTimeoutInSeconds(240).Run()
+			})
+
+			command.New(o, virtualMachineRootCmd, "stop").WithTimeoutInSeconds(90).Run()
+			gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Stopped"))
+
+			writeFile(finchConfigFilePath, append(origCfg, []byte("\nauto_vm_start: false\n")...))
+
+			command.New(o, "version").WithoutSuccessfulExit().Run()
+			gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Stopped"))
 		})
 	})
 }
