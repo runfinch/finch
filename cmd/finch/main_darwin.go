@@ -27,7 +27,7 @@ func dependencies(
 	logger flog.Logger,
 	finchRootPath string,
 ) []*dependency.Group {
-	return []*dependency.Group{
+	groups := []*dependency.Group{
 		credhelper.NewDependencyGroup(
 			ecc,
 			fs,
@@ -37,6 +37,13 @@ func dependencies(
 			finchRootPath,
 			system.NewStdLib().Arch(),
 		),
-		vmnet.NewDependencyGroup(ecc, ncc, fs, fp, logger),
 	}
+
+	if fc.SocketVMNet != nil && *fc.SocketVMNet {
+		if fc.VMType != nil && *fc.VMType == "qemu" {
+			groups = append(groups, vmnet.NewDependencyGroup(ecc, ncc, fs, fp, logger))
+		}
+	}
+
+	return groups
 }
