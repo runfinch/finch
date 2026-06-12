@@ -46,7 +46,7 @@ jobs:
           fi
           echo "using tag=${tag}"
           echo "tag=$tag" >> ${GITHUB_OUTPUT}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: ${{ steps.check-tag.outputs.tag }}
           fetch-depth: 0

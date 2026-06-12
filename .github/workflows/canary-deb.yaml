@@ -30,12 +30,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout canary script
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             scripts/canary-deb.sh
       - name: Run canary script with retry
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         with:
           timeout_minutes: 2
           max_attempts: 3
