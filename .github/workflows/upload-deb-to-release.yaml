@@ -205,7 +205,7 @@ jobs:
           aws cloudfront create-invalidation --distribution-id ${{ secrets.ARTIFACTS_DISTRO_ID_PROD }} --paths "/deb/dists/noble/Release" "/deb/dists/noble/Release.gpg" "/deb/dists/noble/main/binary-amd64/Packages*" "/deb/dists/noble/main/binary-arm64/Packages*"
 
       - name: Upload deb archives and signatures to release
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v0.1.15
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v0.1.15
         with:
           tag_name: ${{ needs.get-tag-and-version.outputs.tag }}
           files: |
