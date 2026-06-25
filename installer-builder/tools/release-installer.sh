@@ -35,6 +35,12 @@ releaseInstaller() {
     echo "[6/12] Merge Back Signed Executables to Finch Build"
     bash ./installer-builder/tools/merge-back-signed-executables.sh "$ARCH"
 
+    echo "[6.5/12] Upload signed artifacts tarball to S3"
+    tar -czf "./installer-builder/output/finch-${FINCH_VERSION}-${ARCH}.tar.gz" \
+        -C "./installer-builder/output/origin" _output
+    aws s3 cp "./installer-builder/output/finch-${FINCH_VERSION}-${ARCH}.tar.gz" \
+        "s3://${INSTALLER_PRIVATE_BUCKET_NAME}/finch-${FINCH_VERSION}-${ARCH}.tar.gz" --no-progress
+
     echo "[7/12] Build .pkg"
     bash ./installer-builder/tools/build-macos-pkg.sh "$ARCH" "$FINCH_VERSION"
 

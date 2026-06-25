@@ -164,6 +164,18 @@ jobs:
                       "name": "Finch-${{ needs.get-latest-tag.outputs.tag }}-x86_64.pkg",
                       "os": "mac",
                       "architecture": "x86_64"
+                  },
+                  {
+                      "name": "finch-${{ needs.get-latest-tag.outputs.tag }}-aarch64.tar.gz",
+                      "os": "mac",
+                      "architecture": "aarch64",
+                      "type": "tarball"
+                  },
+                  {
+                      "name": "finch-${{ needs.get-latest-tag.outputs.tag }}-x86_64.tar.gz",
+                      "os": "mac",
+                      "architecture": "x86_64",
+                      "type": "tarball"
                   }
               ]
           }
