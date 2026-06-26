@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 	"runtime"
 
 	"github.com/runfinch/finch/pkg/disk"
@@ -93,6 +94,15 @@ func (iva *initVMAction) run() error {
 		return err
 	}
 
+	// Resolve paths in the base YAML to match the current finch install location.
+	// Writes the resolved copy to the lima config directory, leaving the original
+	// template unchanged. The resolved file is passed to limactl start.
+	limaYamlPath := iva.baseYamlFilePath
+	resolvedYamlPath := filepath.Join(filepath.Dir(iva.baseYamlFilePath), "base.yaml")
+	if err = resolveBaseYamlPaths(iva.baseYamlFilePath, resolvedYamlPath); err == nil {
+		limaYamlPath = resolvedYamlPath
+	}
+
 	err = dependency.InstallOptionalDeps(iva.optionalDepGroups, iva.logger)
 	if err != nil {
 		iva.logger.Errorf("Dependency error: %v", err)
@@ -107,7 +117,7 @@ func (iva *initVMAction) run() error {
 	}
 
 	instanceName := fmt.Sprintf("--name=%v", limaInstanceName)
-	startOpts := []string{"start", instanceName, iva.baseYamlFilePath, "--tty=false"}
+	startOpts := []string{"start", instanceName, limaYamlPath, "--tty=false"}
 	if iva.finchConfig == nil || *iva.finchConfig.VMType == "vz" {
 		// Starting with 2.0, Lima uses ssh over vsock by default on systemd >= 256 (https://github.com/lima-vm/lima/pull/3979)
 		// which is causing a ssh "permission denied" issue with VZ driver.
