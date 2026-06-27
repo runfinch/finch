@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
 
 env:
-  GO_VERSION: '1.25.7'
+  GO_VERSION: '1.25.11'
   # Python 3.13 is fine, but need to pin chardet for requests compatibility
   PYTHON_VERSION: '3.13'
   PYTHON_BINARY: 'python3.13'
