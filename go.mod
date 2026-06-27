@@ -28,10 +28,10 @@ require (
 	github.com/tc-hib/go-winres v0.3.3
 	github.com/xorcare/pointer v1.2.2
 	go.uber.org/mock v0.6.0
-	golang.org/x/crypto v0.52.0
+	golang.org/x/crypto v0.53.0
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
-	golang.org/x/sync v0.20.0
-	golang.org/x/tools v0.44.0
+	golang.org/x/sync v0.21.0
+	golang.org/x/tools v0.45.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.34.3
@@ -51,7 +51,7 @@ require (
 	github.com/cheggaaa/pb/v3 v3.1.7 // indirect
 	github.com/containerd/console v1.0.5 // indirect
 	github.com/containerd/containerd/api v1.10.0 // indirect
-	github.com/containerd/containerd/v2 v2.2.4 // indirect
+	github.com/containerd/containerd/v2 v2.2.5 // indirect
 	github.com/containerd/continuity v0.4.5 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
@@ -147,7 +147,7 @@ require (
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.3 // indirect
 	golang.org/x/image v0.38.0 // indirect
-	golang.org/x/term v0.43.0 // indirect
+	golang.org/x/term v0.44.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20251222181119-0a764e51fe1b // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251213004720-97cd9d5aeac2 // indirect
 	google.golang.org/grpc v1.79.3 // indirect
@@ -176,10 +176,10 @@ require (
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/wk8/go-ordered-map v1.0.0
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/mod v0.35.0 // indirect
+	golang.org/x/mod v0.36.0 // indirect
 	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/sys v0.45.0
-	golang.org/x/text v0.37.0
+	golang.org/x/sys v0.46.0
+	golang.org/x/text v0.38.0
 	k8s.io/klog/v2 v2.130.1 // indirect
 )
 
