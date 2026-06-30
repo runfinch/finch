@@ -82,11 +82,17 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
+      - name: Install cosign
+        # Only the os-image e2e suite signs manifests; cosign is unnecessary for other suites.
+        if: ${{ inputs.test-command == 'test-e2e-osimage' }}
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
       - name: Build project
+        # FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES is compiled in only for the os-image e2e suite so it
+        # can redirect the updater at its local test server; other suites build prod-identical binaries.
         run: |
           git status
           $env:E2E_COVERAGE="1"
-          make
+          make ${{ inputs.test-command == 'test-e2e-osimage' && 'FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES=true' || '' }}
       - name: Run e2e tests
         run: |
           # set path to use newer ssh version

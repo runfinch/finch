@@ -195,7 +195,7 @@ func TestNewApp(t *testing.T) {
 	assert.Equal(t, cmd.SilenceUsage, true)
 	assert.Equal(t, cmd.SilenceErrors, true)
 	// confirm the number of command, comprised of nerdctl commands + finch commands
-	assert.Equal(t, len(cmd.Commands()), len(nerdctlCmds)+6)
+	assert.Equal(t, len(cmd.Commands()), len(nerdctlCmds)+7)
 
 	// PersistentPreRunE should set logger level to debug if the debug flag exists.
 	mockCmd := &cobra.Command{}
@@ -203,4 +203,152 @@ func TestNewApp(t *testing.T) {
 	l.EXPECT().SetLevel(flog.Debug)
 
 	require.NoError(t, cmd.PersistentPreRunE(mockCmd, nil))
+}
+
+func TestPersistentPreRunE_UpdateNotification(t *testing.T) {
+	t.Parallel()
+
+	t.Run("shows notification when update is available", func(t *testing.T) {
+		t.Parallel()
+		ctrl := gomock.NewController(t)
+		l := mocks.NewLogger(ctrl)
+		ecc := mocks.NewCommandCreator(ctrl)
+		fs := afero.NewMemMapFs()
+		stdOut := os.Stdout
+
+		tmpDir := t.TempDir()
+		fp := path.Finch(tmpDir)
+		finchRootPath := tmpDir
+		finchDir := fp.FinchDir(finchRootPath)
+		require.NoError(t, os.MkdirAll(finchDir, 0o755))
+
+		// Write metadata indicating an update is available
+		metadata := `{"update_available":true,"current_image":"img-old.qcow2","new_image":"img-new.qcow2"}`
+		require.NoError(t, os.WriteFile(finchDir+"/os-image-metadata.json", []byte(metadata), 0o644))
+
+		fc := &config.Finch{}
+		cmd := newApp(l, fp, fs, fc, stdOut, "", finchRootPath, ecc)
+
+		mockCmd := &cobra.Command{Use: "ps"}
+		mockCmd.Flags().Bool("debug", false, "")
+
+		l.EXPECT().Infof(
+			"A new OS image is available: %s (current: %s). Run \"finch os-image update\" to update.",
+			"img-new.qcow2", "img-old.qcow2",
+		)
+
+		require.NoError(t, cmd.PersistentPreRunE(mockCmd, nil))
+	})
+
+	t.Run("does not show notification when disabled in config", func(t *testing.T) {
+		t.Parallel()
+		ctrl := gomock.NewController(t)
+		l := mocks.NewLogger(ctrl)
+		ecc := mocks.NewCommandCreator(ctrl)
+		fs := afero.NewMemMapFs()
+		stdOut := os.Stdout
+
+		tmpDir := t.TempDir()
+		fp := path.Finch(tmpDir)
+		finchRootPath := tmpDir
+		finchDir := fp.FinchDir(finchRootPath)
+		require.NoError(t, os.MkdirAll(finchDir, 0o755))
+
+		metadata := `{"update_available":true,"current_image":"img-old.qcow2","new_image":"img-new.qcow2"}`
+		require.NoError(t, os.WriteFile(finchDir+"/os-image-metadata.json", []byte(metadata), 0o644))
+
+		disabled := false
+		fc := &config.Finch{}
+		fc.OSImage.UpdateNotifications = &disabled
+		cmd := newApp(l, fp, fs, fc, stdOut, "", finchRootPath, ecc)
+
+		mockCmd := &cobra.Command{Use: "ps"}
+		mockCmd.Flags().Bool("debug", false, "")
+
+		// No Infof expectation — notification should not fire
+		require.NoError(t, cmd.PersistentPreRunE(mockCmd, nil))
+	})
+
+	t.Run("does not show notification for version command", func(t *testing.T) {
+		t.Parallel()
+		ctrl := gomock.NewController(t)
+		l := mocks.NewLogger(ctrl)
+		ecc := mocks.NewCommandCreator(ctrl)
+		fs := afero.NewMemMapFs()
+		stdOut := os.Stdout
+
+		tmpDir := t.TempDir()
+		fp := path.Finch(tmpDir)
+		finchRootPath := tmpDir
+		finchDir := fp.FinchDir(finchRootPath)
+		require.NoError(t, os.MkdirAll(finchDir, 0o755))
+
+		metadata := `{"update_available":true,"current_image":"img-old.qcow2","new_image":"img-new.qcow2"}`
+		require.NoError(t, os.WriteFile(finchDir+"/os-image-metadata.json", []byte(metadata), 0o644))
+
+		fc := &config.Finch{}
+		cmd := newApp(l, fp, fs, fc, stdOut, "", finchRootPath, ecc)
+
+		mockCmd := &cobra.Command{Use: "version"}
+		mockCmd.Flags().Bool("debug", false, "")
+
+		// No Infof expectation — notification should not fire for version command
+		require.NoError(t, cmd.PersistentPreRunE(mockCmd, nil))
+	})
+
+	t.Run("does not show notification for os-image subcommands", func(t *testing.T) {
+		t.Parallel()
+		ctrl := gomock.NewController(t)
+		l := mocks.NewLogger(ctrl)
+		ecc := mocks.NewCommandCreator(ctrl)
+		fs := afero.NewMemMapFs()
+		stdOut := os.Stdout
+
+		tmpDir := t.TempDir()
+		fp := path.Finch(tmpDir)
+		finchRootPath := tmpDir
+		finchDir := fp.FinchDir(finchRootPath)
+		require.NoError(t, os.MkdirAll(finchDir, 0o755))
+
+		metadata := `{"update_available":true,"current_image":"img-old.qcow2","new_image":"img-new.qcow2"}`
+		require.NoError(t, os.WriteFile(finchDir+"/os-image-metadata.json", []byte(metadata), 0o644))
+
+		fc := &config.Finch{}
+		cmd := newApp(l, fp, fs, fc, stdOut, "", finchRootPath, ecc)
+
+		parentCmd := &cobra.Command{Use: "os-image"}
+		mockCmd := &cobra.Command{Use: "update"}
+		parentCmd.AddCommand(mockCmd)
+		mockCmd.Flags().Bool("debug", false, "")
+
+		// No Infof expectation — notification should not fire for os-image subcommands
+		require.NoError(t, cmd.PersistentPreRunE(mockCmd, nil))
+	})
+
+	t.Run("does not show notification when no update available", func(t *testing.T) {
+		t.Parallel()
+		ctrl := gomock.NewController(t)
+		l := mocks.NewLogger(ctrl)
+		ecc := mocks.NewCommandCreator(ctrl)
+		fs := afero.NewMemMapFs()
+		stdOut := os.Stdout
+
+		tmpDir := t.TempDir()
+		fp := path.Finch(tmpDir)
+		finchRootPath := tmpDir
+		finchDir := fp.FinchDir(finchRootPath)
+		require.NoError(t, os.MkdirAll(finchDir, 0o755))
+
+		metadata := `{"update_available":false,"current_image":"img.qcow2","new_image":"img.qcow2"}`
+		require.NoError(t, os.WriteFile(finchDir+"/os-image-metadata.json", []byte(metadata), 0o644))
+
+		fc := &config.Finch{}
+		cmd := newApp(l, fp, fs, fc, stdOut, "", finchRootPath, ecc)
+
+		mockCmd := &cobra.Command{Use: "ps"}
+		mockCmd.Flags().Bool("debug", false, "")
+
+		// No Infof expectation — update_available is false
+		require.NoError(t, cmd.PersistentPreRunE(mockCmd, nil))
+	})
 }

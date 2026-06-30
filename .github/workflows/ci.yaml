@@ -197,7 +197,7 @@ jobs:
       fail-fast: false
       matrix:
         version: ['15', '26']
-        test-command: ['test-e2e-vm-serial', 'test-e2e-container', 'test-e2e-daemon']
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container', 'test-e2e-daemon', 'test-e2e-osimage']
         arch: ['X64', 'arm64']
         runner-type: ['test']
         exclude:
@@ -215,7 +215,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container', 'test-e2e-osimage']
         arch: ['amd64']
         runner-type: ['test']
     uses: ./.github/workflows/e2e-windows.yaml
