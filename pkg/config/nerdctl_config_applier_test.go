@@ -69,7 +69,7 @@ AWS_DIR=/home/dir/.aws
 mkdir -p "$HOME/.finch-vm-config"
 export DOCKER_CONFIG="$HOME/.finch-vm-config"
 echo '{"credsStore": "finchhost"}' > "$DOCKER_CONFIG/config.json"
-[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws
+[ -L /root/.aws ] || sudo ln -fsn "$AWS_DIR" /root/.aws
 [ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`), string(fileBytes))
 			},
 			want: nil,
@@ -96,7 +96,7 @@ echo '{"credsStore": "finchhost"}' > "$DOCKER_CONFIG/config.json"
 FINCH_DIR=/finch/dir
 AWS_DIR=/home/dir/.aws
 export DOCKER_CONFIG="$FINCH_DIR"
-[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws)
+[ -L /root/.aws ] || sudo ln -fsn "$AWS_DIR" /root/.aws)
 [ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`,
 						),
 						0o644,
@@ -110,7 +110,7 @@ export DOCKER_CONFIG="$FINCH_DIR"
 FINCH_DIR=/finch/dir
 AWS_DIR=/home/dir/.aws
 export DOCKER_CONFIG="$FINCH_DIR"
-[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws)
+[ -L /root/.aws ] || sudo ln -fsn "$AWS_DIR" /root/.aws)
 [ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch
 mkdir -p "$HOME/.finch-vm-config"
 export DOCKER_CONFIG="$HOME/.finch-vm-config"
@@ -164,7 +164,7 @@ echo '{"credsStore": "finchhost"}' > "$DOCKER_CONFIG/config.json"`), string(file
 FINCH_DIR="$(/usr/bin/wslpath '/finch/dir')"
 AWS_DIR="$(/usr/bin/wslpath '/home/dir/.aws')"
 export DOCKER_CONFIG="$FINCH_DIR"
-[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws
+[ -L /root/.aws ] || sudo ln -fsn "$AWS_DIR" /root/.aws
 [ -L /home/mock_user.linux/.finch ] || ln -s $FINCH_DIR /home/mock_user.linux/.finch`), string(fileBytes))
 			},
 			want: nil,
@@ -194,7 +194,7 @@ export DOCKER_CONFIG="$FINCH_DIR"
 					"\nFINCH_DIR=\"$(/usr/bin/wslpath '/finch/dir')\"\n"+
 						"AWS_DIR=\"$(/usr/bin/wslpath '/home/dir/.aws')\"\n"+
 						"export DOCKER_CONFIG=\"$FINCH_DIR\"\n"+
-						"[ -L /root/.aws ] || sudo ln -fs \"$AWS_DIR\" /root/.aws\n"+
+						"[ -L /root/.aws ] || sudo ln -fsn \"$AWS_DIR\" /root/.aws\n"+
 						"([ -e \"$FINCH_DIR\"/cred-helpers/docker-credential-ecr-login ] || \\\n"+
 						"\t\t\t(echo \"error: docker-credential-ecr-login not found in "+
 						"$FINCH_DIR/cred-helpers directory.\")) && \\\n"+
