@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.18.0](https://github.com/runfinch/finch/compare/v1.17.2...v1.18.0) (2026-06-30)
+
+
+### Features
+
+* gate vmnet behind config, use vzNAT for vz and socket_vmnet for qemu ([ff1346b](https://github.com/runfinch/finch/commit/ff1346b1d76f083ba86433e4501cbb5e5ce29634))
+* use vzNAT for vz networking, gate socket_vmnet behind config for qemu ([#1749](https://github.com/runfinch/finch/issues/1749)) ([ff1346b](https://github.com/runfinch/finch/commit/ff1346b1d76f083ba86433e4501cbb5e5ce29634))
+
 ## [1.17.2](https://github.com/runfinch/finch/compare/v1.17.1...v1.17.2) (2026-06-30)
 
 
