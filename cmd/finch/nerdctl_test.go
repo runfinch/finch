@@ -21,7 +21,7 @@ var testStdoutRs = []command.Replacement{
 func TestNerdctlCommandCreator_create(t *testing.T) {
 	t.Parallel()
 
-	cmd := newNerdctlCommandCreator(nil, nil, nil, nil, nil, nil).create("build", "build description")
+	cmd := newNerdctlCommandCreator(nil, nil, nil, nil, nil, nil, nil).create("build", "build description")
 	assert.Equal(t, cmd.Name(), "build")
 	assert.Equal(t, cmd.DisableFlagParsing, true)
 }
@@ -113,7 +113,7 @@ func TestNerdctlCommand_shouldReplaceForHelp(t *testing.T) {
 			ncsd := mocks.NewNerdctlCommandSystemDeps(ctrl)
 			logger := mocks.NewLogger(ctrl)
 			assert.True(t, (newNerdctlCommand(ncc, ecc, ncsd, logger,
-				nil, &config.Finch{}).shouldReplaceForHelp(tc.cmdName, tc.args) == tc.expected))
+				nil, &config.Finch{}, nil).shouldReplaceForHelp(tc.cmdName, tc.args) == tc.expected))
 		})
 	}
 }
