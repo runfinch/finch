@@ -99,6 +99,10 @@ func (bin *binaries) Installed() bool {
 // Install creates the privileged location (`bin.installationPath()`), copies socket_vmnet files from the build output
 // directory to said location, and sets the correct permissions.
 func (bin *binaries) Install() error {
+	if bin.l != nil {
+		bin.l.Infof("socket_vmnet setup requires sudo. If this hangs, run 'finch vm init' interactively.")
+	}
+
 	mkdirCmd := bin.cmdCreator.Create("sudo", "mkdir", "-p", bin.installationPath())
 	_, err := mkdirCmd.Output()
 	if err != nil {

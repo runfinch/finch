@@ -80,6 +80,15 @@ func (lca *limaConfigApplier) configureVirtualizationFramework(limaCfg *limatype
 		userModeEmulationInstallationScript(limaCfg)
 	}
 
+	// Configure vzNAT networking for vz when vmnet is enabled (no sudo required)
+	if lca.cfg.VMNet != nil && *lca.cfg.VMNet {
+		if lca.cfg.VMType != nil && *lca.cfg.VMType == "vz" {
+			limaCfg.Networks = append(limaCfg.Networks, limatype.Network{
+				VZNAT: pointer.Bool(true),
+			})
+		}
+	}
+
 	return limaCfg, nil
 }
 
