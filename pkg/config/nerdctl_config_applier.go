@@ -107,7 +107,7 @@ func updateEnvironment(fs afero.Fs, fc *Finch, finchDir, homeDir, limaVMHomeDir 
 			`echo '{"credsStore": "finchhost"}' > "$DOCKER_CONFIG/config.json"`,
 		}
 	}
-	cmdArr = append(cmdArr, `[ -L /root/.aws ] || sudo ln -fs "$AWS_DIR" /root/.aws`)
+	cmdArr = append(cmdArr, `[ -L /root/.aws ] || sudo ln -fsn "$AWS_DIR" /root/.aws`)
 
 	// Credential helper configuration in-VM only necessary on Windows.
 	// TODO: Windows requires credential helper binaries to be symlinked into the VM because
