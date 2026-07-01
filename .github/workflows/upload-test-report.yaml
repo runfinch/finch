@@ -46,7 +46,7 @@ jobs:
           is_al2=${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
           echo "is_al2=$is_al2" >> $GITHUB_OUTPUT
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
+        uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b # v6.2.1
         if: |
             steps.linux2.outputs.is_al2 == 'false'
             && inputs.has-creds == 'true'
