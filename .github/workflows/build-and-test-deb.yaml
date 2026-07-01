@@ -80,7 +80,7 @@ jobs:
     timeout-minutes: 60
     steps:
         - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
+          uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b # v6.2.1
           with:
             role-to-assume: ${{ secrets.DEB_ROLE_PROD }}
             role-session-name: ubuntu-deb
