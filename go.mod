@@ -1,6 +1,6 @@
 module github.com/runfinch/finch
 
-go 1.25.7
+go 1.26.0
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.42.0
@@ -15,7 +15,7 @@ require (
 	github.com/lima-vm/lima v1.2.3
 	github.com/lima-vm/lima/v2 v2.1.3
 	github.com/onsi/ginkgo/v2 v2.32.0
-	github.com/onsi/gomega v1.40.0
+	github.com/onsi/gomega v1.42.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/sftp v1.13.10
 	github.com/runfinch/common-tests v0.10.4
@@ -26,7 +26,7 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 	github.com/tc-hib/go-winres v0.3.3
-	github.com/xorcare/pointer v1.2.2
+	github.com/xorcare/pointer v1.26.0
 	go.uber.org/mock v0.6.0
 	golang.org/x/crypto v0.53.0
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
@@ -34,7 +34,7 @@ require (
 	golang.org/x/tools v0.47.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.35.6
+	k8s.io/apimachinery v0.36.2
 )
 
 require (
