@@ -31,7 +31,44 @@ type AdditionalDirectory struct {
 
 // SharedSystemSettings represents all settings shared by virtualized Finch configurations.
 type SharedSystemSettings struct {
-	VMType *limayaml.VMType `yaml:"vmType,omitempty"`
+	VMType  *limayaml.VMType `yaml:"vmType,omitempty"`
+	OSImage OSImageSettings  `yaml:"os_image,omitempty"`
+}
+
+// OSImageSettings represents settings for OS image management.
+type OSImageSettings struct {
+	UpdateNotifications *bool `yaml:"update_notifications,omitempty"`
+	Backup              *bool `yaml:"backup,omitempty"`
+	NumBackups          *int  `yaml:"num_backups,omitempty"`
+}
+
+// UpdateNotificationsEnabled returns whether OS image update notifications are enabled.
+// Defaults to true if not explicitly set.
+func (s *OSImageSettings) UpdateNotificationsEnabled() bool {
+	if s.UpdateNotifications == nil {
+		return true
+	}
+	return *s.UpdateNotifications
+}
+
+// BackupEnabled returns whether OS image backups are enabled.
+// Defaults to true if not explicitly set.
+func (s *OSImageSettings) BackupEnabled() bool {
+	if s.Backup == nil {
+		return true
+	}
+	return *s.Backup
+}
+
+const defaultNumBackups = 3
+
+// GetNumBackups returns the number of backup images to retain.
+// Defaults to 3 if not explicitly set.
+func (s *OSImageSettings) GetNumBackups() int {
+	if s.NumBackups == nil || *s.NumBackups < 1 {
+		return defaultNumBackups
+	}
+	return *s.NumBackups
 }
 
 // SharedSettings represents settings shared by all Finch configurations.

@@ -49,6 +49,13 @@ VERSION_INJECTION += -X $(PACKAGE)/pkg/dependency/credhelper.EcrVersion=$(ECR_CR
 VERSION_INJECTION += -X $(PACKAGE)/pkg/dependency/credhelper.EcrAMD64Hash=$(ECR_CRED_HELPER_AMD64_DIGEST)
 VERSION_INJECTION += -X $(PACKAGE)/pkg/dependency/credhelper.EcrARM64Hash=$(ECR_CRED_HELPER_ARM64_DIGEST)
 
+# Enable runtime FINCH_DEPS_* env overrides. 
+# This is only done for os-image e2e builds so production binaries cannot be redirected
+# to arbitrary manifest sources via the environment vars.
+ifdef FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES
+VERSION_INJECTION += -X $(PACKAGE)/pkg/osimage.allowEnvOverrides=$(FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES)
+endif
+
 FINCH_DAEMON_LOCATION_ROOT ?= $(FINCH_OS_IMAGE_LOCATION_ROOT)/finch-daemon
 FINCH_DAEMON_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/finch-daemon
 FINCH_DAEMON_CREDHELPER_LOCATION ?= $(FINCH_DAEMON_LOCATION_ROOT)/docker-credential-finch
@@ -364,6 +371,18 @@ test-e2e-vm-serial: create-report-dir create-coverage-dir add-credhelper-to-path
 .PHONY: test-e2e-container
 test-e2e-container: create-report-dir create-coverage-dir add-credhelper-to-path
 	FINCH_GOCOVERDIR=$(COVERAGE_DIR) go test -coverpkg=./... -ldflags $(LDFLAGS) -timeout 2h ./e2e/container -test.v -test.gocoverdir=$(COVERAGE_DIR) -ginkgo.vv -ginkgo.timeout=2h -ginkgo.flake-attempts=3 -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-container-report.json --installed="$(INSTALLED)"
+
+.PHONY: test-e2e-osimage
+# NOTE: the finch binary under test must be built with FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES=true.
+# Without it the env overrides are ignored by design and
+# the update commands will hit the production deps endpoint.
+test-e2e-osimage: create-report-dir create-coverage-dir
+	FINCH_GOCOVERDIR=$(COVERAGE_DIR) \
+	go test \
+		-coverpkg=./... -ldflags $(LDFLAGS) -timeout 10m ./e2e/osimage \
+		-test.v -test.gocoverdir=$(COVERAGE_DIR) \
+		-ginkgo.vv -ginkgo.timeout=10m -ginkgo.json-report=$(REPORT_DIR)/$(RUN_ID)-$(RUN_ATTEMPT)-e2e-osimage-report.json \
+		--installed="$(INSTALLED)"
 
 .PHONY: test-e2e-vm
 test-e2e-vm: create-report-dir create-coverage-dir
