@@ -14,6 +14,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/mocks"
 
 	"github.com/stretchr/testify/assert"
@@ -65,7 +66,7 @@ func TestNewVersionCommand(t *testing.T) {
 	logger := mocks.NewLogger(ctrl)
 	ncc := mocks.NewNerdctlCmdCreator(ctrl)
 	var stdOut bytes.Buffer
-	cmd := newVersionCommand(ncc, logger, &stdOut)
+	cmd := newVersionCommand(ncc, logger, &stdOut, nil, nil)
 	assert.Equal(t, cmd.Name(), "version")
 }
 
@@ -138,7 +139,7 @@ func TestVersionAction_runAdaptor(t *testing.T) {
 			var stdOut bytes.Buffer
 			tc.mockSvc(ncc, logger, ctrl)
 
-			assert.NoError(t, newVersionAction(ncc, logger, &stdOut).runAdapter(tc.cmd(t), tc.args))
+			assert.NoError(t, newVersionAction(ncc, logger, &stdOut, nil, nil).runAdapter(tc.cmd(t), tc.args))
 		})
 	}
 }
@@ -147,15 +148,17 @@ func TestVersionAction_run(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name         string
-		wantErr      error
-		cmd          func(t *testing.T) *cobra.Command
-		mockSvc      func(*mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller)
-		postRunCheck func(t *testing.T, stdout []byte)
-		format       string
+		name          string
+		wantErr       error
+		cmd           func(t *testing.T) *cobra.Command
+		mockSvc       func(*mocks.NerdctlCmdCreator, *mocks.Logger, *gomock.Controller)
+		postRunCheck  func(t *testing.T, stdout []byte)
+		format        string
+		vmAutoStarter func(*gomock.Controller) VMAutoStarter
+		fc            *config.Finch
 	}{
 		{
-			name:    "print finch version with Client and Server",
+			name:    "print finch version with Client and Server if autostart is enabled and is successful",
 			wantErr: nil,
 			cmd: func(_ *testing.T) *cobra.Command {
 				c := &cobra.Command{
@@ -165,12 +168,7 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
-				getVMStatusC := mocks.NewCommand(ctrl)
-				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
-				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
-
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
 				command := mocks.NewCommand(ctrl)
 				ncc.EXPECT().CreateWithoutStdio("shell", limaInstanceName, "sudo", "-E", "nerdctl", "version",
 					"--format", "json").Return(command)
@@ -201,9 +199,15 @@ func TestVersionAction_run(t *testing.T) {
 				assert.Equal(t, lines[18], "")
 			},
 			format: "",
+			vmAutoStarter: func(ctrl *gomock.Controller) VMAutoStarter {
+				starter := mocks.NewVMAutoStarter(ctrl)
+				starter.EXPECT().EnsureVMRunning().Return(nil)
+				return starter
+			},
+			fc: &config.Finch{},
 		},
 		{
-			name:    "print only finch version only while VM not running",
+			name:    "print only finch version if no auto-starter and VM not running",
 			wantErr: errors.New("detailed version info is unavailable because VM is not running"),
 			cmd: func(_ *testing.T) *cobra.Command {
 				c := &cobra.Command{
@@ -225,10 +229,10 @@ func TestVersionAction_run(t *testing.T) {
 			format: "",
 		},
 		{
-			name: "print only finch version if VM getting error",
+			name: "print only finch version if auto-start is enabled but fails",
 			wantErr: fmt.Errorf(
-				"failed to get VM status: %w",
-				errors.New("get status error"),
+				"failed to ensure VM is running: %w",
+				errors.New("vm start error"),
 			),
 			cmd: func(_ *testing.T) *cobra.Command {
 				c := &cobra.Command{
@@ -238,15 +242,47 @@ func TestVersionAction_run(t *testing.T) {
 
 				return c
 			},
-			mockSvc: func(ncc *mocks.NerdctlCmdCreator, _ *mocks.Logger, ctrl *gomock.Controller) {
-				getVMStatusC := mocks.NewCommand(ctrl)
-				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
-				getVMStatusC.EXPECT().Output().Return([]byte("Broken"), errors.New("get status error"))
+			mockSvc: func(_ *mocks.NerdctlCmdCreator, _ *mocks.Logger, _ *gomock.Controller) {
 			},
 			postRunCheck: func(t *testing.T, stdout []byte) {
 				assert.Equal(t, string(stdout), "Finch version:\t\n")
 			},
 			format: "",
+			vmAutoStarter: func(ctrl *gomock.Controller) VMAutoStarter {
+				starter := mocks.NewVMAutoStarter(ctrl)
+				starter.EXPECT().EnsureVMRunning().Return(errors.New("vm start error"))
+				return starter
+			},
+			fc: &config.Finch{},
+		},
+		{
+			name:    "print only finch version if auto-start is disabled",
+			wantErr: errors.New("detailed version info is unavailable because VM is not running"),
+			cmd: func(_ *testing.T) *cobra.Command {
+				c := &cobra.Command{
+					Use: "version",
+				}
+				c.Flags().StringP("format", "f", "", "Format the output using the given Go template, e.g, '{{json .}}'")
+
+				return c
+			},
+			mockSvc: func(ncc *mocks.NerdctlCmdCreator, logger *mocks.Logger, ctrl *gomock.Controller) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Stopped"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Stopped")
+			},
+			postRunCheck: func(t *testing.T, stdout []byte) {
+				assert.Equal(t, string(stdout), "Finch version:\t\n")
+			},
+			format: "",
+			fc: &config.Finch{
+				SystemSettings: config.SystemSettings{
+					SharedSystemSettings: config.SharedSystemSettings{
+						AutoVMStart: func() *bool { b := false; return &b }(),
+					},
+				},
+			},
 		},
 		{
 			name:    "with --format json",
@@ -400,7 +436,12 @@ func TestVersionAction_run(t *testing.T) {
 			tc.mockSvc(ncc, logger, ctrl)
 			var stdOut bytes.Buffer
 
-			err := newVersionAction(ncc, logger, &stdOut).run(tc.format)
+			var starter VMAutoStarter
+			if tc.vmAutoStarter != nil {
+				starter = tc.vmAutoStarter(ctrl)
+			}
+
+			err := newVersionAction(ncc, logger, &stdOut, starter, tc.fc).run(tc.format)
 			assert.Equal(t, tc.wantErr, err)
 
 			tc.postRunCheck(t, stdOut.Bytes())

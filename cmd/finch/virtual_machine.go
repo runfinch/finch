@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/runfinch/finch/pkg/dependency"
 	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/fssh"
 	"github.com/runfinch/finch/pkg/system"
@@ -92,6 +93,49 @@ func (p *postVMStartInitAction) run() error {
 	return p.nca.Apply(fmt.Sprintf("127.0.0.1:%v", portString))
 }
 
+// vmDependencies holds the shared dependencies needed for VM init/start operations.
+type vmDependencies struct {
+	optionalDepGroups []*dependency.Group
+	lca               config.LimaConfigApplier
+	nca               config.NerdctlConfigApplier
+	diskManager       disk.UserDataDiskManager
+}
+
+func buildVMDependencies(
+	logger flog.Logger,
+	fp path.Finch,
+	ncc command.NerdctlCmdCreator,
+	ecc command.Creator,
+	fs afero.Fs,
+	fc *config.Finch,
+	home string,
+	finchRootPath string,
+) *vmDependencies {
+	finchDir := fp.FinchDir(finchRootPath)
+	return &vmDependencies{
+		optionalDepGroups: dependencies(ecc, fc, fp, fs, ncc, logger, finchDir),
+		lca: config.NewLimaApplier(
+			fc,
+			ecc,
+			fs,
+			fp.LimaDefaultConfigPath(),
+			fp.LimaOverrideConfigPath(),
+			system.NewStdLib(),
+			fp.ConfigFilePath(finchRootPath),
+		),
+		nca: config.NewNerdctlApplier(
+			fssh.NewDialer(),
+			fs,
+			fp.LimaSSHPrivateKeyPath(),
+			finchDir,
+			home,
+			fp.LimaInstancePath(),
+			fc,
+		),
+		diskManager: disk.NewUserDataDiskManager(ncc, ecc, &afero.OsFs{}, fp, finchRootPath, fc, logger),
+	}
+}
+
 func virtualMachineCommands(
 	logger flog.Logger,
 	fp path.Finch,
@@ -102,31 +146,16 @@ func virtualMachineCommands(
 	home string,
 	finchRootPath string,
 ) *cobra.Command {
+	deps := buildVMDependencies(logger, fp, ncc, ecc, fs, fc, home, finchRootPath)
 	return newVirtualMachineCommand(
 		ncc,
 		logger,
-		dependencies(ecc, fc, fp, fs, ncc, logger, fp.FinchDir(finchRootPath)),
-		config.NewLimaApplier(
-			fc,
-			ecc,
-			fs,
-			fp.LimaDefaultConfigPath(),
-			fp.LimaOverrideConfigPath(),
-			system.NewStdLib(),
-			fp.ConfigFilePath(finchRootPath),
-		),
-		config.NewNerdctlApplier(
-			fssh.NewDialer(),
-			fs,
-			fp.LimaSSHPrivateKeyPath(),
-			fp.FinchDir(finchRootPath),
-			home,
-			fp.LimaInstancePath(),
-			fc,
-		),
+		deps.optionalDepGroups,
+		deps.lca,
+		deps.nca,
 		fp,
 		fs,
-		disk.NewUserDataDiskManager(ncc, ecc, &afero.OsFs{}, fp, finchRootPath, fc, logger),
+		deps.diskManager,
 		fc,
 	)
 }

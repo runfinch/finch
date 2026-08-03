@@ -38,8 +38,9 @@ func initializeNerdctlCommands(
 	logger flog.Logger,
 	fs afero.Fs,
 	fc *config.Finch,
+	vmAutoStarter VMAutoStarter,
 ) []*cobra.Command {
-	nerdctlCommandCreator := newNerdctlCommandCreator(ncc, ecc, system.NewStdLib(), logger, fs, fc)
+	nerdctlCommandCreator := newNerdctlCommandCreator(ncc, ecc, system.NewStdLib(), logger, fs, fc, vmAutoStarter)
 	var allNerdctlCommands []*cobra.Command
 	for cmdName, cmdDescription := range nerdctlCmds {
 		allNerdctlCommands = append(allNerdctlCommands, nerdctlCommandCreator.create(cmdName, cmdDescription))

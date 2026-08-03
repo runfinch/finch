@@ -107,11 +107,11 @@ var newApp = func(
 		system.NewStdLib(),
 	)
 
-	// append nerdctl commands
-	allCommands := initializeNerdctlCommands(ncc, ecc, logger, fs, fc)
+	// append nerdctl commands (no VMAutoStarter on Linux — no VM needed)
+	allCommands := initializeNerdctlCommands(ncc, ecc, logger, fs, fc, nil)
 	// append finch specific commands
 	allCommands = append(allCommands,
-		newVersionCommand(ncc, logger, stdOut),
+		newVersionCommand(ncc, logger, stdOut, nil, fc),
 		newSupportBundleCommand(logger, supportBundleBuilder, ncc),
 		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
 	)
