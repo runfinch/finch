@@ -15,6 +15,8 @@ import (
 	"github.com/docker/docker-credential-helpers/credentials"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/runfinch/finch/pkg/credserver"
 )
 
 func TestHandleCredentials(t *testing.T) {
@@ -62,7 +64,6 @@ func TestHandleCredentials(t *testing.T) {
 	t.Run("returns credentials on success", func(t *testing.T) {
 		t.Parallel()
 		req := httptest.NewRequest(http.MethodGet, "/credentials?server=registry.example.com", nil)
-		req.Header.Set("X-Finch-Env-TEST", "value")
 		w := httptest.NewRecorder()
 
 		handleCredentials(w, req)
@@ -74,6 +75,17 @@ func TestHandleCredentials(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&creds)
 		require.NoError(t, err)
 		assert.Equal(t, "registry.example.com", creds.ServerURL)
+	})
+
+	t.Run("returns 400 for disallowed env header", func(t *testing.T) {
+		t.Parallel()
+		req := httptest.NewRequest(http.MethodGet, "/credentials?server=registry.example.com", nil)
+		req.Header.Set("X-Finch-Env-TEST", "value")
+		w := httptest.NewRecorder()
+
+		handleCredentials(w, req)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
 	t.Run("returns empty credentials on GetCredentials error", func(t *testing.T) {
@@ -103,11 +115,24 @@ func TestHandleCredentials(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("handles large, arbitrary environment variable maps", func(t *testing.T) {
+	t.Run("rejects large, arbitrary environment variable maps", func(t *testing.T) {
 		t.Parallel()
 		req := httptest.NewRequest(http.MethodGet, "/credentials?server=registry.example.com", nil)
 		for i := 0; i < 100; i++ {
 			req.Header.Set(fmt.Sprintf("X-Finch-Env-%c", 'A'+i), "value")
+		}
+		w := httptest.NewRecorder()
+
+		handleCredentials(w, req)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("allows all allowlisted env headers", func(t *testing.T) {
+		t.Parallel()
+		req := httptest.NewRequest(http.MethodGet, "/credentials?server=registry.example.com", nil)
+		for _, key := range credserver.AllowedEnvKeys {
+			req.Header.Set("X-Finch-Env-"+key, "value")
 		}
 		w := httptest.NewRecorder()
 
@@ -164,7 +189,7 @@ func TestHandleCredentials(t *testing.T) {
 		for i := 0; i < numRequests; i++ {
 			go func(id int) {
 				req := httptest.NewRequest(http.MethodGet, "/credentials?server=registry.example.com", nil)
-				req.Header.Set("X-Finch-Env-ID", fmt.Sprintf("%d", id))
+				req.Header.Set("X-Finch-Env-AWS_PROFILE", fmt.Sprintf("profile-%d", id))
 				w := httptest.NewRecorder()
 
 				handleCredentials(w, req)

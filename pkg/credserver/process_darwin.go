@@ -24,7 +24,31 @@ const (
 	credDaemonRelPath  = "finch-cred/credserver"           //nolint:gosec // G101: File path, not credentials
 	credPIDFileRelPath = "lima/data/finch/cred-daemon.pid" //nolint:gosec // G101: File path, not credentials
 	credLogRelPath     = "logs/credserver.log"             //nolint:gosec // G101: File path, not credentials
+
+	// credDaemonWorkingDir is the working directory the detached credential daemon
+	// runs in. Set to root so the daemon does not inherit the finch
+	// CLI's current working directory.
+	credDaemonWorkingDir = "/"
+
+	// credDaemonPath is the PATH the detached credential daemon (and therefore
+	// the credential helpers it execs) runs with.
+	credDaemonPath = "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin" //nolint:gosec // G101: PATH value, not credentials
 )
+
+// sanitizedDaemonEnv returns the environment variables with PATH replaced by
+// credDaemonPath. Other env variables are preserved.
+func sanitizedDaemonEnv() []string {
+	env := os.Environ()
+	out := make([]string, 0, len(env)+1)
+	for _, kv := range env {
+		if strings.HasPrefix(kv, "PATH=") {
+			continue
+		}
+		out = append(out, kv)
+	}
+	out = append(out, "PATH="+credDaemonPath)
+	return out
+}
 
 // IsDaemonRunning checks if the credential daemon is already running.
 func IsDaemonRunning(finchRootPath string) bool {
@@ -67,6 +91,8 @@ func StartCredentialServer(finchRootPath string) error {
 	// Construct command to start daemon as detached background process.
 	// #nosec G204 -- daemonPath is constructed from finchRootPath, not user input
 	cmd := exec.Command(daemonPath, socketPath, pidFile, logPath)
+	cmd.Dir = credDaemonWorkingDir
+	cmd.Env = sanitizedDaemonEnv()
 	cmd.Stderr = nil
 	cmd.Stdout = nil
 	cmd.SysProcAttr = &syscall.SysProcAttr{
