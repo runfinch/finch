@@ -27,6 +27,9 @@ The project will in the near future have a more full set of documentation and tu
 
 ### Installing Finch
 
+> [!IMPORTANT]
+> Please note that Finch is a developer tool and is not meant for use in production environments, especially one running multi-tenant workloads. The virtual machine that Finch manages on macOS and Windows does not create a security boundary and exists for the sole purpose of running Linux containers on macOS and Windows.
+
 #### macOS
 
 To get started with Finch on macOS, the prerequisites are:
