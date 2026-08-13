@@ -162,6 +162,14 @@ func TestLoadConfigWithOverride(t *testing.T) {
 		assert.Equal(t, "custom-helper", cfg.CredentialsStore)
 	})
 
+	t.Run("rejects relative override path", func(t *testing.T) {
+		t.Parallel()
+		cfg, err := loadConfigWithOverride("relative/dir")
+		require.Error(t, err)
+		assert.Nil(t, cfg)
+		assert.Contains(t, err.Error(), "absolute path")
+	})
+
 	t.Run("falls back to ~/.finch when override and env empty", func(t *testing.T) {
 		t.Parallel()
 		tmpDir := t.TempDir()
@@ -232,6 +240,116 @@ func TestGetCredHelperPath(t *testing.T) {
 		path := getCredHelperPath("registry.example.com", nil)
 		assert.Empty(t, path)
 	})
+
+	t.Run("rejects credsStore containing a path separator", func(t *testing.T) {
+		t.Parallel()
+		cfg := &configfile.ConfigFile{ //nolint:gosec // G101: not a credential, this is a test
+			CredentialsStore: "/tmp/bad/script.sh",
+		}
+
+		path := getCredHelperPath("registry.example.com", cfg)
+		assert.Empty(t, path)
+	})
+
+	t.Run("rejects credHelpers value containing a path separator", func(t *testing.T) {
+		t.Parallel()
+		cfg := &configfile.ConfigFile{
+			CredentialHelpers: map[string]string{
+				"registry.example.com": "../../Users/bad/script.sh",
+			},
+		}
+
+		path := getCredHelperPath("registry.example.com", cfg)
+		assert.Empty(t, path)
+	})
+}
+
+//nolint:paralleltest // test uses t.Setenv
+func TestLookupHelperPath(t *testing.T) {
+	binDir := t.TempDir()
+
+	realHelper := filepath.Join(binDir, "docker-credential-realhelper")
+	//nolint:gosec // Test helper must be executable for exec.LookPath to find it
+	err := os.WriteFile(realHelper, []byte("#!/bin/sh\nexit 0\n"), 0o700)
+	require.NoError(t, err)
+
+	err = os.Symlink(realHelper, filepath.Join(binDir, "docker-credential-symlinkedhelper"))
+	require.NoError(t, err)
+
+	t.Setenv("PATH", binDir)
+
+	t.Run("returns path of a regular executable", func(t *testing.T) {
+		assert.Equal(t, realHelper, lookupHelperPath("realhelper"))
+	})
+
+	t.Run("rejects a helper that is a symlink", func(t *testing.T) {
+		assert.Empty(t, lookupHelperPath("symlinkedhelper"))
+	})
+
+	t.Run("returns empty when helper is not in PATH", func(t *testing.T) {
+		assert.Empty(t, lookupHelperPath("missinghelper"))
+	})
+}
+
+//nolint:paralleltest // test uses t.Setenv
+func TestGetCredHelperPathSymlink(t *testing.T) {
+	binDir := t.TempDir()
+
+	realHelper := filepath.Join(binDir, "docker-credential-symlinktarget")
+	//nolint:gosec // Test helper must be executable for exec.LookPath to find it
+	err := os.WriteFile(realHelper, []byte("#!/bin/sh\nexit 0\n"), 0o700)
+	require.NoError(t, err)
+
+	err = os.Symlink(realHelper, filepath.Join(binDir, "docker-credential-bad"))
+	require.NoError(t, err)
+
+	t.Setenv("PATH", binDir)
+
+	t.Run("rejects credHelpers value resolving to a symlink", func(t *testing.T) {
+		cfg := &configfile.ConfigFile{
+			CredentialHelpers: map[string]string{
+				"registry.example.com": "bad",
+			},
+		}
+
+		assert.Empty(t, getCredHelperPath("registry.example.com", cfg))
+	})
+
+	t.Run("rejects credsStore resolving to a symlink", func(t *testing.T) {
+		cfg := &configfile.ConfigFile{
+			CredentialsStore: "bad",
+		}
+
+		assert.Empty(t, getCredHelperPath("registry.example.com", cfg))
+	})
+}
+
+func TestIsValidHelperName(t *testing.T) {
+	t.Parallel()
+
+	valid := []string{"osxkeychain", "ecr-login"}
+	for _, name := range valid {
+		t.Run("valid: "+name, func(t *testing.T) {
+			t.Parallel()
+			assert.True(t, isValidHelperName(name))
+		})
+	}
+
+	invalid := []string{
+		"",
+		// path separators
+		"/tmp/bad/script.sh",
+		"./script.sh",
+		"../script.sh",
+		"../../Users/bad/script.sh",
+		"foo/bar",
+	}
+	for _, name := range invalid {
+		t.Run("invalid: "+name, func(t *testing.T) {
+			t.Parallel()
+			assert.False(t, isValidHelperName(name))
+		})
+	}
 }
 
 func TestReadCredentialsFromConfig(t *testing.T) {

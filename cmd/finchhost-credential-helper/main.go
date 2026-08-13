@@ -1,4 +1,4 @@
-//go:build !windows
+//go:build linux
 
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
@@ -23,17 +23,12 @@ import (
 	"strings"
 
 	"github.com/docker/docker-credential-helpers/credentials"
+
+	"github.com/runfinch/finch/pkg/credserver"
 )
 
 // FinchHostCredentialHelper implements the credentials.Helper interface.
 type FinchHostCredentialHelper struct{}
-
-// credentialEnvs are the environment variables collected for credential operations.
-var credentialEnvs = []string{
-	"COSIGN_PASSWORD", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY",
-	"AWS_SESSION_TOKEN", "AWS_ECR_DISABLE_CACHE", "AWS_ECR_CACHE_DIR",
-	"AWS_ECR_IGNORE_CREDS_STORAGE", "AWS_PROFILE", "HOST_DOCKER_CONFIG",
-}
 
 // Add is not implemented for FinchHost credential helper.
 func (h FinchHostCredentialHelper) Add(*credentials.Credentials) error {
@@ -52,15 +47,21 @@ func (h FinchHostCredentialHelper) List() (map[string]string, error) {
 
 // Get retrieves credentials via HTTP request to host.
 func (h FinchHostCredentialHelper) Get(serverURL string) (string, string, error) {
+	// Reject empty or whitespace-only server URLs before contacting the daemon.
+	serverURL = strings.TrimSpace(serverURL)
+	if serverURL == "" {
+		return "", "", credentials.NewErrCredentialsNotFound()
+	}
+
 	// Build URL with serverURL as query parameter.
-	url := fmt.Sprintf("http://unix/credentials?server=%s", strings.TrimSpace(serverURL))
+	url := fmt.Sprintf("http://unix/credentials?server=%s", serverURL)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return "", "", credentials.NewErrCredentialsNotFound()
 	}
 
 	// Add environment variables as headers.
-	for _, key := range credentialEnvs {
+	for _, key := range credserver.AllowedEnvKeys {
 		if val := os.Getenv(key); val != "" {
 			req.Header.Set("X-Finch-Env-"+key, val)
 		}

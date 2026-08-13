@@ -1,4 +1,4 @@
-//go:build !windows
+//go:build linux
 
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
@@ -11,6 +11,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/runfinch/finch/pkg/credserver"
 )
 
 //nolint:paralleltest // subtests use t.Setenv which is incompatible with t.Parallel
@@ -100,6 +102,29 @@ func TestFinchHostCredentialHelper_List(t *testing.T) {
 	})
 }
 
+func TestFinchHostCredentialHelper_Get(t *testing.T) {
+	t.Parallel()
+	t.Run("rejects empty server URL", func(t *testing.T) {
+		t.Parallel()
+		helper := FinchHostCredentialHelper{}
+		username, secret, err := helper.Get("")
+
+		assert.Error(t, err)
+		assert.Empty(t, username)
+		assert.Empty(t, secret)
+	})
+
+	t.Run("rejects whitespace-only server URL", func(t *testing.T) {
+		t.Parallel()
+		helper := FinchHostCredentialHelper{}
+		username, secret, err := helper.Get("   ")
+
+		assert.Error(t, err)
+		assert.Empty(t, username)
+		assert.Empty(t, secret)
+	})
+}
+
 func TestCredentialEnvs(t *testing.T) {
 	t.Parallel()
 	t.Run("contains expected environment variables", func(t *testing.T) {
@@ -116,13 +141,13 @@ func TestCredentialEnvs(t *testing.T) {
 		}
 
 		for _, expectedVar := range expectedVars {
-			assert.Contains(t, credentialEnvs, expectedVar, "credentialEnvs should contain %s", expectedVar)
+			assert.Contains(t, credserver.AllowedEnvKeys, expectedVar, "AllowedEnvKeys should contain %s", expectedVar)
 		}
 	})
 
 	t.Run("has correct number of environment variables", func(t *testing.T) {
 		t.Parallel()
-		assert.Len(t, credentialEnvs, 9)
+		assert.Len(t, credserver.AllowedEnvKeys, 9)
 	})
 }
 

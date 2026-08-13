@@ -15,6 +15,7 @@ import (
 
 	"github.com/docker/cli/cli/config/configfile"
 	"github.com/docker/docker-credential-helpers/credentials"
+	"github.com/sirupsen/logrus"
 )
 
 // GetCredentials retrieves credentials from configured helper or auths in config. Returns empty credentials if not found.
@@ -110,6 +111,11 @@ func loadConfigWithOverride(dockerConfigOverride string) (*configfile.ConfigFile
 
 	// Priority: 1. Override from HOST_DOCKER_CONFIG (proxied from host's DOCKER_CONFIG) 2. Default ~/.finch
 	if dockerConfigOverride != "" {
+		// Require an absolute path. A relative override would otherwise be resolved
+		// against the daemon's current working directory.
+		if !filepath.IsAbs(dockerConfigOverride) {
+			return nil, fmt.Errorf("HOST_DOCKER_CONFIG must be an absolute path, got %q", dockerConfigOverride)
+		}
 		cfgPath = filepath.Join(dockerConfigOverride, "config.json")
 	} else {
 		// Default to ~/.finch
@@ -145,25 +151,49 @@ func getCredHelperPath(registryHostname string, cfg *configfile.ConfigFile) stri
 
 	if cfg.CredentialHelpers != nil && registryHostname != "" {
 		if helper, exists := cfg.CredentialHelpers[registryHostname]; exists {
-			path, err := exec.LookPath("docker-credential-" + helper)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Warning: credential helper 'docker-credential-%s' not found: %v\n", helper, err)
-				return ""
-			}
-			return path
+			return lookupHelperPath(helper)
 		}
 	}
 
 	if cfg.CredentialsStore != "" {
-		path, err := exec.LookPath("docker-credential-" + cfg.CredentialsStore)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: credential helper 'docker-credential-%s' not found: %v\n", cfg.CredentialsStore, err)
-			return ""
-		}
-		return path
+		return lookupHelperPath(cfg.CredentialsStore)
 	}
 
 	return ""
+}
+
+func lookupHelperPath(helper string) string {
+	if !isValidHelperName(helper) {
+		logrus.Warnf("Ignoring invalid credential helper name %q", helper)
+		return ""
+	}
+
+	path, err := exec.LookPath("docker-credential-" + helper)
+	if err != nil {
+		logrus.Warnf("Credential helper 'docker-credential-%s' not found: %v", helper, err)
+		return ""
+	}
+
+	// Reject path if it's a symlink
+	info, err := os.Lstat(path)
+	if err != nil {
+		logrus.Warnf("Failed to stat 'docker-credential-%s': %v", helper, err)
+		return ""
+	}
+	if info.Mode()&os.ModeSymlink != 0 {
+		logrus.Warnf("Ignoring 'docker-credential-%s' as it's a symlink", path)
+		return ""
+	}
+
+	return path
+}
+
+// The name must be non-empty, contain no path separator and be a member of the allowlist.
+func isValidHelperName(name string) bool {
+	if name == "" || strings.ContainsRune(name, os.PathSeparator) {
+		return false
+	}
+	return true
 }
 
 // readCredentialsFromConfig reads credentials from auths section. Returns empty credentials with only ServerURL if not found.

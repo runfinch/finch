@@ -116,8 +116,8 @@ func handleCredentials(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extract serverURL from query parameter.
-	serverURL := r.URL.Query().Get("server")
+	// Extract serverURL from query parameter, rejecting empty or whitespace-only values.
+	serverURL := strings.TrimSpace(r.URL.Query().Get("server"))
 	if serverURL == "" {
 		logrus.Warn("Missing server parameter")
 		http.Error(w, "server query parameter is required", http.StatusBadRequest)
@@ -134,6 +134,12 @@ func handleCredentials(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(key, "X-Finch-Env-") {
 			envKey := strings.ToUpper(strings.TrimPrefix(key, "X-Finch-Env-"))
 			envKey = strings.ReplaceAll(envKey, "-", "_")
+			// Reject requests carrying any env var outside the allowlist.
+			if !credserver.IsAllowedEnvKey(envKey) {
+				logrus.WithField("env_var", envKey).Warn("Rejecting disallowed environment variable from request")
+				http.Error(w, "disallowed environment variable: "+envKey, http.StatusBadRequest)
+				return
+			}
 			if len(values) > 0 {
 				envMap[envKey] = values[0]
 			}
