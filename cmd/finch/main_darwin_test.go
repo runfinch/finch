@@ -8,7 +8,7 @@ package main
 import (
 	"testing"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/stretchr/testify/assert"
 	"github.com/xorcare/pointer"
 
@@ -29,7 +29,7 @@ func TestDependencies_VMNetEnabledQemu(t *testing.T) {
 
 	fc := &config.Finch{}
 	fc.VMNet = pointer.Bool(true)
-	vmType := limayaml.VMType("qemu")
+	vmType := limatype.VMType("qemu")
 	fc.VMType = &vmType
 	groups := dependencies(nil, fc, "", nil, nil, nil, "")
 	// credhelper + vmnet (socket_vmnet needed for qemu)
@@ -41,7 +41,7 @@ func TestDependencies_VMNetEnabledVz(t *testing.T) {
 
 	fc := &config.Finch{}
 	fc.VMNet = pointer.Bool(true)
-	vmType := limayaml.VMType("vz")
+	vmType := limatype.VMType("vz")
 	fc.VMType = &vmType
 	groups := dependencies(nil, fc, "", nil, nil, nil, "")
 	// Only credhelper, no socket_vmnet (vz uses vzNAT instead)
@@ -53,7 +53,7 @@ func TestDependencies_VMNetDisabledQemu(t *testing.T) {
 
 	fc := &config.Finch{}
 	fc.VMNet = pointer.Bool(false)
-	vmType := limayaml.VMType("qemu")
+	vmType := limatype.VMType("qemu")
 	fc.VMType = &vmType
 	groups := dependencies(nil, fc, "", nil, nil, nil, "")
 	// Only credhelper, vmnet explicitly disabled
