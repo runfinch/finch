@@ -16,11 +16,13 @@ updates:
     docker:
       patterns:
         - "github.com/docker/docker"
+        - "github.com/moby/moby"
         - "github.com/docker/cli"
     project-dependency:
       exclude-patterns:
         - "github.com/containerd/nerdctl/v2"
         - "github.com/docker/docker"
+        - "github.com/moby/moby"
         - "github.com/docker/cli"
 - package-ecosystem: "github-actions"
   directory: "/"

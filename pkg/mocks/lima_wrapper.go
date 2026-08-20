@@ -10,6 +10,7 @@
 package mocks
 
 import (
+	context "context"
 	user "os/user"
 	reflect "reflect"
 
@@ -41,15 +42,15 @@ func (m *MockLimaWrapper) EXPECT() *MockLimaWrapperMockRecorder {
 }
 
 // LimaUser mocks base method.
-func (m *MockLimaWrapper) LimaUser(warn bool) *user.User {
+func (m *MockLimaWrapper) LimaUser(ctx context.Context, warn bool) *user.User {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LimaUser", warn)
+	ret := m.ctrl.Call(m, "LimaUser", ctx, warn)
 	ret0, _ := ret[0].(*user.User)
 	return ret0
 }
 
 // LimaUser indicates an expected call of LimaUser.
-func (mr *MockLimaWrapperMockRecorder) LimaUser(warn any) *gomock.Call {
+func (mr *MockLimaWrapperMockRecorder) LimaUser(ctx, warn any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LimaUser", reflect.TypeOf((*MockLimaWrapper)(nil).LimaUser), warn)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LimaUser", reflect.TypeOf((*MockLimaWrapper)(nil).LimaUser), ctx, warn)
 }
