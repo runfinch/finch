@@ -109,7 +109,7 @@ func (iva *initVMAction) run() error {
 	instanceName := fmt.Sprintf("--name=%v", limaInstanceName)
 	startOpts := []string{"start", instanceName, iva.baseYamlFilePath, "--tty=false"}
 	if iva.finchConfig == nil || *iva.finchConfig.VMType == "vz" {
-		// Starting with 2.0, Lima uses ssh over vsock by default on systemd >= 256 (https://github.com/lima-vm/lima/pull/3979)
+		// Starting with 2.0, Lima uses ssh over vsock by default (https://github.com/lima-vm/lima/pull/3979)
 		// which is causing a ssh "permission denied" issue with VZ driver.
 		// So, disabling this feature for VZ driver for now.
 		// This still works with QEMU driver.

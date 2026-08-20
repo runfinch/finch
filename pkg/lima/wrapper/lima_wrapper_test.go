@@ -42,7 +42,7 @@ func TestLimaWrapper_LimaUser(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			lw := NewLimaWrapper()
-			assert.NotNil(t, lw.LimaUser(false))
+			assert.NotNil(t, lw.LimaUser(t.Context(), false))
 		})
 	}
 }
