@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.18.0](https://github.com/runfinch/finch/compare/v1.17.2...v1.18.0) (2026-08-20)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump golang.org/x/image from 0.38.0 to 0.41.0 ([#1782](https://github.com/runfinch/finch/issues/1782)) ([ab0df60](https://github.com/runfinch/finch/commit/ab0df6095035402141454265857ae23d5e8cb3a4))
+* **deps:** Bump submodules and dependencies ([#1783](https://github.com/runfinch/finch/issues/1783)) ([2b40269](https://github.com/runfinch/finch/commit/2b402696fbc1e0c46f586436717086113c11c6b2))
+* **deps:** Bump submodules and dependencies ([#1797](https://github.com/runfinch/finch/issues/1797)) ([b8b46a5](https://github.com/runfinch/finch/commit/b8b46a50e99e33771921a4cc3904f5a488017516))
+
+
+### Features
+
+* add auto vm init/start on first finch run ([#1751](https://github.com/runfinch/finch/issues/1751)) ([48c9a8b](https://github.com/runfinch/finch/commit/48c9a8b0a874508e9ec594f298c18d6bc7259b64))
+* gate vmnet behind config, use vzNAT for vz and socket_vmnet for qemu ([ff1346b](https://github.com/runfinch/finch/commit/ff1346b1d76f083ba86433e4501cbb5e5ce29634))
+* use vzNAT for vz networking, gate socket_vmnet behind config for qemu ([#1749](https://github.com/runfinch/finch/issues/1749)) ([ff1346b](https://github.com/runfinch/finch/commit/ff1346b1d76f083ba86433e4501cbb5e5ce29634))
+
+
+### Bug Fixes
+
+* credhelper fixups ([#1785](https://github.com/runfinch/finch/issues/1785)) ([2299129](https://github.com/runfinch/finch/commit/229912996e67aa181d34660739d3f7b21c3a3ad0))
+* **macOS:** prevent self-referential ~/.aws/.aws symlink ([#1778](https://github.com/runfinch/finch/issues/1778)) ([01fd081](https://github.com/runfinch/finch/commit/01fd081001f0d0ea36b181fb42d8766401d1e307))
+
 ## [1.17.2](https://github.com/runfinch/finch/compare/v1.17.1...v1.17.2) (2026-06-30)
 
 
