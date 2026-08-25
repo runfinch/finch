@@ -1,0 +1,24 @@
+{
+  "published_at": "2026-08-20T01:42:09Z",
+  "expires_at": "2027-02-20T01:42:09Z",
+  "artifacts": [
+    {
+      "platform": "darwin",
+      "arch": "arm64",
+      "url": "https://deps.runfinch.com/finch-al2023-os-image-arm64-32273812529.qcow2",
+      "digest": "sha512:104d9e7b32531f1ca7b082fd1b62492331aa304d277f153217e560a6355d458ea52856cbc805ce085e3666613ccd00bf0cfa86f3954286d19f8b35020c3546c3"
+    },
+    {
+      "platform": "darwin",
+      "arch": "amd64",
+      "url": "https://deps.runfinch.com/finch-al2023-os-image-x86-64-32273812529.qcow2",
+      "digest": "sha512:c9aeb92599b50039ebff793e3584e67cc32a54ed3000017f512ac5ffd9121b7cc39eef2c39cb7a1c99a5f40866dd9bf2c676c1c36a9123b56c209312094a447c"
+    },
+    {
+      "platform": "windows",
+      "arch": "amd64",
+      "url": "https://deps.runfinch.com/common/x86-64/finch-al2023-rootfs-x86-64-32273812529.tar.gz",
+      "digest": "sha512:8ecd4e0605ffdc57100d5c31ffbddedf4523184cb0dad3c79daa115dcab6960734abc72c6a8dc89b02e175018770d1f64bf76f9aeaa5ce281e10a70f8cd90ee5"
+    }
+  ]
+}

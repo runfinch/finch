@@ -197,11 +197,17 @@ jobs:
       fail-fast: false
       matrix:
         version: ['15', '26']
-        test-command: ['test-e2e-vm-serial', 'test-e2e-container', 'test-e2e-daemon']
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container', 'test-e2e-daemon', 'test-e2e-osimage']
         arch: ['X64', 'arm64']
         runner-type: ['test']
         exclude:
           - arch: 'X64'
+            version: '26'
+          # The os-image test suite does not do anything platform specific, so need to run
+          # it for all combos.
+          - test-command: 'test-e2e-osimage'
+            arch: 'X64'
+          - test-command: 'test-e2e-osimage'
             version: '26'
     uses: ./.github/workflows/e2e-macos.yaml
     secrets: inherit
@@ -215,7 +221,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test-command: ['test-e2e-vm-serial', 'test-e2e-container']
+        test-command: ['test-e2e-vm-serial', 'test-e2e-container', 'test-e2e-osimage']
         arch: ['amd64']
         runner-type: ['test']
     uses: ./.github/workflows/e2e-windows.yaml
