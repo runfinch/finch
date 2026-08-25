@@ -17,6 +17,7 @@ import (
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/fmemory"
 	"github.com/runfinch/finch/pkg/lima/wrapper"
+	"github.com/runfinch/finch/pkg/osimage"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/support"
 	"github.com/runfinch/finch/pkg/system"
@@ -95,6 +96,16 @@ var newApp = func(
 		if debugMode {
 			logger.SetLevel(flog.Debug)
 		}
+
+		if fc.OSImage.UpdateNotificationsEnabled() && shouldShowUpdateNotification(cmd) {
+			finchDir := fp.FinchDir(finchRootPath)
+			metadata, err := osimage.ReadMetadata(finchDir)
+			if err == nil && metadata != nil && metadata.UpdateAvailable {
+				logger.Infof("A new OS image is available: %s (current: %s). Run \"finch os-image update\" to update.",
+					metadata.NewImage, metadata.CurrentImage)
+			}
+		}
+
 		return nil
 	}
 
@@ -136,9 +147,21 @@ var newApp = func(
 		newGenDocsCommand(rootCmd, logger, fs, system.NewStdLib()),
 		newLoginLocalCommand(),
 		newLogoutLocalCommand(),
+		newOSImageCommand(logger, fp, fc, stdOut, finchRootPath),
 	)
 
 	rootCmd.AddCommand(allCommands...)
 
 	return rootCmd
+}
+
+func shouldShowUpdateNotification(cmd *cobra.Command) bool {
+	if cmd.Name() == "version" {
+		return false
+	}
+	parent := cmd.Parent()
+	if parent == nil {
+		return true
+	}
+	return parent.Name() != "os-image" && parent.Name() != "support-bundle"
 }
