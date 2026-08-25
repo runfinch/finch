@@ -28,7 +28,7 @@ const (
 	CosignIssuer = "https://token.actions.githubusercontent.com"
 	// CosignIdentity is identity used to validate the manifest signature.
 	// The workflow in finch-core that will sign the OS images.
-	CosignIdentity = "https://github.com/runfinch/finch-core/.github/workflows/build-os.yaml@refs/heads/main"
+	CosignIdentity = "https://github.com/runfinch/finch-core/.github/workflows/publish-os-image-manifest.yaml@refs/heads/main"
 )
 
 // GetCosignIssuer returns the cosign issuer to be used to validate the manifest signature.
