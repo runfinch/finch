@@ -14,8 +14,9 @@ on:
         type: string
 
   # This workflow will run every 5 min
-  schedule:
-    - cron: '*/10 * * * *'
+  # TODO: revert once Finch v1.18.0 is properly released.
+  # schedule:
+    # - cron: '*/10 * * * *'
   
   # This workflow will run when the workflow file is updated
   pull_request:
