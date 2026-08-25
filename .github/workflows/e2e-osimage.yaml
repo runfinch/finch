@@ -1,0 +1,48 @@
+name: e2e-osimage
+on:
+  workflow_dispatch:
+
+permissions:
+  # Required for cosign keyless signing to request an OIDC token. Without this the
+  # os-image e2e signing step will ask for login details.
+  id-token: write
+  # Required for actions/checkout.
+  contents: read
+
+env:
+  GO_VERSION: '1.26.3'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+      - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - name: Install build and signing dependencies
+        run: brew install lz4 automake autoconf libtool yq cosign
+        shell: zsh {0}
+      - name: Run unit tests
+        run: make test-unit
+        shell: zsh {0}
+      - name: Build finch with os-image env overrides enabled
+        # FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES=true compiles the finch binary so that the
+        # e2e suite can redirect the updater at its local test server (see the osimage package).
+        run: |
+          export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
+          make FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES=true
+        shell: zsh {0}
+      - name: Run os-image e2e tests
+        run: make test-e2e-osimage
+        shell: zsh {0}

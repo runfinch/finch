@@ -80,12 +80,15 @@ jobs:
           fi
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true
-      - run: brew install lz4 automake autoconf libtool yq
+      - name: Install build dependencies
+        run: brew install lz4 automake autoconf libtool yq cosign
         shell: zsh {0}
       - name: Build project
+        # FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES is compiled in only for the os-image e2e suite so it
+        # can redirect the updater at its local test server; other suites build prod-identical binaries.
         run: |
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
-          E2E_COVERAGE=1 make
+          E2E_COVERAGE=1 make ${{ inputs.test-command == 'test-e2e-osimage' && 'FINCH_OSIMAGE_ALLOW_ENV_OVERRIDES=true' || '' }}
         shell: zsh {0}
       - name: Run e2e tests
         run: |
