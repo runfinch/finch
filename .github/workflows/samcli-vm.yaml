@@ -101,7 +101,7 @@ jobs:
         shell: bash
 
       - name: Set up Go
-        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
@@ -115,7 +115,7 @@ jobs:
         run: echo "A" | /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -133,7 +133,7 @@ jobs:
         shell: bash
 
       - name: Checkout finch
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: recursive
 
@@ -174,7 +174,7 @@ jobs:
         shell: bash
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
           role-to-assume: ${{ secrets.SAMCLI_VM_ROLE }}
           role-session-name: samcli-${{ matrix.test_type }}-tests
@@ -192,7 +192,7 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Checkout SAM CLI
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
         with:
           repository: aws/aws-sam-cli
           submodules: recursive
@@ -242,10 +242,10 @@ jobs:
           sudo rm -rf /tmp/finch-* || true
 
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c
         with:
           role-to-assume: ${{ secrets.SAMCLI_VM_ROLE }}
           role-session-name: cleanup
