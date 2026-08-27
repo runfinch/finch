@@ -174,17 +174,6 @@ func lookupHelperPath(helper string) string {
 		return ""
 	}
 
-	// Reject path if it's a symlink
-	info, err := os.Lstat(path)
-	if err != nil {
-		logrus.Warnf("Failed to stat 'docker-credential-%s': %v", helper, err)
-		return ""
-	}
-	if info.Mode()&os.ModeSymlink != 0 {
-		logrus.Warnf("Ignoring 'docker-credential-%s' as it's a symlink", path)
-		return ""
-	}
-
 	return path
 }
 

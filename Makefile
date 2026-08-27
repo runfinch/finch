@@ -6,7 +6,6 @@ GO ?= go
 PREFIX ?= $(CURDIR)/_output
 DEST := $(shell echo "$(DESTDIR)/$(PREFIX)" | sed 's:///*:/:g; s://*$$::')
 BINDIR ?= /usr/local/bin
-CREDHELPER_PATH ?= /opt/finch/bin
 OUTDIR ?= $(CURDIR)/_output
 OS_OUTDIR ?= $(OUTDIR)/os
 COVERAGE_DIR ?= $(CURDIR)/cov
@@ -148,22 +147,14 @@ copy:
 .PHONY: install
 install: copy
 	sudo ln -sf $(DEST)/bin/finch "$(BINDIR)/finch"
-	@if [ -f "$(DEST)/cred-helpers/docker-credential-osxkeychain" ]; then \
-		sudo mkdir -p $(CREDHELPER_PATH); \
-		sudo cp $(DEST)/cred-helpers/docker-credential-osxkeychain "$(CREDHELPER_PATH)/docker-credential-osxkeychain"; \
+	@if [ -f $(DEST)/cred-helpers/docker-credential-osxkeychain ]; then \
+		sudo ln -sf $(DEST)/cred-helpers/docker-credential-osxkeychain "$(BINDIR)/docker-credential-osxkeychain"; \
 	fi
 
-# Older Finch installations symlinked the credential helper into /usr/local/bin.
-# Remove that link if it exists.
 uninstall.finch:
 	@test -f "$(BINDIR)/$(BINARYNAME)" || echo "finch not found in $(BINDIR) prefix"
 	if [ "$$(readlink "$(BINDIR)/$(BINARYNAME)")" = "$(DEST)/bin/$(BINARYNAME)" ]; then sudo rm "$(BINDIR)/$(BINARYNAME)"; fi
-	
-	if [ -L "$(BINDIR)/docker-credential-osxkeychain" ] && \
-		[ "$$(readlink "$(BINDIR)/docker-credential-osxkeychain")" = "$(DEST)/cred-helpers/docker-credential-osxkeychain" ]; then \
-		sudo rm -f "$(BINDIR)/docker-credential-osxkeychain"; \
-	fi
-	-@rm -rf $(CREDHELPER_PATH) 2>/dev/null || true
+	if [ "$$(readlink "$(BINDIR)/docker-credential-osxkeychain")" = "$(DEST)/cred-helpers/docker-credential-osxkeychain" ]; then sudo rm "$(BINDIR)/docker-credential-osxkeychain"; fi
 
 	-@rm -rf $(DEST)/bin 2>/dev/null || true
 	-@rm -rf $(DEST)/lima 2>/dev/null || true
@@ -337,15 +328,12 @@ check-licenses:
 COVERAGE_THRESH = 60
 
 .PHONY: add-credhelper-to-path
-# Older Finch installations symlinked the credential helper into /usr/local/bin.
-# Remove that link so the copy below can replace it.
 add-credhelper-to-path:
 ifeq ($(GOOS),darwin)
-	@if [ -f "$(OUTDIR)/cred-helpers/docker-credential-osxkeychain" ]; then \
+	@if [ -f $(OUTDIR)/cred-helpers/docker-credential-osxkeychain ]; then \
 		chmod +x $(OUTDIR)/cred-helpers/docker-credential-osxkeychain; \
 		codesign -s - -f $(OUTDIR)/cred-helpers/docker-credential-osxkeychain; \
-		sudo mkdir -p $(CREDHELPER_PATH); \
-		sudo cp $(OUTDIR)/cred-helpers/docker-credential-osxkeychain "$(CREDHELPER_PATH)/docker-credential-osxkeychain"; \
+		sudo ln -sf $(OUTDIR)/cred-helpers/docker-credential-osxkeychain /usr/local/bin/docker-credential-osxkeychain; \
 	fi
 endif
 
@@ -499,9 +487,4 @@ clean:
 	-@rm ./*.tar.gz 2>/dev/null || true
 	-@rm ./*.qcow2 2>/dev/null || true
 	-@rm ./test-coverage.* 2>/dev/null || true
-
-	if [ -L "$(BINDIR)/docker-credential-osxkeychain" ] && \
-		[ "$$(readlink "$(BINDIR)/docker-credential-osxkeychain")" = "$(DEST)/cred-helpers/docker-credential-osxkeychain" ]; then \
-		sudo rm -f "$(BINDIR)/docker-credential-osxkeychain"; \
-	fi
 endif
