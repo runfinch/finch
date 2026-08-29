@@ -13,7 +13,7 @@ import (
 	"path"
 
 	"github.com/docker/go-units"
-	limaStore "github.com/lima-vm/lima/pkg/store"
+	limaStore "github.com/lima-vm/lima/v2/pkg/store"
 )
 
 const (
