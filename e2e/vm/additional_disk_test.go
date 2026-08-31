@@ -7,10 +7,12 @@ package vm
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
+	"github.com/onsi/gomega/gexec"
 	"github.com/runfinch/common-tests/command"
 	"github.com/runfinch/common-tests/option"
 )
@@ -61,11 +63,18 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 			networkOutput := command.StdoutAsLines(o, "network", "ls", "--format", "{{.Name}}")
 			gomega.Expect(networkOutput).Should(gomega.ContainElement(networkName))
 
+			gomega.Expect(command.StdoutStr(o, virtualMachineRootCmd, "status")).To(gomega.Equal("Running"),
+				"VM is not running after recreate")
+
 			command.Run(o, "start", containerName)
-			gomega.Eventually(command.StdoutStr(o, "exec", containerName, "cat", "/tmp/test.txt")).
-				WithTimeout(15 * time.Second).
+			gomega.Eventually(func(g gomega.Gomega) {
+				session := command.New(o, "exec", containerName, "cat", "/tmp/test.txt").
+					WithoutCheckingExitCode().Run()
+				g.Expect(session).Should(gexec.Exit(0))
+				g.Expect(strings.TrimSpace(string(session.Out.Contents()))).Should(gomega.Equal("foo"))
+			}).WithTimeout(15 * time.Second).
 				WithPolling(1 * time.Second).
-				Should(gomega.Equal("foo"))
+				Should(gomega.Succeed())
 		})
 	})
 }

@@ -53,10 +53,15 @@ func setupKeychain() func() {
 	// Configure keychain
 	// #nosec G204 -- loginKeychainPath is constructed from user home directory, not user input
 	_ = exec.Command("security", "set-keychain-settings", "-t", "0", "-l", loginKeychainPath).Run()
+
 	// #nosec G204 -- loginKeychainPath is constructed from user home directory, not user input
-	_ = exec.Command("security", "unlock-keychain", "-p", "", loginKeychainPath).Run()
+	err = exec.Command("security", "unlock-keychain", "-p", "", loginKeychainPath).Run()
+	gomega.Expect(err).ShouldNot(gomega.HaveOccurred(), "failed to unlock login keychain")
+
 	// #nosec G204 -- loginKeychainPath is constructed from user home directory, not user input
-	_ = exec.Command("security", "list-keychains", "-s", loginKeychainPath, "/Library/Keychains/System.keychain").Run()
+	err = exec.Command("security", "list-keychains", "-s", loginKeychainPath, "/Library/Keychains/System.keychain").Run()
+	gomega.Expect(err).ShouldNot(gomega.HaveOccurred(), "failed to add login keychain to search list")
+
 	// #nosec G204 -- loginKeychainPath is constructed from user home directory, not user input
 	_ = exec.Command("security", "default-keychain", "-s", loginKeychainPath).Run()
 	// #nosec G204 -- loginKeychainPath is constructed from user home directory, not user input
