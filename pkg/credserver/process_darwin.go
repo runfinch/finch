@@ -34,6 +34,12 @@ const (
 	// the credential helpers it execs) runs with.
 	//nolint:gosec // G101: PATH value, not credentials
 	credDaemonPath = "/opt/finch/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+	// finchHelperDir is the directory the installer places bundled credential
+	// helpers (e.g. docker-credential-osxkeychain) into. It is not on the finch
+	// CLI's inherited PATH, so CLI-side helper lookups must search it explicitly
+	// (the daemon already includes it via credDaemonPath above).
+	finchHelperDir = "/opt/finch/bin"
 )
 
 // sanitizedDaemonEnv returns the environment variables with PATH replaced by
