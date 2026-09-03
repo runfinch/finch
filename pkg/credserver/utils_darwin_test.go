@@ -341,7 +341,6 @@ func TestResolveHelper(t *testing.T) {
 		t.Setenv("PATH", t.TempDir())
 
 		fallbackDir := t.TempDir()
-		//nolint:gosec // Intentionally non-executable to prove the mode check rejects it
 		require.NoError(t, os.WriteFile(
 			filepath.Join(fallbackDir, "docker-credential-nonexec"),
 			[]byte("not executable"), 0o600))
