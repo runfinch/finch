@@ -162,13 +162,62 @@ func getCredHelperPath(registryHostname string, cfg *configfile.ConfigFile) stri
 	return ""
 }
 
+// helperFallbackDir is the directory searched for bundled credential helpers when
+// they are not on the CLI's inherited PATH. It defaults to finchHelperDir
+// (/opt/finch/bin) and is a package variable so tests can redirect it to a
+// temporary directory.
+var helperFallbackDir = finchHelperDir
+
+// EnsureHelperOnPath prepends the bundled credential-helper directory (/opt/finch/bin)
+// to the process PATH if not already present. When credsStore is configured (e.g.
+// osxkeychain), the docker-cli login/logout flow execs docker-credential-<store> via a
+// PATH lookup, and the exec'd helper inherits this process's environment. The installer
+// places the helper in a controlled dir that is NOT on the CLI's inherited PATH, so
+// without this, store/erase fail with "executable file not found in $PATH". Safe to call
+// multiple times; a no-op when the dir is empty (non-darwin) or already on PATH.
+func EnsureHelperOnPath() error {
+	dir := helperFallbackDir
+	if dir == "" {
+		return nil
+	}
+	path := os.Getenv("PATH")
+	for _, p := range strings.Split(path, string(os.PathListSeparator)) {
+		if p == dir {
+			return nil
+		}
+	}
+	newPath := dir
+	if path != "" {
+		newPath = dir + string(os.PathListSeparator) + path
+	}
+	if err := os.Setenv("PATH", newPath); err != nil {
+		return fmt.Errorf("failed to augment PATH for credential helper: %w", err)
+	}
+	return nil
+}
+
+// resolveHelper returns the path to docker-credential-<helper>, searching the
+// CLI PATH first and falling back to the installer's finchHelperDir (/opt/finch/bin),
+// which is not on the CLI's inherited PATH.
+func resolveHelper(helper string) (string, error) {
+	bin := "docker-credential-" + helper
+	if p, err := exec.LookPath(bin); err == nil {
+		return p, nil
+	}
+	fallback := filepath.Join(helperFallbackDir, bin)
+	if info, err := os.Stat(fallback); err == nil && !info.IsDir() && info.Mode()&0o111 != 0 {
+		return fallback, nil
+	}
+	return "", fmt.Errorf("credential helper %q not found on PATH or in %s", bin, helperFallbackDir)
+}
+
 func lookupHelperPath(helper string) string {
 	if !isValidHelperName(helper) {
 		logrus.Warnf("Ignoring invalid credential helper name %q", helper)
 		return ""
 	}
 
-	path, err := exec.LookPath("docker-credential-" + helper)
+	path, err := resolveHelper(helper)
 	if err != nil {
 		logrus.Warnf("Credential helper 'docker-credential-%s' not found: %v", helper, err)
 		return ""
@@ -215,8 +264,8 @@ func readCredentialsFromConfig(registryHostname string, cfg *configfile.ConfigFi
 
 // isOSXKeychainUsable checks if osxkeychain credential helper is both available and functional.
 func isOSXKeychainUsable() bool {
-	// Check if binary exists in PATH
-	helperPath, err := exec.LookPath("docker-credential-osxkeychain")
+	// Check if binary exists on PATH or in the installer's finchHelperDir
+	helperPath, err := resolveHelper("osxkeychain")
 	if err != nil {
 		return false
 	}

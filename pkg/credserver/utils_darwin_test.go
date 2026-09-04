@@ -291,6 +291,75 @@ func TestLookupHelperPath(t *testing.T) {
 	})
 }
 
+//nolint:paralleltest // test mutates PATH and the helperFallbackDir package var
+func TestResolveHelper(t *testing.T) {
+	t.Run("prefers a helper found on PATH", func(t *testing.T) {
+		pathDir := t.TempDir()
+		onPath := filepath.Join(pathDir, "docker-credential-pathhelper")
+		//nolint:gosec // Test helper must be executable for exec.LookPath to find it
+		require.NoError(t, os.WriteFile(onPath, []byte("#!/bin/sh\nexit 0\n"), 0o700))
+
+		t.Setenv("PATH", pathDir)
+
+		got, err := resolveHelper("pathhelper")
+		require.NoError(t, err)
+		assert.Equal(t, onPath, got)
+	})
+
+	t.Run("falls back to finchHelperDir when not on PATH", func(t *testing.T) {
+		// Empty PATH dir so exec.LookPath fails and the fallback is exercised.
+		t.Setenv("PATH", t.TempDir())
+
+		fallbackDir := t.TempDir()
+		fallbackHelper := filepath.Join(fallbackDir, "docker-credential-fallbackhelper")
+		//nolint:gosec // Test helper must be executable to satisfy the mode check
+		require.NoError(t, os.WriteFile(fallbackHelper, []byte("#!/bin/sh\nexit 0\n"), 0o700))
+
+		// Redirect the fallback directory (defaults to /opt/finch/bin, which is
+		// not writable in CI) at the package-var seam.
+		orig := helperFallbackDir
+		helperFallbackDir = fallbackDir
+		defer func() { helperFallbackDir = orig }()
+
+		got, err := resolveHelper("fallbackhelper")
+		require.NoError(t, err)
+		assert.Equal(t, fallbackHelper, got)
+	})
+
+	t.Run("errors when helper is neither on PATH nor in finchHelperDir", func(t *testing.T) {
+		t.Setenv("PATH", t.TempDir())
+
+		orig := helperFallbackDir
+		helperFallbackDir = t.TempDir() // empty
+		defer func() { helperFallbackDir = orig }()
+
+		_, err := resolveHelper("nowherehelper")
+		assert.Error(t, err)
+	})
+
+	t.Run("ignores a non-executable file in finchHelperDir", func(t *testing.T) {
+		t.Setenv("PATH", t.TempDir())
+
+		fallbackDir := t.TempDir()
+		require.NoError(t, os.WriteFile(
+			filepath.Join(fallbackDir, "docker-credential-nonexec"),
+			[]byte("not executable"), 0o600))
+
+		orig := helperFallbackDir
+		helperFallbackDir = fallbackDir
+		defer func() { helperFallbackDir = orig }()
+
+		_, err := resolveHelper("nonexec")
+		assert.Error(t, err)
+	})
+
+	// Documents that finchHelperDir is the installer path #1785 moved the bundled
+	// osxkeychain helper into, which is intentionally not on the CLI's PATH.
+	t.Run("default fallback dir is finchHelperDir", func(t *testing.T) {
+		assert.Equal(t, finchHelperDir, helperFallbackDir)
+	})
+}
+
 //nolint:paralleltest // test uses t.Setenv
 func TestGetCredHelperPathSymlink(t *testing.T) {
 	binDir := t.TempDir()

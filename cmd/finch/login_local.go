@@ -126,6 +126,13 @@ func loginAction(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	// Ensure the bundled credential helper directory (e.g. /opt/finch/bin) is on PATH so
+	// the docker-cli login/logout flow can exec docker-credential-<store>. See
+	// credserver.EnsureHelperOnPath for details.
+	if err := credserver.EnsureHelperOnPath(); err != nil {
+		return err
+	}
+
 	options, err := loginOptions(cmd)
 	if err != nil {
 		return err

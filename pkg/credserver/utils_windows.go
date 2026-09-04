@@ -21,3 +21,7 @@ func GetCredentials(registryHostname string, _ ...map[string]string) (*credentia
 func EnsureConfigExists(_ string) error {
 	return nil
 }
+
+// EnsureHelperOnPath is a no-op on Windows (no bundled credential helper directory to
+// add to PATH).
+func EnsureHelperOnPath() error { return nil }
