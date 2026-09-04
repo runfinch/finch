@@ -69,6 +69,13 @@ func logoutAction(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	// Ensure the bundled credential helper directory (e.g. /opt/finch/bin) is on PATH so
+	// the docker-cli logout flow can exec docker-credential-<store> to erase credentials.
+	// See credserver.EnsureHelperOnPath for details.
+	if err := credserver.EnsureHelperOnPath(); err != nil {
+		return err
+	}
+
 	logoutServer := ""
 	if len(args) > 0 {
 		logoutServer = args[0]

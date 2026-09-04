@@ -168,12 +168,33 @@ func getCredHelperPath(registryHostname string, cfg *configfile.ConfigFile) stri
 // temporary directory.
 var helperFallbackDir = finchHelperDir
 
-// HelperDir returns the directory the installer places bundled credential helpers
-// into (/opt/finch/bin). The finch CLI prepends this to PATH before invoking the
-// docker-cli login flow so that docker-cli can exec the helper (e.g.
-// docker-credential-osxkeychain) to store credentials — the helper is not on the
-// CLI's inherited PATH since it lives in a controlled, non-guest-writable dir.
-func HelperDir() string { return helperFallbackDir }
+// EnsureHelperOnPath prepends the bundled credential-helper directory (/opt/finch/bin)
+// to the process PATH if not already present. When credsStore is configured (e.g.
+// osxkeychain), the docker-cli login/logout flow execs docker-credential-<store> via a
+// PATH lookup, and the exec'd helper inherits this process's environment. The installer
+// places the helper in a controlled dir that is NOT on the CLI's inherited PATH, so
+// without this, store/erase fail with "executable file not found in $PATH". Safe to call
+// multiple times; a no-op when the dir is empty (non-darwin) or already on PATH.
+func EnsureHelperOnPath() error {
+	dir := helperFallbackDir
+	if dir == "" {
+		return nil
+	}
+	path := os.Getenv("PATH")
+	for _, p := range strings.Split(path, string(os.PathListSeparator)) {
+		if p == dir {
+			return nil
+		}
+	}
+	newPath := dir
+	if path != "" {
+		newPath = dir + string(os.PathListSeparator) + path
+	}
+	if err := os.Setenv("PATH", newPath); err != nil {
+		return fmt.Errorf("failed to augment PATH for credential helper: %w", err)
+	}
+	return nil
+}
 
 // resolveHelper returns the path to docker-credential-<helper>, searching the
 // CLI PATH first and falling back to the installer's finchHelperDir (/opt/finch/bin),

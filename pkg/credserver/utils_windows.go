@@ -22,6 +22,6 @@ func EnsureConfigExists(_ string) error {
 	return nil
 }
 
-// HelperDir is a stub on Windows (no bundled credential helper directory to add to
-// PATH). Returning an empty string makes the CLI's PATH-augmentation a no-op.
-func HelperDir() string { return "" }
+// EnsureHelperOnPath is a no-op on Windows (no bundled credential helper directory to
+// add to PATH).
+func EnsureHelperOnPath() error { return nil }

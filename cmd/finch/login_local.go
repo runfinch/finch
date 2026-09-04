@@ -126,24 +126,11 @@ func loginAction(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	// Ensure the bundled credential helper directory (e.g. /opt/finch/bin) is on PATH.
-	// When credsStore is configured (e.g. osxkeychain), the docker-cli login flow below
-	// execs `docker-credential-<store>` via PATH lookup. The installer places that helper
-	// in a controlled dir that is NOT on the CLI's inherited PATH, so without this the
-	// store step fails with "executable file not found in $PATH". The exec'd helper
-	// inherits this process's environment, so augmenting PATH here covers both the lookup
-	// and the child helper.
-	if dir := credserver.HelperDir(); dir != "" {
-		path := os.Getenv("PATH")
-		if !strings.Contains(path, dir) {
-			newPath := dir
-			if path != "" {
-				newPath = dir + string(os.PathListSeparator) + path
-			}
-			if err := os.Setenv("PATH", newPath); err != nil {
-				return fmt.Errorf("failed to augment PATH for credential helper: %w", err)
-			}
-		}
+	// Ensure the bundled credential helper directory (e.g. /opt/finch/bin) is on PATH so
+	// the docker-cli login/logout flow can exec docker-credential-<store>. See
+	// credserver.EnsureHelperOnPath for details.
+	if err := credserver.EnsureHelperOnPath(); err != nil {
+		return err
 	}
 
 	options, err := loginOptions(cmd)
