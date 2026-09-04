@@ -168,6 +168,13 @@ func getCredHelperPath(registryHostname string, cfg *configfile.ConfigFile) stri
 // temporary directory.
 var helperFallbackDir = finchHelperDir
 
+// HelperDir returns the directory the installer places bundled credential helpers
+// into (/opt/finch/bin). The finch CLI prepends this to PATH before invoking the
+// docker-cli login flow so that docker-cli can exec the helper (e.g.
+// docker-credential-osxkeychain) to store credentials — the helper is not on the
+// CLI's inherited PATH since it lives in a controlled, non-guest-writable dir.
+func HelperDir() string { return helperFallbackDir }
+
 // resolveHelper returns the path to docker-credential-<helper>, searching the
 // CLI PATH first and falling back to the installer's finchHelperDir (/opt/finch/bin),
 // which is not on the CLI's inherited PATH.
