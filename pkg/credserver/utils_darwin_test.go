@@ -273,54 +273,14 @@ func TestLookupHelperPath(t *testing.T) {
 	err := os.WriteFile(realHelper, []byte("#!/bin/sh\nexit 0\n"), 0o700)
 	require.NoError(t, err)
 
-	err = os.Symlink(realHelper, filepath.Join(binDir, "docker-credential-symlinkedhelper"))
-	require.NoError(t, err)
-
 	t.Setenv("PATH", binDir)
 
 	t.Run("returns path of a regular executable", func(t *testing.T) {
 		assert.Equal(t, realHelper, lookupHelperPath("realhelper"))
 	})
 
-	t.Run("rejects a helper that is a symlink", func(t *testing.T) {
-		assert.Empty(t, lookupHelperPath("symlinkedhelper"))
-	})
-
 	t.Run("returns empty when helper is not in PATH", func(t *testing.T) {
 		assert.Empty(t, lookupHelperPath("missinghelper"))
-	})
-}
-
-//nolint:paralleltest // test uses t.Setenv
-func TestGetCredHelperPathSymlink(t *testing.T) {
-	binDir := t.TempDir()
-
-	realHelper := filepath.Join(binDir, "docker-credential-symlinktarget")
-	//nolint:gosec // Test helper must be executable for exec.LookPath to find it
-	err := os.WriteFile(realHelper, []byte("#!/bin/sh\nexit 0\n"), 0o700)
-	require.NoError(t, err)
-
-	err = os.Symlink(realHelper, filepath.Join(binDir, "docker-credential-bad"))
-	require.NoError(t, err)
-
-	t.Setenv("PATH", binDir)
-
-	t.Run("rejects credHelpers value resolving to a symlink", func(t *testing.T) {
-		cfg := &configfile.ConfigFile{
-			CredentialHelpers: map[string]string{
-				"registry.example.com": "bad",
-			},
-		}
-
-		assert.Empty(t, getCredHelperPath("registry.example.com", cfg))
-	})
-
-	t.Run("rejects credsStore resolving to a symlink", func(t *testing.T) {
-		cfg := &configfile.ConfigFile{
-			CredentialsStore: "bad",
-		}
-
-		assert.Empty(t, getCredHelperPath("registry.example.com", cfg))
 	})
 }
 

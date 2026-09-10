@@ -20,12 +20,7 @@ sudo pkill '^qemu-system-'
 sudo pkill '^limactl'
 
 if [ "$$(readlink "/usr/local/bin/finch")" = "/Applications/Finch/bin/finch" ]; then sudo rm /usr/local/bin/finch; fi
-# Older Finch installations symlinked the credential helper into /usr/local/bin.
-# Remove that link  if it exists.
-if [ -L "/usr/local/bin/docker-credential-osxkeychain" ] &&
-    [ "$(readlink "/usr/local/bin/docker-credential-osxkeychain")" = "/Applications/Finch/cred-helpers/docker-credential-osxkeychain" ]; then
-    sudo rm -f /usr/local/bin/docker-credential-osxkeychain
-fi
+if [ "$$(readlink "/usr/local/bin/docker-credential-osxkeychain")" = "/Applications/Finch/cred-helpers/docker-credential-osxkeychain" ]; then sudo rm /usr/local/bin/docker-credential-osxkeychain; fi
 
 echo "[1/4] [DONE] Successfully deleted shortcut links"
 

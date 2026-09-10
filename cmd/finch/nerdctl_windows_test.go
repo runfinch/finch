@@ -411,7 +411,8 @@ func TestNerdctlCommand_run(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				ecc.EXPECT().Create("cmd", "/C", "netsh", "interface", "ipv4", "show", "addresses", "vEthernet (WSL)").Return(cmd)
+				ecc.EXPECT().Create("cmd", "/C", "netsh", "interface", "ipv4", "show",
+					"addresses", "vEthernet (WSL (Hyper-V firewall))").Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("IP Address: 192.168.5.2"), nil)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
@@ -508,7 +509,8 @@ func TestNerdctlCommand_run(t *testing.T) {
 				_ afero.Fs,
 			) {
 				getVMStatusC := mocks.NewCommand(ctrl)
-				ecc.EXPECT().Create("cmd", "/C", "netsh", "interface", "ipv4", "show", "addresses", "vEthernet (WSL)").Return(cmd)
+				ecc.EXPECT().Create("cmd", "/C", "netsh", "interface", "ipv4", "show",
+					"addresses", "vEthernet (WSL (Hyper-V firewall))").Return(cmd)
 				cmd.EXPECT().Output().Return([]byte("IP Address: 192.168.5.2"), nil)
 				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
 				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)

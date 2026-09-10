@@ -33,7 +33,7 @@ const (
 	// credDaemonPath is the PATH the detached credential daemon (and therefore
 	// the credential helpers it execs) runs with.
 	//nolint:gosec // G101: PATH value, not credentials
-	credDaemonPath = "/opt/finch/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+	credDaemonPath = "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 )
 
 // sanitizedDaemonEnv returns the environment variables with PATH replaced by
