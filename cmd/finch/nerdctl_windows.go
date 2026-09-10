@@ -346,9 +346,10 @@ func resolveIP(host string, logger flog.Logger, ecc command.Creator) (string, er
 	// access host from the containers.
 	var resolvedIP string
 	if parts[1] == dockerops.HostGatewayName {
-		// get ip address for adapter vEthernet (WSL) to reach host from wsl
+		// get ip address for adapter vEthernet (WSL (Hyper-V firewall)) to reach host from wsl
+		// The adapter name changed on Windows Server 2025; use "netsh interface ipv4 show addresses" to list adapter names.
 		// https://learn.microsoft.com/en-us/windows/wsl/networking#accessing-windows-networking-apps-from-linux-host-ip
-		out, err := ecc.Create("cmd", "/C", "netsh", "interface", "ipv4", "show", "addresses", "vEthernet (WSL)").Output()
+		out, err := ecc.Create("cmd", "/C", "netsh", "interface", "ipv4", "show", "addresses", "vEthernet (WSL (Hyper-V firewall))").Output()
 		if err != nil {
 			return "", err
 		}

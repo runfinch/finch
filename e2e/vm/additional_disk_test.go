@@ -67,12 +67,23 @@ var testAdditionalDisk = func(o *option.Option, installed bool) {
 				"VM is not running after recreate")
 
 			command.Run(o, "start", containerName)
+			// On a freshly recreated VM, "start" returns before the container's task has
+			// transitioned to the running state, so an immediate "exec" fails with
+			// "cannot exec in a stopped state". Wait for the container to actually be
+			// running before exec'ing, matching the pattern used elsewhere in the e2e suite
+			// (e.g. cosign_test.go, finch_config_file_remote_test.go).
+			gomega.Eventually(func(g gomega.Gomega) {
+				running := command.StdoutStr(o, "inspect", "-f", "{{.State.Running}}", containerName)
+				g.Expect(running).Should(gomega.Equal("true"))
+			}).WithTimeout(60 * time.Second).
+				WithPolling(1 * time.Second).
+				Should(gomega.Succeed())
 			gomega.Eventually(func(g gomega.Gomega) {
 				session := command.New(o, "exec", containerName, "cat", "/tmp/test.txt").
 					WithoutCheckingExitCode().Run()
 				g.Expect(session).Should(gexec.Exit(0))
 				g.Expect(strings.TrimSpace(string(session.Out.Contents()))).Should(gomega.Equal("foo"))
-			}).WithTimeout(15 * time.Second).
+			}).WithTimeout(30 * time.Second).
 				WithPolling(1 * time.Second).
 				Should(gomega.Succeed())
 		})
