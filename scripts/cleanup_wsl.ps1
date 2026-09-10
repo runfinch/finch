@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # We want these cleanup commands to always run, ignore errors so the step completes.
-$ErrorActionPreference = 'Ignore'
+$ErrorActionPreference = 'SilentlyContinue'
 
 taskkill /f /im wslservice.exe 2> nul || cmd /c "exit /b 0"
 sc query LxssManager | findstr "STATE" | findstr /C:"STOPPED" > nul && net start LxssManager
@@ -10,7 +10,7 @@ wsl --list --verbose --all
 
 # Attempt to shut down WSL if any distribution is running
 if (wsl --list --verbose | findstr /C:"Running" > nul) {
-    timeout 60s wsl --shutdown
+    wsl --shutdown
     # Forcefully kill WSL if still running
     if (Get-Process -Name "wsl" -ErrorAction SilentlyContinue) {
         Stop-Process -Name "wsl" -Force
@@ -25,4 +25,7 @@ if (wsl --list --quiet | findstr /C:"lima-finch" > nul) {
 }
 
 wsl --list --verbose --all
-Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse
+Remove-Item C:\Users\Administrator\AppData\Local\.finch -Recurse -Force -ErrorAction SilentlyContinue
+
+# Best-effort cleanup: `wsl --list` exits 1 when no distros exist, so force success.
+exit 0
