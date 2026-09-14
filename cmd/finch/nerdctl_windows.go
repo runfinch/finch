@@ -369,7 +369,10 @@ func resolveIP(host string, logger flog.Logger, ecc command.Creator) (string, er
 			}
 		}
 		if resolvedIP == "" {
-			return "", fmt.Errorf("could not resolve host-gateway IP from a WSL adapter (tried %v); last netsh output: %s", wslAdapterNames, lastOutput)
+			return "", fmt.Errorf(
+				"could not resolve host-gateway IP from WSL adapter (tried %v); netsh output: %s",
+				wslAdapterNames, lastOutput,
+			)
 		}
 
 		logger.Debugf(`Resolving special IP "host-gateway" to %q for host %q`, resolvedIP, parts[0])
