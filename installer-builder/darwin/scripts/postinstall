@@ -27,15 +27,9 @@ sudo rm -rf "/opt/finch/"
 sudo rm -rf "/private/var/run/finch-lima"
 sudo rm -rf "/private/etc/sudoers.d/finch-lima"
 
-# Older Finch installations symlinked the credential helper into /usr/local/bin.
-# Remove that link so the copy below can replace it, but leave a real binary
-# in place since it may belong to something other than Finch.
-if [ -L /usr/local/bin/docker-credential-osxkeychain ] &&
-    [ "$(readlink /usr/local/bin/docker-credential-osxkeychain)" = "/Applications/Finch/cred-helpers/docker-credential-osxkeychain" ]; then
-    sudo rm -f /usr/local/bin/docker-credential-osxkeychain
+if [ ! -e /usr/local/bin/docker-credential-osxkeychain ] || [ "$(readlink "/usr/local/bin/docker-credential-osxkeychain")" = "/Applications/Finch/cred-helpers/docker-credential-osxkeychain" ]; then
+    sudo ln -sf /Applications/Finch/cred-helpers/docker-credential-osxkeychain /usr/local/bin/docker-credential-osxkeychain
 fi
-sudo mkdir -p /opt/finch/bin
-sudo cp /Applications/Finch/cred-helpers/docker-credential-osxkeychain /opt/finch/bin/docker-credential-osxkeychain
 
 # Forget previous pkgutil packages starting with org.Finch except for the current version
 echo "Remove historical pkgutil packages..."

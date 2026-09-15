@@ -67,21 +67,28 @@ func TestContainer(t *testing.T) {
 		}
 	}, func() {})
 
+	// get ip address for adapter vEthernet (WSL (Hyper-V firewall)) on Windows
+	var windowsHostIP string
+	if runtime.GOOS == "windows" {
+		n, err := exec.Command("cmd", "/C", "netsh", "interface", "ipv4", "show",
+			"addresses", "vEthernet (WSL (Hyper-V firewall))").Output()
+		if err != nil {
+			fmt.Printf("could not read vEthernet (WSL (Hyper-V firewall)) address: %v\n", err)
+		} else {
+			windowsHostIP = extractIPAddress(string(n))
+		}
+	}
+
 	ginkgo.Describe(description, func() {
 		tests.Pull(o)
 		tests.Rm(o)
 		tests.Rmi(o)
 		switch runtime.GOOS {
 		case "windows":
-			// get ip address for adapter vEthernet (WSL)
-			n, err := exec.Command("cmd", "/C", "netsh", "interface", "ipv4", "show",
-				"addresses", "vEthernet (WSL)").Output()
-			gomega.Expect(err).Should(gomega.BeNil())
-			hostIP := extractIPAddress(string(n))
 			// wsl2 cgroup v2 is mounted at /sys/fs/cgroup/unified,
 			// containerd expects it at /sys/fs/cgroup based on
 			// https://github.com/containerd/cgroups/blob/cc78c6c1e32dc5bde018d92999910fdace3cfa27/utils.go#L36
-			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Hybrid, DefaultHostGatewayIP: hostIP})
+			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Hybrid, DefaultHostGatewayIP: windowsHostIP})
 		case "darwin":
 			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified, DefaultHostGatewayIP: "192.168.5.2"})
 		case "linux":

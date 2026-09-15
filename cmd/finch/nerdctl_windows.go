@@ -346,13 +346,34 @@ func resolveIP(host string, logger flog.Logger, ecc command.Creator) (string, er
 	// access host from the containers.
 	var resolvedIP string
 	if parts[1] == dockerops.HostGatewayName {
-		// get ip address for adapter vEthernet (WSL) to reach host from wsl
+		// Resolve the IPv4 address of the WSL host adapter so containers can reach the host.
 		// https://learn.microsoft.com/en-us/windows/wsl/networking#accessing-windows-networking-apps-from-linux-host-ip
-		out, err := ecc.Create("cmd", "/C", "netsh", "interface", "ipv4", "show", "addresses", "vEthernet (WSL)").Output()
-		if err != nil {
-			return "", err
+		//
+		// The adapter name differs by Windows version:
+		//   - Windows Server 2022 / older WSL:              "vEthernet (WSL)"
+		//   - Windows Server 2025 / Win11 22H2+ (mirrored): "vEthernet (WSL (Hyper-V firewall))"
+		// Try each and use the first that yields an address so this works on both. netsh.exe is
+		// invoked directly (not via "cmd /C"): routing the quoted, parenthesized interface name
+		// through cmd mangles the argument and makes netsh exit 1.
+		wslAdapterNames := []string{"vEthernet (WSL)", "vEthernet (WSL (Hyper-V firewall))"}
+		var lastOutput string
+		for _, adapter := range wslAdapterNames {
+			out, cmdErr := ecc.Create("netsh", "interface", "ipv4", "show", "addresses", adapter).CombinedOutput()
+			lastOutput = string(out)
+			if cmdErr != nil {
+				continue
+			}
+			if ip := extractIPAddress(string(out)); ip != "" {
+				resolvedIP = ip
+				break
+			}
 		}
-		resolvedIP = extractIPAddress(string(out))
+		if resolvedIP == "" {
+			return "", fmt.Errorf(
+				"could not resolve host-gateway IP from WSL adapter (tried %v); netsh output: %s",
+				wslAdapterNames, lastOutput,
+			)
+		}
 
 		logger.Debugf(`Resolving special IP "host-gateway" to %q for host %q`, resolvedIP, parts[0])
 		return fmt.Sprintf("%s:%s", parts[0], resolvedIP), nil
