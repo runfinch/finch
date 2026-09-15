@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.19.0](https://github.com/runfinch/finch/compare/v1.18.0...v1.19.0) (2026-09-15)
+
+
+### Features
+
+* warn that Finch VM is not a security boundary on vm init ([#1808](https://github.com/runfinch/finch/issues/1808)) ([ef69290](https://github.com/runfinch/finch/commit/ef692902c9a11290170334f2bef9eb4ede849192))
+
+
+### Bug Fixes
+
+* move docker-credential-osxkeychain back to /usr/local/bin ([#1803](https://github.com/runfinch/finch/issues/1803)) ([8065f30](https://github.com/runfinch/finch/commit/8065f305915b45133fea88e59750730a34cda042))
+
 ## [1.18.0](https://github.com/runfinch/finch/compare/v1.17.2...v1.18.0) (2026-08-20)
 
 
