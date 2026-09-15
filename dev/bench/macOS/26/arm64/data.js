@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787698582060,
+  "lastUpdate": 1789488816930,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -8712,6 +8712,270 @@ window.BENCHMARK_DATA = {
             "value": 599,
             "unit": "allocs/op",
             "extra": "3 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "swpnlg@amazon.com",
+            "name": "Swapnanil Gupta",
+            "username": "Swapnanil-Gupta"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8065f305915b45133fea88e59750730a34cda042",
+          "message": "fix: move docker-credential-osxkeychain back to /usr/local/bin (#1803)\n\n* revert moving osxkeychain to /opt/finch/bin\n\nSigned-off-by: Swapnanil-Gupta <swpnlg@amazon.com>\n\n* stop ignoring some keychain setup errors\n\nSigned-off-by: Swapnanil-Gupta <swpnlg@amazon.com>\n\n* fix WSL adapter name after move windows server 2025\n\nSigned-off-by: Swapnanil-Gupta <swpnlg@amazon.com>\n\n* assert vm is running before exec\n\nSigned-off-by: Swapnanil-Gupta <swpnlg@amazon.com>\n\n* fix: update WSL adapter name in production resolveIP and wait for container running on WS2025\n\n- cmd/finch/nerdctl_windows.go: resolveIP queried the WSL adapter as\n  \"vEthernet (WSL)\", but Windows Server 2025 renamed it to\n  \"vEthernet (WSL (Hyper-V firewall))\". On WS2025 the old name matches no\n  adapter, so host-gateway resolved to an empty IP and `run --add-host\n  test-host:host-gateway` failed. Updated the adapter name (and the two unit\n  test mocks) to match. Verified the adapter name empirically on a WS2025 host\n  (netsh reports \"vEthernet (WSL (Hyper-V firewall))\") and via\n  go test ./cmd/finch/ on Windows Server 2025.\n\n- e2e/vm/additional_disk_test.go: after recreating the VM, `start` returns\n  before the container task is running, so the immediate `exec` failed with\n  \"cannot exec in a stopped state\" for the whole 15s window. Wait for\n  {{.State.Running}}==true before exec'ing, matching the pattern already used in\n  cosign_test.go and finch_config_file_remote_test.go.\n\nSigned-off-by: Arjun Yogidas <arjunry@amazon.com>\n\n* fix(ci): make cleanup_wsl.ps1 tolerate no WSL distros on Windows runners\n\nwsl --list exits 1 when no distributions are installed (expected on a\nfresh/recreated WS2025 runner), which failed the Remove Finch VM step\nbefore build/test could run. Force exit 0, harden Remove-Item, and drop\nthe invalid 'timeout 60s'.\n\nSigned-off-by: Arjun Yogidas <arjunry@amazon.com>\n\n* fix(windows): resolve host-gateway on both Server 2022 and 2025 WSL adapters\n\nThe WSL host adapter name differs by Windows version:\n  - Server 2022 / older WSL:              \"vEthernet (WSL)\"\n  - Server 2025 / Win11 22H2+ (mirrored): \"vEthernet (WSL (Hyper-V firewall))\"\n\nresolveIP hardcoded the 2025 name, so `finch run --add-host X:host-gateway`\nfailed with \"exit status 1\" on Server 2022 runners (netsh couldn't find the\ninterface). Try both adapter names and use the first that yields an address,\nso it works on both. Also invoke netsh.exe directly instead of via \"cmd /C\"\n(routing the quoted, parenthesized interface name through cmd mangles the\nargument) and surface the netsh output on failure. Unit tests updated to match.\n\nSigned-off-by: ShashankReddy Boyapally <shasboy@amazon.com>\n\n* fix(windows): wrap host-gateway error to satisfy lll linter\n\nSigned-off-by: ShashankReddy Boyapally <shasboy@amazon.com>\n\n---------\n\nSigned-off-by: Swapnanil-Gupta <swpnlg@amazon.com>\nSigned-off-by: Arjun Yogidas <arjunry@amazon.com>\nSigned-off-by: ShashankReddy Boyapally <shasboy@amazon.com>\nCo-authored-by: Arjun Yogidas <arjunry@amazon.com>\nCo-authored-by: ShashankReddy Boyapally <shasboy@amazon.com>",
+          "timestamp": "2026-09-15T09:08:16-07:00",
+          "tree_id": "0dfc80b824a30b0aaab19144c43132a7dc197f08",
+          "url": "https://github.com/runfinch/finch/commit/8065f305915b45133fea88e59750730a34cda042"
+        },
+        "date": 1789488815905,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 63212862250,
+            "unit": "ns/op\t         1.902 %cpu_avg/op\t        80.00 %cpu_peak/op\t        50.28 %mem_avg/op\t        54.73 %mem_peak/op\t        63.21 cpu_seconds/op\t2347769856 disk_bytes/op\t 5522496 B/op\t   80800 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 63212862250,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 1.902,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 80,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %mem_avg/op",
+            "value": 50.28,
+            "unit": "%mem_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %mem_peak/op",
+            "value": 54.73,
+            "unit": "%mem_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 63.21,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 2347769856,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 5522496,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 80800,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 15247301709,
+            "unit": "ns/op\t         2.226 %cpu_avg/op\t       100.0 %cpu_peak/op\t        49.22 %mem_avg/op\t        53.35 %mem_peak/op\t        15.25 cpu_seconds/op\t   8400896 disk_bytes/op\t 1328200 B/op\t   19476 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 15247301709,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 2.226,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 100,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %mem_avg/op",
+            "value": 49.22,
+            "unit": "%mem_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %mem_peak/op",
+            "value": 53.35,
+            "unit": "%mem_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 15.25,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 8400896,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1328200,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 19476,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 427571069,
+            "unit": "ns/op\t         4.114 %cpu_avg/op\t        47.06 %cpu_peak/op\t        54.66 %mem_avg/op\t        54.68 %mem_peak/op\t         0.4275 cpu_seconds/op\t   1142784 disk_bytes/op\t   50749 B/op\t     619 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 427571069,
+            "unit": "ns/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 4.114,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 47.06,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %mem_avg/op",
+            "value": 54.66,
+            "unit": "%mem_avg/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %mem_peak/op",
+            "value": 54.68,
+            "unit": "%mem_peak/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.4275,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 1142784,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 50749,
+            "unit": "B/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 619,
+            "unit": "allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 1035399333,
+            "unit": "ns/op\t         0.6792 %cpu_avg/op\t        33.85 %cpu_peak/op\t        54.41 %mem_avg/op\t        54.66 %mem_peak/op\t         1.035 cpu_seconds/op\t   2863104 disk_bytes/op\t  104992 B/op\t    1428 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - ns/op",
+            "value": 1035399333,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_avg/op",
+            "value": 0.6792,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_peak/op",
+            "value": 33.85,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %mem_avg/op",
+            "value": 54.41,
+            "unit": "%mem_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %mem_peak/op",
+            "value": 54.66,
+            "unit": "%mem_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - cpu_seconds/op",
+            "value": 1.035,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - disk_bytes/op",
+            "value": 2863104,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - B/op",
+            "value": 104992,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
+            "value": 1428,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
           }
         ]
       }
