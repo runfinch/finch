@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.19.0](https://github.com/runfinch/finch/compare/v1.18.0...v1.19.0) (2026-09-16)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/containerd/containerd/v2 ([350e80b](https://github.com/runfinch/finch/commit/350e80be5aab7140650573c26fbd3423d9f17ce0))
+* **deps:** bump github.com/containerd/containerd/v2 from 2.2.5 to 2.2.8 ([#1809](https://github.com/runfinch/finch/issues/1809)) ([350e80b](https://github.com/runfinch/finch/commit/350e80be5aab7140650573c26fbd3423d9f17ce0))
+* **deps:** bump google.golang.org/grpc from 1.81.1 to 1.83.1 ([#1805](https://github.com/runfinch/finch/issues/1805)) ([07d4117](https://github.com/runfinch/finch/commit/07d4117eb4213031270881dbb9fa4c51830122a5))
+
+
+### Features
+
+* warn that Finch VM is not a security boundary on vm init ([#1808](https://github.com/runfinch/finch/issues/1808)) ([ef69290](https://github.com/runfinch/finch/commit/ef692902c9a11290170334f2bef9eb4ede849192))
+
+
+### Bug Fixes
+
+* move docker-credential-osxkeychain back to /usr/local/bin ([#1803](https://github.com/runfinch/finch/issues/1803)) ([8065f30](https://github.com/runfinch/finch/commit/8065f305915b45133fea88e59750730a34cda042))
+
 ## [1.18.0](https://github.com/runfinch/finch/compare/v1.17.2...v1.18.0) (2026-08-20)
 
 
