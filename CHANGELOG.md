@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.1](https://github.com/runfinch/finch/compare/v1.19.0...v1.19.1) (2026-09-16)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump google.golang.org/grpc from 1.83.1 to 1.83.2 ([#1812](https://github.com/runfinch/finch/issues/1812)) ([ca27118](https://github.com/runfinch/finch/commit/ca2711876be54056884779346c4dcf93f0708f87))
+
 ## [1.19.0](https://github.com/runfinch/finch/compare/v1.18.0...v1.19.0) (2026-09-16)
 
 
