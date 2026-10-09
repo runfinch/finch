@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/lima-vm/lima/pkg/limayaml"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 
@@ -31,7 +31,7 @@ type AdditionalDirectory struct {
 
 // SharedSystemSettings represents all settings shared by virtualized Finch configurations.
 type SharedSystemSettings struct {
-	VMType      *limayaml.VMType `yaml:"vmType,omitempty"`
+	VMType      *limatype.VMType `yaml:"vmType,omitempty"`
 	AutoVMStart *bool            `yaml:"auto_vm_start,omitempty"`
 }
 
@@ -159,7 +159,7 @@ func Load(
 				return nil, fmt.Errorf("failed to ensure %q directory: %w", cfgPath, err)
 			}
 			if err := writeConfig(defCfg, fs, cfgPath); err != nil {
-				log.Warnf("Could not save default values to %q: %w", cfgPath, err)
+				log.Warnf("Could not save default values to %q: %v", cfgPath, err)
 			}
 			return defCfg, nil
 		}

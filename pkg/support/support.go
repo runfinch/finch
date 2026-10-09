@@ -8,6 +8,7 @@ import (
 	"archive/zip"
 	"bufio"
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -231,7 +232,7 @@ func (bb *bundleBuilder) copyAndRedactFile(writer io.Writer, reader bufReader) e
 			return err
 		}
 
-		user := bb.lima.LimaUser(false)
+		user := bb.lima.LimaUser(context.Background(), false)
 		line, err = redactUsername(line, user.Username)
 		if err != nil {
 			return err
