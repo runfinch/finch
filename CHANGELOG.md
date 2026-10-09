@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.19.1](https://github.com/runfinch/finch/compare/v1.19.0...v1.19.1) (2026-10-09)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/containerd/containerd/v2 ([ff01f4a](https://github.com/runfinch/finch/commit/ff01f4a7630c97e4c6c5f75d5799ea9dee5d73f1))
+* **deps:** bump github.com/containerd/containerd/v2 from 2.2.8 to 2.2.9 ([#1816](https://github.com/runfinch/finch/issues/1816)) ([ff01f4a](https://github.com/runfinch/finch/commit/ff01f4a7630c97e4c6c5f75d5799ea9dee5d73f1))
+* **deps:** bump google.golang.org/grpc from 1.83.1 to 1.83.2 ([#1812](https://github.com/runfinch/finch/issues/1812)) ([ca27118](https://github.com/runfinch/finch/commit/ca2711876be54056884779346c4dcf93f0708f87))
+
 ## [1.19.0](https://github.com/runfinch/finch/compare/v1.18.0...v1.19.0) (2026-09-16)
 
 
