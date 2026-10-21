@@ -94,7 +94,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
 	github.com/ipfs/go-cid v0.6.0 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
-	github.com/klauspost/compress v1.18.5 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.8 // indirect
 	github.com/lima-vm/go-qcow2reader v0.7.1 // indirect
 	github.com/lufia/plan9stats v0.0.0-20231016141302-07b5767bb0ed // indirect
