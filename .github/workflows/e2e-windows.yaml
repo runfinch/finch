@@ -99,6 +99,8 @@ jobs:
           git status
           git clean -f -d
 
+          # let the container e2e suite allow WSL VM -> host traffic through Windows Firewall
+          $env:FINCH_E2E_ALLOW_WSL_HOST_TRAFFIC="true"
           make ${{ inputs.test-command }}
       - name: Show test coverage
         run: make test-e2e-cov
