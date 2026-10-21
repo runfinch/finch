@@ -97,7 +97,8 @@ func wslAdapterAddr() (*net.IPNet, error) {
 
 func runPowerShell(script string) error {
 	// The script only interpolates constants and addresses parsed by the net package.
-	out, err := exec.Command("powershell", "-NoProfile", "-NonInteractive", "-Command", script).CombinedOutput()
+	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", "-Command", script) //nolint:gosec // G204: see above.
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("%w: %s", err, out)
 	}
