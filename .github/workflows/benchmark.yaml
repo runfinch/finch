@@ -29,7 +29,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0
@@ -62,7 +62,7 @@ jobs:
           echo "OS_VERSION=$(sw_vers -productVersion | cut -d '.' -f 1)" >> $GITHUB_ENV
           echo "ARCH=$(uname -m)" >> $GITHUB_ENV
       - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@52576c92bccf6ac60c8223ec7eb2565637cae9ba # v1.22.1
+        uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
         with:
           name: Finch Benchmark
           tool: 'go'
