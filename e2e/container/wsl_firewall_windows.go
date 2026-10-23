@@ -25,6 +25,18 @@ const (
 	wslHostRuleGroup = "Finch WSL to host"
 	// wslAdapterPrefix matches both "vEthernet (WSL)" and "vEthernet (WSL (Hyper-V firewall))".
 	wslAdapterPrefix = "vEthernet (WSL"
+
+	// The PowerShell scripts are constants; the addresses are passed through these environment variables
+	// so that nothing is interpolated into the command line.
+	wslHostAddressEnv = "FINCH_E2E_WSL_HOST_ADDRESS"
+	wslSubnetEnv      = "FINCH_E2E_WSL_SUBNET"
+
+	removeWSLHostRuleScript = "Remove-NetFirewallRule -Group '" + wslHostRuleGroup + "' -ErrorAction SilentlyContinue"
+	allowWSLHostRuleScript  = "$ErrorActionPreference = 'Stop'\n" +
+		removeWSLHostRuleScript + "\n" +
+		"New-NetFirewallRule -DisplayName '" + wslHostRuleGroup + "' -Group '" + wslHostRuleGroup + "' " +
+		"-Direction Inbound -Action Allow -Protocol TCP " +
+		"-LocalAddress $env:" + wslHostAddressEnv + " -RemoteAddress $env:" + wslSubnetEnv + " | Out-Null"
 )
 
 // allowWSLToHostTraffic creates an inbound Windows Firewall rule that lets the WSL VM reach TCP listeners
@@ -42,12 +54,10 @@ func allowWSLToHostTraffic() error {
 		return err
 	}
 	subnet := &net.IPNet{IP: hostAddr.IP.Mask(hostAddr.Mask), Mask: hostAddr.Mask}
-	script := fmt.Sprintf(`$ErrorActionPreference = 'Stop'
-Remove-NetFirewallRule -Group '%[1]s' -ErrorAction SilentlyContinue
-New-NetFirewallRule -DisplayName '%[1]s' -Group '%[1]s' -Direction Inbound -Action Allow -Protocol TCP `+
-		`-LocalAddress %[2]s -RemoteAddress %[3]s | Out-Null`, wslHostRuleGroup, hostAddr.IP, subnet)
-	if err := runPowerShell(script); err != nil {
-		return fmt.Errorf("failed to allow WSL to host traffic from %s: %w", subnet, err)
+	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", "-Command", allowWSLHostRuleScript)
+	cmd.Env = append(os.Environ(), wslHostAddressEnv+"="+hostAddr.IP.String(), wslSubnetEnv+"="+subnet.String())
+	if out, err := cmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("failed to allow WSL to host traffic from %s: %w: %s", subnet, err, out)
 	}
 	fmt.Printf("allowed inbound TCP from WSL subnet %s to host address %s\n", subnet, hostAddr.IP)
 	return nil
@@ -58,7 +68,11 @@ func removeWSLToHostTraffic() error {
 	if os.Getenv(allowWSLHostTrafficEnv) != "true" {
 		return nil
 	}
-	return runPowerShell(fmt.Sprintf(`Remove-NetFirewallRule -Group '%s' -ErrorAction SilentlyContinue`, wslHostRuleGroup))
+	if out, err := exec.Command("powershell", "-NoProfile", "-NonInteractive", "-Command", removeWSLHostRuleScript).
+		CombinedOutput(); err != nil {
+		return fmt.Errorf("%w: %s", err, out)
+	}
+	return nil
 }
 
 // waitForWSLAdapterAddr returns the host's IPv4 address on the WSL NAT adapter, waiting for the adapter to come up.
@@ -93,14 +107,4 @@ func wslAdapterAddr() (*net.IPNet, error) {
 		}
 	}
 	return nil, errors.New("no IPv4 address found on a WSL network adapter")
-}
-
-func runPowerShell(script string) error {
-	// The script only interpolates constants and addresses parsed by the net package.
-	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", "-Command", script) //nolint:gosec // G204: see above.
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("%w: %s", err, out)
-	}
-	return nil
 }
