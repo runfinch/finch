@@ -53,6 +53,8 @@ func TestContainer(t *testing.T) {
 			command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
 			time.Sleep(1 * time.Second)
 			command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
+			// The WSL adapter only exists once the VM is running, and changes every time WSL restarts.
+			gomega.Expect(allowWSLToHostTraffic()).To(gomega.Succeed())
 		}
 		tests.SetupLocalRegistry(o)
 		return nil
@@ -64,6 +66,9 @@ func TestContainer(t *testing.T) {
 			time.Sleep(1 * time.Second)
 			command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
 			time.Sleep(1 * time.Second)
+			if err := removeWSLToHostTraffic(); err != nil {
+				fmt.Printf("could not remove WSL to host firewall rule: %v\n", err)
+			}
 		}
 	}, func() {})
 

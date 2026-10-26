@@ -80,7 +80,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
-          python-version: '3.x'
+          # TODO: revert to '3.x' once PyYAML (an awscli dependency) publishes Python 3.15 Windows wheels
+          # (https://github.com/yaml/pyyaml/issues/981); until then pip tries to build it from source and fails.
+          python-version: '3.14'
       - name: Install AWS CLI
         run: |
           python -m pip install --upgrade pip
@@ -188,7 +190,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
-          python-version: '3.x'
+          # TODO: revert to '3.x' once PyYAML (an awscli dependency) publishes Python 3.15 Windows wheels
+          # (https://github.com/yaml/pyyaml/issues/981); until then pip tries to build it from source and fails.
+          python-version: '3.14'
       - name: Install AWS CLI
         run: |
           python -m pip install --upgrade pip
@@ -276,6 +280,7 @@ jobs:
             git status
             git clean -f -d
             $env:INSTALLED="true"
+            $env:FINCH_E2E_ALLOW_WSL_HOST_TRAFFIC="true"
             make test-e2e-container
       - name: Uninstall Finch silently
         if: ${{ always() }}
