@@ -119,7 +119,7 @@ var newApp = func(
 
 	// Get the vmAutoStarter that will:
 	// 1. automatically launch a finch vm using `finch vm init` command if the vm instance does not exist.
-	// 2. automatically start the vm instance using `finch vm start` command if the vm instace exists but is stopped.
+	// 2. automatically start the vm instance using `finch vm start` command if the vm instance exists but is stopped.
 	// 3. do nothing when the vm instance is running.
 	// This happens before we execute any nerdctl command on macos and windows.
 	// For linux, we pass nil to `initializeNerdctlCommands` in main_native.go.
