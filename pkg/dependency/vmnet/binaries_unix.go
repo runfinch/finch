@@ -48,7 +48,7 @@ func (bin *binaries) socketVmnetBinPath() string {
 	return "/bin/socket_vmnet"
 }
 
-// installationPathSocketVmnetExe retunrs the full path to correctly installed socket_vmnet executable.
+// installationPathSocketVmnetExe returns the full path to correctly installed socket_vmnet executable.
 func (bin *binaries) installationPathSocketVmnetExe() string {
 	return fmt.Sprintf("%s%s", bin.installationPath(), bin.socketVmnetBinPath())
 }

@@ -111,7 +111,7 @@ func handleFilePath(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdct
 	return nil
 }
 
-// hanldes -v/--volumes option. For anonymous volumes and named volumes this is no-op. For bind mounts path is converted to wsl path.
+// handles -v/--volumes option. For anonymous volumes and named volumes this is no-op. For bind mounts path is converted to wsl path.
 func handleVolume(systemDeps NerdctlCommandSystemDeps, _ *config.Finch, nerdctlCmdArgs []string, index int) error {
 	prefix := nerdctlCmdArgs[index]
 	var (
