@@ -19,7 +19,7 @@ import (
 	"github.com/runfinch/finch/pkg/system"
 )
 
-// SystemSettings represents the system configuration specifc to macOS.
+// SystemSettings represents the system configuration specific to macOS.
 type SystemSettings struct {
 	CPUs                  *int                  `yaml:"cpus,omitempty"`
 	Memory                *string               `yaml:"memory,omitempty"`

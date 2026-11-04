@@ -256,7 +256,7 @@
 
 ### Bug Fixes
 
-* **ci:** Add hardfail to all steps of the .pkg release-installer scipt ([#1481](https://github.com/runfinch/finch/issues/1481)) ([5695017](https://github.com/runfinch/finch/commit/5695017c9b3067f9b067b036aac0bea2422e76ce))
+* **ci:** Add hardfail to all steps of the .pkg release-installer script ([#1481](https://github.com/runfinch/finch/issues/1481)) ([5695017](https://github.com/runfinch/finch/commit/5695017c9b3067f9b067b036aac0bea2422e76ce))
 * downgrade go version to match max AL2 supported version ([#1497](https://github.com/runfinch/finch/issues/1497)) ([1382eea](https://github.com/runfinch/finch/commit/1382eeaa6d0dfc4009d7780d76b1455885c1c5f4))
 * fix service file PATH variable ([#1520](https://github.com/runfinch/finch/issues/1520)) ([7f960bb](https://github.com/runfinch/finch/commit/7f960bb57951dbe87f74782e19fb4fc64faf9800))
 * remove additional e2e run test ([#1528](https://github.com/runfinch/finch/issues/1528)) ([beb68ee](https://github.com/runfinch/finch/commit/beb68ee9e2f9c2e2c58c624806da540ca2a3434b))
@@ -901,7 +901,7 @@
 
 ### Bug Fixes
 
-* Change the default behavoir for deleting .finch folder to false when uninstall ([#732](https://github.com/runfinch/finch/issues/732)) ([e818743](https://github.com/runfinch/finch/commit/e8187432a02c59a821a0d3b39c9cbc51f75a60cd))
+* Change the default behavior for deleting .finch folder to false when uninstall ([#732](https://github.com/runfinch/finch/issues/732)) ([e818743](https://github.com/runfinch/finch/commit/e8187432a02c59a821a0d3b39c9cbc51f75a60cd))
 * Clean up all previous finch version installation registries in postinstall and uninstall ([#688](https://github.com/runfinch/finch/issues/688)) ([9afc0b9](https://github.com/runfinch/finch/commit/9afc0b9a5e73a3c261aeac87b977e44129b311bd))
 * Fix to be able to run finch build with --ssh option ([#696](https://github.com/runfinch/finch/issues/696)) ([4d1e6cf](https://github.com/runfinch/finch/commit/4d1e6cf6d8f4b6f2cbdf0229e8dcf4ad0c80d80c))
 * Fix to delete ~/.finch when uninstalling finch ([#703](https://github.com/runfinch/finch/issues/703)) ([8d7389f](https://github.com/runfinch/finch/commit/8d7389f607fc0211ebd6cfafe13197b945d877a3))

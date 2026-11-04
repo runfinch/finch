@@ -10,9 +10,9 @@
 
 [SOCI](https://github.com/awslabs/soci-snapshotter/tree/main) (short for “Seekable OCI” and pronounced “so-CHEE”) is a lazy-loading snapshotter that is able to skip the build-time conversion step when loading an image.
 
-SOCI does this by using a special artifact called the SOCI index that is comprosied of zTOCs that can be used to access parts of an image layer without fully unpacking the layer.
+SOCI does this by using a special artifact called the SOCI index that is comprised of zTOCs that can be used to access parts of an image layer without fully unpacking the layer.
 
-By creating a seperate index and not converting the image, SOCI is able to keep image signatures consistent.
+By creating a separate index and not converting the image, SOCI is able to keep image signatures consistent.
 
 - To enable SOCI add `"- soci"` to the `snapshotters` list in the finch config file (`${HOME}/.finch/finch.yaml`):
 
@@ -22,7 +22,7 @@ snapshotters:
 ```
 
 This will set SOCI as your default snapshotter and you can then run commands as usual and SOCI will be used (i.e. `finch pull ...` will use SOCI by default).
-If you don't want SOCI be the default snapshotter, but would still like it to be installed on the VM for later use you can set `snapshotters` as:
+If you don't want SOCI to be the default snapshotter, but would still like it to be installed on the VM for later use you can set `snapshotters` as:
 
 ```yaml
 snapshotters:

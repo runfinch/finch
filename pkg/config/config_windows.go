@@ -9,7 +9,7 @@ import (
 	"github.com/runfinch/finch/pkg/command"
 )
 
-// SystemSettings represents the system configuration specifc to Windows.
+// SystemSettings represents the system configuration specific to Windows.
 type SystemSettings struct {
 	SharedSystemSettings `yaml:",inline"`
 }
