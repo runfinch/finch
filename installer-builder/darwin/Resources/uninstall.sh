@@ -33,9 +33,9 @@ done
 
 if [ $? -eq 0 ]
 then
-  echo "[2/4] [DONE] Successfully deleted application informations"
+  echo "[2/4] [DONE] Successfully deleted application information"
 else
-  echo "[2/4] [ERROR] Could not delete application informations" >&2
+  echo "[2/4] [ERROR] Could not delete application information" >&2
 fi
 
 #remove application source distribution

@@ -86,7 +86,7 @@ arch-test:
 	@if [ $(SUPPORTED_ARCH) != "true" ]; then echo "Unsupported architecture: $(ARCH)"; exit "1"; fi
 
 # OS will be set on Windows (to Windows_NT), and undefined otherwise unless
-# it is explicity specified on the commandline.
+# it is explicitly specified on the commandline.
 # On Unix (or, not-Windows), query OS and set it using uname -s
 BUILD_OS ?= $(OS)
 ifeq ($(BUILD_OS),)
