@@ -170,7 +170,7 @@ for arch in "${BUILD_ARCHITECTURES[@]}"; do
     sed "s/\${ARCH}/$arch/g" "$ARCH_DIR/DEBIAN/control" | sudo tee "$ARCH_DIR/DEBIAN/control" > /dev/null
     echo "Replaced arch value in control file with $arch"
     
-    # replace ${REQUIREMENTS} wit the actual requirements
+    # replace ${REQUIREMENTS} with the actual requirements
     requirements="containerd (>= $MIN_CONTAINERD_VERSION), runc (>= $MIN_RUNC_VERSION)"
     sed "s/\${REQUIREMENTS}/$requirements/g" "$ARCH_DIR/DEBIAN/control" | sudo tee "$ARCH_DIR/DEBIAN/control" > /dev/null
     echo "Replaced requirements value in control file with $requirements"
@@ -231,5 +231,5 @@ pushd deb
 mv $SCRIPT_DIR/runfinch-finch* .
 popd && popd
 
-echo "✅ Sucessfully packaged .deb for Finch"
+echo "✅ Successfully packaged .deb for Finch"
 exit
