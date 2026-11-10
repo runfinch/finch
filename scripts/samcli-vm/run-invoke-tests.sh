@@ -43,4 +43,4 @@ test_invoke_returns_expected_results_from_git_function
 EOF
 
 # Validate test results
-$GITHUB_WORKSPACE/scripts/validate-test-results.sh /tmp/invoke_test_output.txt expected_invoke_failures.txt "Invoke tests"
+"$GITHUB_WORKSPACE"/scripts/validate-test-results.sh /tmp/invoke_test_output.txt expected_invoke_failures.txt "Invoke tests"

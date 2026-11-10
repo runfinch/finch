@@ -22,4 +22,4 @@ su ec2-user -c "
 touch expected_sync_failures.txt
 
 # Validate test results
-$GITHUB_WORKSPACE/scripts/validate-test-results.sh /tmp/sync_test_output.txt expected_sync_failures.txt "Sync tests"
+"$GITHUB_WORKSPACE"/scripts/validate-test-results.sh /tmp/sync_test_output.txt expected_sync_failures.txt "Sync tests"
