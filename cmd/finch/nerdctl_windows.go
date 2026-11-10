@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	dockerops "github.com/docker/docker/opts"
+	dockerops "github.com/moby/moby/v2/daemon/pkg/opts"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/config"

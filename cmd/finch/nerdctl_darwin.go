@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"strings"
 
-	dockerops "github.com/docker/docker/opts"
-	"github.com/lima-vm/lima/pkg/networks"
+	"github.com/lima-vm/lima/v2/pkg/networks"
+	dockerops "github.com/moby/moby/v2/daemon/pkg/opts"
 
 	"github.com/runfinch/finch/pkg/command"
 	"github.com/runfinch/finch/pkg/flog"

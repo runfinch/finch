@@ -11,8 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/option"
@@ -31,16 +30,16 @@ var testDaemon = func(_ *option.Option, installed bool) {
 			}()
 
 			daemonSocketPath := filepath.Join(limaDataDirPath(installed), "finch", "sock", "finch.sock")
-			apiClient, err := client.NewClientWithOpts(
+			apiClient, err := client.New(
 				client.WithHost("unix://"+daemonSocketPath),
-				client.WithVersion("v1.43"),
+				client.WithAPIVersion("1.43"),
 			)
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 			defer func() {
 				gomega.Expect(apiClient.Close()).ShouldNot(gomega.HaveOccurred())
 			}()
 
-			_, err = apiClient.ImagePull(testCtx, imageRef, image.PullOptions{})
+			_, err = apiClient.ImagePull(testCtx, imageRef, client.ImagePullOptions{})
 			gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 
 			// ImagePull is asynchronous -- poll to check that the image has been pulled every second
@@ -50,11 +49,11 @@ var testDaemon = func(_ *option.Option, installed bool) {
 			go func(wg *sync.WaitGroup) {
 				for {
 					time.Sleep(1 * time.Second)
-					images, err := apiClient.ImageList(testCtx, image.ListOptions{})
+					images, err := apiClient.ImageList(testCtx, client.ImageListOptions{})
 					if err != nil {
 						gomega.Expect(err).ShouldNot(gomega.HaveOccurred())
 					}
-					for _, img := range images {
+					for _, img := range images.Items {
 						for _, tag := range img.RepoTags {
 							if tag == imageRef {
 								imagePulled = true
