@@ -137,7 +137,7 @@ func (m *userDataDiskManager) getDiskInfo(diskPath string) (*qemuDiskInfo, error
 func (m *userDataDiskManager) convertToRaw(diskPath string) error {
 	qcowPath := fmt.Sprintf("%s.qcow2", diskPath)
 	if err := m.fs.Rename(diskPath, qcowPath); err != nil {
-		return fmt.Errorf("faied to rename disk: %w", err)
+		return fmt.Errorf("failed to rename disk: %w", err)
 	}
 	if _, err := m.ecc.Create(
 		path.Join(m.finch.QEMUBinDir(), "qemu-img"),
