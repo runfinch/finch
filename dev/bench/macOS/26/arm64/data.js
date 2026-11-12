@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794441504339,
+  "lastUpdate": 1794519213828,
   "repoUrl": "https://github.com/runfinch/finch",
   "entries": {
     "Finch Benchmark": [
@@ -12672,6 +12672,270 @@ window.BENCHMARK_DATA = {
             "value": 1407,
             "unit": "allocs/op",
             "extra": "1 times\n8 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f635278babc05507aed609eb1d3e9fe0a47faaa5",
+          "message": "build(deps): bump the project-dependency group across 1 directory with 12 updates (#1834)\n\nBumps the project-dependency group with 12 updates in the / directory:\n\n| Package | From | To |\n| --- | --- | --- |\n| [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.42.0` | `1.47.8` |\n| [github.com/docker/docker-credential-helpers](https://github.com/docker/docker-credential-helpers) | `0.9.8` | `0.9.12` |\n| [github.com/lima-vm/lima/v2](https://github.com/lima-vm/lima) | `2.1.3` | `2.3.0` |\n| [github.com/onsi/ginkgo/v2](https://github.com/onsi/ginkgo) | `2.32.0` | `2.34.0` |\n| [github.com/onsi/gomega](https://github.com/onsi/gomega) | `1.40.0` | `1.44.0` |\n| [github.com/pkg/sftp](https://github.com/pkg/sftp) | `1.13.10` | `1.13.12` |\n| [github.com/runfinch/common-tests](https://github.com/runfinch/common-tests) | `0.10.4` | `0.11.0` |\n| [github.com/xorcare/pointer](https://github.com/xorcare/pointer) | `1.2.2` | `1.26.0` |\n| [golang.org/x/sync](https://github.com/golang/sync) | `0.24.0` | `0.25.0` |\n| [golang.org/x/tools](https://github.com/golang/tools) | `0.51.0` | `0.52.0` |\n| [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) | `0.37.1` | `0.37.2` |\n| [golang.org/x/sys](https://github.com/golang/sys) | `0.49.0` | `0.50.0` |\n\n\n\nUpdates `github.com/aws/aws-sdk-go-v2` from 1.42.0 to 1.47.8\n- [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)\n- [Commits](https://github.com/aws/aws-sdk-go-v2/compare/v1.42.0...v1.47.8)\n\nUpdates `github.com/docker/docker-credential-helpers` from 0.9.8 to 0.9.12\n- [Release notes](https://github.com/docker/docker-credential-helpers/releases)\n- [Commits](https://github.com/docker/docker-credential-helpers/compare/v0.9.8...v0.9.12)\n\nUpdates `github.com/lima-vm/lima/v2` from 2.1.3 to 2.3.0\n- [Release notes](https://github.com/lima-vm/lima/releases)\n- [Commits](https://github.com/lima-vm/lima/compare/v2.1.3...v2.3.0)\n\nUpdates `github.com/onsi/ginkgo/v2` from 2.32.0 to 2.34.0\n- [Release notes](https://github.com/onsi/ginkgo/releases)\n- [Changelog](https://github.com/onsi/ginkgo/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/onsi/ginkgo/compare/v2.32.0...v2.34.0)\n\nUpdates `github.com/onsi/gomega` from 1.40.0 to 1.44.0\n- [Release notes](https://github.com/onsi/gomega/releases)\n- [Changelog](https://github.com/onsi/gomega/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/onsi/gomega/compare/v1.40.0...v1.44.0)\n\nUpdates `github.com/pkg/sftp` from 1.13.10 to 1.13.12\n- [Release notes](https://github.com/pkg/sftp/releases)\n- [Commits](https://github.com/pkg/sftp/compare/v1.13.10...v1.13.12)\n\nUpdates `github.com/runfinch/common-tests` from 0.10.4 to 0.11.0\n- [Release notes](https://github.com/runfinch/common-tests/releases)\n- [Changelog](https://github.com/runfinch/common-tests/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/runfinch/common-tests/compare/v0.10.4...v0.11.0)\n\nUpdates `github.com/xorcare/pointer` from 1.2.2 to 1.26.0\n- [Commits](https://github.com/xorcare/pointer/compare/v1.2.2...v1.26.0)\n\nUpdates `golang.org/x/sync` from 0.24.0 to 0.25.0\n- [Commits](https://github.com/golang/sync/compare/v0.24.0...v0.25.0)\n\nUpdates `golang.org/x/tools` from 0.51.0 to 0.52.0\n- [Release notes](https://github.com/golang/tools/releases)\n- [Commits](https://github.com/golang/tools/compare/v0.51.0...v0.52.0)\n\nUpdates `k8s.io/apimachinery` from 0.37.1 to 0.37.2\n- [Commits](https://github.com/kubernetes/apimachinery/compare/v0.37.1...v0.37.2)\n\nUpdates `golang.org/x/sys` from 0.49.0 to 0.50.0\n- [Commits](https://github.com/golang/sys/compare/v0.49.0...v0.50.0)\n\n---\nupdated-dependencies:\n- dependency-name: github.com/aws/aws-sdk-go-v2\n  dependency-version: 1.47.8\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: project-dependency\n- dependency-name: github.com/docker/docker-credential-helpers\n  dependency-version: 0.9.12\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n  dependency-group: project-dependency\n- dependency-name: github.com/lima-vm/lima/v2\n  dependency-version: 2.3.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: project-dependency\n- dependency-name: github.com/onsi/ginkgo/v2\n  dependency-version: 2.34.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: project-dependency\n- dependency-name: github.com/onsi/gomega\n  dependency-version: 1.44.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: project-dependency\n- dependency-name: github.com/pkg/sftp\n  dependency-version: 1.13.12\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n  dependency-group: project-dependency\n- dependency-name: github.com/runfinch/common-tests\n  dependency-version: 0.11.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: project-dependency\n- dependency-name: github.com/xorcare/pointer\n  dependency-version: 1.26.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: project-dependency\n- dependency-name: golang.org/x/sync\n  dependency-version: 0.25.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: project-dependency\n- dependency-name: golang.org/x/tools\n  dependency-version: 0.52.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: project-dependency\n- dependency-name: k8s.io/apimachinery\n  dependency-version: 0.37.2\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n  dependency-group: project-dependency\n- dependency-name: golang.org/x/sys\n  dependency-version: 0.50.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: project-dependency\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-11-12T16:29:46-05:00",
+          "tree_id": "bdd8819ba9ae7ec8f802236bad96eb6d05d13ac0",
+          "url": "https://github.com/runfinch/finch/commit/f635278babc05507aed609eb1d3e9fe0a47faaa5"
+        },
+        "date": 1794519213057,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit",
+            "value": 55421542834,
+            "unit": "ns/op\t         0.4261 %cpu_avg/op\t        36.36 %cpu_peak/op\t        44.72 %mem_avg/op\t        52.71 %mem_peak/op\t        55.42 cpu_seconds/op\t2020708352 disk_bytes/op\t 4732768 B/op\t   70212 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - ns/op",
+            "value": 55421542834,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_avg/op",
+            "value": 0.4261,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %cpu_peak/op",
+            "value": 36.36,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %mem_avg/op",
+            "value": 44.72,
+            "unit": "%mem_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - %mem_peak/op",
+            "value": 52.71,
+            "unit": "%mem_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - cpu_seconds/op",
+            "value": 55.42,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - disk_bytes/op",
+            "value": 2020708352,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - B/op",
+            "value": 4732768,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMInit - allocs/op",
+            "value": 70212,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart",
+            "value": 15088514541,
+            "unit": "ns/op\t         0.4784 %cpu_avg/op\t        37.50 %cpu_peak/op\t        43.92 %mem_avg/op\t        50.85 %mem_peak/op\t        15.09 cpu_seconds/op\t   8024064 disk_bytes/op\t 1288688 B/op\t   19296 allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - ns/op",
+            "value": 15088514541,
+            "unit": "ns/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_avg/op",
+            "value": 0.4784,
+            "unit": "%cpu_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %cpu_peak/op",
+            "value": 37.5,
+            "unit": "%cpu_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %mem_avg/op",
+            "value": 43.92,
+            "unit": "%mem_avg/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - %mem_peak/op",
+            "value": 50.85,
+            "unit": "%mem_peak/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - cpu_seconds/op",
+            "value": 15.09,
+            "unit": "cpu_seconds/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - disk_bytes/op",
+            "value": 8024064,
+            "unit": "disk_bytes/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - B/op",
+            "value": 1288688,
+            "unit": "B/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkVMStart - allocs/op",
+            "value": 19296,
+            "unit": "allocs/op",
+            "extra": "1 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun",
+            "value": 394794542,
+            "unit": "ns/op\t         1.022 %cpu_avg/op\t        17.94 %cpu_peak/op\t        52.43 %mem_avg/op\t        52.44 %mem_peak/op\t         0.3947 cpu_seconds/op\t   1105920 disk_bytes/op\t   47216 B/op\t     573 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - ns/op",
+            "value": 394794542,
+            "unit": "ns/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_avg/op",
+            "value": 1.022,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %cpu_peak/op",
+            "value": 17.94,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %mem_avg/op",
+            "value": 52.43,
+            "unit": "%mem_avg/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - %mem_peak/op",
+            "value": 52.44,
+            "unit": "%mem_peak/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - cpu_seconds/op",
+            "value": 0.3947,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - disk_bytes/op",
+            "value": 1105920,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - B/op",
+            "value": 47216,
+            "unit": "B/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkContainerRun - allocs/op",
+            "value": 573,
+            "unit": "allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild",
+            "value": 397965875,
+            "unit": "ns/op\t         0.9399 %cpu_avg/op\t        19.44 %cpu_peak/op\t        52.42 %mem_avg/op\t        52.43 %mem_peak/op\t         0.3979 cpu_seconds/op\t    547498 disk_bytes/op\t   47658 B/op\t     574 allocs/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - ns/op",
+            "value": 397965875,
+            "unit": "ns/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_avg/op",
+            "value": 0.9399,
+            "unit": "%cpu_avg/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %cpu_peak/op",
+            "value": 19.44,
+            "unit": "%cpu_peak/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %mem_avg/op",
+            "value": 52.42,
+            "unit": "%mem_avg/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - %mem_peak/op",
+            "value": 52.43,
+            "unit": "%mem_peak/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - cpu_seconds/op",
+            "value": 0.3979,
+            "unit": "cpu_seconds/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - disk_bytes/op",
+            "value": 547498,
+            "unit": "disk_bytes/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - B/op",
+            "value": 47658,
+            "unit": "B/op",
+            "extra": "3 times\n8 procs"
+          },
+          {
+            "name": "BenchmarkAll/BenchmarkImageBuild - allocs/op",
+            "value": 574,
+            "unit": "allocs/op",
+            "extra": "3 times\n8 procs"
           }
         ]
       }
