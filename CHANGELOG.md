@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.19.1](https://github.com/runfinch/finch/compare/v1.19.0...v1.19.1) (2026-11-12)
+
+
+### Build System or External Dependencies
+
+* **deps:** bump github.com/containerd/containerd/v2 ([ff01f4a](https://github.com/runfinch/finch/commit/ff01f4a7630c97e4c6c5f75d5799ea9dee5d73f1))
+* **deps:** bump github.com/containerd/containerd/v2 from 2.2.8 to 2.2.9 ([#1816](https://github.com/runfinch/finch/issues/1816)) ([ff01f4a](https://github.com/runfinch/finch/commit/ff01f4a7630c97e4c6c5f75d5799ea9dee5d73f1))
+* **deps:** bump github.com/containerd/nerdctl/v2 from 2.2.2 to 2.4.2 ([#1829](https://github.com/runfinch/finch/issues/1829)) ([35c3e84](https://github.com/runfinch/finch/commit/35c3e84b01dc85e42e138e6a930f2d20dcebf7f6))
+* **deps:** bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 ([#1830](https://github.com/runfinch/finch/issues/1830)) ([1dd1a9c](https://github.com/runfinch/finch/commit/1dd1a9c8c8e08011150b9d73bcdbf56be5d88bcd))
+* **deps:** bump github.com/klauspost/compress from 1.18.5 to 1.18.7 ([#1822](https://github.com/runfinch/finch/issues/1822)) ([ba73d9c](https://github.com/runfinch/finch/commit/ba73d9c8bf9113bb81f159ddd261ab61cd0fa686))
+* **deps:** bump github.com/moby/sys/user from 0.4.0 to 0.4.1 ([#1820](https://github.com/runfinch/finch/issues/1820)) ([a7d1a28](https://github.com/runfinch/finch/commit/a7d1a28055983643f2c9f3362d02f3868274fe11))
+* **deps:** bump google.golang.org/grpc from 1.83.1 to 1.83.2 ([#1812](https://github.com/runfinch/finch/issues/1812)) ([ca27118](https://github.com/runfinch/finch/commit/ca2711876be54056884779346c4dcf93f0708f87))
+* **deps:** bump the project-dependency group across 1 directory with 12 updates ([#1834](https://github.com/runfinch/finch/issues/1834)) ([f635278](https://github.com/runfinch/finch/commit/f635278babc05507aed609eb1d3e9fe0a47faaa5))
+
+
+### Bug Fixes
+
+* **ci:** pin Python and allow WSL to host traffic in Windows container e2e ([#1823](https://github.com/runfinch/finch/issues/1823)) ([f6c91a6](https://github.com/runfinch/finch/commit/f6c91a6477d168028097631ad4779878ce57eb08))
+
 ## [1.19.0](https://github.com/runfinch/finch/compare/v1.18.0...v1.19.0) (2026-09-16)
 
 
