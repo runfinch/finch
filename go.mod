@@ -182,7 +182,7 @@ require (
 	golang.org/x/mod v0.42.0 // indirect
 	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/sys v0.50.0
-	golang.org/x/text v0.43.0
+	golang.org/x/text v0.44.0
 	k8s.io/klog/v2 v2.140.0 // indirect
 )
 
