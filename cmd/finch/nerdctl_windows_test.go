@@ -128,6 +128,38 @@ func TestNerdctlCommand_run(t *testing.T) {
 			},
 		},
 		{
+			name:    "events with --since, --until, and --filter flags",
+			cmdName: "events",
+			fc:      &config.Finch{},
+			args:    []string{"--since", "10m", "--until", "5m", "--filter", "label=app=test"},
+			wantErr: nil,
+			mockSvc: func(
+				_ *testing.T,
+				_ *mocks.CommandCreator,
+				ncc *mocks.NerdctlCmdCreator,
+				_ *mocks.Command,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				_ afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				ncc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				AddEmptyEnvLookUps(ncsd)
+				ncsd.EXPECT().GetWd().Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathAbs("C:\\workdir").Return("C:\\workdir", nil)
+				ncsd.EXPECT().FilePathJoin(string(filepath.Separator), "mnt", "c", "workdir").Return(augmentedPath)
+				ncsd.EXPECT().FilePathToSlash(augmentedPath).Return(wslPath)
+
+				c := mocks.NewCommand(ctrl)
+				ncc.EXPECT().Create("shell", "--workdir", wslPath, limaInstanceName,
+					"sudo", "-E", nerdctlCmdName, "events", "--since", "10m", "--until", "5m", "--filter", "label=app=test").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
 			name:    "with --debug flag",
 			cmdName: "pull",
 			fc:      &config.Finch{},

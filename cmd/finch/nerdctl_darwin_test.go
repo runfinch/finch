@@ -1345,6 +1345,32 @@ func TestNerdctlCommand_run_miscCommand(t *testing.T) {
 			},
 		},
 		{
+			name:    "events with --since, --until, and --filter flags",
+			cmdName: "events",
+			fc:      &config.Finch{},
+			args:    []string{"--since", "10m", "--until", "5m", "--filter", "label=app=test"},
+			wantErr: nil,
+			mockSvc: func(
+				_ *testing.T,
+				lcc *mocks.NerdctlCmdCreator,
+				_ *mocks.CommandCreator,
+				ncsd *mocks.NerdctlCommandSystemDeps,
+				logger *mocks.Logger,
+				ctrl *gomock.Controller,
+				_ afero.Fs,
+			) {
+				getVMStatusC := mocks.NewCommand(ctrl)
+				lcc.EXPECT().CreateWithoutStdio("ls", "-f", "{{.Status}}", limaInstanceName).Return(getVMStatusC)
+				getVMStatusC.EXPECT().Output().Return([]byte("Running"), nil)
+				logger.EXPECT().Debugf("Status of virtual machine: %s", "Running")
+				AddEmptyEnvLookUps(ncsd)
+				c := mocks.NewCommand(ctrl)
+				lcc.EXPECT().Create("shell", limaInstanceName, "sudo", "-E", nerdctlCmdName, "events",
+					"--since", "10m", "--until", "5m", "--filter", "label=app=test").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
 			name:    "with COSIGN_PASSWORD env var and --sign=cosign",
 			cmdName: "push",
 			fc:      &config.Finch{},
