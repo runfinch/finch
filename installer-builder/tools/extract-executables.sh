@@ -38,15 +38,16 @@ updateQEMUEntitlement() {
 
 #$1: the file object
 extractExecutables() {
-    for file in $(ls -1a "$1")
+    for filepath in "$1"/*
     do
-        if [ -d "$1/$file" ];
+        file=$(basename "$filepath")
+        if [ -d "$filepath" ];
         then
             if [[ $file != '.' && $file != '..' ]];
             then
-                extractExecutables "$1/$file"
+                extractExecutables "$filepath"
             fi
-        elif [[ -x $1/$file || (($file == *.dylib || $file == *.dylib.*) && ! (-L $1/$file)) ]];
+        elif [[ -x "$filepath" || (($file == *.dylib || $file == *.dylib.*) && ! (-L "$filepath")) ]];
         then
             #extract executables from all file directory to one folder
             #to have the ability to merge back, rename the executables with the file path
@@ -55,12 +56,12 @@ extractExecutables() {
             #1) ./a will be removed
             #2) '/' will be replaced by '__'
             #3) final executable name is 'b__c'
-            relativepath=$(echo "$1/$file" | sed 's|./installer-builder/output/origin/_output/||')
+            relativepath=$(echo "$filepath" | sed 's|./installer-builder/output/origin/_output/||')
             newname=${relativepath//\//__}
 
             #copy executable to destination folder
             newpath="./installer-builder/output/executables/unsigned/package/artifact/EXECUTABLES_TO_SIGN/$newname"
-            cp -a "$1/$file" "$newpath"
+            cp -a "$filepath" "$newpath"
             codesign --remove-signature "$newpath"
             #qemu needs specific entitlement, handle it separately
             if [[ $file == "qemu-system-x86_64" || $file == "qemu-system-aarch64" ]];
