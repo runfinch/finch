@@ -28,4 +28,4 @@ test_local_start_lambda_invoke_wait_for_callback_failure_http_2_error_message_on
 EOF
 
 # Validate test results
-$GITHUB_WORKSPACE/scripts/validate-test-results.sh /tmp/start_lambda_test_output.txt expected_start_lambda_failures.txt "Start-Lambda tests"
+"$GITHUB_WORKSPACE"/scripts/validate-test-results.sh /tmp/start_lambda_test_output.txt expected_start_lambda_failures.txt "Start-Lambda tests"

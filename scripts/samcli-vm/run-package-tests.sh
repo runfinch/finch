@@ -29,4 +29,4 @@ test_package_with_loadable_image_archive_0_template_image_load_yaml
 EOF
 
 # Validate test results
-$GITHUB_WORKSPACE/scripts/validate-test-results.sh /tmp/package_test_output.txt expected_package_failures.txt "Package tests"
+"$GITHUB_WORKSPACE"/scripts/validate-test-results.sh /tmp/package_test_output.txt expected_package_failures.txt "Package tests"

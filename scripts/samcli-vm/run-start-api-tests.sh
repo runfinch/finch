@@ -30,4 +30,4 @@ test_changed_code_got_observed_and_loaded
 EOF
 
 # Validate test results
-$GITHUB_WORKSPACE/scripts/validate-test-results.sh /tmp/start_api_test_output.txt expected_start_api_failures.txt "Start-API tests"
+"$GITHUB_WORKSPACE"/scripts/validate-test-results.sh /tmp/start_api_test_output.txt expected_start_api_failures.txt "Start-API tests"

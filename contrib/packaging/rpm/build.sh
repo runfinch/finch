@@ -45,7 +45,7 @@ while [ -n "${1-}" ]; do
         ;;
 
     --branch=*)
-        BRANCH="${i#*=}"
+        BRANCH="${1#*=}"
         shift
         ;;
 
@@ -66,13 +66,13 @@ while [ -n "${1-}" ]; do
 done
 
 # create build tree + tmp dir
-mkdir -p ${RPMBUILD_DIR}/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS,tmp}
+mkdir -p "${RPMBUILD_DIR}"/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS,tmp}
 
 commit=$(git rev-parse HEAD)
 debug_version=$(git describe --match 'v[0-9]*' --dirty='.modified' --always --tags | cut -c2-)
 
 # load amazon linux deps
-source $AL_DEPS
+source "$AL_DEPS"
 
 rpmbuild_opts=(
     --undefine="_disable_source_fetch"
@@ -92,10 +92,10 @@ rpmbuild_opts=(
 )
 
 if [ "${LOCAL}" = true ]; then
-    pushd $PROJECT_ROOT
+    pushd "$PROJECT_ROOT" || exit
     git archive --format="tar.gz" --prefix="finch-${commit}/" HEAD >"finch-${debug_version}.tar.gz"
-    mv "finch-${debug_version}.tar.gz" $RPMBUILD_DIR/SOURCES
-    popd
+    mv "finch-${debug_version}.tar.gz" "$RPMBUILD_DIR"/SOURCES
+    popd || exit
     rpmbuild_opts+=(
         --define='build_local 1'
         --define="finch_release ${debug_version}"
@@ -103,7 +103,7 @@ if [ "${LOCAL}" = true ]; then
     )
 fi
 
-if [ ! -z "${BRANCH}" ]; then
+if [ -n "${BRANCH}" ]; then
     rpmbuild_opts+=(
         --define='build_latest 1'
         --define="latest_branch ${BRANCH}"
@@ -119,10 +119,10 @@ find "${CONFIG}" -maxdepth 1 -type f \
     -and ! -name 'README.md' \
     \) -exec cp -t "${RPMBUILD_DIR}/SOURCES" {} +
 
-echo ${rpmbuild_opts[@]}
+echo "${rpmbuild_opts[@]}"
 
 rpmbuild -ba "${rpmbuild_opts[@]}" "${CURRENT_DIR}/finch.spec"
 
 # copy to output dir
 mkdir -p "${OUTPUT}"
-cp ${RPM_DIR}/* "${OUTPUT}"
+cp "${RPM_DIR}"/* "${OUTPUT}"
