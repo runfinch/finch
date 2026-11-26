@@ -97,6 +97,26 @@ func TestNerdctlCommand_run(t *testing.T) {
 			},
 		},
 		{
+			name:    "events with --since, --until, and --filter flags",
+			cmdName: "events",
+			fc:      &config.Finch{},
+			args:    []string{"--since", "10m", "--until", "5m", "--filter", "label=app=test"},
+			wantErr: nil,
+			mockSvc: func(
+				_ *testing.T,
+				ncc *mocks.NerdctlCmdCreator,
+				_ *mocks.CommandCreator,
+				_ *mocks.NerdctlCommandSystemDeps,
+				_ *mocks.Logger,
+				ctrl *gomock.Controller,
+				_ afero.Fs,
+			) {
+				c := mocks.NewCommand(ctrl)
+				ncc.EXPECT().Create("events", "--since", "10m", "--until", "5m", "--filter", "label=app=test").Return(c)
+				c.EXPECT().Run()
+			},
+		},
+		{
 			name:    "with --debug flag",
 			cmdName: "pull",
 			fc:      &config.Finch{},
